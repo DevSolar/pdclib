@@ -5,7 +5,7 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-#include <string.h>
+#include <__size_t.h>
 
 int memcmp( const void * src_1, const void * src_2, size_t n )
 {
