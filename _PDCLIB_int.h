@@ -89,7 +89,7 @@
 #if   _PDCLIB_LONG_BYTES   == 4
 #define _PDCLIB_LONG_MAX   0x7fffffffL
 #define _PDCLIB_LONG_MIN   (-0x7fffffffL - 1L)
-#define _PDCLIB_LONG_MAX   0xffffffffUL
+#define _PDCLIB_ULONG_MAX   0xffffffffUL
 #elif   _PDCLIB_LONG_BYTES == 8
 #define _PDCLIB_LONG_MAX   0x7fffffffffffffffL
 #define _PDCLIB_LONG_MIN   (-0x7fffffffffffffffL - 1L)
@@ -120,7 +120,7 @@
 /* Setting 'int8_t', its limits, and its literal.                             */
 #if     _PDCLIB_SHRT_BYTES == 1
 typedef signed short       _PDCLIB_int8_t;
-typedef unsigned short     _PDCLIB_int8_t;
+typedef unsigned short     _PDCLIB_uint8_t;
 #define _PDCLIB_INT8_MAX   _PDCLIB_SHRT_MAX
 #define _PDCLIB_INT8_MIN   _PDCLIB_SHRT_MIN
 #define _PDCLIB_UINT8_MAX  _PDCLIB_USHRT_MAX
@@ -141,7 +141,7 @@ typedef unsigned int       _PDCLIB_uint16_t;
 #define _PDCLIB_UINT16_MAX _PDCLIB_UINT_MAX
 #elif   _PDCLIB_SHRT_BYTES == 2
 typedef signed short       _PDCLIB_int16_t;
-typedef unsigned short     _PDCLIB_int16_t;
+typedef unsigned short     _PDCLIB_uint16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_SHRT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_SHRT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_USHRT_MAX
@@ -152,13 +152,13 @@ typedef unsigned short     _PDCLIB_int16_t;
 /* Setting 'int32_t', its limits, and its literal                             */
 #if     _PDCLIB_INT_BYTES  == 4
 typedef signed int         _PDCLIB_int32_t;
-typedef unsigned int       _PDCLIB_int32_t;
+typedef unsigned int       _PDCLIB_uint32_t;
 #define _PDCLIB_INT32_MAX  _PDCLIB_INT_MAX
 #define _PDCLIB_INT32_MIN  _PDCLIB_INT_MIN
 #define _PDCLIB_UINT32_MAX _PDCLIB_UINT_MAX
 #elif   _PDCLIB_LONG_BYTES == 4
 typedef signed long        _PDCLIB_int32_t;
-typedef unsigned long      _PDCLIB_int32_t;
+typedef unsigned long      _PDCLIB_uint32_t;
 #define _PDCLIB_INT32_MAX  _PDCLIB_LONG_MAX
 #define _PDCLIB_INT32_MIN  _PDCLIB_LONG_MIN
 #define _PDCLIB_UINT32_MAX _PDCLIB_LONG_MAX
@@ -168,16 +168,16 @@ typedef unsigned long      _PDCLIB_int32_t;
 
 #if     _PDCLIB_LONG_BYTES == 8
 typedef signed long        _PDCLIB_int64_t;
-typedef unsigned long      _PDCLIB_int64_t;
+typedef unsigned long      _PDCLIB_uint64_t;
 #define _PDCLIB_INT64_MAX  _PDCLIB_LONG_MAX
 #define _PDCLIB_INT64_MIN  _PDCLIB_LONG_MIN
-#define _PDCLIB_INT64_MAX  _PDCLIB_ULONG_MAX
+#define _PDCLIB_UINT64_MAX  _PDCLIB_ULONG_MAX
 #elif _PDCLIB_LLONG_BYTES  == 8
 typedef signed long long   _PDCLIB_int64_t;
-typedef unsigned long long _PDCLIB_int64_t;
+typedef unsigned long long _PDCLIB_uint64_t;
 #define _PDCLIB_INT64_MAX  _PDCLIB_LLONG_MAX
 #define _PDCLIB_INT64_MIN  _PDCLIB_LLONG_MIN
-#define _PDCLIB_INT64_MAX  _PDCLIB_ULLONG_MAX
+#define _PDCLIB_UINT64_MAX  _PDCLIB_ULLONG_MAX
 #else
 #error Neither 'long' nor 'long long' are 64-bit.
 #endif
