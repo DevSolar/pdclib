@@ -31,7 +31,7 @@
  *          found.
  *  @see strchr()
  */
-void * memchr( const void * s, int c, size_t n );
+void * memchr( const void * src, int c, size_t n );
 
 /** MEMory CoMPare. Compares two memory areas until a difference is found.
  *  This implementation actually returns the difference of the first differing
@@ -46,7 +46,7 @@ void * memchr( const void * s, int c, size_t n );
  *          from src_2, or > 0 if otherwise.
  *  @see strncmp()
  */
-int memcmp( const void * s1, const void * s2, size_t n );
+int memcmp( const void * src_1, const void * src_2, size_t n );
 
 /** MEMory CoPY. Copies a source memory area of size n into a destination
  *  memory area.
@@ -58,7 +58,7 @@ int memcmp( const void * s1, const void * s2, size_t n );
  *  @return A pointer to the destination memory area.
  *  @see strncpy()
  */
-void * memcpy( void * restrict s1, const void * restrict s2, size_t n );
+void * memcpy( void * restrict dest, const void * restrict src, size_t n );
 
 /** MEMory CoPY. Moves a source memory area of size n into a destination
  *  memory area. The memory areas may overlap.
@@ -68,7 +68,7 @@ void * memcpy( void * restrict s1, const void * restrict s2, size_t n );
  *  @return A pointer to the destination memory area.
  *  @see strncpy()
  */
-void * memmove( void * s1, const void * s2, size_t n );
+void * memmove( void * dest, const void * src, size_t n );
 
 /** MEMory SET. Fills a memory area with a given character.
  *  @param dest The destination memory area.
@@ -76,7 +76,7 @@ void * memmove( void * s1, const void * s2, size_t n );
  *  @param n The number of characters to be written to dest.
  *  @return A pointer to the destination memory area.
  */
-void * memset( void * s, int c, size_t n );
+void * memset( void * dest, int c, size_t n );
 
 /** STRing conCATenation. Appends a C string to another. If the memory area
  *  pointed to by 'dest' is not large enough to hold both 'dest' and 'src',
@@ -199,7 +199,7 @@ int strncmp( const char * src_1, const char * src_2, size_t n );
  *  @return A pointer to the destination string.
  *  @see strcpy()
  */
-char * strncpy( char * restrict s1, const char * restrict s2, size_t n );
+char * strncpy( char * restrict dest, const char * restrict src, size_t n );
 
 /** STRing SPaN. Compares two C strings, determining the length of the
  *  substring where both strings are equal.
@@ -207,7 +207,7 @@ char * strncpy( char * restrict s1, const char * restrict s2, size_t n );
  *  @param src_2 The second string to be compared.
  *  @return The length of the identical substring.
  */
-size_t strspn( const char * s1, const char * s2 );
+size_t strspn( const char * src_1, const char * src_2 );
 
 /** STRing TOKenizer. This (complex and not thread-safe) function allows, by
  *  subsequent calls, to parse a string for tokens. The first parameter to the
@@ -239,7 +239,7 @@ char * strtok( char * restrict src, const char * restrict seperators );
  *  @see locale.h
  *  @see strcoll()
  */
-size_t strxfrm( char * restrict s1, const char * restrict s2, size_t n );
+size_t strxfrm( char * restrict dest, const char * restrict src, size_t n );
 
 /** STRing search, return Pointer to BReaK. Searches a C string (including
  *  terminating \0) for any character contained in a second string. If the
@@ -259,7 +259,7 @@ char * strpbrk( const char * src_1, const char * src_2 );
  *  @return A pointer to the last occurrence of c in src, or NULL if no match
  *          found.
  */
-char * strrchr( const char * s, int c );
+char * strrchr( const char * src, int c );
 
 /** STRing search for STRing. Searches a C string for a substring.
  *  @param src_1 The string to be searched in.
