@@ -5,34 +5,27 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-void * memmove( void * s1, const void * s2, size_t n ) { /* TODO */ };
+#include <string.h>
 
-/* PDPC code - unreviewed
+void * memmove( void * dest, const void * src, size_t n )
 {
-    char *p = s1;
-    const char *cs2 = s2;
-    size_t x;
-    
-    if (p <= cs2)
+    const char * src_p = (const char *) src;
+    char * dest_p = (char *) dest;
+    if ( dest_p < src_p )
     {
-        for (x=0; x < n; x++)
+        while ( n-- )
         {
-            *p = *cs2;
-            p++;
-            cs2++;
+            *dest_p++ = *src_p++;
         }
     }
     else
     {
-        if (n != 0)
+        src_p += n;
+        dest_p += n;
+        while ( n-- )
         {
-            for (x=n-1; x > 0; x--)
-            {
-                *(p+x) = *(cs2+x);
-            }
+            *dest_p-- = *src_p--;
         }
-        *(p+x) = *(cs2+x);
     }
-    return (s1);
+    return dest;
 }
-*/
