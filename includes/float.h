@@ -10,6 +10,8 @@
 #ifndef __FLOAT_H
 #define __FLOAT_H __FLOAT_H
 
+// This file is part of the platform personality (see personality.txt).
+
 #define FLT_RADIX       // TODO
 #define FLT_ROUNDS      // TODO
 #define FLT_EVAL_METHOD // TODO

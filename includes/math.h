@@ -10,38 +10,40 @@
 #ifndef __MATH_H
 #define __MATH_H __MATH_H
 
+// TODO: Documentation
+
 // ----------------------------------------------------------------------------
 // DEFINES
 
-#define HUGE_VAL  // TODO
-#define HUGE_VALF // TODO
-#define HUGE_VALL // TODO
+#define HUGE_VAL  // TODO - personality?
+#define HUGE_VALF // TODO - personality?
+#define HUGE_VALL // TODO - personality?
 
-#define INFINITY // TODO
-#define NAN      // TODO
+#define INFINITY // TODO - personality?
+#define NAN      // TODO - personality?
 
-#define FP_FAST_FMA  // TODO
-#define FP_FAST_FMAF // TODO
-#define FP_FAST_FMAL // TODO
+#define FP_FAST_FMA  // TODO - personality?
+#define FP_FAST_FMAF // TODO - personality?
+#define FP_FAST_FMAL // TODO - personality?
 
-#define FP_INFINITE  // TODO
-#define FP_NAN       // TODO
-#define FP_NORMAL    // TODO
-#define FP_SUBNORMAL // TODO
-#define FP_ZERO      // TODO
+#define FP_INFINITE  // TODO - personality?
+#define FP_NAN       // TODO - personality?
+#define FP_NORMAL    // TODO - personality?
+#define FP_SUBNORMAL // TODO - personality?
+#define FP_ZERO      // TODO - personality?
 
-#define FP_ILOGB0   // TODO
-#define FP_ILOGBNAN // TODO
+#define FP_ILOGB0   // TODO - personality?
+#define FP_ILOGBNAN // TODO - personality?
 
-#define MATH_ERRNO       1
-#define MATH_ERREXCEPT   2
-#define math_errhandling // TODO
+#define MATH_ERRNO       1 // personality?
+#define MATH_ERREXCEPT   2 // personality?
+#define math_errhandling // TODO - personality?
 
 // --------------------------------------------------------------------------
 // TYPEDEFS
 
-typedef double_t; // TODO
-typedef float_t;  // TODO
+typedef double_t; // TODO - personality?
+typedef float_t;  // TODO - personality?
 
 // --------------------------------------------------------------------------
 // MACROS

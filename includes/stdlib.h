@@ -10,6 +10,8 @@
 #ifndef __STDLIB_H
 #define __STDLIB_H __STDLIB_H
 
+// TODO: Documentation, C++ handling
+
 // ----------------------------------------------------------------------------
 // MACROS
 
@@ -39,10 +41,10 @@ typedef struct
     long long remainder;
 } lldiv_t;
 
-typedef size_t; // TODO
+typedef size_t; // TODO - personality?
 
 #ifndef __cplusplus
-typedef wchar_t; // TODO
+typedef wchar_t; // TODO - personality?
 #endif // __cplusplus
 
 // ----------------------------------------------------------------------------
@@ -114,5 +116,7 @@ extern "C" x
 __cppwrapper( int atexit( void (*func) ( void ) ) { /* TODO */ }; )
 __cppwrapper( void * bsearch( const void * key, const void * base, size_t nelem, size_t size, int (*cmp) ( const void * ck, const void * ce) ) { /* TODO */ }; )
 __cppwrapper( void qsort( void * base, size_t nelem, size_t size, int (*cmp) ( const void * e1, const void * e2) ) { /* TODO */ }; )
+
+#undef __cppwrapper
 
 #endif // __STDLIB_H

@@ -10,18 +10,17 @@
 #ifndef __SETJMP_H
 #define __SETJMP_H __SETJMP_H
 
+// TODO: Documentation
+
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
-struct jmp_buf[1];
+struct jmp_buf[1]; // TODO
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS
 
-// TODO
-int setjmp(jmp_buf env);
-
-// TODO
-void longjmp(jmp_buf env, int val);
+int setjmp( jmp_buf env );
+void longjmp( jmp_buf env, int val );
 
 #endif // __SETJMP_H

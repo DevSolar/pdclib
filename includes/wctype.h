@@ -10,12 +10,14 @@
 #ifndef __WCTYPE_H
 #define __WCTYPE_H __WCTYPE_H
 
+// TODO: Documentation
+
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
-typedef wctrans_t;
-typedef wctype_t;
-typedef wint_t;
+typedef wctrans_t; // TODO - personality?
+typedef wctype_t;  // TODO - personality?
+typedef wint_t;    // TODO - personality?
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS

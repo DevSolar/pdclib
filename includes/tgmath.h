@@ -10,6 +10,8 @@
 #ifndef __TGMATH_H
 #define __TGMATH_H __TGMATH_H
 
+// TODO: Generics support, C++ handling
+
 #include <complex.h>
 #include <math.h>
 

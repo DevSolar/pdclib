@@ -10,6 +10,10 @@
 #ifndef __STDINT_H
 #define __STDINT_H __STDINT_H
 
+// This file is part of the platform personality (see personality.txt).
+
+// TODO: Documentation
+
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 

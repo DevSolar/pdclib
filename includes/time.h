@@ -10,19 +10,21 @@
 #ifndef __TIME_H
 #define __TIME_H __TIME_H
 
+// TODO: Documentation.
+
 // ----------------------------------------------------------------------------
 // MACROS
 
-#define CLOCKS_PER_SEC // TODO
+#define CLOCKS_PER_SEC // TODO - personality?
 #define NULL           0
 
 // ----------------------------------------------------------------------------
 // TYPES
 
-typedef clock_t;
-typedef size_t;
-typedef time_t;
-struct tm;
+typedef clock_t; // TODO - personality?
+typedef size_t;  // TODO - personality?
+typedef time_t;  // TODO - personality?
+struct tm;       // TODO - personality?
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS
