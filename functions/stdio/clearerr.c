@@ -5,12 +5,14 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-void clearerr( FILE * stream ) { /* TODO */ };
+#ifndef __FILE_H
+#define __FILE_H __FILE_H
+#include <__FILE.h>
+#endif // __FILE_H
 
-/* PDPC code - unreviewed
+void clearerr( FILE * fh )
 {
-    stream->errorInd = 0;
-    stream->eofInd = 0;
+    fh->ErrorIndicator = 0;
+    fh->EOFIndicator = 0;
     return;
 }
-*/

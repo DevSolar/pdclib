@@ -5,10 +5,12 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-int ferror( FILE * stream ) { /* TODO */ };
+#ifndef __FILE_H
+#define __FILE_H __FILE_H
+#include <__FILE.h>
+#endif // __FILE_H
 
-/* PDPC code - unreviewed
+int ferror( FILE * fh )
 {
-    return (stream->errorInd);
+    return fh->ErrorIndicator;
 }
-*/
