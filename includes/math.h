@@ -129,7 +129,6 @@ float       asin( float       x );
 long double asin( long double x );
 
 // These functions compute the arc hyperbolic sine of x.
-// @returns arsinh x.
 float       asinh( float       x );
 long double asinh( long double x );
 
@@ -343,7 +342,6 @@ float       fabsf( float       x );
 long double fabsl( long double x );
 
 // These functions compute the sine of x (measured in radians).
-// @returns sin x.
 double      sin( double       x );
 float       sinf( float       x );
 long double sinl( long double x );
@@ -364,7 +362,6 @@ float       asinhf( float       x );
 long double asinhl( long double x );
 
 // These functions compute the cosine of x (measured in radians).
-// @returns cos x.
 double      cos( double       x );
 float       cosf( float       x );
 long double cosl( long double x );
@@ -384,8 +381,7 @@ double      acosh( double       x );
 float       acoshf( float       x );
 long double acoshl( long double x );
 
-// These functions return the tangent of x (measured in radians).
-// @returns tan x.
+// These functions return the tangent of x.
 double      tan( double       x );
 float       tanf( float       x );
 long double tanl( long double x );
@@ -395,8 +391,7 @@ double      tanh( double       x );
 float       tanhf( float       x );
 long double tanhl( long double x );
 
-// These functions compute the principal value of the arc tangent of x.
-// @returns arctan x in the interval [-p/2, +p/2] radians.
+// These functions compute the arctangent of x.
 double      atan( double       x );
 float       atanf( float       x );
 long double atanl( long double x );
