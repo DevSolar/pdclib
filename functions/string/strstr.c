@@ -5,35 +5,26 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
+#include <__NULL.h>
 
-const char * strstr( const char * s1, const char * s2 ) { /* TODO */ };
-char * strstr( char * s1, const char * s2 ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
-char * strstr( const char * s1, const char * s2 ) { /* TODO */ };
-
-/* PDPC code - unreviewed
+char * strstr( const char * src_1, const char * src_2 )
 {
-    const char *p = s1, *p1, *p2 = s2;
-
-    while (*p)
+    const char * p1 = src_1;
+    const char * p2;
+    while ( *src_1 != '\0' )
     {
-        if (*p == *s2)
+        p2 = src_2;
+        while ( ( *p2 != '\0' ) && ( *p1 == *p2 ) )
         {
-            p1 = p;
-            p2 = s2;
-            while ((*p2 != '\0') && (*p1++ == *p2++)) ;
-            if (*p2 == '\0')
-            {
-                return (char *)p;
-            }
+            ++p1;
+            ++p2;
         }
-        p++;
+        if ( *p2 == '\0' )
+        {
+            return (char *) src_1;
+        }
+        ++src_1;
+        p1 = src_1;
     }
     return NULL;
 }
-*/

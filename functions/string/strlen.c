@@ -5,25 +5,14 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-size_t strlen( const char * s ) { /* TODO */ };
+#include <__size_t.h>
 
-/* Therx code
+size_t strlen( const char * src )
 {
-    const char * start = s1;
-    while (*s1)
+    size_t len = 0;
+    while ( src[len] != '\0' )
     {
-        s1++;
+        ++len;
     }
-    return s1 - start;
+    return len;
 }
-*/
-
-/* PDPC code - unreviewed
-{
-    const char *p;
-    
-    p = s;
-    while (*p != '\0') p++;
-    return ((size_t)(p - s));
-}
-*/

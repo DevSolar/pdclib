@@ -5,27 +5,22 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
+#include <__NULL.h>
 
-const char * strrchr( const char * s, int c ) { /* TODO */ };
-char * strrchr( char * s, int c ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
-char * strrchr( const char * s, int c ) { /* TODO */ };
-
-/* PDPC code - unreviewed
+char * strrchr( const char * src, int c )
 {
-    const char *p;
-    
-    p = s + strlen(s);
-    while (p >= s)
+    const char * p = src;
+    while ( *p != '\0' )
     {
-        if (*p == (char)c) return ((char *)p);
-        p--;
+        ++p;
     }
-    return (NULL);
+    while ( p >= src )
+    {
+        if ( *p == (char) c )
+        {
+            return (char *) p;
+        }
+        --p;
+    }
+    return NULL;
 }
-*/

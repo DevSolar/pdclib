@@ -5,25 +5,18 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-char * strncpy( char * restrict s1, const char * restrict s2, size_t n ) { /* TODO */ };
+#include <__size_t.h>
 
-/* PDPC code - unreviewed
-char *strncpy(char *s1, const char *s2, size_t n)
+char * strncpy( char * restrict dest, const char * restrict src, size_t n )
 {
-    char *p = s1;
-    size_t x;
-    
-    for (x=0; x < n; x++)
+    char * tmp = dest;
+    while ( ( n-- != 0 ) && ( ( *dest++ = *src++ ) != '\0' ) )
     {
-        *p = *s2;
-        if (*s2 == '\0') break;
-        p++;
-        s2++;
+        // EMPTY
     }
-    for (; x < n; x++)
+    while ( n-- != 0 )
     {
-        *p++ = '\0';
+        *dest++ = '\0';
     }
-    return (s1);
+    return tmp;
 }
-*/

@@ -5,22 +5,18 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-char * strncat( char * restrict s1, const char * restrict s2, size_t n ) { /* TODO */ };
+#include <__size_t.h>
 
-/* PDPC code - unreviewed
+char * strncat( char * restrict dest, const char * restrict src, size_t n )
 {
-    char *p = s1;
-    size_t x = 0;
-    
-    while (*p != '\0') p++;
-    while ((*s2 != '\0') && (x < n))
+    char * tmp = dest;
+    while ( *dest != '\0' )
     {
-        *p = *s2;
-        p++;
-        s2++;
-        x++;
+        ++dest;
     }
-    *p = '\0';
-    return (s1);
+    while ( ( n-- > 0 ) && ( *src != '\0' ) )
+    {
+        *dest++ = *src++;
+    }
+    return tmp;
 }
-*/

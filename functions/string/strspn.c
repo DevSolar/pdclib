@@ -5,25 +5,28 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-size_t strspn( const char * s1, const char * s2 ) { /* TODO */ };
+#include <__size_t.h>
 
-/* PDPC code - unreviewed
+size_t strspn( const char * src_1, const char * src_2 )
 {
-    const char *p1;
-    const char *p2;
-    
-    p1 = s1;
-    while (*p1 != '\0')
+    size_t len = 0;
+    const char * p;
+    while ( src_1[ len ] != '\0' )
     {
-        p2 = s2;
-        while (*p2 != '\0')
+        p = src_2;
+        while ( *p != '\0' )
         {
-            if (*p1 == *p2) break;
-            p2++;
+            if ( *src_1 == *p )
+            {
+                break;
+            }
+            ++p;
         }
-        if (*p2 == '\0') return ((size_t)(p1 - s1));
-        p1++;
+        if ( *p == '\0' )
+        {
+            return len;
+        }
+        ++len;
     }
-    return ((size_t)(p1 - s1));
+    return len;
 }
-*/
