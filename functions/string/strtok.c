@@ -5,27 +5,35 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-char * strtok( char * restrict s1, const char * restrict s2 ) { /* TODO */ };
-
-/* PDPC code - unreviewed
+char * strtok( char * restrict src, const char * restrict seperators )
 {
-    static char *old = NULL;
-    char *p;
-    size_t len;
-    size_t remain;
-    
-    if (s1 != NULL) old = s1;
-    if (old == NULL) return (NULL);
-    p = old;
-    len = strspn(p, s2);
-    remain = strlen(p);
-    if (remain <= len) { old = NULL; return (NULL); }
-    p += len;
-    len = strcspn(p, s2);
-    remain = strlen(p);
-    if (remain <= len) { old = NULL; return (p); }
-    *(p + len) = '\0';
-    old = p + len + 1;
-    return (p);
+    static char * store = NULL;
+    size_t token_length;
+
+    if ( src != NULL )
+    {
+        // new string
+        store = src;
+    }
+    if ( store == NULL )
+    {
+        // no old string, no new string, nothing to do
+        return NULL;
+    }
+    src += strspn( src, seperators ); // skipping leading seperators
+    if ( strlen( src ) == 0 )
+    {
+        // no more to parse
+        return ( store = NULL );
+    }
+    token_length = strcspn( src, seperators );
+    if ( src[ token_length ] == '\0' )
+    {
+        // parsed to end of string
+        store = NULL;
+        return src;
+    }
+    src[ token_length ] = '\0';
+    store = src + token_length + 1;
+    return src;
 }
-*/
