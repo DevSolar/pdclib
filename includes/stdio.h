@@ -13,10 +13,8 @@
 // ----------------------------------------------------------------------------
 // MACROS
 
-// personality: FILENAME_MAX, FOPEN_MAX, L_tmpnam, TMP_MAX, stderr, stdin,
-//              stdout
-
 #include "__NULL.h"
+#include "__pdc_stdio.h"
 
 #define _IOFBF    0   // @see setvbuf()
 #define _IOLBF    1   // @see setvbuf()
@@ -33,10 +31,13 @@
 
 #include "__size_t.h"
 
-typedef FILE;   // object holding all stream information, including file pos,
-                // buffer (optional), error indicator, EOF indicator
-typedef fpos_t; // position indicator type, other than array - personality?
-                // (see mbstate_t)
+typedef FILE;   // file position, buffer pointer, ErrorIndicator, EOFIndicator,
+                // HostRC
+typedef fpos_t; // file position
+
+extern FILE * stdin;
+extern FILE * stdout;
+extern FILE * stderr;
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS
@@ -51,22 +52,22 @@ typedef fpos_t; // position indicator type, other than array - personality?
  * * ferror()
  * * clearerr()
  * * fclose()
- * 
+ *
  * Rename / Remove
  * * rename()
  * * remove()
- * 
+ *
  * Temporary Files
  * * tmpfile()
  * * tmpnam()
- * 
+ *
  * File Positioning
  * * fseek()
  * * rewind()
  * * ftell()
  * * fgetpos()
  * * fsetpos()
- * 
+ *
  * Reading
  * * fgetc()
  * * getc()
@@ -74,14 +75,14 @@ typedef fpos_t; // position indicator type, other than array - personality?
  * * ungetc()
  * * fgets()
  * * gets()
- * 
+ *
  * Writing
  * * fputc()
  * * putc()
  * * putchar()
  * * fputs()
  * * puts()
- * 
+ *
  * Formatted Reading
  * * fscanf()
  * * scanf()
@@ -89,7 +90,7 @@ typedef fpos_t; // position indicator type, other than array - personality?
  * * vfscanf()
  * * vscanf()
  * * vsscanf()
- * 
+ *
  * Formatted Writing
  * * fprintf()
  * * printf()
@@ -99,22 +100,22 @@ typedef fpos_t; // position indicator type, other than array - personality?
  * * vprintf()
  * * vsprintf()
  * * vsnprintf()
- * 
+ *
  * Special
  * * perror()
- * 
+ *
  * Binary Read / Write
  * * fread()
  * * fwrite()
- * 
+ *
  * Buffer Handling
  * * setvbuf()
  * * setbuf()
  *
- */ 
+ */
 
-/** File OPEN. Opens the file specified by the given name.
-    @param filename Name of the file to be opened.
+/** File OPEN. Opens a file.
+    @param filename Name of the file.
     @param mode One of r, w, a, rb, wb, ab, r+, w+, a+, rb+, wb+, ab+,
            specifying which mode to open the file in.
     @return A file handle associated with the opened file, NULL if failed.
@@ -134,10 +135,11 @@ FILE * fopen( const char * restrict filename, const char * restrict mode );
  */
 FILE * freopen( const char * restrict filename, const char * restrict mode, FILE * fh );
 
-/** File FLUSH. Flushes output buffers (if any) for given file handle. If
-    parameter is NULL, flushes output buffers for all file handles.
+/** File FLUSH. Flushes any output buffers of a file. If parameter is NULL,
+    flushes output buffers for all file handles. The function is undefined for
+    input streams or update streams when the last operation was input.
     @param fh The file handle.
-    @return 0 if successful, EOF if failed (setting error indicators).
+    @return 0 if successful, EOF on write error (setting error indicator).
  */
 int fflush( FILE * fh );
 
@@ -145,22 +147,23 @@ int fflush( FILE * fh );
     @param fh The file handle.
     @return 0 if EOF is not set, non-zero if EOF is set.
  */
-int feof( FILE * stream );
+int feof( FILE * fh );
 
-/** File ERROR. Tests whether error indicators are set for a given file.
+/** File ERROR. Tests whether error indicator is set for a given file.
     @param fh The file handle.
-    @return 0 if no error indicators are set, non-zero otherwise.
+    @return 0 if error indicator is not set, non-zero if set.
  */
-int ferror( FILE * stream );
+int ferror( FILE * fh );
 
 /** CLEAR ERRor. Clears EOF and error indicator of a FILE handle.
     @param fh The file handle.
  */
 void clearerr( FILE * fh );
 
-/** File CLOSE. Flush output buffers (if any) and closes the FILE handle.
-    @param stream The file handle.
-    @return 0 if successful, non-zero if failed. (In any case, the FILE handle 
+/** File CLOSE. Flushes any output buffers, closes the file, frees internal
+    buffers, and discards the file handle.
+    @param fh The file handle.
+    @return 0 if successful, non-zero if failed. (In any case, the file handle
             is invalid afterwards.)
  */
 int fclose( FILE * fh );
@@ -168,41 +171,44 @@ int fclose( FILE * fh );
 // ----------------------------------------------------------------------------
 
 /** RENAME file. Causes a file to be no longer accessible under a given name,
-    but a new name instead. If a file with the intended new name already
-    exists, this implementation of rename() fails, returning INT_MAX.
-    @param old Name of the file to be renamed.
-    @param new Name to rename the file to.
-    @return 0 if successful, non-zero if failed. (Implementation defined:
-            INT_MAX if target file name already exists.)
+    but a new name instead.
+    @param filename Name of the file.
+    @param newname New file name.
+    @return 0 if successful, non-zero if failed. (This implementation: INT_MAX
+            if newname already exists; INT_MIN if filename could not be found;
+            EOF if filename is a currently open file.)
  */
-int rename( const char * old, const char * new );
+int rename( const char * filename, const char * newname );
 
 /** REMOVE file. Causes a file to be no longer accessible under a given name.
-    If the file is currently open, this implementation of remove() fails,
-    returning INT_MAX.
-    @param filename Name of the file to be removed.
-    @return 0 if successful, non-zero if failed. (Implementation defined:
-            INT_MAX if the file is currently open.)
+    @param filename Name of the file.
+    @return 0 if successful, non-zero if failed. (This implementation: INT_MAX
+            if the file is currently open.)
  */
 int remove( const char * filename );
 
 // ----------------------------------------------------------------------------
 
-/** TeMPorary FILE. Opens a file in "wb+" mode that will be automatically
-    deleted when closed, or when the program terminates.
+/** TeMPorary FILE. Opens a previously non-existend file in "wb+" mode that
+    will be automatically deleted when closed, or when the program terminates.
+    (This implementation: If program terminates abnormally, file is not
+    deleted.)
     @return A file handle for the temporary file. (NULL if opening failed.)
  */
 FILE * tmpfile( void )
 
-/** TeMPorary NAMe. Generates a random file name that does not yet exist in the
-    file system. Note that a file generated with this name is not "temporary",
-    and must be remove()d normally.
-    @param dest NULL, or a char[ L_tmpnam ] array.
-    @return A pointer to a static internal buffer containing the file name,
-            or NULL if no file name could be generated. If 'dest' is not NULL,
-            writes the file name to and returns 'dest'.
- */ 
-char * tmpnam( char * dest );
+/** TeMPorary NAMe. Generates a file name that does not yet exist in the file
+    system, and is different from the last call to the function. Note that a
+    file generated with this name is not "temporary", and must be remove()d
+    normally.
+    @param filename NULL, or a char[ L_tmpnam ] array. (Beware, calling this
+           function with a NULL parameter is not thread-safe.)
+    @return If 'filename' is NULL, a pointer to an internal static buffer
+            holding the generated name. If 'filename' is not null, the
+            generated name is stored in 'filename', and 'filename' is returned.
+            If the filename generation fails, function returns NULL.
+ */
+char * tmpnam( char * filename );
 
 // ----------------------------------------------------------------------------
 
@@ -219,7 +225,7 @@ int fseek( FILE * fh, long offset, int start );
 /** REWIND file. Equivalent to (void) fseek( fh, 0, SEEK_SET ).
     @param fh The file handle.
  */
-void rewind( FILE * stream );
+void rewind( FILE * fh );
 
 /** File TELL position. Tells the current offset into a given file.
     @param fh The file handle.
@@ -240,7 +246,7 @@ int fgetpos( FILE * restrict fh, fpos_t * restrict pos );
     @param pos The fpos_t object.
     @return 0 if successful, non-zero if error encountered.
  */
-int fsetpos( FILE * stream, const fpos_t * pos );
+int fsetpos( FILE * fh, const fpos_t * pos );
 
 // ----------------------------------------------------------------------------
 
@@ -292,7 +298,7 @@ char * gets( char * dest );
     @param fh The file handle.
     @return 'c', or EOF if an error occurred.
  */
-int fputc( int c, FILE * stream );
+int fputc( int c, FILE * fh );
 
 /** PUT Character. Equivalent to fputc( c, stdout ), but may be implemented as
     a macro, and may evaluate the file handle more than once.
@@ -313,7 +319,7 @@ int putchar( int c );
     @param fh The file handle.
     @return >= 0 if successful, or EOF if an error occurred.
  */
-int fputs( const char * restrict s, FILE * restrict stream );
+int fputs( const char * restrict src, FILE * restrict fh );
 
 /** PUT String. Write a C string to stdout.
     @param src The C string to write.
@@ -359,7 +365,7 @@ int sscanf( const char * restrict src, const char * restrict format, ... );
     @param args The argument list created by the va_start macro.
     @return Number of characters printed.
  */
-int vfscanf( FILE * restrict stream, const char * restrict format, va_list args );
+int vfscanf( FILE * restrict fh, const char * restrict format, va_list args );
 
 /** Variable SCAN Formatted. Equivalent to vfscanf( stdin, format, args ).
     @param format The formatting string.
@@ -387,7 +393,7 @@ int vsscanf( const char * restrict src, const char * restrict format, va_list ap
            'format'.
     @return Number of characters printed, negative value if error occurred.
  */
-int fprintf( FILE * restrict stream, const char * restrict format, ... );
+int fprintf( FILE * restrict fh, const char * restrict format, ... );
 
 /** PRINT Formatted. Equivalent to fprintf( stdout, format, ... ).
     @param format The formatting string.
@@ -564,36 +570,5 @@ typedef struct
     int update;     /* Is file update (read + write)? */
     int theirBuffer; /* Is the buffer supplied by them? */
 } FILE;
-
-typedef unsigned long fpos_t;
-
-#define NULL ((void *)0)
-#define FILENAME_MAX 260
-#define FOPEN_MAX 40
-#define _IOFBF 1
-#define _IOLBF 2
-#define _IONBF 3
-/*#define BUFSIZ 409600*/
-/* #define BUFSIZ 8192 */
-/*#define BUFSIZ 5120*/
-#define BUFSIZ 6144
-/* #define BUFSIZ 10 */
-/* #define BUFSIZ 512 */
-#define EOF -1
-#define L_tmpnam FILENAME_MAX
-#define TMP_MAX 25
-#define SEEK_SET 0
-#define SEEK_CUR 1
-#define SEEK_END 2
-#define __NFILE (FOPEN_MAX - 3)
-#define __WRITE_MODE 1
-#define __READ_MODE 2
-
-extern FILE *stdin;
-extern FILE *stdout;
-extern FILE *stderr;
-
-extern FILE *__userFiles[__NFILE];
-*/
 
 #endif // __STDIO_H
