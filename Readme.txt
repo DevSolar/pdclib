@@ -140,10 +140,10 @@ package, to leave <float.h> to the overlay, or devise some parameterized
 macro magic as for <limits.h> / <stdint.h>. Not thoroughly tested, but
 I had to make the 0.1 release sometime so why not now.
 
-Future releases:
+v0.2 - unreleased
+Implements the INTN_C() / UINTN_C() macros, although I am not sure I got
+them right or missed something in how they are supposed to work.
 
-v0.2 - will (hopefully) add the INTN_C() / UINTN_C() macros, at least
-one overlay for GCC / x86, and implementations for <string.h> as well
-as parts of <stdlib.h>. I will also add a test driver to make at least
-some basic tests for syntax.
-
+Should contain at least one overlay for GCC / x86, and implementations
+for <string.h> as well as parts of <stdlib.h>. I will also add a test
+driver to make at least some basic tests for syntax.

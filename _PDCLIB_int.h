@@ -120,6 +120,8 @@ typedef unsigned char      _PDCLIB_uint8_t;
 #define _PDCLIB_INT8_MAX   _PDCLIB_CHAR_MAX
 #define _PDCLIB_INT8_MIN   _PDCLIB_CHAR_MIN
 #define _PDCLIB_UINT8_MAX  _PDCLIB_UCHAR_MAX
+#define _PDCLIB_INT8_LITERAL
+#define _PDCLIB_UINT8_LITERAL
 #else
 #error Unsupported width of char (not 8 bits).
 #endif
@@ -131,12 +133,16 @@ typedef unsigned int       _PDCLIB_uint16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_INT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_INT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_UINT_MAX
+#define _PDCLIB_INT16_LITERAL
+#define _PDCLIB_UINT16_LITERAL
 #elif   _PDCLIB_SHRT_BYTES == 2
 typedef signed short       _PDCLIB_int16_t;
 typedef unsigned short     _PDCLIB_uint16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_SHRT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_SHRT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_USHRT_MAX
+#define _PDCLIB_INT16_LITERAL  s
+#define _PDCLIB_UINT16_LITERAL us
 #else
 #error Neither 'short' nor 'int' are 16-bit.
 #endif
@@ -148,12 +154,16 @@ typedef unsigned int       _PDCLIB_uint32_t;
 #define _PDCLIB_INT32_MAX  _PDCLIB_INT_MAX
 #define _PDCLIB_INT32_MIN  _PDCLIB_INT_MIN
 #define _PDCLIB_UINT32_MAX _PDCLIB_UINT_MAX
+#define _PDCLIB_INT32_LITERAL
+#define _PDCLIB_UINT32_LITERAL
 #elif   _PDCLIB_LONG_BYTES == 4
 typedef signed long        _PDCLIB_int32_t;
 typedef unsigned long      _PDCLIB_uint32_t;
 #define _PDCLIB_INT32_MAX  _PDCLIB_LONG_MAX
 #define _PDCLIB_INT32_MIN  _PDCLIB_LONG_MIN
 #define _PDCLIB_UINT32_MAX _PDCLIB_LONG_MAX
+#define _PDCLIB_INT32_LITERAL  l
+#define _PDCLIB_UINT32_LITERAL ul
 #else
 #error Neither 'int' nor 'long' are 32-bit.
 #endif
@@ -164,12 +174,16 @@ typedef unsigned long      _PDCLIB_uint64_t;
 #define _PDCLIB_INT64_MAX  _PDCLIB_LONG_MAX
 #define _PDCLIB_INT64_MIN  _PDCLIB_LONG_MIN
 #define _PDCLIB_UINT64_MAX  _PDCLIB_ULONG_MAX
+#define _PDCLIB_INT64_LITERAL  l
+#define _PDCLIB_UINT64_LITERAL ul
 #elif _PDCLIB_LLONG_BYTES  == 8
 typedef signed long long   _PDCLIB_int64_t;
 typedef unsigned long long _PDCLIB_uint64_t;
 #define _PDCLIB_INT64_MAX  _PDCLIB_LLONG_MAX
 #define _PDCLIB_INT64_MIN  _PDCLIB_LLONG_MIN
 #define _PDCLIB_UINT64_MAX  _PDCLIB_ULLONG_MAX
+#define _PDCLIB_INT64_LITERAL  ll
+#define _PDCLIB_UINT64_LITERAL ull
 #else
 #error Neither 'long' nor 'long long' are 64-bit.
 #endif
@@ -235,6 +249,6 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_INTMAX_MIN  concat( concat( _PDCLIB_, _PDCLIB_INTMAX ), _MIN )
 #define _PDCLIB_INTMAX_MAX  concat( concat( _PDCLIB_, _PDCLIB_INTMAX ), _MAX )
 #define _PDCLIB_UINTMAX_MAX concat( concat( _PDCLIB_U, _PDCLIB_INTMAX ), _MAX )
-
-/* TODO: INTN_C / UINTN_C */
+#define _PDCLIB_INTMAX_C( value )  concat( value, _PDCLIB_INTMAX_LITERAL )
+#define _PDCLIB_UINTMAX_C( value ) concat( value, concat( u, _PDCLIB_INTMAX_LITERAL ) )
 

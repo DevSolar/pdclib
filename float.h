@@ -29,8 +29,6 @@
 #define FLT_MANT_DIG 24
    /* Number of decimal digits of precision in a float */
 #define FLT_DIG 6
-   /* Addition rounds to 0: zero, 1: nearest, 2: +inf, 3: -inf, -1: unknown */
-#define FLT_ROUNDS 1
    /* Difference between 1.0 and the minimum float greater than 1.0 */
 #define FLT_EPSILON 1.19209290e-07F
    /* Minimum int x such that FLT_RADIX**(x-1) is a normalised float */
