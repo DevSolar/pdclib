@@ -10,7 +10,7 @@
 #ifndef __COMPLEX_H
 #define __COMPLEX_H __COMPLEX_H
 
-#include "personality.h"
+#include "__personality.h"
 
 // ----------------------------------------------------------------------------
 // DEFINES
@@ -36,131 +36,7 @@
 #endif
 
 // ----------------------------------------------------------------------------
-// FUNCTIONS - C++
-
-#ifdef __cplusplus
-
-// These functions return the absolute value (magnitude) of their parameter.
-double               abs( double      _Complex  x );
-float                abs( float       _Complex  x );
-long double          abs( long double _Complex  x );
-double               fabs( double      _Complex x );
-float                fabs( float       _Complex x );
-long double          fabs( long double _Complex x );
-
-// These functions return the sine of their parameter.
-double _Complex      sin( double _Complex      x );
-float _Complex       sin( float _Complex       x );
-long double _Complex sin( long double _Complex x );
-
-// These functions return the hyperbolic sine of their parameter.
-double _Complex      sinh( double _Complex      x );
-float _Complex       sinh( float _Complex       x );
-long double _Complex sinh( long double _Complex x );
-
-// These functions return the arcsine of their parameter.
-double _Complex      asin( double _Complex      x );
-float _Complex       asin( float _Complex       x );
-long double _Complex asin( long double _Complex x );
-
-// These functions return the hyperbolic arcsine of their parameter.
-double _Complex      asinh( double _Complex      x );
-float _Complex       asinh( float _Complex       x );
-long double _Complex asinh( long double _Complex x );
-
-// These functions return the cosine of their parameter.
-double _Complex      cos( double _Complex      x );
-float _Complex       cos( float _Complex       x );
-long double _Complex cos( long double _Complex x );
-
-// These functions return the hyperbolic cosine of their parameter.
-double _Complex      cosh( double _Complex      x );
-float _Complex       cosh( float _Complex       x );
-long double _Complex cosh( long double _Complex x );
-
-// These functions return the arccosine of their parameter.
-double _Complex      acos( double      _Complex x );
-float _Complex       acos( float       _Complex x );
-long double _Complex acos( long double _Complex x );
-
-// These functions return the hyperbolic arccosine of their parameter.
-double _Complex      acosh( double      _Complex x );
-float _Complex       acosh( float       _Complex x );
-long double _Complex acosh( long double _Complex x );
-
-// These functions return the tangent of their parameter.
-double _Complex      tan( double _Complex      x );
-float _Complex       tan( float _Complex       x );
-long double _Complex tan( long double _Complex x );
-
-// These functions return the hyperbolic tangent of their parameter.
-double _Complex      tanh( double _Complex      x );
-float _Complex       tanh( float _Complex       x );
-long double _Complex tanh( long double _Complex x );
-
-// These functions return the arctangent of their parameter.
-double _Complex      atan( double _Complex      x );
-float _Complex       atan( float _Complex       x );
-long double _Complex atan( long double _Complex x );
-
-// These functions return the hyperbolic arctangent of their parameter.
-double _Complex      atanh( double _Complex      x );
-float _Complex       atanh( float _Complex       x );
-long double _Complex atanh( long double _Complex x );
-
-// These functions return the imaginary part of their parameter.
-double               imag( double _Complex       x );
-float                imag( float _Complex        x );
-long double          imag( long double _Complex  x );
-float                cimag( float _Complex       x );
-long double          cimag( long double _Complex x );
-
-// These functions return the real part of their parameter.
-double               real( double _Complex       x );
-float                real( float _Complex        x );
-long double          real( long double _Complex  x );
-float                creal( float _Complex       x );
-long double          creal( long double _Complex x );
-
-// These functions return x^y.
-double _Complex      pow( double _Complex      x, double _Complex      y );
-float _Complex       pow( float _Complex       x, float _Complex       y );
-long double _Complex pow( long double _Complex x, long double _Complex y );
-
-// These functions return the square root of their parameter.
-double _Complex      sqrt( double _Complex      x );
-float _Complex       sqrt( float _Complex       x );
-long double _Complex sqrt( long double _Complex x );
-
-// These functions return the exponential of their parameter.
-double _Complex      exp( double _Complex      x );
-float _Complex       exp( float _Complex       x );
-long double _Complex exp( long double _Complex x );
-
-// These functions return the logarithm of their parameter.
-double _Complex      log( double _Complex      x );
-float _Complex       log( float _Complex       x );
-long double _Complex log( long double _Complex x );
-
-// These functions return the phase angle of their parameter.
-double               arg( double _Complex       x );
-float                arg( float _Complex        x );
-long double          arg( long double _Complex  x );
-float                carg( float _Complex       x );
-long double          carg( long double _Complex x );
-
-// These functions return the conjugate of their parameter.
-float _Complex       conj( float _Complex       x );
-long double _Complex conj( long double _Complex x );
-
-// These functions return the projection of their parameter.
-float _Complex       cproj( float _Complex       x );
-long double _Complex cproj( long double _Complex x );
-
-#endif // __cplusplus
-
-// ----------------------------------------------------------------------------
-// FUNCTIONS - Standard C
+// FUNCTIONS
 
 // These functions return the absolute value (magnitude) of their parameter.
 double               cabs( double _Complex       x );

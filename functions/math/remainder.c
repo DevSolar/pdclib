@@ -5,15 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float remainder( float x, float y ) { /* TODO */ };
-long double remainder( long double x, long double y ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double remainder( double x, double y ) { /* TODO */ };
 
 /* Therx code

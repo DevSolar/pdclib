@@ -5,15 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float cbrt( float x ) { /* TODO */ };
-long double cbrt( long double x ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double cbrt( double x ) { /* TODO */ };
 
 /* Therx code

@@ -5,15 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float nexttoward( float x, long double y ) { /* TODO */ };
-long double nexttoward( long double x, long double y ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double nexttoward( double x, long double y ) { /* TODO */ };
 float nexttowardf( float x, long double y ) { /* TODO */ };
 long double nexttowardl( long double x, long double y ) { /* TODO */ };

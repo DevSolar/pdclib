@@ -5,18 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float erf( float x ) { /* TODO */ };
-long double erf( long double x ) { /* TODO */ };
-
-float erfc( float x ) { /* TODO */ };
-long double erfc( long double x ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double erf( double x ) { /* TODO */ };
 float erff( float x ) { /* TODO */ };
 long double erfl( long double x ) { /* TODO */ };

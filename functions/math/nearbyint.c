@@ -5,15 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float nearbyint( float x ) { /* TODO */ };
-long double nearbyint( long double x ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double nearbyint( double x ) { /* TODO */ };
 
 /* Therx code

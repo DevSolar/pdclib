@@ -5,15 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float copysign( float x, float y ) { /* TODO */ };
-long double copysign( long double x, long double y ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double copysign( double x, double y ) { /* TODO */ };
 
 /* Own code

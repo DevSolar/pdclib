@@ -5,18 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float fmod( float x, float y ) { /* TODO */ };
-long double fmod( long double x, long double y ) { /* TODO */ };
-
-float modf( float x, float * integer ) { /* TODO */ };
-long double modf( long double x, long double * integer ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double fmod( double x, double y ) { /* TODO */ };
 
 /* Therx code

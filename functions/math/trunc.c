@@ -5,15 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float trunc( float x ) { /* TODO */ };
-long double trunc( long double x ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double trunc( double x ) { /* TODO */ };
 
 /* Therx code
