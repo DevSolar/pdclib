@@ -10,24 +10,26 @@
 #ifndef __WCHAR_H
 #define __WCHAR_H __WCHAR_H
 
+// TODO: Documentation, C++ handling
+
 // ----------------------------------------------------------------------------
 // MACROS
 
 #define NULL       0
-#define WCHAR_MAX  // TODO
-#define WCHAR_MIN  // TODO
-#define WEOF       // TODO
+#define WCHAR_MAX  // TODO - personality?
+#define WCHAR_MIN  // TODO - personality?
+#define WEOF       // TODO - personality?
 
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
-typedef mbstate_t;
-typedef size_t;
-typedef wint_t;
-struct tm;
+typedef mbstate_t; // TODO - personality?
+typedef size_t;    // TODO - personality?
+typedef wint_t;    // TODO - personality?
+struct tm;         // TODO - personality?
 
 #ifndef __cplusplus
-typedef wchar_t;
+typedef wchar_t;   // TODO - personality?
 #endif // __cplusplus
 
 // ----------------------------------------------------------------------------

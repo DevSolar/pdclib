@@ -10,6 +10,8 @@
 #ifndef __COMPLEX_H
 #define __COMPLEX_H __COMPLEX_H
 
+#include "personality.h"
+
 // ----------------------------------------------------------------------------
 // DEFINES
 
@@ -19,8 +21,9 @@
 
 #define _Complex_I  ( const float _Complex ) { 0, 1 }
 
-// TODO: imaginary is only defined if implementation supports _Imaginary.
+#ifdef __PERSONALITY_SUPPORTS_IMAGINARY
 #define imaginary   _Imaginary
+#endif // __PERSONALITY_SUPPORTS_IMAGINARY
 
 #ifdef imaginary
 #define _Imaginary_I ( ( const float _Imaginary ) 1 )

@@ -10,6 +10,8 @@
 #ifndef __STDIO_H
 #define __STDIO_H __STDIO_H
 
+// TODO: Documentation, checking macros for personality
+
 // ----------------------------------------------------------------------------
 // MACROS
 
@@ -34,9 +36,9 @@
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
-typedef FILE;   // TODO
-typedef fpos_t; // TODO
-typedef size_t; // TODO
+typedef FILE;   // TODO - personality?
+typedef fpos_t; // TODO - personality?
+typedef size_t; // TODO - personality?
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS

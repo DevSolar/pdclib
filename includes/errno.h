@@ -10,6 +10,8 @@
 #ifndef __ERRNO_H
 #define __ERRNO_H __ERRNO_H
 
+// TODO: Documentation
+
 // ----------------------------------------------------------------------------
 // DECLARATIONS
 

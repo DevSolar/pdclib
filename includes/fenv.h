@@ -10,6 +10,8 @@
 #ifndef __FENV_H
 #define __FENV_H __FENV_H
 
+// TODO: Documentation, checking for personality
+
 // ----------------------------------------------------------------------------
 // MACROS
 
