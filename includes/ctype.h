@@ -4,8 +4,7 @@
 // Public Domain C Library - http://pdclib.sourceforge.net
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
-// Provides functions for determining the locale-dependent type of a character,
-// plus locale-aware uppercase / lowercase conversions. (See also locale.h.)
+// Character handling
 // ----------------------------------------------------------------------------
 
 #ifndef __CTYPE_H
@@ -35,7 +34,7 @@ int isgraph( int c );
 // returns nonzero if c is a lowercase alphabetic character in the locale.
 int islower( int c );
 
-// returns nonzero if c is a printable character ( isgraph(  ) or isblank(  ) ) in
+// returns nonzero if c is a printable character ( isgraph() or isblank() ) in
 // the locale.
 int isprint( int c );
 

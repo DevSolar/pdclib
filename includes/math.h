@@ -4,7 +4,7 @@
 // Public Domain C Library - http://pdclib.sourceforge.net
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
-// Provides floating point math functions.
+// Mathematics
 // ----------------------------------------------------------------------------
 
 #ifndef __MATH_H
@@ -48,19 +48,19 @@ typedef float_t;  // TODO
 
 #ifndef __cplusplus
 
-#define signbit( x )           // TODO
-#define fpclassify( x )        // TODO
-#define isfinite( x )          // TODO
-#define isinf( x )             // TODO
-#define isnan( x )             // TODO
-#define isnormal( x )          // TODO
-
 #define isgreater( x, y )      // TODO
 #define isgreaterequal( x, y ) // TODO
 #define isless( x, y )         // TODO
 #define islessequal( x, y )    // TODO
 #define islessgreater( x, y )  // TODO
 #define isunordered( x, y )    // TODO
+#define fpclassify( x )        // TODO
+#define isfinite( x )          // TODO
+
+#define isinf( x )             // TODO
+#define isnan( x )             // TODO
+#define isnormal( x )          // TODO
+#define signbit( x )           // TODO
 
 #else // __cplusplus
 
@@ -128,7 +128,8 @@ long double sinh( long double x );
 float       asin( float       x );
 long double asin( long double x );
 
-// These functions return the hyperbolic arcsine of their parameter.
+// These functions compute the arc hyperbolic sine of x.
+// @returns arsinh x.
 float       asinh( float       x );
 long double asinh( long double x );
 
@@ -140,7 +141,7 @@ long double cos( long double x );
 float       cosh( float       x );
 long double cosh( long double x );
 
-// These functions return the arccosine of their parameter.
+// These functions return the arcsine of their parameter.
 float       acos( float       x );
 long double acos( long double x );
 
@@ -165,8 +166,8 @@ float       atanh( float       x );
 long double atanh( long double x );
 
 // TODO
-float       atan2( float       x, float       y );
-long double atan2( long double x, long double y );
+float       atan2( float       y, float       x );
+long double atan2( long double y, long double x );
 
 // These functions return sqrt( x^2 + y^2 ).
 float       hypot( float       x, float       y );
@@ -336,22 +337,23 @@ long double tgamma( long double x );
 // ----------------------------------------------------------------------------
 // FUNCTIONS - Standard C
 
-// These functions return the magnitude of its parameter.
+// These functions return the magnitude of their parameter.
 double      fabs( double       x );
 float       fabsf( float       x );
 long double fabsl( long double x );
 
-// These functions return the sine of its parameter.
+// These functions compute the sine of x (measured in radians).
+// @returns sin x.
 double      sin( double       x );
 float       sinf( float       x );
 long double sinl( long double x );
 
-// These functions return the hyperbolic cosine of its parameter.
+// These functions return the hyperbolic cosine of their parameter.
 double      sinh( double       x );
 float       sinhf( float       x );
 long double sinhl( long double x );
 
-// These functions return the arcsine of its parameter.
+// These functions return the arcsine of their parameter.
 double      asin( double       x );
 float       asinf( float       x );
 long double asinl( long double x );
@@ -361,17 +363,18 @@ double      asinh( double       x );
 float       asinhf( float       x );
 long double asinhl( long double x );
 
-// These functions return the cosine of its parameter.
+// These functions compute the cosine of x (measured in radians).
+// @returns cos x.
 double      cos( double       x );
 float       cosf( float       x );
 long double cosl( long double x );
 
-// These functions return the hyperbolic cosine of its parameter.
+// These functions return the hyperbolic cosine of their parameter.
 double      cosh( double       x );
 float       coshf( float       x );
 long double coshl( long double x );
 
-// These functions return the arccosine of its parameter.
+// These functions return the arccosine of their parameter.
 double      acos( double       x );
 float       acosf( float       x );
 long double acosl( long double x );
@@ -381,17 +384,19 @@ double      acosh( double       x );
 float       acoshf( float       x );
 long double acoshl( long double x );
 
-// These functions return the tangent of its parameter.
+// These functions return the tangent of x (measured in radians).
+// @returns tan x.
 double      tan( double       x );
 float       tanf( float       x );
 long double tanl( long double x );
 
-// These functions return the hyperbolic tangent of its parameter.
+// These functions return the hyperbolic tangent of their parameter.
 double      tanh( double       x );
 float       tanhf( float       x );
 long double tanhl( long double x );
 
-// These functions return the arctangent of its parameter.
+// These functions compute the principal value of the arc tangent of x.
+// @returns arctan x in the interval [-p/2, +p/2] radians.
 double      atan( double       x );
 float       atanf( float       x );
 long double atanl( long double x );
@@ -411,12 +416,12 @@ double      hypot( double       x, double      y );
 float       hypotf( float       x, float       y );
 long double hypotl( long double x, long double y );
 
-// These functions return its parameter x, raised to the power y.
+// These functions return their parameter x, raised to the power y.
 double      pow( double       x, double      y );
 float       powf( float       x, float       y );
 long double powl( long double x, long double y );
 
-// These functions return the square root of its parameter.
+// These functions return the square root of their parameter.
 double      sqrt( double       x );
 float       sqrtf( float       x );
 long double sqrtl( long double x );
@@ -451,12 +456,12 @@ double      ldexp( double       x, int exp );
 float       ldexpf( float       x, int exp );
 long double ldexpl( long double x, int exp );
 
-// These functions return the natural logarithm of its parameter.
+// These functions return the natural logarithm of their parameter.
 double      log( double       x );
 float       logf( float       x );
 long double logl( long double x );
 
-// These functions return the logarithm (base 10 ) of its parameter.
+// These functions return the logarithm (base 10 ) of their parameter.
 double      log10( double       x );
 float       log10f( float       x );
 long double log10l( long double x );
@@ -486,7 +491,7 @@ double      ceil( double       x );
 float       ceilf( float       x );
 long double ceill( long double x );
 
-// These functions return the largest integer no larger than its parameter.
+// These functions return the largest integer no larger than their parameter.
 double      floor( double       x );
 float       floorf( float       x );
 long double floorl( long double x );
