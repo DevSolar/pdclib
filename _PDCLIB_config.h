@@ -10,6 +10,13 @@
 */
 
 /* -------------------------------------------------------------------------- */
+/* Misc                                                                       */
+/* -------------------------------------------------------------------------- */
+
+/* The character (sequence) your platform uses as newline.                    */
+#define _PDCLIB_endl "\n"
+
+/* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
 /* Assuming 8-bit char, two's-complement architecture here. 'short' being     */
@@ -93,6 +100,8 @@
 
 #define _PDCLIB_intmax long long int
 #define _PDCLIB_INTMAX LLINT
+/* You are also required to state the literal suffix for the intmax type      */
+#define _PDCLIB_INTMAX_LITERAL ll
 
 /* -------------------------------------------------------------------------- */
 /* Floating Point                                                             */
@@ -153,4 +162,3 @@ typedef char * _PDCLIB_va_list;
 #define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
 #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
 #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
-

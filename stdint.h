@@ -179,35 +179,35 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* 7.18.4.1 Macros for minimum-width integer constants */
 
+/* As the minimum-width types - for the required widths of 8, 16, 32, and 64
+   bits - are expressed in terms of the exact-width types, the mechanism for
+   these macros is to append the literal of that exact-width type to the macro
+   parameter.
+   This is considered a hack, as the author is not sure his understanding of
+   the requirements of this macro is correct. Any input appreciated.
+*/
+
 /* Expand to an integer constant of specified value and type int_leastN_t */
 
-/* NOT YET IMPLEMENTED
-#define INT8_C( value )
-#define INT16_C( value )
-#define INT32_C( value )
-#define INT64_C( value )
-*/
+#define INT8_C( value )  concat( value, _PDCLIB_INT8_LITERAL )
+#define INT16_C( value ) concat( value, _PDCLIB_INT16_LITERAL )
+#define INT32_C( value ) concat( value, _PDCLIB_INT32_LITERAL )
+#define INT64_C( value ) concat( value, _PDCLIB_INT64_LITERAL )
 
 /* Expand to an integer constant of specified value and type uint_leastN_t */
 
-/* NOT YET IMPLEMENTED
-#define UINT8_C( value )
-#define UINT16_C( value )
-#define UINT32_C( value )
-#define UINT64_C( value )
-*/
+#define UINT8_C( value )  concat( value, _PDCLIB_UINT8_LITERAL )
+#define UINT16_C( value ) concat( value, _PDCLIB_UINT16_LITERAL )
+#define UINT32_C( value ) concat( value, _PDCLIB_UINT32_LITERAL )
+#define UINT64_C( value ) concat( value, _PDCLIB_UINT64_LITERAL )
 
 /* 7.18.4.2 Macros for greatest-width integer constants */
 
 /* Expand to an integer constant of specified value and type intmax_t */
-/* NOT YET IMPLEMENTED
-#define INTMAX_C( value )
-*/
+#define INTMAX_C( value ) _PDCLIB_INTMAX_C( value )
 
 /* Expand to an integer constant of specified value and type uintmax_t */
-/* NOT YET IMPLEMENTED
-#define UINTMAX_C( value )
-*/
+#define UINTMAX_C( value ) _PDCLIB_UINTMAX_C( value )
 
 #endif
 
