@@ -5,42 +5,27 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-void * memcpy( void * restrict s1, const void * restrict s2, size_t n ) { /* TODO */ };
+#include <string.h>
 
-/* Therx code
+void * memcpy( void * restrict dest, const void * restrict src, size_t n )
 {
-    void * ret = s1;
-    const char * src = (const char *) s2;
-    char * dst = (char *) s1;
-    for( ; n != 0; n-- )
+    const char * src_p = (const char *) src;
+    char * dest_p = (char *) dest;
+    while ( n-- )
     {
-        *dst++ = *src++;
+        *dest_p++ = *src_p++;
     }
-    return ret;
+    return dest;
 }
-*/
 
-/* PDPC code - unreviewed
-void *memcpy(void *s1, const void *s2, size_t n)
-{
-    register const unsigned char *f = s2;
-    register const unsigned char *fe;
-    register unsigned char *t = s1;
-    
-    fe = f + n;
-    while (f != fe)
-    {
-        *t++ = *f++;
-    }
-    return (s1);
-}
-#else
+/* TODO: This is code from PDPC, optimizing for word access.
+
 void *memcpy(void *s1, const void *s2, size_t n)
 {
     register unsigned int *p = (unsigned int *)s1;
     register unsigned int *cs2 = (unsigned int *)s2;
     register unsigned int *endi;
-    
+
     endi = (unsigned int *)((char *)p + (n & ~0x03));
     while (p != endi)
     {

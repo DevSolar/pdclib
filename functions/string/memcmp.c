@@ -5,22 +5,20 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-int memcmp( const void * s1, const void * s2, size_t n ) { /* TODO */ };
+#include <string.h>
 
-/* PDPC code - unreviewed
+int memcmp( const void * src_1, const void * src_2, size_t n )
 {
-    const unsigned char *p1;
-    const unsigned char *p2;
-    size_t x = 0;
-    
-    p1 = (const unsigned char *)s1;
-    p2 = (const unsigned char *)s2;
-    while (x < n)
+    const unsigned char * p1 = (const unsigned char *) src_1;
+    const unsigned char * p2 = (const unsigned char *) src_2;
+    while ( n-- )
     {
-        if (p1[x] < p2[x]) return (-1);
-        else if (p1[x] > p2[x]) return (1);
-        x++;
+        if ( *p1 != *p2 )
+        {
+            return *p2 - *p1;
+        }
+        ++p1;
+        ++p2;
     }
-    return (0);
+    return 0;
 }
-*/
