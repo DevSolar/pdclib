@@ -6,3 +6,10 @@
 // ----------------------------------------------------------------------------
 
 void rewind( FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    fseek(stream, 0L, SEEK_SET);
+    return;
+}
+*/

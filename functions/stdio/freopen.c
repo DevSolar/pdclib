@@ -6,3 +6,10 @@
 // ----------------------------------------------------------------------------
 
 FILE * freopen( const char * restrict filename, const char * restrict mode, FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    fclose(stream);
+    return (fopen(filename, mode));
+}
+*/

@@ -25,5 +25,12 @@ long lrint( double x ) { /* TODO */ };
 long lrintf( float x ) { /* TODO */ };
 long lrintl( long double x ) { /* TODO */ };
 double rint( double x ) { /* TODO */ };
+
+/* Therx code
+{
+    return round( x );
+}
+*/
+
 float rintf( float x ) { /* TODO */ };
 long double rintl( long double x ) { /* TODO */ };

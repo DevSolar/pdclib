@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 int ferror( FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (stream->errorInd);
+}
+*/

@@ -25,5 +25,12 @@ long lround( double x ) { /* TODO */ };
 long lroundf( float x ) { /* TODO */ };
 long lroundl( long double x ) { /* TODO */ };
 double round( double x ) { /* TODO */ };
+
+/* Therx code
+{
+    return (int) ( x + 0.5 );
+}
+*/
+
 float roundf( float x ) { /* TODO */ };
 long double roundl( long double x ) { /* TODO */ };

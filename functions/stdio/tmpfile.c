@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 FILE * tmpfile( void ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (fopen("ZZZZZZZA.$$$", "wb+"));
+}
+*/

@@ -6,3 +6,17 @@
 // ----------------------------------------------------------------------------
 
 char * tmpnam( char * s ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    static char buf[] = "ZZZZZZZA.$$$";
+
+    buf[7]++;
+    if (s == NULL)
+    {
+        return (buf);
+    }
+    strcpy(s, buf);
+    return (s);
+}
+*/

@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 int putc( int c, FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (fputc(c, stream));
+}
+*/

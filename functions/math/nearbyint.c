@@ -15,5 +15,12 @@ long double nearbyint( long double x ) { /* TODO */ };
 // Standard C
 
 double nearbyint( double x ) { /* TODO */ };
+
+/* Therx code
+{
+    return round( x );
+}
+*/
+
 float nearbyintf( float x ) { /* TODO */ };
 long double nearbyintl( long double x ) { /* TODO */ };

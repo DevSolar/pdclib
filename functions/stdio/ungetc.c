@@ -6,3 +6,15 @@
 // ----------------------------------------------------------------------------
 
 int ungetc( int c, FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    if ((stream->ungetCh != -1) || (c == EOF))
+    {
+        return (EOF);
+    }
+    stream->ungetCh = (unsigned char)c;
+    stream->quickText = 0;
+    return ((unsigned char)c);
+}
+*/

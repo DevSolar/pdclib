@@ -31,6 +31,18 @@ float expf( float x ) { /* TODO */ };
 long double expl( long double x ) { /* TODO */ };
 
 double exp2( double x ) { /* TODO */ };
+
+/* Therx code
+{
+    double value = 1;
+    for( int i = 1; i <= x; i++ )
+    {
+        value *= 2;
+    }
+    return value;
+}
+*/
+
 float exp2f( float x ) { /* TODO */ };
 long double exp2l( long double x ) { /* TODO */ };
 

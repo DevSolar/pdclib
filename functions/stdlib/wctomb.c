@@ -6,3 +6,17 @@
 // ----------------------------------------------------------------------------
 
 int wctomb( char * s, wchar_t wchar ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    if (s != NULL)
+    {
+        *s = wchar;
+        return (1);
+    }
+    else
+    {
+        return (0);
+    }
+}
+*/

@@ -6,3 +6,10 @@
 // ----------------------------------------------------------------------------
 
 void abort( void ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    raise(SIGABRT);
+    exit(EXIT_FAILURE);
+}
+*/

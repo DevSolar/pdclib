@@ -6,3 +6,16 @@
 // ----------------------------------------------------------------------------
 
 int vsprintf( char * restrict s, const char * restrict format, va_list ap) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    int ret;
+
+    ret = vvprintf(format, arg, NULL, s);
+    if (ret >= 0)
+    {
+        *(s + ret) = '\0';
+    }
+    return (ret);
+}
+*/

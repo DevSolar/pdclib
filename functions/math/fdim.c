@@ -15,5 +15,12 @@ long double fdim( long double x, long double y ) { /* TODO */ };
 // Standard C
 
 double fdim( double x, double y ) { /* TODO */ };
+
+/* Therx code
+{
+    return ( ( x - y ) < 1 ) ? 0 : x - y;
+}
+*/
+
 float fdimf( float x, float y ) { /* TODO */ };
 long double fdiml( long double x, long double y ) { /* TODO */ };

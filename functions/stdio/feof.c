@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 int feof( FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (stream->eofInd);
+}
+*/
