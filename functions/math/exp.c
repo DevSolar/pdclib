@@ -5,27 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float exp( float x ) { /* TODO */ };
-long double exp( long double x ) { /* TODO */ };
-
-float exp2( float x ) { /* TODO */ };
-long double exp2( long double x ) { /* TODO */ };
-
-float expm1( float x ) { /* TODO */ };
-long double expm1( long double x ) { /* TODO */ };
-
-float frexp( float x, int * exponent ) { /* TODO */ };
-long double frexp( long double x, int * exponent ) { /* TODO */ };
-
-float ldexp( float x, int exponent ) { /* TODO */ };
-long double ldexp( long double x, int exponent ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double exp( double x ) { /* TODO */ };
 float expf( float x ) { /* TODO */ };
 long double expl( long double x ) { /* TODO */ };

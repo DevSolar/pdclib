@@ -5,21 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-double abs( double x ) { /* TODO */ };
-float abs( float x ) { /* TODO */ };
-long double abs( long double x ) { /* TODO */ };
-float fabs( float x ) { /* TODO */ };
-long double fabs( long double x ) { /* TODO */ };
-
-long abs( long i ) { /* TODO */ };
-long long abs( long long i ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double fabs( double x ) { /* TODO */ };
 
 /* Therx code

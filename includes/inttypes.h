@@ -23,15 +23,7 @@ typedef struct
 imaxdiv_t;
 
 // ----------------------------------------------------------------------------
-// FUNCTIONS - C++
-
-#ifdef __cplusplus
-intmax_t abs( intmax_t i );
-imaxdiv_t div( intmax_t numer, intmax_t denom );
-#endif __cplusplus
-
-// ----------------------------------------------------------------------------
-// FUNCTIONS - Standard C
+// FUNCTIONS
 
 intmax_t imaxabs( intmax_t i );
 imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom );

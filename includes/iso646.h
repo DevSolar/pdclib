@@ -13,8 +13,6 @@
 // ----------------------------------------------------------------------------
 // DEFINES
 
-#ifndef __cplusplus
-
 #define and &&
 #define and_eq &=
 #define bitand &
@@ -26,7 +24,5 @@
 #define or_eq |=
 #define xor ^
 #define xor_eq ^=
-
-#endif // __cplusplus
 
 #endif // __ISO646_H

@@ -10,7 +10,7 @@
 #ifndef __STRING_H
 #define __STRING_H __STRING_H
 
-// TODO: Documentation, C++ handling
+// TODO: Documentation
 
 // ----------------------------------------------------------------------------
 // MACROS
@@ -43,27 +43,10 @@ size_t strspn( const char * s1, const char * s2 );
 char * strtok( char * restrict s1, const char * restrict s2 );
 size_t strxfrm( char * restrict s1, const char * restrict s2, size_t n );
 
-#ifdef __cplusplus
-
-const void * memchr( const void * s, int c, size_t n );
-void * memchr( void * s, int c, size_t n );
-const char * strchr( const char * s, int c );
-char * strchr( char * s, int c );
-const char * strpbrk( const char * s1, const char * s2 );
-char * strpbrk( char * s1, const char * s2 );
-const char * strrchr( const char * s, int c );
-char * strrchr( char * s, int c );
-const char * strstr( const char * s1, const char * s2 );
-char * strstr( char * s1, const char * s2 );
-
-#else
-
 void * memchr( const void * s, int c, size_t n );
 char * strchr( const char * s, int c );
 char * strpbrk( const char *s1, const char * s2 );
 char * strrchr( const char * s, int c );
 char * strstr( const char * s1, const char * s2 );
-
-#endif // __cplusplus
 
 #endif // __STRING_H

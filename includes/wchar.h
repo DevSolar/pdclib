@@ -10,7 +10,7 @@
 #ifndef __WCHAR_H
 #define __WCHAR_H __WCHAR_H
 
-// TODO: Documentation, C++ handling
+// TODO: Documentation
 
 // ----------------------------------------------------------------------------
 // MACROS
@@ -95,27 +95,10 @@ wchar_t * wmemcpy( wchar_t * restrict s1, const wchar_t * restrict s2, size_t n 
 wchar_t * wmemmove( wchar_t * s1, const wchar_t * s2, size_t n );
 wchar_t * wmemset( wchar_t * s, wchar_t c, size_t n );
 
-#ifdef __cplusplus
-
-const wchar_t * wcschr( const wchar_t * s, wchar_t c );
-wchar_t * wcschr( wchar_t * s, wchar_t c );
-const wchar_t * wcspbrk( const wchar_t * s1, const wchar_t * s2 );
-wchar_t * wcspbrk( wchar_t * s1, const wchar_t * s2 );
-const wchar_t * wcsrchr( const wchar_t * s, wchar_t c );
-wchar_t * wcsrchr( wchar_t * s, wchar_t c );
-const wchar_t * wcsstr( const wchar_t * s1, const wchar_t * s2 );
-wchar_t * wcsstr( wchar_t * s1, const wchar_t * s2 );
-const wchar_t * wmemchr( const wchar_t * s, wchar_t c, size_t n );
-wchar_t * wmemchr( wchar_t * s, wchar_t c, size_t n );
-
-#else
-
 wchar_t * wcschr( const wchar_t * s, wchar_t c ); 
 wchar_t * wcspbrk( const wchar_t * s1, const wchar_t * s2 );
 wchar_t * wcsrchr( const wchar_t * s, wchar_t c );
 wchar_t * wcsstr( const wchar_t * s1, const wchar_t * s2 );
 wchar_t * wmemchr( const wchar_t * s, wchar_t c, size_t n);
-
-#endif // __cplusplus
 
 #endif // __WCHAR_H

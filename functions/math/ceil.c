@@ -5,15 +5,6 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-// ----------------------------------------------------------------------------
-// C++
-
-float ceil( float x ) { /* TODO */ };
-long double ceil( long double x ) { /* TODO */ };
-
-// ----------------------------------------------------------------------------
-// Standard C
-
 double ceil( double x ) { /* TODO */ };
 
 /* Therx code

@@ -10,7 +10,7 @@
 #ifndef __STDLIB_H
 #define __STDLIB_H __STDLIB_H
 
-// TODO: Documentation, C++ handling
+// TODO: Documentation
 
 // ----------------------------------------------------------------------------
 // MACROS
@@ -48,20 +48,7 @@ typedef wchar_t; // TODO - personality?
 #endif // __cplusplus
 
 // ----------------------------------------------------------------------------
-// FUNCTIONS - C++
-
-#ifdef __cplusplus
-
-long abs( long i );
-long long abs( long long i );
-
-ldiv_t div( long numer, long denom );
-lldiv_t div( long long numer, long long denom );
-
-#endif // __cplusplus
-
-// ----------------------------------------------------------------------------
-// FUNCTIONS - Standard C
+// FUNCTIONS
 
 int abs( int i );
 long long llabs( long long i );
@@ -106,17 +93,8 @@ void abort( void );
 char * getenv( const char * name );
 int system( const char * s );
 
-#ifdef __cplusplus
-#define __cppwrapper( x ) extern "C++" x \
-extern "C" x
-#else
-#define __cppwrapper( x ) x
-#endif // __cplusplus
-
-__cppwrapper( int atexit( void (*func) ( void ) ) { /* TODO */ }; )
-__cppwrapper( void * bsearch( const void * key, const void * base, size_t nelem, size_t size, int (*cmp) ( const void * ck, const void * ce) ) { /* TODO */ }; )
-__cppwrapper( void qsort( void * base, size_t nelem, size_t size, int (*cmp) ( const void * e1, const void * e2) ) { /* TODO */ }; )
-
-#undef __cppwrapper
+int atexit( void (*func) ( void ) );
+void * bsearch( const void * key, const void * base, size_t nelem, size_t size, int (*cmp) ( const void * ck, const void * ce) );
+void qsort( void * base, size_t nelem, size_t size, int (*cmp) ( const void * e1, const void * e2) );
 
 #endif // __STDLIB_H
