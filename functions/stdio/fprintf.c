@@ -6,3 +6,15 @@
 // ----------------------------------------------------------------------------
 
 int fprintf( FILE * restrict stream, const char * restrict format, ... ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    va_list arg;
+    int ret;
+
+    va_start(arg, format);
+    ret = vfprintf(stream, format, arg);
+    va_end(arg);
+    return (ret);
+}
+*/

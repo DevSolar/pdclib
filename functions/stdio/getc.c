@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 int getc( FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (fgetc(stream));
+}
+*/

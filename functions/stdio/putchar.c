@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 int putchar( int c ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (putc(c, stdout));
+}
+*/

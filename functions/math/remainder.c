@@ -15,5 +15,12 @@ long double remainder( long double x, long double y ) { /* TODO */ };
 // Standard C
 
 double remainder( double x, double y ) { /* TODO */ };
+
+/* Therx code
+{
+    return fmod( x, y );
+}
+*/
+
 float remainderf( float x, float y ) { /* TODO */ };
 long double remainderl( long double x, long double y ) { /* TODO */ };

@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 int getchar( void ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (getc(stdin));
+}
+*/

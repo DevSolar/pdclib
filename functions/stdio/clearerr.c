@@ -6,3 +6,11 @@
 // ----------------------------------------------------------------------------
 
 void clearerr( FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    stream->errorInd = 0;
+    stream->eofInd = 0;
+    return;
+}
+*/

@@ -6,3 +6,16 @@
 // ----------------------------------------------------------------------------
 
 int puts( const char * s ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    int ret;
+
+    ret = fputs(s, stdout);
+    if (ret == EOF)
+    {
+        return (ret);
+    }
+    return (putc('\n', stdout));
+}
+*/

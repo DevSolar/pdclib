@@ -6,3 +6,10 @@
 // ----------------------------------------------------------------------------
 
 char * strerror( int errcode ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    if (errnum == 0) return ("No error has occurred\n");
+    else return ("An error has occurred\n");
+}
+*/

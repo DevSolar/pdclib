@@ -15,3 +15,17 @@ char * strrchr( char * s, int c ) { /* TODO */ };
 // Standard C
 
 char * strrchr( const char * s, int c ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    const char *p;
+    
+    p = s + strlen(s);
+    while (p >= s)
+    {
+        if (*p == (char)c) return ((char *)p);
+        p--;
+    }
+    return (NULL);
+}
+*/

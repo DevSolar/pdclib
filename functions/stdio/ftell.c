@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 long ftell( FILE * stream ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (stream->bufStartR + (stream->upto - stream->fbuf));
+}
+*/

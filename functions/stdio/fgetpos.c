@@ -6,3 +6,10 @@
 // ----------------------------------------------------------------------------
 
 int fgetpos( FILE * restrict stream, fpos_t * restrict pos ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    *pos = ftell(stream);
+    return (0);
+}
+*/

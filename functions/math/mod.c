@@ -18,6 +18,19 @@ long double modf( long double x, long double * integer ) { /* TODO */ };
 // Standard C
 
 double fmod( double x, double y ) { /* TODO */ };
+
+/* Therx code
+{
+    return (int) ( ( ( ( x / y ) - ( (int) ( x / y ) ) ) * y ) + 0.5 );
+}
+*/
+
+/* PDPC code - unreviewed
+{
+    return (x / y);
+}
+*/
+
 float fmodf( float x, float y ) { /* TODO */ };
 long double fmodl( long double x, long double y ) { /* TODO */ };
 

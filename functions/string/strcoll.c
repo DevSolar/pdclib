@@ -6,3 +6,9 @@
 // ----------------------------------------------------------------------------
 
 int strcoll( const char * s1, const char * s2 ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    return (strcmp(s1, s2));
+}
+*/

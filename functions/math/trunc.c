@@ -15,5 +15,12 @@ long double trunc( long double x ) { /* TODO */ };
 // Standard C
 
 double trunc( double x ) { /* TODO */ };
+
+/* Therx code
+{
+    return (int) x;
+}
+*/
+
 float truncf( float x ) { /* TODO */ };
 long double truncl( long double x ) { /* TODO */ };

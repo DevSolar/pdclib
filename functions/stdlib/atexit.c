@@ -7,3 +7,19 @@
 
 // TODO: C/C++ linkages
 int atexit( void (*func) ( void ) ) { /* TODO */ };
+
+/* PDPC code - unreviewed
+{
+    int x;
+    
+    for (x = 0; x < __NATEXIT; x++)
+    {
+        if (__userExit[x] == 0)
+        {
+            __userExit[x] = func;
+            return (0);
+        }
+    }
+    return (-1);
+}
+*/
