@@ -20,10 +20,12 @@
 
 #if _PDCLIB_HOSTED == 1
 #warning As of the current release, PDCLib is not a conforming hosted environment.
-#warning <string.h> might be incomplete.
+#warning <string.h> is not standard-compliant (yet) - strerror is missing.
 #endif
 
 typedef _PDCLIB_size_t size_t;
+
+#define NULL _PDCLIB_NULL
 
 /* String function conventions */
 
@@ -129,4 +131,63 @@ void * memchr( const void * s, int c, size_t n );
    Returns a pointer to the first instance found, or NULL.
 */
 char * strchr( const char * s, int c );
+
+/* Determine the length of the initial substring of character array s1 which
+   consists only of characters not from the character array s2.
+   Returns the length of that substring.
+*/
+size_t strcspn( const char * s1, const char * s2 );
+
+/* Search the character array s1 for any character from the character array s2.
+   Returns a pointer to the first occurrence, or NULL.
+*/
+char * strpbrk( const char * s1, const char * s2 );
+
+/* Search the character array s (including terminating '\0') for the character c
+   (interpreted as char).
+   Returns a pointer to the last instance found, or NULL.
+*/
+char * strrchr( const char * s, int c );
+
+/* Determine the length of the initial substring of character array s1 which
+   consists only of characters from the character array s2.
+   Returns the length of that substring.
+*/
+size_t strspn( const char * s1, const char s2 );
+
+/* Search the character array s1 for the substring in character array s2.
+   Returns a pointer to that sbstring, or NULL. If s2 is of length zero,
+   returns s1.
+*/
+char * strstr( const char * s1, const char s2 );
+
+/* In a series of subsequent calls, parse a C string into tokens.
+   On the first call to strtok(), the first argument is a pointer to the to-be-
+   parsed C string. On subsequent calls, the first argument is NULL unless you
+   want to start parsing a new string. s2 holds an array of seperator characters
+   which can differ from call to call. Leading seperators are skipped, the first
+   trailing seperator overwritten with '\0'.
+   Returns a pointer to the next token.
+   WARNING: This function uses static storage, and as such is not reentrant.
+*/
+char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 );
+
+/* Miscellaneous functions */
+
+/* Write the character c (interpreted as unsigned char) to the first n
+   characters of the memory area pointed to by s.
+   Returns s.
+*/
+void * memset( void * s, int c, size_t n );
+
+/* Map an error number to a (locale-specific) error message string. Error
+   numbers are typically errno values, but any number is mapped to a message.
+   TODO: PDCLib does not yet support locales.
+   TODO: strerror() not yet implemented.
+char * strerror( int errnum );
+*/
+
+/* Returns the length of the string s (excluding terminating '\0').
+*/
+size_t strlen( const char * s );
 
