@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 __assert( char const * const expression, char const * const file,
-          char const * const function, int const line )
+ char const * const function, int const line )
 {
     fprintf(stderr, "Assertion failed: %s, function %s, file %s, line %d.\n",
                     expression, function, file, line );
