@@ -153,3 +153,4 @@ typedef char * _PDCLIB_va_list;
 #define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
 #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
 #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
+

@@ -25,8 +25,7 @@
 #elif __STDC_VERSION__ == 199901L
 #define _PDCLIB_C_VERSION C99
 #else
-#error Unsupported _ _STDC_VERSION_ _ (__STDC_VERSION__)
-(supported: ISO/IEC 9899:1990, 9899/AMD1:1995, and 9899:1999).
+#error Unsupported _ _STDC_VERSION_ _ (__STDC_VERSION__) (supported: ISO/IEC 9899:1990, 9899/AMD1:1995, and 9899:1999).
 #endif
 
 #ifndef __STDC_HOSTED__
@@ -55,3 +54,4 @@
 
 #define _PDCLIB_cc( x, y )     x ## y
 #define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
+
