@@ -140,7 +140,7 @@ package, to leave <float.h> to the overlay, or devise some parameterized
 macro magic as for <limits.h> / <stdint.h>. Not thoroughly tested, but
 I had to make the 0.1 release sometime so why not now.
 
-v0.2 - 2005-01-11
+v0.2 - 2005-01-12
 Adds implementations for <string.h> (excluding strerror()), INTN_C() /
 UINTN_C() macros, and some improvements in the internal headers.
 Test drivers still missing, but added warnings about that.
