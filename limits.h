@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
 /* 7.10 Sizes of integer types <limits.h>
 
@@ -40,3 +40,4 @@
 #define ULONG_MAX  _PDCLIB_ULONG_MAX
 
 #endif
+

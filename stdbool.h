@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
 /* 7.16 Boolean type and values <stdbool.h>
 
@@ -17,3 +17,4 @@
 #define __bool_true_false_are_defined 1
 
 #endif
+

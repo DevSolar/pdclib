@@ -1,8 +1,8 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
-/* Internal PDCLib logic <_PDCLIB_internal.h>
+/* PDCLib internal integer logic <_PDCLIB_int.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -18,17 +18,13 @@
 #include <_PDCLIB_config.h>
 #endif
 
+#ifndef _PDCLIB_AUX_H
+#define _PDCLIB_AUX_H _PDCLIB_AUX_H
+#include <_PDCLIB_aux.h>
+#endif
+
 /* null pointer constant */
 #define _PDCLIB_NULL 0
-
-/* -------------------------------------------------------------------------- */
-/* Helper macros:                                                             */
-/* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending  */
-/* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
-/* -------------------------------------------------------------------------- */
-
-#define _PDCLIB_cc( x, y )     x ## y
-#define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
 
 /* -------------------------------------------------------------------------- */
 /* Limits of native datatypes                                                 */
@@ -54,18 +50,18 @@
 #endif
 
 /* Setting 'short' limits                                                     */
-#if     _PDCLIB_SHRT_BYTES == 1
-#define _PDCLIB_SHRT_MAX   0x7f
-#define _PDCLIB_SHRT_MIN   (-0x7f - 1)
-#define _PDCLIB_USHRT_MAX  0xff
-#elif   _PDCLIB_SHRT_BYTES == 2
-#define _PDCLIB_SHRT_MAX   0x7fff
-#define _PDCLIB_SHRT_MIN   (-0x7fff - 1)
-#define _PDCLIB_USHRT_MAX  0xffff
+#if     _PDCLIB_SHRT_BYTES == 2
+#define _PDCLIB_SHRT_MAX      0x7fff
+#define _PDCLIB_SHRT_MIN      (-0x7fff - 1)
+#define _PDCLIB_USHRT_MAX     0xffff
 #else
-#error Unsupported width of 'short' (neither 8 nor 16 bit).
+#error Unsupported width of 'short' (not 16 bit).
 #endif
 #define _PDCLIB_USHRT_MIN 0
+
+#if _PDCLIB_INT_BYTES < _PDCLIB_SHRT_BYTES
+#error Bogus setting: short > int? Check _PDCLIB_config.h.
+#endif
 
 /* Setting 'int' limits                                                       */
 #if     _PDCLIB_INT_BYTES == 2
@@ -114,22 +110,18 @@
 #define _PDCLIB_ULLONG_MIN 0
 
 /* -------------------------------------------------------------------------- */
-/* <stdint.h> exact-width types, their limits and literals                    */
+/* <stdint.h> exact-width types and their limits                              */
 /* -------------------------------------------------------------------------- */
 
 /* Setting 'int8_t', its limits, and its literal.                             */
-#if     _PDCLIB_SHRT_BYTES == 1
-typedef signed short       _PDCLIB_int8_t;
-typedef unsigned short     _PDCLIB_uint8_t;
-#define _PDCLIB_INT8_MAX   _PDCLIB_SHRT_MAX
-#define _PDCLIB_INT8_MIN   _PDCLIB_SHRT_MIN
-#define _PDCLIB_UINT8_MAX  _PDCLIB_USHRT_MAX
-#else
+#if     _PDCLIB_CHAR_BIT == 8
 typedef signed char        _PDCLIB_int8_t;
 typedef unsigned char      _PDCLIB_uint8_t;
 #define _PDCLIB_INT8_MAX   _PDCLIB_CHAR_MAX
 #define _PDCLIB_INT8_MIN   _PDCLIB_CHAR_MIN
 #define _PDCLIB_UINT8_MAX  _PDCLIB_UCHAR_MAX
+#else
+#error Unsupported width of char (not 8 bits).
 #endif
 
 /* Setting 'int16_t', its limits, and its literal                             */
@@ -215,45 +207,33 @@ typedef unsigned _PDCLIB_fast64 _PDCLIB_uint_fast64_t;
 #define _PDCLIB_UINT_FAST64_MAX concat( concat( _PDCLIB_U, _PDCLIB_FAST64 ), _MAX )
 
 /* -------------------------------------------------------------------------- */
-/* Various <stddef.h> limits                                                  */
+/* Various <stddef.h> typedefs and limits                                     */
 /* -------------------------------------------------------------------------- */
 
+typedef _PDCLIB_ptrdiff     _PDCLIB_ptrdiff_t
 #define _PDCLIB_PTRDIFF_MIN concat( concat( _PDCLIB_, _PDCLIB_PTRDIFF ), _MIN )
 #define _PDCLIB_PTRDIFF_MAX concat( concat( _PDCLIB_, _PDCLIB_PTRDIFF ), _MAX )
 
 #define _PDCLIB_SIG_ATOMIC_MIN concat( concat( _PDCLIB_, _PDCLIB_SIG_ATOMIC ), _MIN )
 #define _PDCLIB_SIG_ATOMIC_MAX concat( concat( _PDCLIB_, _PDCLIB_SIG_ATOMIC ), _MAX )
 
+typedef _PDCLIB_size     _PDCLIB_size_t
 #define _PDCLIB_SIZE_MAX concat( concat( _PDCLIB_, _PDCLIB_SIZE ), _MAX )
 
+typedef _PDCLIB_wchar     _PDCLIB_wchar_t
 #define _PDCLIB_WCHAR_MIN concat( concat( _PDCLIB_, _PDCLIB_WCHAR ), _MIN )
 #define _PDCLIB_WCHAR_MAX concat( concat( _PDCLIB_, _PDCLIB_WCHAR ), _MAX )
 
-/* -------------------------------------------------------------------------- */
-/* <stdint.h> "exact width" literal suffixes                                  */
-/* -------------------------------------------------------------------------- */
+typedef _PDCLIB_intptr          _PDCLIB_intptr_t;
+typedef unsigned _PDCLIB_intptr _PDCLIB_uintptr_t;
+#define _PDCLIB_INTPTR_MIN  concat( concat( _PDCLIB_, _PDCLIB_INTPTR ), _MIN )
+#define _PDCLIB_INTPTR_MAX  concat( concat( _PDCLIB_, _PDCLIB_INTPTR ), _MAX )
+#define _PDCLIB_UINTPTR_MAX concat( concat( _PDCLIB_U, _PDCLIB_INTPTR ), _MAX )
 
-#define _PDCLIB_INT8_LITERAL  c
-#define _PDCLIB_INT16_LITERAL s
-#define _PDCLIB_INT32_LITERAL l
-#define _PDCLIB_INT64_LITERAL ll
-#define _PDCLIB_UINT8_LITERAL uc
-#define _PDCLIB_UINT16_LITERAL us
-#define _PDCLIB_UINT32_LITERAL ul
-#define _PDCLIB_UINT64_LITERAL ull
+typedef _PDCLIB_intmax          _PDCLIB_intmax_t;
+typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
+#define _PDCLIB_INTMAX_MIN  concat( concat( _PDCLIB_, _PDCLIB_INTMAX ), _MIN )
+#define _PDCLIB_INTMAX_MAX  concat( concat( _PDCLIB_, _PDCLIB_INTMAX ), _MAX )
+#define _PDCLIB_UINTMAX_MAX concat( concat( _PDCLIB_U, _PDCLIB_INTMAX ), _MAX )
 
-/* -------------------------------------------------------------------------- */
-/* <stdint.h> intptr and intmax typedefs and limits                           */
-/* -------------------------------------------------------------------------- */
-
-typedef int                 _PDCLIB_intptr_t;
-#define _PDCLIB_INTPTR_MIN  (-0x7fffff - 1)
-#define _PDCLIB_INTPTR_MAX  0x7fffff
-typedef unsigned int        _PDCLIB_uintptr_t;
-#define _PDCLIB_UINTPTR_MAX 0xffffff
-
-typedef signed long long int   _PDCLIB_intmax_t;
-#define _PDCLIB_INTMAX_MIN     (-0x7fffffffffffffff - 1)
-#define _PDCLIB_INTMAX_MAX     0x7fffffffffffffff
-typedef unsigned long long int _PDCLIB_uintmax_t;
-#define _PDCLIB_UINTMAX_MAX    0xffffffffffffffff
+/* TODO: INTN_C / UINTN_C */

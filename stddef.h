@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
 /* 7.17 Common definitions <stddef.h>
 
@@ -25,3 +25,4 @@ typedef _PDCLIB_wchar_t   wchar_t;
 #define offsetof( type, member ) _PDCLIB_offsetof( type, member )
 
 #endif
+

@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
 /* 7.18 Integer types <stdint.h>
 
@@ -181,25 +181,33 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* Expand to an integer constant of specified value and type int_leastN_t */
 
-#define INT8_C( value )  _PDCLIB_concat( value, _PDCLIB_INT8_LITERAL )
-#define INT16_C( value ) _PDCLIB_concat( value, _PDCLIB_INT16_LITERAL )
-#define INT32_C( value ) _PDCLIB_concat( value, _PDCLIB_INT32_LITERAL )
-#define INT64_C( value ) _PDCLIB_concat( value, _PDCLIB_INT64_LITERAL )
+/* NOT YET IMPLEMENTED
+#define INT8_C( value )
+#define INT16_C( value )
+#define INT32_C( value )
+#define INT64_C( value )
+*/
 
 /* Expand to an integer constant of specified value and type uint_leastN_t */
 
-#define UINT8_C( value )  _PDCLIB_concat( value, _PDCLIB_UINT8_LITERAL )
-#define UINT16_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT16_LITERAL )
-#define UINT32_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT32_LITERAL )
-#define UINT64_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT64_LITERAL )
+/* NOT YET IMPLEMENTED
+#define UINT8_C( value )
+#define UINT16_C( value )
+#define UINT32_C( value )
+#define UINT64_C( value )
+*/
 
 /* 7.18.4.2 Macros for greatest-width integer constants */
 
 /* Expand to an integer constant of specified value and type intmax_t */
-#define INTMAX_C( value )  _PDCLIB_concat( value, _PDCLIB_INTMAX_LITERAL )
+/* NOT YET IMPLEMENTED
+#define INTMAX_C( value )
+*/
 
 /* Expand to an integer constant of specified value and type uintmax_t */
-#define UINTMAX_C( value ) _PDCLIB_concat( value, _PDCLIB_UINTMAX_LITERAL )
+/* NOT YET IMPLEMENTED
+#define UINTMAX_C( value )
+*/
 
 #endif
 
