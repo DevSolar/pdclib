@@ -5,27 +5,15 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-void * memset( void * s, int c, size_t n ) { /* TODO */ };
+#include <string.h>
 
-/* Therx code
+void * memset( void * dest, int c, size_t n )
 {
-    unsigned short * tmp = (unsigned short *) s; // TODO: unsigned short?
-    for( ; n != 0; n-- )
+    unsigned char ch = (unsigned char) c;
+    unsigned char * dest_p = (unsigned char *) dest;
+    while ( n-- )
     {
-        *tmp++ = c;
+        *dest_p++ = ch;
     }
-    return s;
+    return dest;
 }
-*/
-
-/* PDPC code - unreviewed
-{
-    size_t x = 0;
-    
-    for (x = 0; x < n; x++)
-    {
-        *((char *)s + x) = (unsigned char)c;
-    }
-    return (s);
-}
-*/
