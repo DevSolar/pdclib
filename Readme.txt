@@ -137,10 +137,13 @@ Freestanding-only C99 implementation without any overlay, and missing
 the INTN_C() / UINTN_C() macros. <float.h> still has the enquire.c
 values hardcoded into it; not sure whether to include enquire.c in the
 package, to leave <float.h> to the overlay, or devise some parameterized
-macro magic as for <limits.h> / <stdint.h>.
+macro magic as for <limits.h> / <stdint.h>. Not thoroughly tested, but
+I had to make the 0.1 release sometime so why not now.
 
 Future releases:
 
 v0.2 - will (hopefully) add the INTN_C() / UINTN_C() macros, at least
 one overlay for GCC / x86, and implementations for <string.h> as well
-as parts of <stdlib.h>.
+as parts of <stdlib.h>. I will also add a test driver to make at least
+some basic tests for syntax.
+
