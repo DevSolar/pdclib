@@ -5,10 +5,12 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-int feof( FILE * stream ) { /* TODO */ };
+#ifndef __FILE_H
+#define __FILE_H __FILE_H
+#include <__FILE.h>
+#endif // __FILE_H
 
-/* PDPC code - unreviewed
+int feof( FILE * fh )
 {
-    return (stream->eofInd);
+    return fh->EOFIndicator;
 }
-*/
