@@ -33,3 +33,5 @@ size_t strspn( const char * s1, const char * s2 )
     }
     return len;
 }
+
+#warning Test driver missing.

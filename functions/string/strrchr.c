@@ -23,3 +23,5 @@ char * strrchr( const char * s, int c )
     } while ( i );
     return NULL;
 }
+
+#warning Test driver missing.
