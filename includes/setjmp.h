@@ -4,7 +4,7 @@
 // Public Domain C Library - http://pdclib.sourceforge.net
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
-// TODO
+// Nonlocal jumps
 // ----------------------------------------------------------------------------
 
 #ifndef __SETJMP_H

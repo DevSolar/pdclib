@@ -4,8 +4,7 @@
 // Public Domain C Library - http://pdclib.sourceforge.net
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
-// Provides the types float _Complex, double _Complex and long double _Complex
-// plus math functions on those types.
+// Complex arithmetic
 // ----------------------------------------------------------------------------
 
 #ifndef __COMPLEX_H
@@ -18,11 +17,13 @@
 #define complex     _Complex
 #endif
 
-#define _Complex_I  (float _Complex){0, 1}
-#define imaginary   _Imaginary             // optional
+#define _Complex_I  ( const float _Complex ) { 0, 1 }
+
+// TODO: imaginary is only defined if implementation supports _Imaginary.
+#define imaginary   _Imaginary
 
 #ifdef imaginary
-#define _Imaginary_I ((float _Imaginary)1)
+#define _Imaginary_I ( ( const float _Imaginary ) 1 )
 #endif
 
 #ifdef imaginary

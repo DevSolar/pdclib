@@ -4,8 +4,7 @@
 // Public Domain C Library - http://pdclib.sourceforge.net
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
-// Provides information on locale specifics as well as a function to change the
-// active locale to something else but the startup default "C".
+// Localization
 // ----------------------------------------------------------------------------
 
 #ifndef __LOCALE_H

@@ -4,7 +4,7 @@
 // Public Domain C Library - http://pdclib.sourceforge.net
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
-// TODO
+// Sizes of integer types
 // ----------------------------------------------------------------------------
 
 #ifndef __LIMITS_H
