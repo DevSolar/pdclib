@@ -13,7 +13,7 @@
 size_t strlen( const char * s )
 {
     size_t rc = 0;
-    while ( src[rc] )
+    while ( s[rc] )
     {
         ++rc;
     }
