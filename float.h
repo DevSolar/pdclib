@@ -1,7 +1,6 @@
-#ifndef _PDCLIB_FLOAT_H
-#define _PDCLIB_FLOAT_H _PDCLIB_FLOAT_H
-
 /* $Id$ */
+
+/* Release: $Name$ */
 
 /* 7.7 Characteristics of floating types <float.h>
 
@@ -9,14 +8,17 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_DEFS_H
-#define _PDCLIB_DEFS_H _PDCLIB_DEFS_H
-#include <_PDCLIB_defs.h>
+#ifndef _PDCLIB_FLOAT_H
+#define _PDCLIB_FLOAT_H _PDCLIB_FLOAT_H
+
+#ifndef _PDCLIB_CONFIG_H
+#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
+#include <_PDCLIB_config.h>
 #endif
 
-#define FLT_ROUNDS _PDCLIB_FLT_ROUNDS
+#define FLT_ROUNDS      _PDCLIB_FLT_ROUNDS
 #define FLT_EVAL_METHOD _PDCLIB_FLT_EVAL_METHOD
-#define DECIMAL_DIG _PDCLIB_DECIMAL_DIG
+#define DECIMAL_DIG     _PDCLIB_DECIMAL_DIG
 
 /* Produced by enquire version 5.1a, CWI, Amsterdam
    http://www.cwi.nl/~steven/enquire.html  */
