@@ -202,7 +202,7 @@ int strncmp( const char * src_1, const char * src_2, size_t n );
 char * strncpy( char * restrict dest, const char * restrict src, size_t n );
 
 /** STRing SPaN. Compares two C strings, determining the length of the
- *  substring where both strings are equal.
+ *  substring containing only characters from the second string.
  *  @param src_1 The first string to be compared.
  *  @param src_2 The second string to be compared.
  *  @return The length of the identical substring.
