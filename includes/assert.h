@@ -26,9 +26,9 @@ void __assert( char const * const expression, // the tested expression
 
 #undef assert
 #if defined NDEBUG
-#define assert( x ) (void) 0
+#define assert( x ) ( (void) 0 )
 #else
-#define assert( x ) ( x ) ? (void) 0 \
+#define assert( x ) ( x ) ? ( (void) 0 ) \
                           :  __assert( #x, __FILE__, __func__, __LINE__ )
 #endif
 
