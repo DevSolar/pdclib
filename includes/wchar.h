@@ -15,22 +15,22 @@
 // ----------------------------------------------------------------------------
 // MACROS
 
-#define NULL       0
-#define WCHAR_MAX  // TODO - personality?
-#define WCHAR_MIN  // TODO - personality?
+#include "__NULL.h"
+#include "__WCHAR.h"
+
 #define WEOF       // TODO - personality?
 
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
+#include "__tm.h"
+#include "__size_t.h"
+#include "__wchar_t.h"
+#include "__wint_t.h"
+
 typedef mbstate_t; // TODO - personality?
 typedef size_t;    // TODO - personality?
 typedef wint_t;    // TODO - personality?
-struct tm;         // TODO - personality?
-
-#ifndef __cplusplus
-typedef wchar_t;   // TODO - personality?
-#endif // __cplusplus
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS

@@ -15,17 +15,16 @@
 // ----------------------------------------------------------------------------
 // MACROS
 
-#define NULL  0
+#include "__NULL.h"
+
 #define offsetof( s-type, mbr ) // TODO - personality?
 
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
-typedef ptrdiff_t; // TODO - personality?
-typedef size_t;    // TODO - personality?
+#include "__size_t.h"
+#include "__wchar_t.h"
 
-#ifndef __cplusplus
-typedef wchar_t;   // TODO - personality?
-#endif // __cplusplus
+typedef ptrdiff_t; // TODO - personality?
 
 #endif // __STDDEF_H

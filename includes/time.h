@@ -15,16 +15,18 @@
 // ----------------------------------------------------------------------------
 // MACROS
 
+#include "__NULL.h"
+
 #define CLOCKS_PER_SEC // TODO - personality?
-#define NULL           0
 
 // ----------------------------------------------------------------------------
 // TYPES
 
+#include "__size_t.h"
+#include "__tm.h"
+
 typedef clock_t; // TODO - personality?
-typedef size_t;  // TODO - personality?
 typedef time_t;  // TODO - personality?
-struct tm;       // TODO - personality?
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS

@@ -13,7 +13,7 @@
 // ----------------------------------------------------------------------------
 // DEFINES
 
-#define NULL 0
+#include "__NULL.h"
 
 // Locale categories
 #define LC_COLLATE   1 // affects strcoll() and strxfrm()
