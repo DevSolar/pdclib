@@ -10,16 +10,16 @@
 
 #include <string.h>
 
-size_t strcspn( const char * src_1, const char * src_2 )
+size_t strcspn( const char * s1, const char * s2 )
 {
     size_t len = 0;
-    const char * src_p;
-    while ( src_1[len] != '\0' )
+    const char * p;
+    while ( s1[len] )
     {
-        src_p = src_2;
-        while ( *src_p != '\0' )
+        p = s2;
+        while ( *p )
         {
-            if ( src_1[len] == *src_p++ )
+            if ( s1[len] == *p++ )
             {
                 return len;
             }
