@@ -5,6 +5,8 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
+#include <string.h>
+
 void * memchr( const void * src, int c, size_t n )
 {
     const unsigned char * p = (const unsigned char *) src;
