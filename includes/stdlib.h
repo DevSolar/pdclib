@@ -56,21 +56,6 @@ long long abs( long long i );
 ldiv_t div( long numer, long denom );
 lldiv_t div( long long numer, long long denom );
 
-extern "C++" int atexit( void (*func) ( void ) );
-extern "C"   int atexit( void (*func) ( void ) );
-
-extern "C++" void * bsearch( const void * key, const void * base,
-                             size_t nelem, size_t size,
-                             int (*cmp) ( const void * ck, const void * ce ) );
-extern "C"   void * bsearch( const void * key, const void * base,
-                             size_t nelem, size_t size,
-                             int (*cmp) ( const void * ck, const void * ce ) );
-
-extern "C++" void qsort( void * base, size_t nelem, size_t size,
-                         int (*cmp) ( const void * e1, const void * e2 ) );
-extern "C"   void qsort( void * base, size_t nelem, size_t size,
-                         int (*cmp) ( const void * e1, const void * e2 ) );
-
 #endif // __cplusplus
 
 // ----------------------------------------------------------------------------
@@ -119,14 +104,15 @@ void abort( void );
 char * getenv( const char * name );
 int system( const char * s );
 
-#ifndef __cplusplus
-
-int atexit( void (*func) ( void ) );
-void * bsearch( const void * key, const void * base, size_t nelem, size_t size,
-                int (*cmp) ( const void * ck, const void * ce) );
-void qsort( void * base, size_t nelem, size_t size,
-            int (*cmp) ( const void * e1, const void * e2) );
-
+#ifdef __cplusplus
+#define __cppwrapper( x ) extern "C++" x \
+extern "C" x
+#else
+#define __cppwrapper( x ) x
 #endif // __cplusplus
+
+__cppwrapper( int atexit( void (*func) ( void ) ) { /* TODO */ }; )
+__cppwrapper( void * bsearch( const void * key, const void * base, size_t nelem, size_t size, int (*cmp) ( const void * ck, const void * ce) ) { /* TODO */ }; )
+__cppwrapper( void qsort( void * base, size_t nelem, size_t size, int (*cmp) ( const void * e1, const void * e2) ) { /* TODO */ }; )
 
 #endif // __STDLIB_H

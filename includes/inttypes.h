@@ -21,13 +21,18 @@ typedef struct
 imaxdiv_t;
 
 // ----------------------------------------------------------------------------
-// FUNCTIONS
+// FUNCTIONS - C++
+
+#ifdef __cplusplus
+intmax_t abs( intmax_t i );
+imaxdiv_t div( intmax_t numer, intmax_t denom );
+#endif __cplusplus
+
+// ----------------------------------------------------------------------------
+// FUNCTIONS - Standard C
 
 intmax_t imaxabs( intmax_t i );
-intmax_t abs( intmax_t i ); [C++ only]
-
 imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom );
-imaxdiv_t div( intmax_t numer, intmax_t denom ); [C++ only]
 
 intmax_t strtoimax( const char * restrict s, char * * restrict endptr, int base );
 uintmax_t strtoumax( const char * restrict s, char * * restrict endptr, int base );
