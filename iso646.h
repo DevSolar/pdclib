@@ -1,8 +1,8 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
-/* 7.9 Alternative spellings <iso646.h> */
+/* 7.9 Alternative spellings <iso646.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -24,3 +24,4 @@
 #define xor_eq ˆ=
 
 #endif
+

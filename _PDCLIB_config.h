@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
 /* Internal PDCLib configuration <_PDCLIB_config.h>
    (Generic Template)
@@ -13,18 +13,20 @@
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
 /* Assuming 8-bit char, two's-complement architecture here. 'short' being     */
-/* either 8 or 16 bit, 'int' being either 16, 32 or 64 bit, 'long' being      */
-/* either 32 or 64 bit, and 'long long' being 64 bit if 'long' is not, 64 or  */
-/* 128 bit otherwise.                                                         */
+/* 16 bit, 'int' being either 16, 32 or 64 bit, 'long' being either 32 or 64  */
+/* bit (but 64 bit only if 'int' is 32 bit), and 'long long' being 64 bit if  */
+/* 'long' is not, 64 or 128 bit otherwise.                                    */
 /* Author is quite willing to support other systems but would like to hear of */
 /* interest in such support and details on the to-be-supported architecture   */
-/* first before going to lengths about it.                                    */
+/* first, before going to lengths about it.                                   */
 /* -------------------------------------------------------------------------- */
 
 /* Comment out (or delete) the line below if your 'char' type is unsigned.    */
-#define _PDCLIB_CHAR_SIGNED _PDCLIB_CHAR_SIGNED
+#define _PDCLIB_CHAR_SIGNED 1
 
 /* Width of the integer types short, int, long, and long long, in bytes.      */
+/* SHRT == 2, INT >= SHRT, LONG >= INT >= 4, LLONG >= LONG - check your       */
+/* compiler manuals.                                                          */
 #define _PDCLIB_SHRT_BYTES  2
 #define _PDCLIB_INT_BYTES   4
 #define _PDCLIB_LONG_BYTES  4
@@ -63,13 +65,11 @@
 /* -------------------------------------------------------------------------- */
 /* What follows are a couple of "special" typedefs and their limits. Again,   */
 /* the actual definition of the limits is done in <_PDCLIB_int.h>, and the    */
-/* defines here are merely "configuration".                                   */
-/* Type is defined directly, limits are defined the same way as the "fastest" */
-/* limits above (SHRT, USHRT, INT, UINT, LONG, ULONG, LLONG, or ULLONG).      */
+/* defines here are merely "configuration". See above for details.            */
 /* -------------------------------------------------------------------------- */
 
 /* The result type of substracting two pointers */
-typedef int             _PDCLIB_ptrdiff_t;
+#define _PDCLIB_ptrdiff int
 #define _PDCLIB_PTRDIFF INT
 
 /* An integer type that can be accessed as atomic entity (think asynchronous
@@ -79,14 +79,20 @@ typedef int             _PDCLIB_ptrdiff_t;
 #define _PDCLIB_SIG_ATOMIC INT
 
 /* Result type of the 'sizeof' operator */
-typedef unsigned int _PDCLIB_size_t;
+#define _PDCLIB_size unsigned int
 #define _PDCLIB_SIZE UINT
 
 /* Large enough an integer to hold all character codes of the largest supported
    locale.
 */
-#define _PDCLIB_WCHAR  USHRT
-typedef unsigned short _PDCLIB_wchar_t;
+#define _PDCLIB_wchar unsigned short 
+#define _PDCLIB_WCHAR USHRT
+
+#define _PDCLIB_intptr int
+#define _PDCLIB_INTPTR INT
+
+#define _PDCLIB_intmax long long int
+#define _PDCLIB_INTMAX LLINT
 
 /* -------------------------------------------------------------------------- */
 /* Floating Point                                                             */

@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
 /* 7.15 Variable arguments <stdarg.h> 
 
@@ -24,3 +24,4 @@ typedef _PDCLIB_va_list va_list;
 #define va_start( ap, parmN ) _PDCLIB_va_start( ap, parmN )
 
 #endif
+

@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* Release: $Name$ */
+/* Release $Name$ */
 
 /* 7.7 Characteristics of floating types <float.h>
 
@@ -85,3 +85,4 @@
 #define LDBL_MAX_10_EXP 4932
 
 #endif
+
