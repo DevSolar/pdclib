@@ -27,3 +27,5 @@ char * strncat( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
     }
     return rc;
 }
+
+#warning Test driver missing.

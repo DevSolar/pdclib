@@ -16,3 +16,5 @@ char * strcpy( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
     while ( ( *s1++ = *s2++ ) );
     return rc;
 }
+
+#warning Test driver missing.

@@ -24,3 +24,5 @@ size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
     }
     return len;
 }
+
+#warning Test driver missing.

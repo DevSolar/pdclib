@@ -20,3 +20,5 @@ void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, siz
     }
     return s1;
 }
+
+#warning Test driver missing.

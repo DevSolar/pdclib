@@ -23,3 +23,5 @@ void * memchr( const void * s, int c, size_t n )
     }
     return NULL;
 }
+
+#warning Test driver missing.
