@@ -10,6 +10,20 @@
 #ifndef __STDDEF_H
 #define __STDDEF_H __STDDEF_H
 
-// TODO
+// ----------------------------------------------------------------------------
+// MACROS
+
+#define NULL  0
+#define offsetof( s-type, mbr ) // TODO
+
+// ----------------------------------------------------------------------------
+// TYPEDEFS
+
+typedef ptrdiff_t; // TODO
+typedef size_t;    // TODO
+
+#ifndef __cplusplus
+typedef wchar_t;
+#endif // __cplusplus
 
 #endif // __STDDEF_H
