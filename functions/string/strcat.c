@@ -5,32 +5,19 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-char * strcat( char * restrict s1, const char * restrict s2 ) { /* TODO */ };
-
-/* Therx code
+char * strcat( char * restrict dest, const char * restrict src )
 {
-    while (*s1)
+    char * dest_p = dest;
+    if ( *dest_p != '\0' )
     {
-        s1++;
+        while ( *++dest_p != '\0' )
+        {
+            // EMPTY
+        }
     }
-    while (*s1++ = *s2++)
+    while ( (*dest_p++ = *src++) != '\0' )
     {
         // EMPTY
     }
-    return s1;
+    return dest;
 }
-*/
-
-/* PDPC code - unreviewed
-{
-    char *p = s1;
-    
-    while (*p != '\0') p++;
-    while ((*p = *s2) != '\0')
-    {
-        p++;
-        s2++;
-    }
-    return (s1);
-}
-*/
