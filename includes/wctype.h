@@ -15,9 +15,10 @@
 // ----------------------------------------------------------------------------
 // TYPEDEFS
 
+#include "__wint_t.h"
+
 typedef wctrans_t; // TODO - personality?
 typedef wctype_t;  // TODO - personality?
-typedef wint_t;    // TODO - personality?
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS

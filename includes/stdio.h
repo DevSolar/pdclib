@@ -15,6 +15,8 @@
 // ----------------------------------------------------------------------------
 // MACROS
 
+#include "__NULL.h"
+
 #define _IOFBF       // TODO
 #define _IOLBF       // TODO
 #define _IONBF       // TODO
@@ -23,7 +25,6 @@
 #define FILENAME_MAX // TODO
 #define FOPEN_MAX    // TODO
 #define L_tmpnam     // TODO
-#define NULL         0
 #define SEEK_CUR     // TODO
 #define SEEK_END     // TODO
 #define SEEK_SET     // TODO
@@ -35,6 +36,8 @@
 
 // ----------------------------------------------------------------------------
 // TYPEDEFS
+
+#include "__size_t.h"
 
 typedef FILE;   // TODO - personality?
 typedef fpos_t; // TODO - personality?

@@ -15,10 +15,11 @@
 // ----------------------------------------------------------------------------
 // MACROS
 
+#include "__NULL.h"
+
 #define EXIT_FAILURE // TODO
 #define EXIT_SUCCESS // TODO
 #define MB_CUR_MAX   // TODO
-#define NULL         0
 #define RAND_MAX     // TODO
 
 // ----------------------------------------------------------------------------
@@ -41,11 +42,8 @@ typedef struct
     long long remainder;
 } lldiv_t;
 
-typedef size_t; // TODO - personality?
-
-#ifndef __cplusplus
-typedef wchar_t; // TODO - personality?
-#endif // __cplusplus
+#include "__size_t.h"
+#include "__wchar_t.h"
 
 // ----------------------------------------------------------------------------
 // FUNCTIONS

@@ -129,8 +129,7 @@ typedef uintmax_t; // TODO
 #define WCHAR_MIN // TODO
 #define WCHAR_MAX // TODO
 
-#define WINT_MIN // TODO
-#define WINT_MAX // TODO
+#include "__WCHAR.h"
 
 #define INTMAX_MIN  // TODO
 #define INTMAX_MAX  // TODO
