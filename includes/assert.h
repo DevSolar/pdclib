@@ -22,16 +22,13 @@ void __assert( char const * const expression, // the tested expression
 // ----------------------------------------------------------------------------
 // DEFINES
 
-// TODO: <void expression> is given as (void) 0, which might give a "C style
-// cast" warning under C++. Find a void expression that does not give warnings.
-
 // TODO: Check the macro for if-compatibility.
 
 #undef assert
 #if defined NDEBUG
-#define assert( x ) <void expression>
+#define assert( x ) (void) 0
 #else
-#define assert( x ) ( x ) ? <void expression> \
+#define assert( x ) ( x ) ? (void) 0 \
                           :  __assert( #x, __FILE__, __func__, __LINE__ )
 #endif
 
