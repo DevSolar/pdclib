@@ -129,3 +129,18 @@ So, to use PDCLib on your given platform, you unpack PDCLib (as you
 obviously have done already since you are reading this), and copy
 the overlay for your platform over the PDCLib source tree structure.
 
+Development Status
+------------------
+
+v0.1 - 2004-12-12
+Freestanding-only C99 implementation without any overlay, and missing
+the INTN_C() / UINTN_C() macros. <float.h> still has the enquire.c
+values hardcoded into it; not sure whether to include enquire.c in the
+package, to leave <float.h> to the overlay, or devise some parameterized
+macro magic as for <limits.h> / <stdint.h>.
+
+Future releases:
+
+v0.2 - will (hopefully) add the INTN_C() / UINTN_C() macros, at least
+one overlay for GCC / x86, and implementations for <string.h> as well
+as parts of <stdlib.h>.
