@@ -95,4 +95,94 @@ int vprintf( const char * restrict format, va_list ap );
 int vsnprintf( char * restrict s, size_t n, const char * restrict format, va_list ap );
 int vsprintf( char * restrict s, const char * restrict format, va_list ap);
 
+/* PDPC code - unreviewed
+/*
+    What we have is an internal buffer, which is 8 characters
+    longer than the actually used buffer.  E.g. say BUFSIZ is
+    512 bytes, then we actually allocate 520 bytes.  The first
+    2 characters will be junk, the next 2 characters set to NUL,
+    for protection against some backward-compares.  The fourth-last
+    character is set to '\n', to protect against overscan.  The
+    last 3 characters will be junk, to protect against memory
+    violation.  intBuffer is the internal buffer, but everyone refers
+    to fbuf, which is actually set to the &intBuffer[4].  Also,
+    szfbuf is the size of the "visible" buffer, not the internal
+    buffer.  The reason for the 2 junk characters at the beginning
+    is to align the buffer on a 4-byte boundary.
+*/
+
+typedef struct
+{
+#if (defined(__OS2__) || defined(__32BIT__))
+    unsigned long hfile;  /* OS/2 file handle */
+#endif
+#if (defined(__MSDOS__) || defined(__DOS__) || defined(__POWERC))
+    int hfile; /* dos file handle */
+#endif
+#if (defined(__MVS__))
+    void *hfile;
+    int recfm;
+    int style;
+    int lrecl;
+    char ddname[9];
+#endif
+    int quickBin;  /* 1 = do DosRead NOW!!!! */
+    int quickText; /* 1 = quick text mode */
+    int textMode; /* 1 = text mode, 0 = binary mode */
+    int intFno;   /* internal file number */
+    unsigned long bufStartR; /* buffer start represents, e.g. if we
+        have read in 3 buffers, each of 512 bytes, and we are
+        currently reading from the 3rd buffer, then the first
+        character in the buffer would be 1024, so that is what is
+        put in bufStartR. */
+    char *fbuf;     /* file buffer - this is what all the routines
+                       look at. */
+    size_t szfbuf;  /* size of file buffer (the one that the routines
+                       see, and the user allocates, and what is actually
+                       read in from disk) */
+    char *upto;     /* what character is next to read from buffer */
+    char *endbuf;   /* pointer PAST last character in buffer, ie it
+                       points to the '\n' in the internal buffer */
+    int errorInd;   /* whether an error has occurred on this file */
+    int eofInd;     /* whether EOF has been reached on this file */
+    int ungetCh;    /* character pushed back, -1 if none */
+    int bufTech;    /* buffering technique, _IOFBF etc */
+    char *intBuffer; /* internal buffer */
+    int noNl;       /* When doing gets, we don't copy NL */
+    int mode;       /* __WRITE_MODE or __READ_MODE */
+    int update;     /* Is file update (read + write)? */
+    int theirBuffer; /* Is the buffer supplied by them? */
+} FILE;
+
+typedef unsigned long fpos_t;
+
+#define NULL ((void *)0)
+#define FILENAME_MAX 260
+#define FOPEN_MAX 40
+#define _IOFBF 1
+#define _IOLBF 2
+#define _IONBF 3
+/*#define BUFSIZ 409600*/
+/* #define BUFSIZ 8192 */
+/*#define BUFSIZ 5120*/
+#define BUFSIZ 6144
+/* #define BUFSIZ 10 */
+/* #define BUFSIZ 512 */
+#define EOF -1
+#define L_tmpnam FILENAME_MAX
+#define TMP_MAX 25
+#define SEEK_SET 0
+#define SEEK_CUR 1
+#define SEEK_END 2
+#define __NFILE (FOPEN_MAX - 3)
+#define __WRITE_MODE 1
+#define __READ_MODE 2
+
+extern FILE *stdin;
+extern FILE *stdout;
+extern FILE *stderr;
+
+extern FILE *__userFiles[__NFILE];
+*/
+
 #endif // __STDIO_H
