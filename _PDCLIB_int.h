@@ -224,17 +224,17 @@ typedef unsigned _PDCLIB_fast64 _PDCLIB_uint_fast64_t;
 /* Various <stddef.h> typedefs and limits                                     */
 /* -------------------------------------------------------------------------- */
 
-typedef _PDCLIB_ptrdiff     _PDCLIB_ptrdiff_t
+typedef _PDCLIB_ptrdiff     _PDCLIB_ptrdiff_t;
 #define _PDCLIB_PTRDIFF_MIN concat( concat( _PDCLIB_, _PDCLIB_PTRDIFF ), _MIN )
 #define _PDCLIB_PTRDIFF_MAX concat( concat( _PDCLIB_, _PDCLIB_PTRDIFF ), _MAX )
 
 #define _PDCLIB_SIG_ATOMIC_MIN concat( concat( _PDCLIB_, _PDCLIB_SIG_ATOMIC ), _MIN )
 #define _PDCLIB_SIG_ATOMIC_MAX concat( concat( _PDCLIB_, _PDCLIB_SIG_ATOMIC ), _MAX )
 
-typedef _PDCLIB_size     _PDCLIB_size_t
+typedef _PDCLIB_size     _PDCLIB_size_t;
 #define _PDCLIB_SIZE_MAX concat( concat( _PDCLIB_, _PDCLIB_SIZE ), _MAX )
 
-typedef _PDCLIB_wchar     _PDCLIB_wchar_t
+typedef _PDCLIB_wchar     _PDCLIB_wchar_t;
 #define _PDCLIB_WCHAR_MIN concat( concat( _PDCLIB_, _PDCLIB_WCHAR ), _MIN )
 #define _PDCLIB_WCHAR_MAX concat( concat( _PDCLIB_, _PDCLIB_WCHAR ), _MAX )
 
@@ -251,4 +251,3 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_UINTMAX_MAX concat( concat( _PDCLIB_U, _PDCLIB_INTMAX ), _MAX )
 #define _PDCLIB_INTMAX_C( value )  concat( value, _PDCLIB_INTMAX_LITERAL )
 #define _PDCLIB_UINTMAX_C( value ) concat( value, concat( u, _PDCLIB_INTMAX_LITERAL ) )
-

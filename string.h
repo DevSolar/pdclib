@@ -153,13 +153,13 @@ char * strrchr( const char * s, int c );
    consists only of characters from the character array s2.
    Returns the length of that substring.
 */
-size_t strspn( const char * s1, const char s2 );
+size_t strspn( const char * s1, const char * s2 );
 
 /* Search the character array s1 for the substring in character array s2.
    Returns a pointer to that sbstring, or NULL. If s2 is of length zero,
    returns s1.
 */
-char * strstr( const char * s1, const char s2 );
+char * strstr( const char * s1, const char * s2 );
 
 /* In a series of subsequent calls, parse a C string into tokens.
    On the first call to strtok(), the first argument is a pointer to the to-be-

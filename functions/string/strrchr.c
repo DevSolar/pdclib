@@ -13,12 +13,12 @@
 char * strrchr( const char * s, int c )
 {
     size_t i = 0;
-    while ( p[i++] );
+    while ( s[i++] );
     do
     {
-        if ( p[--i] == (char) c )
+        if ( s[--i] == (char) c )
         {
-            return (char *) p + i;
+            return (char *) s + i;
         }
     } while ( i );
     return NULL;

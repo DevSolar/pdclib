@@ -25,7 +25,7 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
     {
         /* old string continued */
         if ( tmp == NULL )
-        }
+        {
             /* No old string, no new string, nothing to do */
             return NULL;
         }
