@@ -5,23 +5,18 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-int strncmp( const char * s1, const char * s2, size_t n ) { /* TODO */ };
+#include <__size_t.h>
 
-/* PDPC code - unreviewed
+int strncmp( const char * src_1, const char * src_2, size_t n )
 {
-    const unsigned char *p1;
-    const unsigned char *p2;
-    size_t x = 0;
-    
-    p1 = (const unsigned char *)s1;
-    p2 = (const unsigned char *)s2;
-    while (x < n)
+    while ( ( n-- != 0 ) && ( *src_1 == *src_2 ) )
     {
-        if (p1[x] < p2[x]) return (-1);
-        else if (p1[x] > p2[x]) return (1);
-        else if (p1[x] == '\0') return (0);
-        x++;
+        ++src_1;
+        ++src_2;
     }
-    return (0);
+    if ( ( n == 0 ) )
+    {
+        return 0;
+    }
+    return ( *src_1 - *src_2 );
 }
-*/

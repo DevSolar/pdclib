@@ -5,24 +5,12 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-char * strcpy( char * restrict s1, const char * restrict s2 ) { /* TODO */ };
-
-/* Therx code - unreviewed
+char * strcpy( char * restrict dest, const char * restrict src )
 {
-    while (*s1++ = *s2++)
+    char * tmp = dest;
+    while ( ( *dest++ = *src++ ) != '\0' )
     {
         // EMPTY
     }
-    return s1;
+    return tmp;
 }
-*/
-
-/* PDPC code - unreviewed
-char *strcpy(char *s1, const char *s2)
-{
-    char *p = s1;
-    
-    while ((*p++ = *s2++) != '\0') ;
-    return (s1);
-}
-*/

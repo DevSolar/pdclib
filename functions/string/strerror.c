@@ -5,11 +5,26 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-char * strerror( int errcode ) { /* TODO */ };
+#include <errno.h>
 
-/* PDPC code - unreviewed
+char * strerror( int errcode )
 {
-    if (errnum == 0) return ("No error has occurred\n");
-    else return ("An error has occurred\n");
+    switch ( errcode )
+    {
+        case 0:
+            return "no error";
+            break;
+        case EDOM:
+            return "domain error";
+            break;
+        case EILSEQ:
+            return "illegal sequence";
+            break;
+        case ERANGE:
+            return "range error";
+            break;
+        default:
+            return "unknown error";
+            break;
+    }
 }
-*/

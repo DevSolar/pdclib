@@ -5,10 +5,11 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-int strcoll( const char * s1, const char * s2 ) { /* TODO */ };
+// TODO: Dummy function, does not support locales.
 
-/* PDPC code - unreviewed
+int strcmp( const char * src_1, const char * src_2 );
+
+int strcoll( const char * src_1, const char * src_2 )
 {
-    return (strcmp(s1, s2));
+    return strcmp( src_1, src_2 );
 }
-*/
