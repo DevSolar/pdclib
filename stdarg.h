@@ -1,7 +1,6 @@
-#ifndef _PDCLIB_STDARG_H
-#define _PDCLIB_STDARG_H _PDCLIB_STDARG_H
-
 /* $Id$ */
+
+/* Release: $Name$ */
 
 /* 7.15 Variable arguments <stdarg.h> 
 
@@ -9,9 +8,12 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_DEFS_H
-#define _PDCLIB_DEFS_H _PDCLIB_DEFS_H
-#include <_PDCLIB_defs.h>
+#ifndef _PDCLIB_STDARG_H
+#define _PDCLIB_STDARG_H _PDCLIB_STDARG_H
+
+#ifndef _PDCLIB_CONFIG_H
+#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
+#include <_PDCLIB_config.h>
 #endif
 
 typedef _PDCLIB_va_list va_list;

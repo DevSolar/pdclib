@@ -1,5 +1,7 @@
 /* $Id$ */
 
+/* Release: $Name$ */
+
 /* Internal PDCLib configuration <_PDCLIB_config.h>
    (Generic Template)
 
@@ -10,7 +12,7 @@
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
-/* Assuming 8-bit char, two's-complement architecture here, 'short' being     */
+/* Assuming 8-bit char, two's-complement architecture here. 'short' being     */
 /* either 8 or 16 bit, 'int' being either 16, 32 or 64 bit, 'long' being      */
 /* either 32 or 64 bit, and 'long long' being 64 bit if 'long' is not, 64 or  */
 /* 128 bit otherwise.                                                         */
@@ -77,8 +79,8 @@ typedef int             _PDCLIB_ptrdiff_t;
 #define _PDCLIB_SIG_ATOMIC INT
 
 /* Result type of the 'sizeof' operator */
-#define _PDCLIB_SIZE UINT
 typedef unsigned int _PDCLIB_size_t;
+#define _PDCLIB_SIZE UINT
 
 /* Large enough an integer to hold all character codes of the largest supported
    locale.

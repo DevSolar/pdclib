@@ -1,7 +1,6 @@
-#ifndef _PDCLIB_STDINT_H
-#define _PDCLIB_STDINT_H _PDCLIB_STDINT_H
-
 /* $Id$ */
+
+/* Release: $Name$ */
 
 /* 7.18 Integer types <stdint.h>
 
@@ -9,9 +8,12 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_DEFS_H
-#define _PDCLIB_DEFS_H _PDCLIB_DEFS_H
-#include <_PDCLIB_defs.h>
+#ifndef _PDCLIB_STDINT_H
+#define _PDCLIB_STDINT_H _PDCLIB_STDINT_H
+
+#ifndef _PDCLIB_INT_H
+#define _PDCLIB_INT_H _PDCLIB_INT_H
+#include <_PDCLIB_int.h>
 #endif
 
 /* 7.18.1.1 Exact-width integer types. */
@@ -27,6 +29,11 @@ typedef _PDCLIB_uint32_t uint32_t;
 typedef _PDCLIB_uint64_t uint64_t;
 
 /* 7.18.1.2 Minimum-width integer types */
+
+/* You are allowed to add more types here, e.g. int_least24_t. For the standard
+   types, int_leastN_t is equivalent to the corresponding exact type intN_t by
+   definition.
+*/
 
 typedef int8_t  int_least8_t;
 typedef int16_t int_least16_t;
@@ -74,25 +81,27 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* 7.18.2.1 Limits of exact-width integer types */
 
-#define INT8_MIN (-0x7f - 1)
-#define INT8_MAX   0x7f
-#define UINT8_MAX  0xff
+#define INT8_MIN  _PDCLIB_INT8_MIN
+#define INT8_MAX  _PDCLIB_INT8_MAX
+#define UINT8_MAX _PDCLIB_UINT8_MAX
 
-#define INT16_MIN (-0x7fff - 1)
-#define INT16_MAX   0x7fff
-#define UINT16_MAX  0xffff
+#define INT16_MIN  _PDCLIB_INT16_MIN
+#define INT16_MAX  _PDCLIB_INT16_MAX
+#define UINT16_MAX _PDCLIB_UINT16_MAX
 
-#define INT32_MIN (-0x7fffffff - 1)
-#define INT32_MAX   0x7fffffff
-#define UINT32_MAX  0xffffffff
+#define INT32_MIN  _PDCLIB_INT32_MIN
+#define INT32_MAX  _PDCLIB_INT32_MAX
+#define UINT32_MAX _PDCLIB_UINT32_MAX
 
-#define INT64_MIN (-0x7fffffffffffffff - 1)
-#define INT64_MAX   0x7fffffffffffffff
-#define UINT64_MAX  0xffffffffffffffff
+#define INT64_MIN  _PDCLIB_INT64_MIN
+#define INT64_MAX  _PDCLIB_INT64_MAX
+#define UINT64_MAX _PDCLIB_UINT64_MAX
 
 /* 7.18.2.2 Limits of minimum-width integer types */
 
-/* See the comment at 7.18.1.2 as to type equivalence. */
+/* For the standard widths, least and exact types are equivalent.
+   You are allowed to add more types here, e.g. int_least24_t.
+*/
 
 #define INT_LEAST8_MIN  INT8_MIN
 #define INT_LEAST8_MAX  INT8_MAX
@@ -171,24 +180,26 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 /* 7.18.4.1 Macros for minimum-width integer constants */
 
 /* Expand to an integer constant of specified value and type int_leastN_t */
-#define INT8_C( value )  _PDCLIB_append( value, _PDCLIB_INT8_LITERAL )
-#define INT16_C( value ) _PDCLIB_append( value, _PDCLIB_INT16_LITERAL )
-#define INT32_C( value ) _PDCLIB_append( value, _PDCLIB_INT32_LITERAL )
-#define INT64_C( value ) _PDCLIB_append( value, _PDCLIB_INT64_LITERAL )
+
+#define INT8_C( value )  _PDCLIB_concat( value, _PDCLIB_INT8_LITERAL )
+#define INT16_C( value ) _PDCLIB_concat( value, _PDCLIB_INT16_LITERAL )
+#define INT32_C( value ) _PDCLIB_concat( value, _PDCLIB_INT32_LITERAL )
+#define INT64_C( value ) _PDCLIB_concat( value, _PDCLIB_INT64_LITERAL )
 
 /* Expand to an integer constant of specified value and type uint_leastN_t */
-#define UINT8_C( value )  _PDCLIB_append( value, _PDCLIB_UINT8_LITERAL )
-#define UINT16_C( value ) _PDCLIB_append( value, _PDCLIB_UINT16_LITERAL )
-#define UINT32_C( value ) _PDCLIB_append( value, _PDCLIB_UINT32_LITERAL )
-#define UINT64_C( value ) _PDCLIB_append( value, _PDCLIB_UINT64_LITERAL )
+
+#define UINT8_C( value )  _PDCLIB_concat( value, _PDCLIB_UINT8_LITERAL )
+#define UINT16_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT16_LITERAL )
+#define UINT32_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT32_LITERAL )
+#define UINT64_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT64_LITERAL )
 
 /* 7.18.4.2 Macros for greatest-width integer constants */
 
 /* Expand to an integer constant of specified value and type intmax_t */
-#define INTMAX_C( value )  _PDCLIB_append( value, _PDCLIB_INTMAX_LITERAL )
+#define INTMAX_C( value )  _PDCLIB_concat( value, _PDCLIB_INTMAX_LITERAL )
 
 /* Expand to an integer constant of specified value and type uintmax_t */
-#define UINTMAX_C( value ) _PDCLIB_append( value, _PDCLIB_UINTMAX_LITERAL )
+#define UINTMAX_C( value ) _PDCLIB_concat( value, _PDCLIB_UINTMAX_LITERAL )
 
 #endif
 

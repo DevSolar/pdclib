@@ -1,5 +1,7 @@
 /* $Id$ */
 
+/* Release: $Name$ */
+
 /* Internal PDCLib logic <_PDCLIB_internal.h>
 
    This file is part of the Public Domain C Library (PDCLib).
@@ -8,10 +10,13 @@
 
 /* -------------------------------------------------------------------------- */
 /* You should not have to edit anything in this file; if you DO have to, it   */
-/* would be considered a bug / missing feature: notify the author.            */
+/* would be considered a bug / missing feature: notify the author(s).         */
 /* -------------------------------------------------------------------------- */
 
+#ifndef _PDCLIB_CONFIG_H
+#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
 #include <_PDCLIB_config.h>
+#endif
 
 /* null pointer constant */
 #define _PDCLIB_NULL 0
@@ -22,7 +27,7 @@
 /* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
 /* -------------------------------------------------------------------------- */
 
-#define _PDCLIB_cc( x, y ) x ## y
+#define _PDCLIB_cc( x, y )     x ## y
 #define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
 
 /* -------------------------------------------------------------------------- */
@@ -238,7 +243,7 @@ typedef unsigned _PDCLIB_fast64 _PDCLIB_uint_fast64_t;
 #define _PDCLIB_UINT64_LITERAL ull
 
 /* -------------------------------------------------------------------------- */
-/* <stdint.h> "fast" typedefs                                                 */
+/* <stdint.h> intptr and intmax typedefs and limits                           */
 /* -------------------------------------------------------------------------- */
 
 typedef int                 _PDCLIB_intptr_t;
