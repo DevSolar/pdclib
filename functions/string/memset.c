@@ -5,7 +5,7 @@
 // This code is Public Domain. Use, modify, and redistribute at will.
 // ----------------------------------------------------------------------------
 
-#include <string.h>
+#include <__size_t.h>
 
 void * memset( void * dest, int c, size_t n )
 {
