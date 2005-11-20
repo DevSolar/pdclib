@@ -23,3 +23,10 @@ void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, siz
 }
 
 #warning Test driver missing.
+
+#ifdef TEST
+int main()
+{
+    return 0;
+}
+#endif

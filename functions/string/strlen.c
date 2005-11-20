@@ -21,3 +21,10 @@ size_t strlen( const char * s )
 }
 
 #warning Test driver missing.
+
+#ifdef TEST
+int main()
+{
+    return 0;
+}
+#endif

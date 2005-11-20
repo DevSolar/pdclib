@@ -25,3 +25,10 @@ void _PDCLIB_assert( char const * const message )
 }
 #endif
 
+
+#ifdef TEST
+int main()
+{
+    return 0;
+}
+#endif
