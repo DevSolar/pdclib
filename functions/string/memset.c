@@ -21,3 +21,10 @@ void * memset( void * s, int c, size_t n )
 }
 
 #warning Test driver missing.
+
+#ifdef TEST
+int main()
+{
+    return 0;
+}
+#endif

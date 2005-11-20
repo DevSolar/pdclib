@@ -74,3 +74,10 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
 }
 
 #warning Test driver missing.
+
+#ifdef TEST
+int main()
+{
+    return 0;
+}
+#endif

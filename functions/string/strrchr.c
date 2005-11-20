@@ -25,3 +25,10 @@ char * strrchr( const char * s, int c )
 }
 
 #warning Test driver missing.
+
+#ifdef TEST
+int main()
+{
+    return 0;
+}
+#endif

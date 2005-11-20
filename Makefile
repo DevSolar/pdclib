@@ -4,6 +4,7 @@ AUXFILES := Makefile Readme.txt
 SRCFILES := $(shell find . -name "*.c" -mindepth 1 -maxdepth 3)
 HDRFILES := $(shell find . -name "*.h" -mindepth 1 -maxdepth 3)
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
+TSTFILES := $(patsubst %.c,%.t,$(SRCFILES))
 DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
@@ -15,6 +16,9 @@ CFLAGS    := -g -std=c99 -I./internals/
 all: $(OBJFILES)
 	ar r pdclib.a $(OBJFILES)
 
+test: $(TSTFILES)
+	-@rc=0; for file in $(TSTFILES); do ./$$file; rc=`expr $$rc + $$?`; done; echo; echo "Tests failed: $$rc"
+
 -include $(DEPFILES)
 
 clean:
@@ -24,5 +28,8 @@ dist:
 	@tar czf pdclib.tgz $(ALLFILES)
 
 %.o: %.c Makefile
-	$(CC) $(MODE) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+	$(CC) -DNDEBUG -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+
+%.t: %.c Makefile
+	$(CC) -DTEST $(CFLAGS) $< -o $@
 
