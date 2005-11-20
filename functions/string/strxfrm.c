@@ -8,6 +8,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <_PDCLIB_aux.h>
 #include <string.h>
 
 /* TODO: Dummy function, no locale support yet. */
