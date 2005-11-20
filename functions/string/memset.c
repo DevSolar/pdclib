@@ -20,11 +20,20 @@ void * memset( void * s, int c, size_t n )
     return s;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char s[10] = "xxxxxxxxx";
+    BEGIN_TESTS;
+    TESTCASE( memset( s, 'o', 10 ) == s );
+    TESTCASE( s[9] == 'o' );
+    TESTCASE( memset( s, '_', 0 ) == s );
+    TESTCASE( s[0] == 'o' );
+    TESTCASE( memset( s, '_', 1 ) == s );
+    TESTCASE( s[0] == '_' );
+    TESTCASE( s[1] == 'o' );
+    return TEST_RESULTS;
 }
 #endif
