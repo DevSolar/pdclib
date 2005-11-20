@@ -14,7 +14,7 @@ void * memmove( void * s1, const void * s2, size_t n )
 {
     char * dest = (char *) s1;
     const char * src = (const char *) s2;
-    if ( dest < src )
+    if ( dest <= src )
     {
         while ( n-- )
         {
@@ -27,17 +27,25 @@ void * memmove( void * s1, const void * s2, size_t n )
         dest += n;
         while ( n-- )
         {
-            *dest-- = *src--;
+            *--dest = *--src;
         }
     }
     return s1;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char s[10] = "xxxxabcde";
+    BEGIN_TESTS;
+    TESTCASE( memmove( s, s + 4, 5 ) == s );
+    TESTCASE( s[0] == 'a' );
+    TESTCASE( s[4] == 'e' );
+    TESTCASE( s[5] == 'b' );
+    TESTCASE( memmove( s + 4, s, 5 ) == s + 4 );
+    TESTCASE( s[4] == 'a' );
+    return TEST_RESULTS;
 }
 #endif
