@@ -8,6 +8,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <_PDCLIB_aux.h>
 #include <string.h>
 
 void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, size_t n )

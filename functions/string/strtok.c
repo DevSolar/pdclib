@@ -8,6 +8,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <_PDCLIB_aux.h>
 #include <string.h>
 
 char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
