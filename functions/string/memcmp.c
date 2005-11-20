@@ -18,7 +18,7 @@ int memcmp( const void * s1, const void * s2, size_t n )
     {
         if ( *p1 != *p2 )
         {
-            return *p2 - *p1;
+            return *p1 - *p2;
         }
         ++p1;
         ++p2;
@@ -26,11 +26,17 @@ int memcmp( const void * s1, const void * s2, size_t n )
     return 0;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
+    char const xxxxx[] = "xxxxx";
+    BEGIN_TESTS;
+    TESTCASE( memcmp( abcde, abcdx, 5 ) < 0 );
+    TESTCASE( memcmp( abcde, abcdx, 4 ) == 0 );
+    TESTCASE( memcmp( abcde, xxxxx, 0 ) == 0 );
+    TESTCASE( memcmp( xxxxx, abcde, 1 ) > 0 );
     return 0;
 }
 #endif
