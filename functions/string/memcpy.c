@@ -22,11 +22,19 @@ void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, siz
     return s1;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char s[11] = "xxxxxxxxxxx";
+    BEGIN_TESTS;
+    TESTCASE( memcpy( s, abcde, 6 ) == s );
+    TESTCASE( s[4] == 'e' );
+    TESTCASE( s[5] == '\0' );
+    TESTCASE( memcpy( s + 5, abcde, 5 ) == s + 5 );
+    TESTCASE( s[9] == 'e' );
+    TESTCASE( s[10] == 'x' );
+    return TEST_RESULTS;
 }
 #endif
