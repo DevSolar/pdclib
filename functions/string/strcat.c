@@ -21,11 +21,25 @@ char * strcat( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
     return rc;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char s[] = "xx\0xxxxxx";
+    BEGIN_TESTS;
+    TESTCASE( strcat( s, abcde ) == s );
+    TESTCASE( s[2] == 'a' );
+    TESTCASE( s[6] == 'e' );
+    TESTCASE( s[7] == '\0' );
+    TESTCASE( s[8] == 'x' );
+    s[0] = '\0';
+    TESTCASE( strcat( s, abcdx ) == s );
+    TESTCASE( s[4] == 'x' );
+    TESTCASE( s[5] == '\0' );
+    TESTCASE( strcat( s, "\0" ) == s );
+    TESTCASE( s[5] == '\0' );
+    TESTCASE( s[6] == 'e' );
+    return TEST_RESULTS;
 }
 #endif

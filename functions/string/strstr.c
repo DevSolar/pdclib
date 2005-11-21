@@ -32,11 +32,19 @@ char * strstr( const char * s1, const char * s2 )
     return NULL;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char s[] = "abcabcabcdabcde";
+    BEGIN_TESTS;
+    TESTCASE( strstr( s, "x" ) == NULL );
+    TESTCASE( strstr( s, "xyz" ) == NULL );
+    TESTCASE( strstr( s, "a" ) == &s[0] );
+    TESTCASE( strstr( s, "abc" ) == &s[0] );
+    TESTCASE( strstr( s, "abcd" ) == &s[6] );
+    TESTCASE( strstr( s, "abcde" ) == &s[10] );
+    return TEST_RESULTS;
 }
 #endif

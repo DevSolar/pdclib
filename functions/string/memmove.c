@@ -38,7 +38,7 @@ void * memmove( void * s1, const void * s2, size_t n )
 
 int main()
 {
-    char s[10] = "xxxxabcde";
+    char s[] = "xxxxabcde";
     BEGIN_TESTS;
     TESTCASE( memmove( s, s + 4, 5 ) == s );
     TESTCASE( s[0] == 'a' );

@@ -20,11 +20,14 @@ size_t strlen( const char * s )
     return rc;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    BEGIN_TESTS;
+    TESTCASE( strlen( abcde ) == 5 );
+    TESTCASE( strlen( "" ) == 0 );
+    return TEST_RESULTS;
 }
 #endif

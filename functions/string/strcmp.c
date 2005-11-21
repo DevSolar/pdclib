@@ -18,11 +18,19 @@ int strcmp( const char * s1, const char * s2 )
     return ( *s1 - *s2 );
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char cmpabcde[] = "abcde";
+    char empty[] = "";
+    BEGIN_TESTS;
+    TESTCASE( strcmp( abcde, cmpabcde ) == 0 );
+    TESTCASE( strcmp( abcde, abcdx ) < 0 );
+    TESTCASE( strcmp( abcdx, abcde ) > 0 );
+    TESTCASE( strcmp( empty, abcde ) < 0 );
+    TESTCASE( strcmp( abcde, empty ) > 0 );
+    return TEST_RESULTS;
 }
 #endif
