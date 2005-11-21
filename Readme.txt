@@ -145,7 +145,8 @@ Adds implementations for <string.h> (excluding strerror()), INTN_C() /
 UINTN_C() macros, and some improvements in the internal headers.
 Test drivers still missing, but added warnings about that.
 
-v0.3 - unreleased
-Should contain at least one overlay for GCC / x86, and implementations
-for parts of <stdlib.h>. Some test drivers.
+v0.3 - 2005-11-21
+Adds test drivers, fixes some bugs in <string.h>.
 
+v0.4 - unreleased
+Implementations for parts of <stdlib.h> and <stdio.h>.
