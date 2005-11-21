@@ -17,22 +17,34 @@ char * strncpy( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
     while ( ( n > 0 ) && ( *s1++ = *s2++ ) )
     {
         /* Cannot do "n--" in the conditional as size_t is unsigned and we have
-           to check it again for >0 in the next loop.
+        to check it again for >0 in the next loop.
         */
         --n;
     }
-    while ( n-- )
+    while ( --n )
     {
         *s1++ = '\0';
     }
     return rc;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char s[] = "xxxxxxx";
+    BEGIN_TESTS;
+    TESTCASE( strncpy( s, "", 1 ) == s );
+    TESTCASE( s[0] == '\0' );
+    TESTCASE( s[1] == 'x' );
+    TESTCASE( strncpy( s, abcde, 6 ) == s );
+    TESTCASE( s[0] == 'a' );
+    TESTCASE( s[4] == 'e' );
+    TESTCASE( s[5] == '\0' );
+    TESTCASE( s[6] == 'x' );
+    TESTCASE( strncpy( s, abcde, 7 ) == s );
+    TESTCASE( s[6] == '\0' );
+    return TEST_RESULTS;
 }
 #endif
