@@ -26,11 +26,24 @@ size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
     return len;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char s[] = "xxxxxxxxxxx";
+    BEGIN_TESTS;
+    TESTCASE( strxfrm( NULL, "123456789012", 0 ) == 12 );
+    TESTCASE( strxfrm( s, "123456789012", 12 ) == 12 );
+    /*
+    The following test case is true in *this* implementation, but doesn't have to.
+    TESTCASE( s[0] == 'x' );
+    */
+    TESTCASE( strxfrm( s, "1234567890", 11 ) == 10 );
+    TESTCASE( s[0] == '1' );
+    TESTCASE( s[9] == '0' );
+    TESTCASE( s[10] == '\0' );
+    return TEST_RESULTS;
 }
 #endif
+

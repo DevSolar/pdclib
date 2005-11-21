@@ -28,11 +28,23 @@ int strncmp( const char * s1, const char * s2, size_t n )
     }
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    char cmpabcde[] = "abcde";
+    char empty[] = "";
+    char x[] = "x";
+    BEGIN_TESTS;
+    TESTCASE( strncmp( abcde, cmpabcde, 5 ) == 0 );
+    TESTCASE( strncmp( abcde, abcdx, 5 ) < 0 );
+    TESTCASE( strncmp( abcdx, abcde, 5 ) > 0 );
+    TESTCASE( strncmp( empty, abcde, 5 ) < 0 );
+    TESTCASE( strncmp( abcde, empty, 5 ) > 0 );
+    TESTCASE( strncmp( abcde, abcdx, 4 ) == 0 );
+    TESTCASE( strncmp( abcde, x, 0 ) == 0 );
+    TESTCASE( strncmp( abcde, x, 1 ) < 0 );
+    return TEST_RESULTS;
 }
 #endif

@@ -25,7 +25,7 @@ void * memset( void * s, int c, size_t n )
 
 int main()
 {
-    char s[10] = "xxxxxxxxx";
+    char s[] = "xxxxxxxxx";
     BEGIN_TESTS;
     TESTCASE( memset( s, 'o', 10 ) == s );
     TESTCASE( s[9] == 'o' );

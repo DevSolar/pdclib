@@ -29,11 +29,20 @@ char * strpbrk( const char * s1, const char * s2 )
     return NULL;
 }
 
-#warning Test driver missing.
-
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    BEGIN_TESTS;
+    TESTCASE( strpbrk( abcde, "x" ) == NULL );
+    TESTCASE( strpbrk( abcde, "xyz" ) == NULL );
+    TESTCASE( strpbrk( abcdx, "x" ) == &abcdx[4] );
+    TESTCASE( strpbrk( abcdx, "xyz" ) == &abcdx[4] );
+    TESTCASE( strpbrk( abcdx, "zyx" ) == &abcdx[4] );
+    TESTCASE( strpbrk( abcde, "a" ) == &abcde[0] );
+    TESTCASE( strpbrk( abcde, "abc" ) == &abcde[0] );
+    TESTCASE( strpbrk( abcde, "cba" ) == &abcde[0] );
+    return TEST_RESULTS;
 }
 #endif
