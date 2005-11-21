@@ -25,7 +25,7 @@ dist:
 	@tar czf pdclib.tgz $(ALLFILES)
 
 %.o: %.c Makefile
-	$(CC) -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./internals -c $< -o $@
+	@$(CC) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./internals -c $< -o $@
 
 %.t: %.c Makefile
-	$(CC) -DTEST -std=c99 -I./internals/ $< -o $@
+	@$(CC) -Wall -DTEST -std=c99 -I./internals/ $< -o $@
