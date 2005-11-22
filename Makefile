@@ -1,8 +1,8 @@
 # This is a list of all non-source files that are part of the distribution.
 AUXFILES := Makefile Readme.txt
 
-SRCFILES := $(shell find . -name "*.c" -mindepth 1 -maxdepth 3)
-HDRFILES := $(shell find . -name "*.h" -mindepth 1 -maxdepth 3)
+SRCFILES := $(shell find . -mindepth 1 -maxdepth 3 -name "*.c")
+HDRFILES := $(shell find . -mindepth 1 -maxdepth 3 -name "*.h")
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 TSTFILES := $(patsubst %.c,%.t,$(SRCFILES))
 DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
