@@ -98,6 +98,7 @@
 #define _PDCLIB_intptr int
 #define _PDCLIB_INTPTR INT
 
+/* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
 #define _PDCLIB_intmax long long int
 #define _PDCLIB_INTMAX LLINT
 /* You are also required to state the literal suffix for the intmax type      */
