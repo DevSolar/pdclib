@@ -1,8 +1,9 @@
 # This is a list of all non-source files that are part of the distribution.
 AUXFILES := Makefile Readme.txt
 
-SRCFILES := $(shell find . -mindepth 1 -maxdepth 3 -name "*.c")
-HDRFILES := $(shell find . -mindepth 1 -maxdepth 3 -name "*.h")
+PROJDIRS := functions includes internals
+SRCFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.c")
+HDRFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.h")
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 TSTFILES := $(patsubst %.c,%.t,$(SRCFILES))
 DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
@@ -11,10 +12,10 @@ ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 .PHONY: all clean dist
 
 all: $(OBJFILES)
-	ar r pdclib.a $?
+	@ar r pdclib.a $?
 
 test: $(TSTFILES)
-	-@rc=0; for file in $(TSTFILES); do ./$$file; rc=`expr $$rc + $$?`; done; echo; echo "Tests failed: $$rc"
+	-@rc=0; for file in $(TSTFILES); do echo "Testing $$file..."; ./$$file; rc=`expr $$rc + $$?`; done; echo; echo "Tests failed: $$rc"
 
 -include $(DEPFILES)
 
@@ -27,5 +28,6 @@ dist:
 %.o: %.c Makefile
 	@$(CC) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./internals -c $< -o $@
 
-%.t: %.c Makefile
-	@$(CC) -Wall -DTEST -std=c99 -I./internals/ $< -o $@
+%.t: %.c Makefile all
+	@$(CC) -Wall -DTEST -std=c99 -I./internals/ $< pdclib.a -o $@
+
