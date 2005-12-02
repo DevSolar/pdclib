@@ -21,12 +21,15 @@
 #ifndef __STDC_VERSION__
 #define _PDCLIB_C_VERSION 90
 #define _PDCLIB_restrict
+#define _PDCLIB_inline
 #elif __STDC_VERSION__ == 199409L
 #define _PDCLIB_C_VERSION 95
 #define _PDCLIB_restrict
+#define _PDCLIB_inline
 #elif __STDC_VERSION__ == 199901L
 #define _PDCLIB_C_VERSION 99
 #define _PDCLIB_restrict restrict
+#define _PDCLIB_inline inline
 #else
 #error Unsupported _ _STDC_VERSION_ _ (__STDC_VERSION__) (supported: ISO/IEC 9899:1990, 9899/AMD1:1995, and 9899:1999).
 #endif
@@ -58,4 +61,3 @@
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )
 #define _PDCLIB_symbol2identity( x ) x
-
