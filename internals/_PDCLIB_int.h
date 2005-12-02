@@ -85,7 +85,7 @@
 #if   _PDCLIB_LONG_BYTES   == 4
 #define _PDCLIB_LONG_MAX   0x7fffffffL
 #define _PDCLIB_LONG_MIN   (-0x7fffffffL - 1L)
-#define _PDCLIB_ULONG_MAX   0xffffffffUL
+#define _PDCLIB_ULONG_MAX  0xffffffffUL
 #elif   _PDCLIB_LONG_BYTES == 8
 #define _PDCLIB_LONG_MAX   0x7fffffffffffffffL
 #define _PDCLIB_LONG_MIN   (-0x7fffffffffffffffL - 1L)
@@ -251,3 +251,13 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_UINTMAX_MAX concat( concat( _PDCLIB_U, _PDCLIB_INTMAX ), _MAX )
 #define _PDCLIB_INTMAX_C( value )  concat( value, _PDCLIB_INTMAX_LITERAL )
 #define _PDCLIB_UINTMAX_C( value ) concat( value, concat( u, _PDCLIB_INTMAX_LITERAL ) )
+
+/* -------------------------------------------------------------------------- */
+/* Declaration of helper functions (implemented in functions/_PDCLIB).        */
+/* -------------------------------------------------------------------------- */
+
+/* This is the main function called by atoi(), atol() and atoll().            */
+_PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
+
+/* Digits array used by various integer conversion functions in <stdlib.h>    */
+extern char _PDCLIB_digits[];
