@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 int memcmp( const void * s1, const void * s2, size_t n )
 {
     const unsigned char * p1 = (const unsigned char *) s1;
@@ -25,6 +27,8 @@ int memcmp( const void * s1, const void * s2, size_t n )
     }
     return 0;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

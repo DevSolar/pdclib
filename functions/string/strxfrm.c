@@ -11,8 +11,9 @@
 #include <_PDCLIB_aux.h>
 #include <string.h>
 
-/* TODO: Dummy function, no locale support yet. */
+#ifndef REGTEST
 
+/* TODO: Dummy function, no locale support yet. */
 size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, size_t n )
 {
     size_t len = strlen( s2 );
@@ -25,6 +26,8 @@ size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
     }
     return len;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

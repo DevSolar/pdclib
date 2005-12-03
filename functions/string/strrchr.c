@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 char * strrchr( const char * s, int c )
 {
     size_t i = 0;
@@ -23,6 +25,8 @@ char * strrchr( const char * s, int c )
     } while ( i );
     return NULL;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

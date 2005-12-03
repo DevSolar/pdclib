@@ -9,6 +9,9 @@
 */
 
 #include <_PDCLIB_aux.h>
+#include <string.h>
+
+#ifndef REGTEST
 
 char * strcpy( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
 {
@@ -16,6 +19,8 @@ char * strcpy( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
     while ( ( *s1++ = *s2++ ) );
     return rc;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

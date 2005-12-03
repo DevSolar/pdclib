@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 int strncmp( const char * s1, const char * s2, size_t n )
 {
     while ( n && ( *s1 == *s2 ) )
@@ -27,6 +29,8 @@ int strncmp( const char * s1, const char * s2, size_t n )
         return ( *s1 - *s2 );
     }
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

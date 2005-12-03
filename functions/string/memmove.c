@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 void * memmove( void * s1, const void * s2, size_t n )
 {
     char * dest = (char *) s1;
@@ -32,6 +34,8 @@ void * memmove( void * s1, const void * s2, size_t n )
     }
     return s1;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

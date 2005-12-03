@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 char * strpbrk( const char * s1, const char * s2 )
 {
     const char * p1 = s1;
@@ -28,6 +30,8 @@ char * strpbrk( const char * s1, const char * s2 )
     }
     return NULL;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

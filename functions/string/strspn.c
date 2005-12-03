@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 size_t strspn( const char * s1, const char * s2 )
 {
     size_t len = 0;
@@ -33,6 +35,8 @@ size_t strspn( const char * s1, const char * s2 )
     }
     return len;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

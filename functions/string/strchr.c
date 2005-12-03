@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 char * strchr( const char * s, int c )
 {
     do
@@ -21,6 +23,8 @@ char * strchr( const char * s, int c )
     } while ( *s++ );
     return NULL;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

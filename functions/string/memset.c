@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 void * memset( void * s, int c, size_t n )
 {
     unsigned char * p = (unsigned char *) s;
@@ -19,6 +21,8 @@ void * memset( void * s, int c, size_t n )
     }
     return s;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
