@@ -259,5 +259,9 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 /* This is the main function called by atoi(), atol() and atoll().            */
 _PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
 
+/* Two helper functions used by strtol(), strtoul() and long long variants.   */
+const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
+_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, int limdigit );
+
 /* Digits array used by various integer conversion functions in <stdlib.h>    */
 extern char _PDCLIB_digits[];
