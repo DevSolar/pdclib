@@ -27,8 +27,14 @@ void _PDCLIB_assert( char const * const message )
 
 
 #ifdef TEST
+#include <_PDCLIB_test.h>
+
 int main()
 {
-    return 0;
+    int NO_TESTDRIVER = 0;
+    BEGIN_TESTS;
+    TESTCASE( NO_TESTDRIVER );
+    return TEST_RESULTS;
 }
+
 #endif
