@@ -11,6 +11,8 @@
 #include <_PDCLIB_aux.h>
 #include <string.h>
 
+#ifndef REGTEST
+
 void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, size_t n )
 {
     char * dest = (char *) s1;
@@ -21,6 +23,8 @@ void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, siz
     }
     return s1;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

@@ -11,6 +11,8 @@
 #include <_PDCLIB_aux.h>
 #include <string.h>
 
+#ifndef REGTEST
+
 char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
 {
     static char * tmp = NULL;
@@ -71,6 +73,8 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
     /* parsed to end of string */
     return ( tmp = NULL );
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

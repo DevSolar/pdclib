@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 size_t strlen( const char * s )
 {
     size_t rc = 0;
@@ -19,6 +21,8 @@ size_t strlen( const char * s )
     }
     return rc;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

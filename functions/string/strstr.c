@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 char * strstr( const char * s1, const char * s2 )
 {
     const char * p1 = s1;
@@ -31,6 +33,8 @@ char * strstr( const char * s1, const char * s2 )
     }
     return NULL;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

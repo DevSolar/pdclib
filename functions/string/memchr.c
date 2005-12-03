@@ -10,6 +10,8 @@
 
 #include <string.h>
 
+#ifndef REGTEST
+
 void * memchr( const void * s, int c, size_t n )
 {
     const unsigned char * p = (const unsigned char *) s;
@@ -23,6 +25,8 @@ void * memchr( const void * s, int c, size_t n )
     }
     return NULL;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

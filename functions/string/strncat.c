@@ -11,6 +11,8 @@
 #include <_PDCLIB_aux.h>
 #include <string.h>
 
+#ifndef REGTEST
+
 char * strncat( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, size_t n )
 {
     char * rc = s1;
@@ -28,6 +30,8 @@ char * strncat( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
     }
     return rc;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
