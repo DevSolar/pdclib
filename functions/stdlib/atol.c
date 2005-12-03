@@ -9,11 +9,16 @@
 */
 
 #include <_PDCLIB_int.h>
+#include <stdlib.h>
+
+#ifndef REGTEST
 
 long int atol( const char * s )
 {
     return (long int) _PDCLIB_atomax( s );
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
