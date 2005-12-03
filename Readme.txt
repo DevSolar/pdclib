@@ -14,7 +14,7 @@ This software is provided as-is. Use it at your own risk. There is
 no warranty whatsoever, neither expressed nor implied, and by using
 this software you accept that the author(s) shall not be held liable
 for any loss of data, loss of service, or other damages, be they
-incidential or consequential. Your only option other than accepting
+incidental or consequential. Your only option other than accepting
 this is not to use the software at all.
 
 A case for Public Domain
@@ -149,4 +149,5 @@ v0.3 - 2005-11-21
 Adds test drivers, fixes some bugs in <string.h>.
 
 v0.4 - unreleased
-Implementations for parts of <stdlib.h> and <stdio.h>.
+Implementations for parts of <stdlib.h>.
+(strtol, strtoul, atoi, atol and atoll.)
