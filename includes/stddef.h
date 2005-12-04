@@ -16,6 +16,11 @@
 #include <_PDCLIB_config.h>
 #endif
 
+#ifndef _PDCLIB_INT_H
+#define _PDCLIB_INT_H _PDCLIB_INT_H
+#include <_PDCLIB_int.h>
+#endif
+
 typedef _PDCLIB_ptrdiff_t ptrdiff_t;
 typedef _PDCLIB_size_t    size_t;
 typedef _PDCLIB_wchar_t   wchar_t;
