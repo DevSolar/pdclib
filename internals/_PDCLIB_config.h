@@ -39,6 +39,30 @@
 #define _PDCLIB_LONG_BYTES  4
 #define _PDCLIB_LLONG_BYTES 8
 
+/* <stdlib.h> defines the div() function family that allows taking quotient   */
+/* and remainder of an integer division in one operation. Many platforms      */
+/* support this in hardware / opcode, and the standard permits ordering of    */
+/* the return structure in any way to fit the hardware. That is why those     */
+/* structs can be configured here.                                            */
+
+struct _PDCLIB_div_t
+{
+    int quot;
+    int rem;
+};
+
+struct _PDCLIB_ldiv_t
+{
+    long int quot;
+    long int rem;
+};
+
+struct _PDCLIB_lldiv_t
+{
+    long long int quot;
+    long long int rem;
+};
+
 /* -------------------------------------------------------------------------- */
 /* <stdint.h> defines a set of integer types that are of a minimum width, and */
 /* "usually fastest" on the system. (If, for example, accessing a single char */
