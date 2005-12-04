@@ -8,9 +8,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
 #include <limits.h>
-#include <stddef.h>
 #include <stdlib.h>
 
 #ifndef REGTEST
