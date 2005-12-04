@@ -21,11 +21,6 @@
 #include <_PDCLIB_int.h>
 #endif
 
-#if _PDCLIB_HOSTED == 1
-#warning As of the current release, PDCLib is not a conforming hosted environment.
-#warning <string.h> is not standard-compliant (yet) - strerror is missing.
-#endif
-
 typedef _PDCLIB_size_t size_t;
 
 #define NULL _PDCLIB_NULL

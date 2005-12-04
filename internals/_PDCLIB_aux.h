@@ -35,7 +35,7 @@
 #endif
 
 #ifndef __STDC_HOSTED__
-#warning Compiler does not define _ _STDC_HOSTED_ _ (not standard-compliant)!
+#error Compiler does not define _ _STDC_HOSTED_ _ (not standard-compliant)!
 #elif __STDC_HOSTED__ == 0
 #define _PDCLIB_HOSTED 0
 #elif __STDC_HOSTED__ == 1
@@ -45,8 +45,7 @@
 #endif
 
 #if _PDCLIB_C_VERSION != 99
-#warning Up to and including v1.x, PDCLib is only aiming at ISO/IEC 9899:1999 (C99).
-#warning PDCLib might not be fully conforming to either C89 or C95 prior to v2.x.
+#error PDCLib might not be fully conforming to either C89 or C95 prior to v2.x.
 #endif
 
 /* -------------------------------------------------------------------------- */
