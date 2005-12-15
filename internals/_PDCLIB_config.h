@@ -16,6 +16,13 @@
 /* The character (sequence) your platform uses as newline.                    */
 #define _PDCLIB_endl "\n"
 
+/* exit() can signal success to the host environment by the value of zero or  */
+/* the constant EXIT_SUCCESS. Failure is signaled by EXIT_FAILURE. Note that  */
+/* any other return value is "implementation-defined", i.e. your environment  */
+/* is not required to handle it gracefully. Set your definitions here.        */
+#define _PDCLIB_SUCCESS 0
+#define _PDCLIB_FAILURE -1
+
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
