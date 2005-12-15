@@ -8,7 +8,6 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_int.h>
 #include <stdlib.h>
 
 #ifndef REGTEST

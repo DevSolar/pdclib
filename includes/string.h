@@ -21,7 +21,10 @@
 #include <_PDCLIB_int.h>
 #endif
 
+#ifndef _PDCLIB_SIZE_T_DEFINED
+#define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
 typedef _PDCLIB_size_t size_t;
+#endif
 
 #define NULL _PDCLIB_NULL
 
