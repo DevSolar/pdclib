@@ -31,12 +31,39 @@ void _PDCLIB_assert( char const * const message )
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
+#include <signal.h>
+
+static int rc = 0;
+static int EXPECTED_ABORT = 0;
+
+void aborthandler( int signal )
+{
+    TESTCASE( ! EXPECTED_ABORT );
+    exit( rc );
+}
+
+#define NDEBUG
+#include <assert.h>
+
+int disabled_test()
+{
+    int i = 0;
+    assert( i == 0 ); /* NDEBUG set, condition met */
+    assert( i == 1 ); /* NDEBUG set, condition fails */
+    return i;
+}
+
+#undef NDEBUG
+#include <assert.h>
 
 int main()
 {
-    int NO_TESTDRIVER = 0;
+    int i = 0;
     BEGIN_TESTS;
-    TESTCASE( NO_TESTDRIVER );
+    TESTCASE( signal( SIGABRT, &aborthandler ) != SIG_ERR );
+    assert( i == 0 ); /* NDEBUG not set, condition met */
+    puts( "Expecting failed assert() message here:" );
+    assert( i == 1 ); /* NDEBUG not set, condition fails - should abort */
     return TEST_RESULTS;
 }
 
