@@ -30,7 +30,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, int base, _PDCLIB_uintma
         else
         {
             errno = ERANGE;
-            /* TODO: Only if endptr != NULL */
+            /* TODO: Only if endptr != NULL - but do we really want *another* parameter? */
             while ( memchr( _PDCLIB_digits, **p, base ) != NULL ) ++(*p);
             /* TODO: This is ugly, but keeps caller from negating the error value */
             *sign = '+';
