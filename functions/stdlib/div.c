@@ -26,11 +26,22 @@ div_t div( int numer, int denom )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
+#ifndef _PDCLIB_CONFIG_H
+#include <_PDCLIB_config.h>
+#endif
+
 int main()
 {
-    int NO_TESTDRIVER = 0;
+    div_t idiv;
     BEGIN_TESTS;
-    TESTCASE( NO_TESTDRIVER );
+    idiv = div( 5, 2 );
+    TESTCASE( idiv.quot == 2 && idiv.rem == 1 );
+    idiv = div( -5, 2 );
+    TESTCASE( idiv.quot == -2 && idiv.rem == -1 );
+    idiv = div( 5, -2 );
+    TESTCASE( idiv.quot == -2 && idiv.rem == 1 );
+    TESTCASE( sizeof( idiv.quot ) == _PDCLIB_INT_BYTES );
+    TESTCASE( sizeof( idiv.rem )  == _PDCLIB_INT_BYTES );
     return TEST_RESULTS;
 }
 
