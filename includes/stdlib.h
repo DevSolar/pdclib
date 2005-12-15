@@ -11,19 +11,19 @@
 #ifndef _PDCLIB_STDLIB_H
 #define _PDCLIB_STDLIB_H _PDCLIB_STDLIB_H
 
-#ifndef _PDCLIB_AUX_H
-#define _PDCLIB_AUX_H _PDCLIB_AUX_H
-#include <_PDCLIB_aux.h>
-#endif
-
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
-#include <_PDCLIB_config.h>
+#ifndef _PDCLIB_INT_H
+#define _PDCLIB_INT_H _PDCLIB_INT_H
+#include <_PDCLIB_int.h>
 #endif
 
 typedef struct _PDCLIB_div_t     div_t;
 typedef struct _PDCLIB_ldiv_t   ldiv_t;
 typedef struct _PDCLIB_lldiv_t lldiv_t;
+
+#ifndef _PDCLIB_SIZE_T_DEFINED
+#define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
+typedef _PDCLIB_size_t size_t;
+#endif
 
 #define NULL         _PDCLIB_NULL
 #define EXIT_SUCCESS _PDCLIB_SUCCESS;

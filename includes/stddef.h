@@ -22,7 +22,12 @@
 #endif
 
 typedef _PDCLIB_ptrdiff_t ptrdiff_t;
-typedef _PDCLIB_size_t    size_t;
+
+#ifndef _PDCLIB_SIZE_T_DEFINED
+#define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
+typedef _PDCLIB_size_t size_t;
+#endif
+
 typedef _PDCLIB_wchar_t   wchar_t;
 
 #define NULL _PDCLIB_NULL

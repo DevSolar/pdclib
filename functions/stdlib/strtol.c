@@ -8,8 +8,6 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#define _PDCLIB_INT_H _PDCLIB_INT_H
-#include <_PDCLIB_int.h>
 #include <limits.h>
 #include <stdlib.h>
 
@@ -37,6 +35,12 @@ long int strtol( const char * s, char ** endptr, int base )
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
+
+#ifndef _PDCLIB_INT_H
+#define _PDCLIB_INT_H
+#include <_PDCLIB_int.h>
+#endif
+
 #include <errno.h>
 
 int main()
