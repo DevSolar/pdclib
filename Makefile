@@ -11,9 +11,11 @@ REGFILES := $(filter-out $(INTFILES),$(patsubst %.c,%.r,$(SRCFILES)))
 DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
-.PHONY: all clean dist
+.PHONY: clean dist test regtest
 
-all: $(OBJFILES)
+all: pdclib.a
+
+pdclib.a: $(OBJFILES)
 	@ar r pdclib.a $?
 
 test: $(TSTFILES)
@@ -31,10 +33,10 @@ dist:
 	@tar czf pdclib.tgz $(ALLFILES)
 
 %.o: %.c Makefile
-	@$(CC) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./internals -c $< -o $@
+	@$(CC) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@
 
-%.t: %.c Makefile all
-	@$(CC) -Wall -DTEST -std=c99 -I./internals/ $< pdclib.a -o $@
+%.t: %.c Makefile pdclib.a
+	@$(CC) -Wall -DTEST -std=c99 -I./includes -I./internals $< pdclib.a -o $@
 
 %.r: %.c Makefile
-	@$(CC) -Wall -DTEST -DREGTEST -std=c99 -I./internals/ $< -o $@
+	@$(CC) -Wall -DTEST -DREGTEST -std=c99 -I./internals $< -o $@
