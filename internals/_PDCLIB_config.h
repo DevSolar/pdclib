@@ -23,6 +23,11 @@
 #define _PDCLIB_SUCCESS 0
 #define _PDCLIB_FAILURE -1
 
+/* qsort() in <stdlib.h> requires a function that swaps two memory areas.     */
+/* Below is a naive implementation that can be improved significantly for     */
+/* specific platforms, e.g. by swapping int instead of char.                  */
+#define _PDCLIB_memswp( i, j, size ) char tmp; do { tmp = *i; *i++ = *j; *j++ = tmp; } while ( --size );
+
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
