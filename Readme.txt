@@ -150,4 +150,4 @@ Adds test drivers, fixes some bugs in <string.h>.
 
 v0.4 - unreleased
 Implementations for parts of <stdlib.h>.
-(strtol, strtoul, atoi, atol and atoll.)
+(strtol, strtoul, atoi, atol, atoll, rand, srand, bsearch, qsort.)
