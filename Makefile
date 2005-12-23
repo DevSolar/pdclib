@@ -32,6 +32,9 @@ clean:
 dist:
 	@tar czf pdclib.tgz $(ALLFILES)
 
+todolist:
+	-@for file in $(ALLFILES); do grep -H TODO $$file; done; true
+
 %.o: %.c Makefile
 	@$(CC) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@
 
