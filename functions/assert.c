@@ -35,6 +35,7 @@ void _PDCLIB_assert( char const * const message )
 
 static int rc = 0;
 static int EXPECTED_ABORT = 0;
+static int UNEXPECTED_ABORT = 1;
 
 void aborthandler( int signal )
 {
@@ -58,12 +59,10 @@ int disabled_test()
 
 int main()
 {
-    int i = 0;
     BEGIN_TESTS;
     TESTCASE( signal( SIGABRT, &aborthandler ) != SIG_ERR );
-    assert( i == 0 ); /* NDEBUG not set, condition met */
-    puts( "Expecting failed assert() message here:" );
-    assert( i == 1 ); /* NDEBUG not set, condition fails - should abort */
+    assert( UNEXPECTED_ABORT ); /* NDEBUG not set, condition met */
+    assert( EXPECTED_ABORT ); /* NDEBUG not set, condition fails - should abort */
     return TEST_RESULTS;
 }
 
