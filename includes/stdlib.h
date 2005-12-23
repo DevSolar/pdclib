@@ -26,8 +26,8 @@ typedef _PDCLIB_size_t size_t;
 #endif
 
 #define NULL         _PDCLIB_NULL
-#define EXIT_SUCCESS _PDCLIB_SUCCESS;
-#define EXIT_FAILURE _PDCLIB_FAILURE;
+#define EXIT_SUCCESS _PDCLIB_SUCCESS
+#define EXIT_FAILURE _PDCLIB_FAILURE
 
 /* Numeric conversion functions */
 
@@ -55,7 +55,7 @@ void srand( unsigned int seed );
 /* Communication with the environment */
 
 void abort();
-void exit();
+void exit( int status );
 
 /* Searching and sorting */
 
