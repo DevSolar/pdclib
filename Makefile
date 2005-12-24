@@ -4,10 +4,10 @@ AUXFILES := Makefile Readme.txt
 PROJDIRS := functions includes internals
 SRCFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.c")
 HDRFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.h")
-INTFILES := $(patsubst %.c,%.r,$(shell find functions/_PDCLIB -name "*.c"))
+INTFILES := atomax digits seed strtox_main strtox_prelim
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 TSTFILES := $(patsubst %.c,%.t,$(SRCFILES))
-REGFILES := $(filter-out $(INTFILES),$(patsubst %.c,%.r,$(SRCFILES)))
+REGFILES := $(filter-out $(patsubst %,functions/_PDCLIB/%.r,$(INTFILES)),$(patsubst %.c,%.r,$(SRCFILES)))
 DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
