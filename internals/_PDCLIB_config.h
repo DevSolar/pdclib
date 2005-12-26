@@ -199,3 +199,12 @@ typedef char * _PDCLIB_va_list;
 #define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
 #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
 #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
+
+/* -------------------------------------------------------------------------- */
+/* OS "glue"                                                                  */
+/* This is where PDCLib interfaces with the operating system. The examples    */
+/* below are POSIX calls; provide your OS' equivalents.                       */
+/* -------------------------------------------------------------------------- */
+
+/* A system call that terminates the calling process */
+#define _PDCLIB_Exit( x ) _exit( x )
