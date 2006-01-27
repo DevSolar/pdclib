@@ -8,7 +8,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdlib.h>
+#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
+#include <_PDCLIB_config.h>
 
 #ifndef REGTEST
 
