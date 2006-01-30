@@ -12,13 +12,6 @@
 
 #ifndef REGTEST
 
-/* TODO: Required by both atexit() and exit(). */
-struct _PDCLIB_exitfunc_t
-{
-    struct _PDCLIB_exitfunc_t * next;
-    void (*func)( void );
-};
-
 extern struct _PDCLIB_exitfunc_t * regstack;
 
 int atexit( void (*func)( void ) )
