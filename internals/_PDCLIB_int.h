@@ -265,3 +265,27 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, int base, _PDCLIB_uintma
 
 /* Digits array used by various integer conversion functions in <stdlib.h>    */
 extern char _PDCLIB_digits[];
+
+/* -------------------------------------------------------------------------- */
+/* Internal data types                                                        */
+/* -------------------------------------------------------------------------- */
+
+/* Structure required by both atexit() and exit() for handling atexit functions */
+struct _PDCLIB_exitfunc_t
+{
+    struct _PDCLIB_exitfunc_t * next;
+    void (*func)( void );
+};
+
+/* Structures required by malloc(), realloc(), and free(). */
+struct _PDCLIB_headnode_t
+{
+    struct _PDCLIB_memnode_t * first;
+    struct _PDCLIB_memnode_t * last;
+};
+
+struct _PDCLIB_memnode_t
+{
+    struct _PDCLIB_memnode_t * next;
+    _PDCLIB_size_t size;
+};

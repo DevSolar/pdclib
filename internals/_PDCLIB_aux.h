@@ -9,6 +9,11 @@
 */
 
 /* -------------------------------------------------------------------------- */
+/* You should not have to edit anything in this file; if you DO have to, it   */
+/* would be considered a bug / missing feature: notify the author(s).         */
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
 /* Standard Version                                                           */
 /* -------------------------------------------------------------------------- */
 
@@ -60,14 +65,3 @@
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )
 #define _PDCLIB_symbol2identity( x ) x
-
-/* -------------------------------------------------------------------------- */
-/* Internal data types                                                        */
-/* -------------------------------------------------------------------------- */
-
-/* Structure required by both atexit() and exit() for handling atexit functions */
-struct _PDCLIB_exitfunc_t
-{
-    struct _PDCLIB_exitfunc_t * next;
-    void (*func)( void );
-};
