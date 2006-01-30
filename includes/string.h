@@ -11,11 +11,6 @@
 #ifndef _PDCLIB_STRING_H
 #define _PDCLIB_STRING_H _PDCLIB_STRING_H
 
-#ifndef _PDCLIB_AUX_H
-#define _PDCLIB_AUX_H _PDCLIB_AUX_H
-#include <_PDCLIB_aux.h>
-#endif
-
 #ifndef _PDCLIB_INT_H
 #define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
