@@ -29,6 +29,11 @@ typedef _PDCLIB_size_t size_t;
 
 /* TODO: atof(), strtof(), strtod(), strtold() */
 
+double atof( const char * nptr );
+double strtod( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr );
+float strtof( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr );
+long double strtold( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr );
+
 /* Seperate the character array nptr into three parts: A (possibly empty)
    sequence of whitespace characters, a character representation of an integer
    to the given base, and trailing invalid characters (including the terminating
@@ -90,9 +95,15 @@ void free( void * ptr );
 
 /* Communication with the environment */
 
+#define EXIT_SUCCESS _PDCLIB_SUCCESS
+#define EXIT_FAILURE _PDCLIB_FAILURE
+
 void abort();
+int atexit( void (*func)( void ) ); 
 void exit( int status );
 void _Exit( int status );
+char * getenv( const char * name );
+int system( const char * string );
 
 /* Searching and sorting */
 
@@ -117,7 +128,12 @@ lldiv_t lldiv( long long int numer, long long int denom );
 
 /* TODO: Macro MB_CUR_MAX */
 
-/* Multibyte / wide string conversion functions */
-
+/*
+int mblen( const char * s, size_t n );
+int mbtowc( wchar_t * _PDCLIB_restrict pwc, const char * _PDCLIB_restrict s, size_t n );
+int wctomb( char * s, wchar_t wc );
+size_t mbstowcs( wchar_t * _PDCLIB_restrict pwcs, const char * _PDCLIB_restrict s, size_t n );
+size_t wcstombs( char * _PDCLIB_restrict s, const wchar_t * _PDCLIB_restrict pwcs, size_t n );
+*/
 
 #endif
