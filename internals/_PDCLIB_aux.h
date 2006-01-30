@@ -60,3 +60,14 @@
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )
 #define _PDCLIB_symbol2identity( x ) x
+
+/* -------------------------------------------------------------------------- */
+/* Internal data types                                                        */
+/* -------------------------------------------------------------------------- */
+
+/* Structure required by both atexit() and exit() for handling atexit functions */
+struct _PDCLIB_exitfunc_t
+{
+    struct _PDCLIB_exitfunc_t * next;
+    void (*func)( void );
+};
