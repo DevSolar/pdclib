@@ -37,7 +37,6 @@ int atexit( void (*func)( void ) )
 
 int main()
 {
-    int NO_TESTDRIVER = 0;
     BEGIN_TESTS;
     TESTCASE( NO_TESTDRIVER );
     return TEST_RESULTS;
