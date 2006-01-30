@@ -12,6 +12,10 @@
 
 #ifndef REGTEST
 
+/* TODO - "except that a function is called after any previously registered
+   functions that had already been called at the time it was registered.
+*/
+
 struct _PDCLIB_exitfunc_t * regstack = NULL;
 
 void exit( int status )
@@ -24,7 +28,6 @@ void exit( int status )
         free( next );
         next = regstack;
     }
-    /* TODO: Flush and close open streams. Remove tmpfile() files. */
     _Exit( status );
 }
 
@@ -36,7 +39,7 @@ void exit( int status )
 int main()
 {
     BEGIN_TESTS;
-    TESTCASE( NO_TESTDRIVER );
+    /* Unwinding of regstack tested in atexit(). */
     return TEST_RESULTS;
 }
 

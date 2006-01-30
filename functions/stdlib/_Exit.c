@@ -15,6 +15,7 @@
 
 void _Exit( int status )
 {
+    /* TODO: Flush and close open streams. Remove tmpfile() files. */
     _PDCLIB_Exit( status );
 }
 
@@ -26,7 +27,7 @@ void _Exit( int status )
 int main()
 {
     BEGIN_TESTS;
-    TESTCASE( NO_TESTDRIVER );
+    /* TODO: Add testdrivers after flush / close / tmpfile is implemented. */
     return TEST_RESULTS;
 }
 
