@@ -91,6 +91,7 @@ void srand( unsigned int seed );
 /* Memory management functions */
 
 void * malloc( size_t size );
+void * realloc( void * ptr, size_t size );
 void free( void * ptr );
 
 /* Communication with the environment */
