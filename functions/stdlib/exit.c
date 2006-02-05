@@ -16,17 +16,19 @@
    functions that had already been called at the time it was registered.
 */
 
-struct _PDCLIB_exitfunc_t * regstack = NULL;
+/* TODO: 32 is guaranteed. This should be dynamic but ATM gives problems
+   with my malloc.
+*/
+#define NUMBER_OF_SLOTS 40
+
+void (*_PDCLIB_regstack[ NUMBER_OF_SLOTS ])( void );
+size_t _PDCLIB_regptr = NUMBER_OF_SLOTS;
 
 void exit( int status )
 {
-    struct _PDCLIB_exitfunc_t * next = regstack;
-    while ( next != NULL )
+    while ( _PDCLIB_regptr < NUMBER_OF_SLOTS )
     {
-        next->func();
-        regstack = next->next;
-        free( next );
-        next = regstack;
+        _PDCLIB_regstack[ _PDCLIB_regptr++ ]();
     }
     _Exit( status );
 }
