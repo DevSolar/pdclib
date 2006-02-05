@@ -12,20 +12,18 @@
 
 #ifndef REGTEST
 
-extern struct _PDCLIB_exitfunc_t * regstack;
+extern void (*_PDCLIB_regstack[])( void );
+extern size_t _PDCLIB_regptr;
 
 int atexit( void (*func)( void ) )
 {
-    struct _PDCLIB_exitfunc_t * regfunc = (struct _PDCLIB_exitfunc_t *)malloc( sizeof( struct _PDCLIB_exitfunc_t ) );
-    if ( regfunc == NULL )
+    if ( _PDCLIB_regptr == 0 )
     {
         return -1;
     }
     else
     {
-        regfunc->func = func;
-	regfunc->next = regstack;
-	regstack = regfunc;
+        _PDCLIB_regstack[ --_PDCLIB_regptr ] = func;
 	return 0;
     }
 }
