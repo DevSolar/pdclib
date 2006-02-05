@@ -148,8 +148,6 @@ Test drivers still missing, but added warnings about that.
 v0.3 - 2005-11-21
 Adds test drivers, fixes some bugs in <string.h>.
 
-v0.4 - unreleased
-Implementations for parts of <stdlib.h>.
-(strtol, strtoul, atoi, atol, atoll, rand, srand, bsearch, qsort, abort,
-exit / _Exit (partial), atexit.)
-
+v0.4 - 2006-02-05
+Implementations for parts of <stdlib.h>. Still missing are the floating
+point conversions, and the wide-/multibyte-character functions.
