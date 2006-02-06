@@ -121,7 +121,7 @@ struct _PDCLIB_lldiv_t
 */
 #define _PDCLIB_SIG_ATOMIC INT
 
-/* Result type of the 'sizeof' operator */
+/* Result type of the 'sizeof' operator (must be unsigned) */
 #define _PDCLIB_size unsigned int
 #define _PDCLIB_SIZE UINT
 
@@ -207,4 +207,25 @@ typedef char * _PDCLIB_va_list;
 /* -------------------------------------------------------------------------- */
 
 /* A system call that terminates the calling process */
+void _exit( int status ) __attribute__(( noreturn ));
 #define _PDCLIB_Exit( x ) _exit( x )
+
+/* Memory management */
+
+/* Set this to the page size of your OS. If your OS does not support paging, set
+   to an appropriate value. (Too small, and malloc() will call the kernel too
+   often. Too large, and you will waste memory.
+*/
+#define _PDCLIB_PAGESIZE 4096
+
+/* Set this to the minimum memory node size. Any malloc() for a smaller siz
+   will be satisfied by a malloc() of this size instead.
+*/
+#define _PDCLIB_MINALLOC 8
+
+/* Request another x pages (of size _PDCLIB_PAGESIZE) of memory from the kernel,
+   or release them back to the kernel if n is negative.
+   Return a (void *) pointing to the former end-of-heap if successful, NULL
+   otherwise.
+*/
+void * _PDCLIB_allocpages( int n );
