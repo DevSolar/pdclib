@@ -286,6 +286,6 @@ struct _PDCLIB_headnode_t
 
 struct _PDCLIB_memnode_t
 {
-    struct _PDCLIB_memnode_t * next;
     _PDCLIB_size_t size;
+    struct _PDCLIB_memnode_t * next;
 };
