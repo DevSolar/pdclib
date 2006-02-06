@@ -15,9 +15,11 @@
 
 void * calloc( size_t nmemb, size_t size )
 {
+    /* assign memory for nmemb elements of given size */
     void * rc = malloc( nmemb * size );
     if ( rc != NULL )
     {
+        /* zero-initialize the memory */
         memset( rc, 0, nmemb * size );
     }
     return rc;
