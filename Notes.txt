@@ -26,7 +26,7 @@ serious cash in the process, thanks.
 Michael Moody, who contributed the generic implementation for <stdarg.h> which
 can now be found in <_PDCLIB_config.h> to the Public Domain, thanks.
 
-Rob Pendelton, for pointing out several flaws in early versions of PDCLib and
+Rod Pemberton, for pointing out several flaws in early versions of PDCLib and
 giving other valuable hints, thanks.
 
 Everyone involved in the first, "public" attempt at PDCLib, for bearing with me
