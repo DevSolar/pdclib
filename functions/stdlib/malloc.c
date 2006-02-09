@@ -20,6 +20,7 @@
 #endif
 
 /* TODO: Primitive placeholder. Much room for improvement. */
+/* TODO: Leaves nodes with size < _PDCLIB_MINALLOC, which are never assigned */
 
 /* Keeping pointers to the first and the last element of the free list. */
 struct _PDCLIB_headnode_t _PDCLIB_memlist = { NULL, NULL };
@@ -163,7 +164,7 @@ int main( int argc, char * argv[] )
     BEGIN_TESTS;
 #ifndef REGTEST
     {
-    void * ptr1, * ptr2, * ptr3, * ptr4, * ptr5, * ptr6, * ptr7, * ptr8;
+    void * ptr1, * ptr2, * ptr3, * ptr4, * ptr5, * ptr6, * ptr7, * ptr8, * ptr9;
     char * pages_start = _PDCLIB_allocpages( 0 );
     /* allocating 10 byte; expected: 1 page allocation, node split */
     TESTCASE( MEMTEST( ptr1, 10 ) );
@@ -212,6 +213,11 @@ int main( int argc, char * argv[] )
     /* freeing, and allocating one byte more; expected: 1 page allocation, node split */
     free( ptr8 );
     TESTCASE( MEMTEST( ptr8, EFFECTIVE + 1 - _PDCLIB_MINALLOC - sizeof( struct _PDCLIB_memnode_t ) ) );
+    TESTCASE( PAGETEST( 9 ) );
+    /* realloc with NULL pointer; expected: no page allocation, no node split */
+    ptr9 = realloc( NULL, 4072 );
+    TESTCASE( ptr9 != NULL );
+    TESTCASE( memset( ptr9, 0, 4072 ) == ptr9 );
     TESTCASE( PAGETEST( 9 ) );
     }
 #endif

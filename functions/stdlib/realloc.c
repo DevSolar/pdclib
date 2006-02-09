@@ -18,6 +18,11 @@
 
 void * realloc( void * ptr, size_t size )
 {
+    if ( ptr == NULL )
+    {
+        return malloc( size );
+    }
+    {
     struct _PDCLIB_memnode_t * baseptr = (struct _PDCLIB_memnode_t *)( (char *)ptr - sizeof( struct _PDCLIB_memnode_t ) );
     if ( baseptr->size >= size )
     {
@@ -29,6 +34,7 @@ void * realloc( void * ptr, size_t size )
         memcpy( newptr, ptr, baseptr->size );
         free( ptr );
         return newptr;
+    }
     }
     return NULL;
 }
