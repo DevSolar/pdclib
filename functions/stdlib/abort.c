@@ -16,7 +16,7 @@
 void abort( void )
 {
     raise( SIGABRT );
-    exit( 1 );
+    exit( EXIT_FAILURE );
 }
 
 #endif
