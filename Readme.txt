@@ -151,3 +151,8 @@ Adds test drivers, fixes some bugs in <string.h>.
 v0.4 - 2005-02-06
 Implementations for parts of <stdlib.h>. Still missing are the floating
 point conversions, and the wide-/multibyte-character functions.
+
+v0.5 - unreleased
+Implementations for parts of <stdio.h>. Bug fixes. Still no locale /
+wide-char support.
+
