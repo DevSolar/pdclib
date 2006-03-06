@@ -13,12 +13,15 @@
 
 #ifndef REGTEST
 
+#include <stdint.h>
+
 unsigned long long int strtoull( const char * s, char ** endptr, int base )
 {
     unsigned long long int rc;
     char sign = '+';
     const char * p = _PDCLIB_strtox_prelim( s, &sign, &base );
-    rc = _PDCLIB_strtox_main( &p, base, ULLONG_MAX, ULLONG_MAX / base, ULLONG_MAX % base, &sign );
+    if ( base < 2 || base > 36 ) return 0;
+    rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)ULLONG_MAX, (uintmax_t)( ULLONG_MAX / base ), (uintmax_t)( ULLONG_MAX % base ), &sign );
     if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;
     return ( sign == '+' ) ? rc : -rc;
 }
@@ -29,12 +32,11 @@ unsigned long long int strtoull( const char * s, char ** endptr, int base )
 #include <_PDCLIB_test.h>
 #include <errno.h>
 
-int main()
+int main( void )
 {
     char * endptr;
     /* this, to base 36, overflows even a 256 bit integer */
     char overflow[] = "-ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ_";
-    BEGIN_TESTS;
     errno = 0;
     /* basic functionality */
     TESTCASE( strtoull( "123", NULL, 10 ) == 123 );

@@ -34,10 +34,9 @@ char * strncpy( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char s[] = "xxxxxxx";
-    BEGIN_TESTS;
     TESTCASE( strncpy( s, "", 1 ) == s );
     TESTCASE( s[0] == '\0' );
     TESTCASE( s[1] == 'x' );

@@ -13,8 +13,9 @@
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
+#include <stdint.h>
 
-_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, _PDCLIB_uintmax_t limdigit, char * sign )
+_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintmax_t error, uintmax_t limval, uintmax_t limdigit, char * sign )
 {
     _PDCLIB_uintmax_t rc = 0;
     int digit = -1;
@@ -49,27 +50,26 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, int base, _PDCLIB_uintma
 #include <_PDCLIB_test.h>
 #include <errno.h>
 
-int main()
+int main( void )
 {
     const char * p;
     char test[] = "123_";
     char fail[] = "xxx";
     char sign = '-';
-    BEGIN_TESTS;
     /* basic functionality */
     p = test;
     errno = 0;
-    TESTCASE( _PDCLIB_strtox_main( &p, 10, 999, 12, 3, &sign ) == 123 );
+    TESTCASE( _PDCLIB_strtox_main( &p, 10u, (uintmax_t)999, (uintmax_t)12, (uintmax_t)3, &sign ) == 123 );
     TESTCASE( errno == 0 );
     TESTCASE( p == &test[3] );
     /* proper functioning to smaller base */
     p = test;
-    TESTCASE( _PDCLIB_strtox_main( &p, 8, 999, 12, 3, &sign ) == 0123 );
+    TESTCASE( _PDCLIB_strtox_main( &p, 8u, (uintmax_t)999, (uintmax_t)12, (uintmax_t)3, &sign ) == 0123 );
     TESTCASE( errno == 0 );
     TESTCASE( p == &test[3] );
     /* overflowing subject sequence must still return proper endptr */
     p = test;
-    TESTCASE( _PDCLIB_strtox_main( &p, 4, 999, 1, 2, &sign ) == 999 );
+    TESTCASE( _PDCLIB_strtox_main( &p, 4u, (uintmax_t)999, (uintmax_t)1, (uintmax_t)2, &sign ) == 999 );
     TESTCASE( errno == ERANGE );
     TESTCASE( p == &test[3] );
     TESTCASE( sign == '+' );
@@ -77,7 +77,7 @@ int main()
     errno = 0;
     p = fail;
     sign = '-';
-    TESTCASE( _PDCLIB_strtox_main( &p, 10, 999, 99, 8, &sign ) == 0 );
+    TESTCASE( _PDCLIB_strtox_main( &p, 10u, (uintmax_t)999, (uintmax_t)99, (uintmax_t)8, &sign ) == 0 );
     TESTCASE( p == NULL );
     return TEST_RESULTS;
 }

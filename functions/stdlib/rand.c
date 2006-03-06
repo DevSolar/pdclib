@@ -23,10 +23,9 @@ int rand( void )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     int rnd1, rnd2;
-    BEGIN_TESTS;
     TESTCASE( ( rnd1 = rand() ) < RAND_MAX );
     TESTCASE( ( rnd2 = rand() ) < RAND_MAX );
     srand( 1 );

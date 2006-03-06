@@ -13,19 +13,22 @@
 
 #ifndef REGTEST
 
+#include <stdint.h>
+
 long long int strtoll( const char * s, char ** endptr, int base )
 {
     long long int rc;
     char sign = '+';
     const char * p = _PDCLIB_strtox_prelim( s, &sign, &base );
+    if ( base < 2 || base > 36 ) return 0;
     if ( sign == '+' )
     {
-        rc = _PDCLIB_strtox_main( &p, base, LLONG_MAX, LLONG_MAX / base, LLONG_MAX % base, &sign );
+        rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MAX, (uintmax_t)( LLONG_MAX / base ), (uintmax_t)( LLONG_MAX % base ), &sign );
     }
     else
     {
         /* FIXME: This breaks on some machines that round negatives wrongly */
-        rc = _PDCLIB_strtox_main( &p, base, LLONG_MIN, LLONG_MIN / -base, -( LLONG_MIN % base ), &sign );
+        rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MIN, (uintmax_t)( LLONG_MIN / -base ), (uintmax_t)( -( LLONG_MIN % base ) ), &sign );
     }
     if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;
     return ( sign == '+' ) ? rc : -rc;
@@ -43,12 +46,11 @@ long long int strtoll( const char * s, char ** endptr, int base )
 
 #include <errno.h>
 
-int main()
+int main( void )
 {
     char * endptr;
     /* this, to base 36, overflows even a 256 bit integer */
     char overflow[] = "-ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ_";
-    BEGIN_TESTS;
     errno = 0;
     /* basic functionality */
     TESTCASE( strtoll( "123", NULL, 10 ) == 123 );

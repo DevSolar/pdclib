@@ -31,10 +31,9 @@ char * strrchr( const char * s, int c )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char abccd[] = "abccd";
-    BEGIN_TESTS;
     TESTCASE( strrchr( abcde, '\0' ) == &abcde[5] );
     TESTCASE( strrchr( abcde, 'e' ) == &abcde[4] );
     TESTCASE( strrchr( abcde, 'a' ) == &abcde[0] );

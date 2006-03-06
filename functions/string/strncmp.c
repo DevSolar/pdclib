@@ -35,12 +35,11 @@ int strncmp( const char * s1, const char * s2, size_t n )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char cmpabcde[] = "abcde";
     char empty[] = "";
     char x[] = "x";
-    BEGIN_TESTS;
     TESTCASE( strncmp( abcde, cmpabcde, 5 ) == 0 );
     TESTCASE( strncmp( abcde, abcdx, 5 ) < 0 );
     TESTCASE( strncmp( abcdx, abcde, 5 ) > 0 );

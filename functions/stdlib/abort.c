@@ -26,15 +26,14 @@ void abort( void )
 
 #include <stdio.h>
 
-static void aborthandler( int signal )
+static void aborthandler( int sig )
 {
     exit( 0 );
 }
 
-int main()
+int main( void )
 {
     int UNEXPECTED_RETURN_FROM_ABORT = 0;
-    BEGIN_TESTS;
     TESTCASE( signal( SIGABRT, &aborthandler ) != SIG_ERR );
     abort();
     TESTCASE( UNEXPECTED_RETURN_FROM_ABORT );

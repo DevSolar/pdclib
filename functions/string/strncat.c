@@ -35,10 +35,9 @@ char * strncat( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char s[] = "xx\0xxxxxx";
-    BEGIN_TESTS;
     TESTCASE( strncat( s, abcde, 10 ) == s );
     TESTCASE( s[2] == 'a' );
     TESTCASE( s[6] == 'e' );

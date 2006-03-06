@@ -9,18 +9,16 @@
 */
 
 #include <stdlib.h>
+#include <stdint.h>
 
 #ifndef REGTEST
 
-#include <stdint.h>
-
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDLIB_INT_H
-#include <_PDCLIB_int.h>
+#ifndef _PDCLIB_GLUE_H
+#define _PDCLIB_GLUE_H _PDLIB_GLUE_H
+#include <_PDCLIB_glue.h>
 #endif
 
 /* TODO: Primitive placeholder. Much room for improvement. */
-/* TODO: Leaves nodes with size < _PDCLIB_MINALLOC, which are never assigned */
 
 /* Keeping pointers to the first and the last element of the free list. */
 struct _PDCLIB_headnode_t _PDCLIB_memlist = { NULL, NULL };
@@ -108,14 +106,14 @@ void * malloc( size_t size )
     }
     {
     /* No fit possible; how many additional pages do we need? */
-    uintmax_t pages = ( ( size + sizeof( struct _PDCLIB_memnode_t ) - 1 ) / _PDCLIB_PAGESIZE ) + 1;
+    int pages = ( ( size + sizeof( struct _PDCLIB_memnode_t ) - 1 ) / _PDCLIB_PAGESIZE ) + 1;
     /* Allocate more pages */
     struct _PDCLIB_memnode_t * newnode = (struct _PDCLIB_memnode_t *)_PDCLIB_allocpages( pages );
     if ( newnode != NULL )
     {
         newnode->next = NULL;
         newnode->size = pages * _PDCLIB_PAGESIZE - sizeof( struct _PDCLIB_memnode_t );
-        if ( ( newnode->size - size ) > _PDCLIB_MINALLOC )
+        if ( ( newnode->size - size ) > ( _PDCLIB_MINALLOC + sizeof( struct _PDCLIB_memnode_t ) ) )
         {
             /* Oversized - split into two nodes */
             struct _PDCLIB_memnode_t * splitnode = (struct _PDCLIB_memnode_t *)( (char *)newnode + sizeof( struct _PDCLIB_memnode_t ) + size );
@@ -150,6 +148,13 @@ void * malloc( size_t size )
 #define PAGETEST( x ) ( pages_start + x * _PDCLIB_PAGESIZE ) == sbrk( 0 )
 #define EFFECTIVE _PDCLIB_PAGESIZE - sizeof( struct _PDCLIB_memnode_t )
 
+/* This can be enabled to give a dump of available nodes */
+#if 0
+#define NODETRACE( x ) do { struct _PDCLIB_memnode_t * tracer = _PDCLIB_memlist.first; printf( "Node trace #%d, %d allocated pages\n", x, ( (intptr_t)sbrk( 0 ) - (intptr_t)pages_start ) / _PDCLIB_PAGESIZE ); while ( tracer != NULL ) { printf( "- node %p, size %#x\n", (void *)tracer, tracer->size ); tracer = tracer->next; } } while ( 0 )
+#else
+#define NODETRACE( x ) ( (void) 0 )
+#endif
+
 /* Note that this test driver heavily tests *internals* of the implementation
    above (and of free() and realloc(), too). That means that changes in the
    implementation must be accompanied with appropriate changes of the test
@@ -157,69 +162,89 @@ void * malloc( size_t size )
    I am afraid, and thus there is no REGTEST equivalent.
 */
 
-#include <unistd.h>
+void * sbrk( intptr_t );
 
-int main( int argc, char * argv[] )
+int main( void )
 {
-    BEGIN_TESTS;
 #ifndef REGTEST
+    printf( "Start of malloc() testing...\n" );
     {
     void * ptr1, * ptr2, * ptr3, * ptr4, * ptr5, * ptr6, * ptr7, * ptr8, * ptr9;
     char * pages_start = _PDCLIB_allocpages( 0 );
     /* allocating 10 byte; expected: 1 page allocation, node split */
     TESTCASE( MEMTEST( ptr1, 10 ) );
     TESTCASE( PAGETEST( 1 ) );
+    NODETRACE( 1 );
     /* allocating EFFECTIVE - 10 byte; expected: no page allocation, receiving split node */
     TESTCASE( MEMTEST( ptr2, EFFECTIVE - 10 - sizeof( struct _PDCLIB_memnode_t ) ) );
     TESTCASE( PAGETEST( 1 ) );
+    NODETRACE( 2 );
     /* allocating EFFECTIVE; expected: 1 page allocation, no node split */
     TESTCASE( MEMTEST( ptr3, EFFECTIVE ) );
     TESTCASE( PAGETEST( 2 ) );
+    NODETRACE( 3 );
     /* allocating EFFECTIVE - 4; expected: 1 page allocation, no node split */
     TESTCASE( MEMTEST( ptr4, EFFECTIVE - 4 ) );
     TESTCASE( PAGETEST( 3 ) );
+    NODETRACE( 4 );
     /* freeing and re-allocating EFFECTIVE - 4; expected: no page allocation, no node split */
     free( ptr4 );
     TESTCASE( MEMTEST( ptr5, EFFECTIVE - 4 ) );
     TESTCASE( ptr4 == ptr5 );
     TESTCASE( PAGETEST( 3 ) );
+    NODETRACE( 5 );
     /* releasing EFFECTIVE; expected: no page release */
     free( ptr3 );
     TESTCASE( PAGETEST( 3 ) );
+    NODETRACE( 6 );
     /* allocating EFFECTIVE + _PDCLIB_PAGESIZE; expected: 2 page allocation, no node split */
     TESTCASE( MEMTEST( ptr3, EFFECTIVE + _PDCLIB_PAGESIZE ) );
     TESTCASE( PAGETEST( 5 ) );
+    NODETRACE( 7 );
     /* reallocating to 10 byte; expected: no page allocation, no node split */
     TESTCASE( realloc( ptr3, 10 ) == ptr3 );
     TESTCASE( PAGETEST( 5 ) );
+    NODETRACE( 8 );
     /* reallocating to EFFECTIVE + _PDCLIB_PAGESIZE; expected: no page allocation, no node split */
     TESTCASE( realloc( ptr3, EFFECTIVE + _PDCLIB_PAGESIZE ) == ptr3 );
     TESTCASE( PAGETEST( 5 ) );
+    NODETRACE( 9 );
     /* reallocating to EFFECTIVE + _PDCLIB_PAGESIZE * 2; expected: 3 page allocations, no node split */
     TESTCASE( realloc( ptr3, EFFECTIVE + _PDCLIB_PAGESIZE * 2 ) != ptr3 );
     TESTCASE( PAGETEST( 8 ) );
+    NODETRACE( 10 );
     /* allocating EFFECTIVE + _PDCLIB_PAGESIZE; expected: no page allocation, no node split */
     TESTCASE( MEMTEST( ptr4, EFFECTIVE + _PDCLIB_PAGESIZE ) );
     TESTCASE( PAGETEST( 8 ) );
+    NODETRACE( 11 );
     /* allocating zero size; expected: no page allocation, no node split */
     TESTCASE( ! MEMTEST( ptr6, 0 ) );
     TESTCASE( PAGETEST( 8 ) );
+    NODETRACE( 12 );
     /* allocating 4 byte; expected: no page allocation, upsizing of size, node split */
     TESTCASE( MEMTEST( ptr7, 4 ) );
     TESTCASE( PAGETEST( 8 ) );
+    NODETRACE( 13 );
     /* allocating rest of page; expected: no page allocation, no node split */
     TESTCASE( MEMTEST( ptr8, EFFECTIVE - _PDCLIB_MINALLOC - sizeof( struct _PDCLIB_memnode_t ) ) );
     TESTCASE( PAGETEST( 8 ) );
-    /* freeing, and allocating one byte more; expected: 1 page allocation, node split */
+    NODETRACE( 14 );
+    /* freeing, and allocating one byte more; expected: 1 page allocation, no node split */
     free( ptr8 );
+    NODETRACE( 15 );
     TESTCASE( MEMTEST( ptr8, EFFECTIVE + 1 - _PDCLIB_MINALLOC - sizeof( struct _PDCLIB_memnode_t ) ) );
     TESTCASE( PAGETEST( 9 ) );
+    NODETRACE( 16 );
     /* realloc with NULL pointer; expected: no page allocation, no node split */
     ptr9 = realloc( NULL, 4072 );
     TESTCASE( ptr9 != NULL );
     TESTCASE( memset( ptr9, 0, 4072 ) == ptr9 );
     TESTCASE( PAGETEST( 9 ) );
+    NODETRACE( 17 );
+    printf( "End of malloc() testing.\n" );
     }
+#else
+    printf( "No testing of malloc() - test driver does not know internals of system malloc().\n" );
 #endif
     return TEST_RESULTS;
 }

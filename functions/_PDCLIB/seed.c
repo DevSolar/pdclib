@@ -13,9 +13,8 @@ unsigned long int _PDCLIB_seed = 1;
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     /* no tests for raw data */
     return TEST_RESULTS;
 }

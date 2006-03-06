@@ -23,9 +23,8 @@ long int labs( long int j )
 #include <_PDCLIB_test.h>
 #include <limits.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( labs( 0 ) == 0 );
     TESTCASE( labs( LONG_MAX ) == LONG_MAX );
     TESTCASE( labs( LONG_MIN + 1 ) == -( LONG_MIN + 1 ) );

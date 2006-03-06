@@ -38,9 +38,8 @@ void exit( int status )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     /* Unwinding of regstack tested in atexit(). */
     return TEST_RESULTS;
 }

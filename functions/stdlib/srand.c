@@ -22,9 +22,8 @@ void srand( unsigned int seed )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     /* tested in rand.c */
     return TEST_RESULTS;
 }

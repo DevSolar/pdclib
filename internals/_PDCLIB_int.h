@@ -261,7 +261,7 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
 
 /* Two helper functions used by strtol(), strtoul() and long long variants.   */
 const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
-_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, _PDCLIB_uintmax_t limdigit, char * sign );
+_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, _PDCLIB_uintmax_t limdigit, char * sign );
 
 /* Digits array used by various integer conversion functions in <stdlib.h>    */
 extern char _PDCLIB_digits[];
@@ -289,3 +289,15 @@ struct _PDCLIB_memnode_t
     _PDCLIB_size_t size;
     struct _PDCLIB_memnode_t * next;
 };
+
+#if 0
+
+/* fpos_t, an object type (not an array!) capable of storing any position
+   information of a file.
+*/
+typedef unsigned long long int  _PDCLIB_fpos_t;
+
+/* file descriptor - a type used by the OS to identify a stream */
+typedef int                     _PDCLIB_fd_t;
+
+#endif

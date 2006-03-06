@@ -30,18 +30,17 @@ div_t div( int numer, int denom )
 #include <_PDCLIB_config.h>
 #endif
 
-int main()
+int main( void )
 {
-    div_t idiv;
-    BEGIN_TESTS;
-    idiv = div( 5, 2 );
-    TESTCASE( idiv.quot == 2 && idiv.rem == 1 );
-    idiv = div( -5, 2 );
-    TESTCASE( idiv.quot == -2 && idiv.rem == -1 );
-    idiv = div( 5, -2 );
-    TESTCASE( idiv.quot == -2 && idiv.rem == 1 );
-    TESTCASE( sizeof( idiv.quot ) == _PDCLIB_INT_BYTES );
-    TESTCASE( sizeof( idiv.rem )  == _PDCLIB_INT_BYTES );
+    div_t result;
+    result = div( 5, 2 );
+    TESTCASE( result.quot == 2 && result.rem == 1 );
+    result = div( -5, 2 );
+    TESTCASE( result.quot == -2 && result.rem == -1 );
+    result = div( 5, -2 );
+    TESTCASE( result.quot == -2 && result.rem == 1 );
+    TESTCASE( sizeof( result.quot ) == _PDCLIB_INT_BYTES );
+    TESTCASE( sizeof( result.rem )  == _PDCLIB_INT_BYTES );
     return TEST_RESULTS;
 }
 

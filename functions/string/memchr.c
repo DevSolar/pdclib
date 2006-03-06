@@ -31,9 +31,8 @@ void * memchr( const void * s, int c, size_t n )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( memchr( abcde, 'c', 5 ) == &abcde[2] );
     TESTCASE( memchr( abcde, 'a', 1 ) == &abcde[0] );
     TESTCASE( memchr( abcde, 'a', 0 ) == NULL );

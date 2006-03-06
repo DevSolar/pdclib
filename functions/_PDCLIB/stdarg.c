@@ -8,14 +8,11 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifdef TEST
-
-#include <_PDCLIB_test.h>
 #include <stdarg.h>
 #include <limits.h>
 #include <float.h>
 
-unsigned int rc = 0;
+#include <_PDCLIB_test.h>
 
 typedef int (*intfunc_t)( void );
 
@@ -98,12 +95,12 @@ static int test( enum tag_t s, ... )
     }
 }
 
-int dummy()
+static int dummy( void )
 {
     return INT_MAX;
 }
 
-int main()
+int main( void )
 {
     int x = INT_MAX;
     long double d = LDBL_MAX;
@@ -114,5 +111,3 @@ int main()
     test( TAG_INTPTR, &x, TAG_LDBLPTR, &d, TAG_FUNCPTR, dummy, TAG_END );
     return TEST_RESULTS;
 }
-
-#endif

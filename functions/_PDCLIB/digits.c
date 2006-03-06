@@ -11,13 +11,11 @@
 char _PDCLIB_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     /* no tests for raw data */
-    return TEST_RESULTS;
+    return 0;
 }
 
 #endif

@@ -133,18 +133,17 @@ void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *,
 #include <string.h>
 #include <limits.h>
 
-int compare( const void * left, const void * right )
+static int compare( const void * left, const void * right )
 {
     return *( (unsigned char *)left ) - *( (unsigned char *)right );
 }
 
-int main()
+int main( void )
 {
     char presort[] = { "shreicnyjqpvozxmbt" };
     char sorted1[] = { "bcehijmnopqrstvxyz" };
     char sorted2[] = { "bticjqnyozpvreshxm" };
     char s[19];
-    BEGIN_TESTS;
     strcpy( s, presort );
     qsort( s, 18, 1, compare );
     TESTCASE( strcmp( s, sorted1 ) == 0 );
