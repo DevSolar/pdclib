@@ -39,10 +39,9 @@ char * strstr( const char * s1, const char * s2 )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char s[] = "abcabcabcdabcde";
-    BEGIN_TESTS;
     TESTCASE( strstr( s, "x" ) == NULL );
     TESTCASE( strstr( s, "xyz" ) == NULL );
     TESTCASE( strstr( s, "a" ) == &s[0] );

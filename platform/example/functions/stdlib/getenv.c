@@ -38,9 +38,8 @@ char * getenv( const char * name )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( strcmp( getenv( "SHELL" ), "/bin/sh" ) == 0 );
     return TEST_RESULTS;
 }

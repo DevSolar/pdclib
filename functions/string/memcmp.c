@@ -33,10 +33,9 @@ int memcmp( const void * s1, const void * s2, size_t n )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char const xxxxx[] = "xxxxx";
-    BEGIN_TESTS;
     TESTCASE( memcmp( abcde, abcdx, 5 ) < 0 );
     TESTCASE( memcmp( abcde, abcdx, 4 ) == 0 );
     TESTCASE( memcmp( abcde, xxxxx, 0 ) == 0 );

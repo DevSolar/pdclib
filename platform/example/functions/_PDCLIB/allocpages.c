@@ -13,12 +13,14 @@
 */
 
 #include <stdint.h>
+#include <stddef.h>
 
-#include <unistd.h>
+int brk( void * );
+void * sbrk( intptr_t );
 
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
-#include <_PDCLIB_config.h>
+#ifndef _PDCLIB_GLUE_H
+#define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
+#include <_PDCLIB_glue.h>
 #endif
 
 static void * membreak = NULL;
@@ -39,7 +41,7 @@ void * _PDCLIB_allocpages( int const n )
                 /* error */
                 return NULL;
             }
-            membreak += unaligned;
+            membreak = (char *)membreak + unaligned;
         }
     }
     /* increasing or decreasing heap - standard operation */
@@ -61,16 +63,13 @@ void * _PDCLIB_allocpages( int const n )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int puts( const char * );
-
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
 #ifndef REGTEST
     {
-    void * startbreak = sbrk( 0 );
+    char * startbreak = sbrk( 0 );
     TESTCASE( _PDCLIB_allocpages( 0 ) );
-    TESTCASE( ( sbrk( 0 ) - startbreak ) <= _PDCLIB_PAGESIZE );
+    TESTCASE( ( (char *)sbrk( 0 ) - startbreak ) <= _PDCLIB_PAGESIZE );
     startbreak = sbrk( 0 );
     TESTCASE( _PDCLIB_allocpages( 1 ) );
     TESTCASE( sbrk( 0 ) == startbreak + ( 1 * _PDCLIB_PAGESIZE ) );

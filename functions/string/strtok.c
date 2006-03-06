@@ -78,10 +78,9 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char s[] = "_a_bc__d_";
-    BEGIN_TESTS;
     TESTCASE( strtok( s, "_" ) == &s[1] );
     TESTCASE( s[1] == 'a' );
     TESTCASE( s[2] == '\0' );

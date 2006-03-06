@@ -41,9 +41,8 @@ size_t strspn( const char * s1, const char * s2 )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( strspn( abcde, "abc" ) == 3 );
     TESTCASE( strspn( abcde, "b" ) == 0 );
     TESTCASE( strspn( abcde, abcde ) == 5 );

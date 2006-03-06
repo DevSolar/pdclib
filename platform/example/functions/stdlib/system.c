@@ -8,6 +8,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <stdlib.h>
+
 /* This is an example implementation of system() fit for use with POSIX kernels.
 */
 
@@ -16,13 +18,13 @@
 
 int system( const char * string )
 {
-    char * const argv[] = { "sh", "-c", (char * const)string, NULL };
+    char const * const argv[] = { "sh", "-c", (char const * const)string, NULL };
     if ( string != NULL )
     {
         int pid = fork();
         if ( pid == 0 )
         {
-            execve( "/bin/sh", argv, NULL );
+            execve( "/bin/sh", (char * * const)argv, NULL );
         }
         else if ( pid > 0 )
         {
@@ -34,13 +36,11 @@ int system( const char * string )
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
-#include <_PDCLIB_config.h>
 
 #define SHELLCOMMAND "echo 'SUCCESS testing system()'"
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( system( SHELLCOMMAND ) );
     return TEST_RESULTS;
 }

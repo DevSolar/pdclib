@@ -23,10 +23,9 @@ long long int llabs( long long int j )
 #include <_PDCLIB_test.h>
 #include <limits.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
-    TESTCASE( llabs( 0 ) == 0 );
+    TESTCASE( llabs( 0ll ) == 0 );
     TESTCASE( llabs( LLONG_MAX ) == LLONG_MAX );
     TESTCASE( llabs( LLONG_MIN + 1 ) == -( LLONG_MIN + 1 ) );
     return TEST_RESULTS;

@@ -32,9 +32,8 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     /* basic functionality */
     TESTCASE( _PDCLIB_atomax( "123" ) == 123 );
     /* testing skipping of leading whitespace and trailing garbage */

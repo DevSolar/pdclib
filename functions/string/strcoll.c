@@ -23,11 +23,10 @@ int strcoll( const char * s1, const char * s2 )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char cmpabcde[] = "abcde";
     char empty[] = "";
-    BEGIN_TESTS;
     TESTCASE( strcmp( abcde, cmpabcde ) == 0 );
     TESTCASE( strcmp( abcde, abcdx ) < 0 );
     TESTCASE( strcmp( abcdx, abcde ) > 0 );

@@ -154,5 +154,7 @@ point conversions, and the wide-/multibyte-character functions.
 
 v0.5 - unreleased
 Implementations for parts of <stdio.h>. Bug fixes. Still no locale /
-wide-char support.
+wide-char support. Enabled all GCC compiler warnings I could find, and
+fixed everything that threw a warning. Fixed all open bugs in the v0.4
+release.
 

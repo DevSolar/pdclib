@@ -8,8 +8,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
-#include <_PDCLIB_config.h>
+#include <stdlib.h>
+#include <_PDCLIB_glue.h>
 
 #ifndef REGTEST
 
@@ -24,10 +24,11 @@ void _Exit( int status )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
-    /* TODO: Add testdrivers after flush / close / tmpfile is implemented. */
+    int UNEXPECTED_RETURN = 0;
+    _Exit( 0 );
+    TESTCASE( UNEXPECTED_RETURN );
     return TEST_RESULTS;
 }
 

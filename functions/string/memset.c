@@ -27,10 +27,9 @@ void * memset( void * s, int c, size_t n )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char s[] = "xxxxxxxxx";
-    BEGIN_TESTS;
     TESTCASE( memset( s, 'o', 10 ) == s );
     TESTCASE( s[9] == 'o' );
     TESTCASE( memset( s, '_', 0 ) == s );

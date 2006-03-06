@@ -28,6 +28,12 @@
 /* specific platforms, e.g. by swapping int instead of char.                  */
 #define _PDCLIB_memswp( i, j, size ) char tmp; do { tmp = *i; *i++ = *j; *j++ = tmp; } while ( --size );
 
+/* Define this to some compiler directive that can be written after the       */
+/* parameter list of a function declaration to indicate the function does     */
+/* never return. If your compiler does not support such a directive, define   */
+/* to nothing. (This is to avoid warnings with the exit functions under GCC.) */
+#define _PDCLIB_NORETURN __attribute__(( noreturn ))
+
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -201,14 +207,11 @@ typedef char * _PDCLIB_va_list;
 #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
 
 /* -------------------------------------------------------------------------- */
-/* OS "glue"                                                                  */
-/* This is where PDCLib interfaces with the operating system. The examples    */
-/* below are POSIX calls; provide your OS' equivalents.                       */
+/* OS "glue", part 1                                                          */
+/* These are values and data type definitions that you would have to adapt to */
+/* the capabilities and requirements of your OS.                              */
+/* The actual *functions* of the OS interface are declared in _PDCLIB_glue.h. */
 /* -------------------------------------------------------------------------- */
-
-/* A system call that terminates the calling process */
-void _exit( int status ) __attribute__(( noreturn ));
-#define _PDCLIB_Exit( x ) _exit( x )
 
 /* Memory management */
 
@@ -223,9 +226,24 @@ void _exit( int status ) __attribute__(( noreturn ));
 */
 #define _PDCLIB_MINALLOC 8
 
-/* Request another x pages (of size _PDCLIB_PAGESIZE) of memory from the kernel,
-   or release them back to the kernel if n is negative.
-   Return a (void *) pointing to the former end-of-heap if successful, NULL
-   otherwise.
-*/
-void * _PDCLIB_allocpages( int n );
+/* I/O */
+
+/* The unique file descriptor returned by _PDCLIB_open(). */
+typedef int _PDCLIB_fd_t;
+
+/* A type in which to store file offsets. See fgetpos() / fsetpos(). */
+typedef struct
+{
+    int position;
+    int parse_state;
+} _PDCLIB_fpos_t;
+
+/* The mode flags used in calls to _PDCLIB_open(). */
+enum _PDCLIB_iomode_e
+{
+    _PDCLIB_io_read     = 1,
+    _PDCLIB_io_write    = 2,
+    _PDCLIB_io_append   = 4,
+    _PDCLIB_io_create   = 8,
+    _PDCLIB_io_truncate = 16,
+};

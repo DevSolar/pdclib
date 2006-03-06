@@ -30,10 +30,9 @@ void * calloc( size_t nmemb, size_t size )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char * s;
-    BEGIN_TESTS;
     TESTCASE( ( s = calloc( 3, 2 ) ) != NULL );
     TESTCASE( s[0] == '\0' );
     TESTCASE( s[5] == '\0' );

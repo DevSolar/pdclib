@@ -39,20 +39,19 @@ const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
     {
         *base = 10;
     }
-    return p;
+    return ( ( *base >= 2 ) && ( *base <= 36 ) ) ? p : NULL;
 }
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     int base = 0;
     char sign = '\0';
     char test1[] = "  123";
     char test2[] = "\t+0123";
     char test3[] = "\v-0x123";
-    BEGIN_TESTS;
     TESTCASE( _PDCLIB_strtox_prelim( test1, &sign, &base ) == &test1[2] );
     TESTCASE( sign == '+' );
     TESTCASE( base == 10 );
@@ -71,6 +70,10 @@ int main()
     TESTCASE( _PDCLIB_strtox_prelim( test3, &sign, &base ) == &test3[2] );
     TESTCASE( sign == '-' );
     TESTCASE( base == 10 );
+    base = 1;
+    TESTCASE( _PDCLIB_strtox_prelim( test3, &sign, &base ) == NULL );
+    base = 37;
+    TESTCASE( _PDCLIB_strtox_prelim( test3, &sign, &base ) == NULL );
     return TEST_RESULTS;
 }
 

@@ -40,10 +40,9 @@ void * memmove( void * s1, const void * s2, size_t n )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char s[] = "xxxxabcde";
-    BEGIN_TESTS;
     TESTCASE( memmove( s, s + 4, 5 ) == s );
     TESTCASE( s[0] == 'a' );
     TESTCASE( s[4] == 'e' );

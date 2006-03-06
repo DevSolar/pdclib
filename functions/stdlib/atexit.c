@@ -36,14 +36,14 @@ int atexit( void (*func)( void ) )
 
 static int flags[ 32 ];
 
-static void counthandler()
+static void counthandler( void )
 {
-    static int rc = 0;
-    flags[ rc ] = rc;
-    ++rc;
+    static int count = 0;
+    flags[ count ] = count;
+    ++count;
 }
 
-static void checkhandler()
+static void checkhandler( void )
 {
     for ( int i = 0; i < 31; ++i )
     {
@@ -51,9 +51,8 @@ static void checkhandler()
     }
 }
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( atexit( &checkhandler ) == 0 );
     for ( int i = 0; i < 31; ++i )
     {

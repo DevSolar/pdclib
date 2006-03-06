@@ -10,6 +10,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+
+#ifndef REGTEST
 
 #ifndef _PDCLIB_AUX_H
 #define _PDCLIB_AUX_H _PDCLIB_AUX_H
@@ -32,25 +35,25 @@ void _PDCLIB_assert( char const * const message )
 }
 #endif
 
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
 #include <signal.h>
 
-static int rc = 0;
 static int EXPECTED_ABORT = 0;
 static int UNEXPECTED_ABORT = 1;
 
-void aborthandler( int signal )
+static void aborthandler( int sig )
 {
     TESTCASE( ! EXPECTED_ABORT );
-    exit( rc );
+    exit( (signed int)rc );
 }
 
 #define NDEBUG
 #include <assert.h>
 
-int disabled_test()
+static int disabled_test( void )
 {
     int i = 0;
     assert( i == 0 ); /* NDEBUG set, condition met */
@@ -61,10 +64,10 @@ int disabled_test()
 #undef NDEBUG
 #include <assert.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( signal( SIGABRT, &aborthandler ) != SIG_ERR );
+    TESTCASE( disabled_test() == 0 );
     assert( UNEXPECTED_ABORT ); /* NDEBUG not set, condition met */
     assert( EXPECTED_ABORT ); /* NDEBUG not set, condition fails - should abort */
     return TEST_RESULTS;

@@ -42,14 +42,13 @@ void * bsearch( const void * key, const void * base, size_t nmemb, size_t size, 
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int compare( const void * left, const void * right )
+static int compare( const void * left, const void * right )
 {
     return *( (unsigned char *)left ) - *( (unsigned char *)right );
 }
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( bsearch( "e", abcde, 4, 1, compare ) == NULL );
     TESTCASE( bsearch( "e", abcde, 5, 1, compare ) == &abcde[4] );
     TESTCASE( bsearch( "a", abcde + 1, 4, 1, compare ) == NULL );

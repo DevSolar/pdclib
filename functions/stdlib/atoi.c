@@ -22,9 +22,8 @@ int atoi( const char * s )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     /* no tests for a simple wrapper */
     return TEST_RESULTS;
 }

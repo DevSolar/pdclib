@@ -27,9 +27,8 @@ size_t strlen( const char * s )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( strlen( abcde ) == 5 );
     TESTCASE( strlen( "" ) == 0 );
     return TEST_RESULTS;

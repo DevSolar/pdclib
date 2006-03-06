@@ -36,9 +36,8 @@ char * strpbrk( const char * s1, const char * s2 )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     TESTCASE( strpbrk( abcde, "x" ) == NULL );
     TESTCASE( strpbrk( abcde, "xyz" ) == NULL );
     TESTCASE( strpbrk( abcdx, "x" ) == &abcdx[4] );

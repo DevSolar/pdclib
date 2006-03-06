@@ -28,10 +28,9 @@ void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, siz
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char s[] = "xxxxxxxxxxx";
-    BEGIN_TESTS;
     TESTCASE( memcpy( s, abcde, 6 ) == s );
     TESTCASE( s[4] == 'e' );
     TESTCASE( s[5] == '\0' );

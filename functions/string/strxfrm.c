@@ -31,10 +31,9 @@ size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     char s[] = "xxxxxxxxxxx";
-    BEGIN_TESTS;
     TESTCASE( strxfrm( NULL, "123456789012", 0 ) == 12 );
     TESTCASE( strxfrm( s, "123456789012", 12 ) == 12 );
     /*

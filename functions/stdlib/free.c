@@ -42,9 +42,8 @@ void free( void * ptr )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
-    BEGIN_TESTS;
     /* tests covered in malloc test driver */
     return TEST_RESULTS;
 }

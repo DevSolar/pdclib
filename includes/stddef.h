@@ -30,7 +30,10 @@ typedef _PDCLIB_size_t size_t;
 
 typedef _PDCLIB_wchar_t   wchar_t;
 
+#ifndef _PDCLIB_NULL_DEFINED
+#define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED
 #define NULL _PDCLIB_NULL
+#endif
 
 #define offsetof( type, member ) _PDCLIB_offsetof( type, member )
 

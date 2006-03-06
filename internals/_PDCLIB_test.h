@@ -19,7 +19,8 @@ char const abcdx[] = "abcdx";
 
 int NO_TESTDRIVER = 0;
 
-#define BEGIN_TESTS   unsigned int rc = 0
+//#define BEGIN_TESTS   unsigned int rc = 0
+static unsigned int rc = 0;
 #define TESTCASE( x ) if ( x ) {} \
                       else { rc += 1; printf( "Testcase failed: " __FILE__ ", line %d - " #x "\n", __LINE__ ); }
 #define TEST_RESULTS  rc
