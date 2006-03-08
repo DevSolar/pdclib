@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* 7.7 Characteristics of floating types <float.h>
 
    This file is part of the Public Domain C Library (PDCLib).

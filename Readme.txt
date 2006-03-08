@@ -1,3 +1,5 @@
+$Id$
+
 PDCLib - Public Domain C Library
 ================================
 

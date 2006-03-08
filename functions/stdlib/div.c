@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* div( int, int )
 
    This file is part of the Public Domain C Library (PDCLib).

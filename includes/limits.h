@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* 7.10 Sizes of integer types <limits.h>
 
    This file is part of the Public Domain C Library (PDCLib).

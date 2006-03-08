@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* atexit( void (*)( void ) )
 
    This file is part of the Public Domain C Library (PDCLib).

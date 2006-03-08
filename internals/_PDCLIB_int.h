@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* PDCLib internal integer logic <_PDCLIB_int.h>
 
    This file is part of the Public Domain C Library (PDCLib).

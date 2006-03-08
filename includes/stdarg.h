@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* 7.15 Variable arguments <stdarg.h> 
 
    This file is part of the Public Domain C Library (PDCLib).

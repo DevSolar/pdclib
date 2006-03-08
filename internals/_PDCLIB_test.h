@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* PDCLib testing suite <_PDCLIB_test.h>
 
    This file is part of the Public Domain C Library (PDCLib).

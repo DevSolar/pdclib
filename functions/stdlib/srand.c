@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* srand( unsigned int )
 
    This file is part of the Public Domain C Library (PDCLib).

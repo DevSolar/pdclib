@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* 7.17 Common definitions <stddef.h>
 
    This file is part of the Public Domain C Library (PDCLib).
