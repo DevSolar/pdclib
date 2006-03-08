@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* OS glue functions declaration <_PDCLIB_glue.h>
 
    This file is part of the Public Domain C Library (PDCLib).

@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* setvbuf( FILE *, char *, int, size_t )
 
    This file is part of the Public Domain C Library (PDCLib).

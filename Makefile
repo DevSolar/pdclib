@@ -1,3 +1,5 @@
+# $Id$
+
 # This is a list of all non-source files that are part of the distribution.
 AUXFILES := Makefile Readme.txt
 

@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* _PDCLIB_strtox_main( const char * *, int, _PDCLIB_uintmax_t, _PDCLIB_uintmax_t, int )
 
    This file is part of the Public Domain C Library (PDCLib).

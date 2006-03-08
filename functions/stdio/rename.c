@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* rename( const char *, const char * )
 
    This file is part of the Public Domain C Library (PDCLib).

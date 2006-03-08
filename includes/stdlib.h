@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* General utilities <stdlib.h>
 
    This file is part of the Public Domain C Library (PDCLib).

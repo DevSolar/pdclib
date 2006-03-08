@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* vfprintf( FILE *, const char *, va_list )
 
    This file is part of the Public Domain C Library (PDCLib).

@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* setbuf( FILE *, char * )
 
    This file is part of the Public Domain C Library (PDCLib).

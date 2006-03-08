@@ -1,7 +1,5 @@
 /* $Id$ */
 
-/* Release $Name$ */
-
 /* 7.18 Integer types <stdint.h>
 
    This file is part of the Public Domain C Library (PDCLib).
