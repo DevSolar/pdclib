@@ -251,6 +251,28 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_UINTMAX_C( value ) concat( value, concat( u, _PDCLIB_INTMAX_LITERAL ) )
 
 /* -------------------------------------------------------------------------- */
+/* Various <stdio.h> internals                                                */
+/* -------------------------------------------------------------------------- */
+
+/* Flags for representing mode (see fopen()). */
+#define _PDCLIB_FREAD    1
+#define _PDCLIB_FWRITE   2
+#define _PDCLIB_FAPPEND  4
+#define _PDCLIB_FRW      8
+#define _PDCLIB_FBIN    16
+
+struct
+{
+    _PDCLIB_fd_t   handle;   /* OS-specific file descriptor */
+    _PDCLIB_fpos_t position; /* file position indicator */
+    void *         buffer;   /* file buffer */
+    size_t         bufsize;  /* size of buffer */
+    int            status;   /* misc. status bits */
+  /*mbstate_t      mbstate;*//* multibyte parse state */ /* TODO: Unmask. */
+    FILE *         next;     /* provisions for linked list handling */
+} _PDCLIB_file_t;
+
+/* -------------------------------------------------------------------------- */
 /* Declaration of helper functions (implemented in functions/_PDCLIB).        */
 /* -------------------------------------------------------------------------- */
 
