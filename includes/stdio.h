@@ -123,16 +123,84 @@ int vsprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, _
 int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
 
 /* Character input/output functions */
+
+/* Retrieve the next character from given stream. Returns the character, cast
+   to int, if successful. If EOF is reached, the EOF indicator of the stream
+   is set and EOF returned. If a read error occurs, the error indicator of the
+   stream is set and EOF returned.
+*/
 int fgetc( FILE * stream );
+
+/* Reads at most n-1 characters from given stream into the array s, stopping at
+   \n or EOF. The string read is terminated with \n. Returns s if successful.
+   If EOF is encountered before any characters are read, the contents of s are
+   unchanged, and NULL is returned. If a read error occurs, the contents of s
+   are indeterminate, and NULL is returned.
+*/
 char * fgets( char * _PDCLIB_restrict s, int n, FILE * _PDCLIB_restrict stream );
+
+/* Write the value c (cast to unsigned char) to the given stream. Returns c if
+   successful. If a write error occurs, sets the error indicator of the stream
+   and returns EOF.
+*/
 int fputc( int c, FILE * stream );
+
+fputs( s, stream ) - write s to stream (not including terminating \0). Return >0 if
+                     successful, EOF on write error. (No mention of err!)
+
+/* Write the string s (not including the terminating \0) to the given stream.
+   Returns a value >=0 if successful, EOF if a write error occurs. (The
+   standard does not mention the error indicator; this implementation does set
+   it in such a case.)
+*/
 int fputs( const char * _PDCLIB_restrict s, FILE * _PDCLIB_restrict stream );
-int getc( FILE * stream );
-int getchar( void );
+
+/* Equivalent to fgetc( stream ), but may be implemented as a macro that
+   evaluates its parameter more than once.
+*/
+#define getc( stream ) fgetc( stream )
+
+/* Equivalent to fgetc( stdin ), but may be implemented as a macro. */
+#define getchar() fgetc( stdin )
+
+/* Read characters from given stream into the array s, stopping at \n or EOF.
+   The string read is terminated with \0. Returns s if successful. If EOF is
+   encountered before any characters are read, the contents of s are unchanged,
+   and NULL is returned. If a read error occurs, the contents of s are indeter-
+   minate, and NULL is returned.
+*/
 char * gets( char * s );
-int putc( int c, FILE * stream );
+
+/* Equivalent to fputc( c, stream ), but may be implemented as a macro that
+   evaluates its parameter more than once.
+*/
+#define putc( c, stream ) fputc( c, stream )
+
+/* Equivalent to fputc( c, stdout ), but may be implemented as a macro that
+   evaluates its parameter more than once.
+*/
 int putchar( int c );
+
+/* Write the string s (not including the terminating \0) to stdout, and append
+   a newline to the output. Returns a value >= 0 when successful, EOF if a
+   write error occurred.
+*/
 int puts( const char * s );
+
+/* Push the value c (cast to unsigned char) back onto the given (input) stream.
+   A character pushed back in this way will be delivered by subsequent read
+   operations (and skipped by subsequent file positioning operations) as if it
+   has not been read. The external representation of the stream is unaffected
+   by this pushback (it is a buffer operation). One character of pushback is
+   guaranteed, further pushbacks may fail. EOF as value for c does not change
+   the input stream and results in failure of the function.
+   For text files, the file position indicator is indeterminate until all
+   pushed-back characters are read. For binary files, the file position
+   indicator is decremented by each successful call of ungetc(). If the file
+   position indicator for a binary file was zero before the call of ungetc(),
+   behaviour is undefined. (Older versions of the library allowed such a call.)
+   Returns the pushed-back character if successful, EOF if it fails.
+*/
 int ungetc( int c, FILE * stream );
 
 /* Direct input/output functions */
