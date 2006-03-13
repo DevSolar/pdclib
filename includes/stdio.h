@@ -204,7 +204,23 @@ int puts( const char * s );
 int ungetc( int c, FILE * stream );
 
 /* Direct input/output functions */
+
+/* Read up to nmemb elements of given size from given stream into the buffer
+   pointed to by ptr. Returns the number of elements successfully read, which
+   may be less than nmemb if a read error or EOF is encountered. If a read
+   error is encountered, the value of the file position indicator is
+   indeterminate. If a partial element is read, its value is indeterminate.
+   If size or nmemb are zero, the function does nothing and returns zero.
+*/
 size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, FILE * _PDCLIB_restrict stream );
+
+/* Write up to nmemb elements of given size from buffer pointed to by ptr to
+   the given stream. Returns the number of elements successfully written, which
+   will be less than nmemb only if a write error is encountered. If a write
+   error is encountered, the value of the file position indicator is
+   indeterminate. If size or nmemb are zero, the function does nothing and
+   returns zero.
+*/
 size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, FILE * _PDCLIB_restrict stream );
 
 /* File positioning functions */
