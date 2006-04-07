@@ -180,19 +180,478 @@ void setbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf );
 int setvbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mode, size_t size );
 
 /* Formatted input/output functions */
+
+/*
+   Write output to the given stream, as defined by the given format string and
+   0..n subsequent arguments (the argument stack).
+
+   The format string is written to the given stream verbatim, except for any
+   conversion specifiers included, which start with the letter '%' and are
+   documented below. If the given conversion specifiers require more arguments
+   from the argument stack than provided, behaviour is undefined. Additional
+   arguments not required by conversion specifiers are evaluated but otherwise
+   ignored.
+
+   (The standard specifies the format string is allowed to contain multibyte
+   character sequences as long as it starts and ends in initial shift state,
+   but this is not yet supported by this implementation, which interprets the
+   format string as sequence of char.)
+   TODO: Add multibyte support to printf() functions.
+
+   A conversion specifier consists of:
+   - Zero or more flags (one of the characters "-+ #0").
+   - Optional minimum field width as decimal integer. Default is padding to the
+     left, using spaces. Note that 0 is taken as a flag, not the beginning of a
+     field width. Note also that a small field width will not result in the
+     truncation of a value.
+   - Optional precision (given as ".#" with # being a decimal integer),
+     specifying:
+     - the min. number of digits to appear (diouxX),
+     - the max. number of digits after the decimal point (aAeEfF),
+     - the max. number of significant digits (gG),
+     - the max. number of bytes to be written (s).
+     - behaviour with other conversion specifiers is undefined.
+   - Optional length modifier specifying the size of the argument (one of "hh",
+     "ll", or one of the characters "hljztL").
+   - Conversion specifier character specifying the type of conversion to be
+     applied (and the type of the next argument from the argument stack). One
+     of the characters "diouxXfFeEgGaAcspn%".
+
+   Minimum field width and/or precision may be given as asterisk ('*') instead
+   of a decimal integer. In this case, the next argument from the argument
+   stack is assumed to be an int value specifying the width / precision. A
+   negative field width is interpreted as flag '-' followed by a positive field
+   width. A negative precision is interpreted as if no precision was given.
+
+   FLAGS
+   -     Left-justify the conversion result within its field width.
+   +     Prefix a '+' on positive signed conversion results. Prefix a '-' on
+         floating conversions resulting in negative zero, or negative values
+         rounding to zero.
+   space Prefix a space on positive signed conversion results, or if a signed
+         conversion results in no characters. If both '+' and ' ' are given,
+         ' ' is ignored.
+   #     Use an "alternative form" for
+         - 'o' conversion, increasing precision until the first digit of the
+           result is a zero;
+         - 'x' or 'X' conversion, prefixing "0x" or "0X" to nonzero results;
+         - "aAeEfF" conversions, always printing a decimal point even if no
+           digits are following;
+         - 'g' or 'G' conversions, always printing a decimal point even if no
+           digits are following, and not removing trailing zeroes.
+         - behaviour for other conversions is unspecified.
+   0     Use leading zeroes instead of spaces for field width padding. If both
+         '-' and '0' are given, '0' is ignored. If a precision is specified for
+         any of the "diouxX" conversions, '0' is ignored. Behaviour is only
+         defined for "diouxXaAeEfFgG".
+
+   LENGTH MODIFIERS
+   hh  For "diouxX" conversions, the argument from the argument stack is
+       assumed to be of char width. (It will have been subject to integer
+       promotion but will be converted back.) For 'n' conversions, the argument
+       is assumed to be a pointer to signed char.
+   h   For "diouxX" conversions, the argument from the argument stack is
+       assumed to be of short int width. (It will have been subject to integer
+       promotion but will be converted back.) For 'n' conversions, the argument
+       is assumed to be a pointer to short int.
+   l   For "diouxX" conversions, the argument from the argument stack is
+       assumed to be of long int width. For 'n' conversions, the argument is
+       assumed to be a pointer to short int. For 'c' conversions, the argument
+       is assumed to be a wint_t. For 's' conversions, the argument is assumed
+       to be a pointer to wchar_t. No effect on "aAeEfFgG" conversions.
+   ll  For "diouxX" conversions, the argument from the argument stack is
+       assumed to be of long long int width. For 'n' conversions, the argument
+       is assumed to be a pointer to long long int.
+   j   For "diouxX" conversions, the argument from the argument stack is
+       assumed to be of intmax_t width. For 'n' conversions, the argument is
+       assumed to be a pointer to intmax_t.
+   z   For "diouxX" conversions, the argument from the argument stack is
+       assumed to be of size_t width. For 'n' conversions, the argument is
+       assumed to be a pointer to size_t.
+   t   For "diouxX" conversions, the argument from the argument stack is
+       assumed to be of ptrdiff_t width. For 'n' conversions, the argument is
+       assumed to be a pointer to ptrdiff_t.
+   L   For "aAeEfFgG" conversions, the argument from the argument stack is
+       assumed to be a long double.
+   Length modifiers appearing for any conversions not mentioned above will have
+   undefined behaviour.
+   If a length modifier appears with any conversion specifier other than as
+   specified above, the behavior is undefined.
+
+   CONVERSION SPECIFIERS
+   d,i The argument from the argument stack is assumed to be of type int, and
+       is converted to a signed decimal value with a minimum number of digits
+       as specified by the precision (default 1), padded with leading zeroes.
+       A zero value converted with precision zero yields no output.
+   o   The argument from the argument stack is assumed to be of type unsigned
+       int, and is converted to an unsigned octal value, other behaviour being
+       as above.
+   u   The argument from the argument stack is assumed to be of type unsigned
+       int, and converted to an unsigned decimal value, other behaviour being
+       as above.
+   x,X The argument from the argument stack is assumed to be of type unsigned
+       int, and converted to an unsigned hexadecimal value, using lowercase
+       "abcdef" for 'x' and uppercase "ABCDEF" for 'X' conversion, other
+       behaviour being as above.
+   f,F The argument from the argument stack is assumed to be of type double,
+       and converted to a decimal floating point in decimal-point notation,
+       with the number of digits after the decimal point as specified by the
+       precision (default 6) and the value being rounded appropriately. If
+       precision is zero (and the '#' flag is not given), no decimal point is
+       printed. At least one digit is always printed before the decimal point.
+       For 'f' conversions, an infinity value is printed as either [-]inf or
+       [-]infinity (, depending on the configuration of this implementation. A
+       NaN value is printed as [-]nan. For 'F' conversions uppercase characters
+       are used for these special values. The flags '-', '+' and ' ' apply as
+       usual to these special values, '#' and '0' have no effect.
+   e,E The argument from the argument stack is assumed to be of type double,
+       and converted to a decimal floating point in normalized exponential
+       notation ([?]d.ddd e±dd). "Normalized" means one nonzero digit before
+       the decimal point, unless the value is zero. The number of digits after
+       the decimal point is specified by the precision (default 6), the value
+       being rounded appropriately. If precision is zero (and the '#' flag is
+       not given), no decimal point is printed. The exponent has at least two
+       digits, and not more than necessary to represent the exponent. If the
+       value is zero, the exponent is zero. The 'e' written to indicate the
+       exponend is uppercase for 'E' conversions.
+       Infinity or NaN values are represented as for 'f' and 'F' conversions,
+       respectively.
+   g,G The argument from the argument stack is assumed to be of type double,
+       and converted according to either 'f' or 'e' format for 'g' conversions,
+       or 'F' or 'E' format for 'G' conversions, respectively, with the actual
+       conversion chosen depending on the value. 'e' / 'E' conversion is chosen
+       if the resulting exponent is < -4 or >= the precision (default 1).
+       Trailing zeroes are removed (unless the '#' flag is given). A decimal
+       point appears only if followed by a digit.
+       Infinity or NaN values are represented as for 'f' and 'F' conversions,
+       respectively.
+   a,A The argument from the argument stack is assumed to be of type double,
+       and converted to a floating point hexadecimal notation ([?]0xh.hhhh p±d)
+       with one hexadecimal digit (being nonzero if the value is normalized,
+       and otherwise unspecified) before the decimal point, and the number of
+       digits after the decimal point being specified by the precision. If no
+       precision is given, the default is to print as many digits as nevessary
+       to give an exact representation of the value (if FLT_RADIX is a power of
+       2). If no precision is given and FLT_RADIX is not a power of 2, the
+       default is to print as many digits to distinguish values of type double
+       (possibly omitting trailing zeroes). (A precision p is sufficient to
+       distinguish values of the source type if 16^p-1 > b^n where b is
+       FLT_RADIX and n is the number of digits in the significand (to base b)
+       of the source type. A smaller p might suffice depending on the
+       implementation's scheme for determining the digit to the left of the
+       decimal point.) The error has the correct sign for the current rounding
+       direction.
+       Unless the '#' flag is given, no decimal-point is given for zero
+       precision.
+       The 'a' conversion uses lowercase "abcdef", "0x" and 'p', the 'A'
+       conversion uppercase "ABCDEF", "0X" and 'P'.
+       The exponent always has at least one digit, and not more than necessary
+       to represent the decimal exponent of 2. If the value is zero, the
+       exponent is zero.
+       Infinity or NaN values are represented as for 'f' and 'F' conversions,
+       respectively.
+       Binary implementations are at liberty to chose the hexadecimal digit to
+       the left of the decimal point so that subsequent digits align to nibble
+       boundaries.
+   c   The argument from the argument stack is assumed to be of type int, and
+       converted to a character after the value has been cast to unsigned char.
+       If the 'l' length modifier is given, the argument is assumed to be of
+       type wint_t, and converted as by a "%ls" conversion with no precision
+       and a pointer to a two-element wchar_t array, with the first element
+       being the wint_t argument and the second a '\0' wide character.
+   s   The argument from the argument stack is assumed to be a char array (i.e.
+       pointer to char). Characters from that array are printed until a zero
+       byte is encountered or as many bytes as specified by a given precision
+       have been written.
+       If the l length modifier is given, the argument from the argument stack
+       is assumed to be a wchar_t array (i.e. pointer to wchar_t). Wide
+       characters from that array are converted to multibyte characters as by
+       calls to wcrtomb() (using a mbstate_t object initialized to zero prior
+       to the first conversion), up to and including the terminating null wide
+       character. The resulting multibyte character sequence is then printed up
+       to but not including the terminating null character. If a precision is
+       given, it specifies the maximum number of bytes to be written (including
+       shift sequences). If the given precision would require access to a wide
+       character one past the end of the array, the array shall contain a '\0'
+       wide character. In no case is a partial multibyte character written.
+       Redundant shift sequences may result if the multibyte characters have a
+       state-dependent encoding.
+       TODO: Clarify these statements regarding %ls.
+   p   The argument from the argument stack is assumed to be a void pointer,
+       and converted to a sequence of printing characters in an implementation-
+       defined manner.
+       This implementation casts the pointer to type intptr_t, and prints the
+       value as if a %#x conversion specifier was given.
+   n   The argument from the argument stack is assumed to be a pointer to a
+       signed integer, into which the number of characters written so far by
+       this call to fprintf is stored. The behaviour, should any flags, field
+       widths, or precisions be given is undefined.
+   %   A verbatim '%' character is written. No argument is taken from the
+       argument stack.
+
+   Returns the number of characters written if successful, a negative value
+   otherwise.
+*/
 int fprintf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
+
+/* TODO: fscanf() documentation */
+/*
+   Write output to the given stream, as defined by the given format string and
+   0..n subsequent arguments (the argument stack).
+
+   The format string is written to the given stream verbatim, except for any
+   conversion specifiers included, which start with the letter '%' and are
+   documented below. If the given conversion specifiers require more arguments
+   from the argument stack than provided, behaviour is undefined. Additional
+   arguments not required by conversion specifiers are evaluated but otherwise
+   ignored.
+
+   (The standard specifies the format string is allowed to contain multibyte
+   character sequences as long as it starts and ends in initial shift state,
+   but this is not yet supported by this implementation, which interprets the
+   format string as sequence of char.)
+   TODO: Add multibyte support to printf() functions.
+
+   Read input from the given stream, as defined by the given format string and
+   0..n subsequent arguments (the argument stack).
+
+   The format string contains a sequence of directives that are expected to
+   match the input. If such a directive fails to match, the function returns
+   (matching error). It also returns if an input error occurs (input error).
+
+   Directives can be:
+   - one or more whitespaces, matching any number of whitespaces in the input;
+   - printing characters, matching the input verbatim;
+   - conversion specifications, which convert an input sequence into a value as
+     defined by the individual specifier, and store that value in a memory
+     location pointed to by the next pointer on the argument stack. Details are
+     documented below. If there is an insufficient number of pointers on the
+     argument stack, behaviour is undefined. Additional arguments not required
+     by any conversion specifications are evaluated, but otherwise ignored.
+
+The format shall be a multibyte character sequence, beginning and ending in its initial
+shift state. The format is composed of zero or more directives: one or more white-space
+characters, an ordinary multibyte character (neither % nor a white-space character), or a
+conversion speci?cation. Each conversion speci?cation is introduced by the character %.
+After the %, the following appear in sequence:
+? An optional assignment-suppressing character *.
+? An optional nonzero decimal integer that speci?es the maximum ?eld width (in
+    characters).
+? An optional length modi?er that speci?es the size of the receiving object.
+? A conversion speci?er character that speci?es the type of conversion to be applied.
+The fscanf function executes each directive of the format in turn. If a directive fails, as
+detailed below, the function returns. Failures are described as input failures (due to the
+occurrence of an encoding error or the unavailability of input characters), or matching
+failures (due to inappropriate input).
+A directive composed of white-space character(s) is executed by reading input up to the
+?rst non-white-space character (which remains unread), or until no more characters can
+be read.
+A directive that is an ordinary multibyte character is executed by reading the next
+characters of the stream. If any of those characters differ from the ones composing the
+directive, the directive fails and the differing and subsequent characters remain unread.
+Similarly, if end-of-?le, an encoding error, or a read error prevents a character from being
+read, the directive fails.
+A directive that is a conversion speci?cation de?nes a set of matching input sequences, as
+described below for each speci?er. A conversion speci?cation is executed in the
+following steps:
+Input white-space characters (as speci?ed by the isspace function) are skipped, unless
+the speci?cation includes a [, c, or n speci?er.241)
+These white-space characters are not counted against a speci?ed ?eld width.
+An input item is read from the stream, unless the speci?cation includes an n speci?er. An
+input item is de?ned as the longest sequence of input characters which does not exceed
+any speci?ed ?eld width and which is, or is a pre?x of, a matching input sequence.242)
+fscanf pushes back at most one input character onto the input stream. Therefore, some sequences
+that are acceptable to strtod, strtol, etc., are unacceptable to fscanf.
+The ?rst character, if any, after the input item remains unread. If the length of the input
+item is zero, the execution of the directive fails; this condition is a matching failure unless
+end-of-?le, an encoding error, or a read error prevented input from the stream, in which
+case it is an input failure.
+Except in the case of a % speci?er, the input item (or, in the case of a %n directive, the
+count of input characters) is converted to a type appropriate to the conversion speci?er. If
+the input item is not a matching sequence, the execution of the directive fails: this
+condition is a matching failure. Unless assignment suppression was indicated by a *, the
+result of the conversion is placed in the object pointed to by the ?rst argument following
+the format argument that has not already received a conversion result. If this object
+does not have an appropriate type, or if the result of the conversion cannot be represented
+in the object, the behavior is unde?ned.
+The length modi?ers and their meanings are:
+   
+   LENGTH MODIFIERS
+   hh  For "diouxXn" conversions, the next pointer from the argument stack is
+       assumed to point to a variable of of char width.
+   h   For "diouxXn" conversions, the next pointer from the argument stack is
+       assumed to point to a variable of short int width.
+   l   For "diouxXn" conversions, the next pointer from the argument stack is
+       assumed to point to a variable of long int width.
+       For "aAeEfFgG" conversions, it is assumed to point to a variable of type
+       double.
+       For "cs[" conversions, it is assumed to point to a variable of type
+       wchar_t.
+   ll  For "diouxXn" conversions, the next pointer from the argument stack is
+       assumed to point to a variable of long long int width.
+   j   For "diouxXn" conversions, the next pointer from the argument stack is
+       assumed to point to a variable of intmax_t width.
+   z   For "diouxXn" conversions, the next pointer from the argument stack is
+       assumed to point to a variable of size_t width.
+   t   For "diouxXn" conversions, the next pointer from the argument stack is
+       assumed to point to a variable of ptrdiff_t width.
+   L   For "aAeEfFgG" conversions, the next pointer from the argument stack is
+       assumed to point to a variable of type long double.
+   Length modifiers appearing for any conversions not mentioned above will have
+   undefined behaviour.
+   If a length modifier appears with any conversion specifier other than as
+   specified above, the behavior is undefined.
+
+   CONVERSION SPECIFIERS
+   d    Matches an (optionally signed) decimal integer of the format expected
+        by strtol() with base 10. The next pointer from the argument stack is
+        assumed to point to a signed integer.
+   i    Matches an (optionally signed) integer of the format expected by
+        strtol() with base 0. The next pointer from the argument stack is
+        assumed to point to a signed integer.
+   o    Matches an (optionally signed) octal integer of the format expected by
+        strtoul() with base 8. The next pointer from the argument stack is
+        assumed to point to an unsigned integer.
+   u    Matches an (optionally signed) decimal integer of the format expected
+        by strtoul() with base 10. The next pointer from the argument stack is
+        assumed to point to an unsigned integer.
+   x    Matches an (optionally signed) hexadecimal integer of the format
+        expected by strtoul() with base 16. The next pointer from the argument
+        stack is assumed to point to an unsigned integer.
+   aefg Matches an (optionally signed) floating point number, infinity, or not-
+        a-number-value of the format expected by strtod(). The next pointer
+        from the argument stack is assumed to point to a float.
+   c    Matches a number of characters as specified by the field width (default
+        1). The next pointer from the argument stack is assumed to point to a
+        character array large enough to hold that many characters.
+        If the 'l' length modifier is given, the input is assumed to match a
+        sequence of multibyte characters (starting in the initial shift state),
+        which will be converted to a wide character sequence as by successive
+        calls to mbrtowc() with a mbstate_t object initialized to zero prior to
+        the first conversion. The next pointer from the argument stack is
+        assumed to point to a wchar_t array large enough to hold that many
+        characters.
+        In either case, note that no '\0' character is added to terminate the
+        sequence.
+   s    Matches a sequence of non-white-space characters. The next pointer from
+        the argument stack is assumed to point to a character array large
+        enough to hold the sequence including terminating '\0' character.
+        If the 'l' length modifier is given, the input is assumed to match a
+        sequence of multibyte characters (starting in the initial shift state),
+        which will be converted to a wide character sequence as by a call to
+        mbrtowc() with a mbstate_t object initialized to zero prior to the
+        first conversion. The next pointer from the argument stack is assumed
+        to point to a wchar_t array large enough to hold the sequence including
+        terminating '\0' character.
+   [    Matches a nonempty sequence consisting of any of those characters
+        specified between itself and a corresponding closing bracket (']').
+        If the first character in the list is a circumflex ('^'), this matches
+        a nonempty sequence consisting of any characters NOT specified. If the
+        closing bracket appears as the first character in the scanset ("[]" or
+        "[^]", it is assumed to belong to the scanset, which then ends with the
+        NEXT closing bracket.
+        If there is a '-' character in the scanset which is not the first after
+        the opening bracket (or the circumflex, see above) or the last in the
+        scanset, behaviour is implementation-defined. This implementation
+        handles this character like any other.
+
+        The extend of the input field is determined byte-by-byte for the above
+        conversions ('c', 's', '['), with no special provisions being made for
+        multibyte characters. The resulting field is nevertheless a multibyte
+        sequence begining in intial shift state.
+
+   p    Matches a sequence of characters as produced by the printf() "%p"
+        conversion. The next pointer from the argument stack is assumed to
+        point to a void pointer, which will be filled with the same location
+        as the pointer used in the printf() statement. Note that behaviour is
+        undefined if the input value is not the result of an earlier printf()
+        call.
+   n    Does not read input. The next pointer from the argument stack is
+        assumed to point to a signed integer, into which the number of
+        characters read from input so far by this call to fscanf() is stored.
+        This does not affect the return value of fscanf(). The behaviour,
+        should an assignment-supressing character of field width be given,
+        is undefined.
+        This can be used to test the success of literal matches and suppressed
+        assignments.
+   %    Matches a single, verbatim '%' character.
+
+   A, E, F, G and X are valid, and equivalent to their lowercase counterparts.
+
+   Returns the number of input items successfully assigned. This can be zero if
+   an early mismatch occurs. Returns EOF if an input failure occurs before the
+   first conversion.
+*/
 int fscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
+
+/* Equivalent to fprintf( stdout, format, ... ). */
 int printf( const char * _PDCLIB_restrict format, ... );
+
+/* Equivalent to fscanf( stdin, format, ... ). */
 int scanf( const char * _PDCLIB_restrict format, ... );
+
+/* Equivalent to fprintf( stdout, format, ... ), except that the result is
+   written into the buffer pointed to by s, instead of stdout, and that any
+   characters beyond the (n-1)th are discarded. The (n)th character is
+   replaced by a '\0' character in this case.
+   Returns the number of characters that would have been written (not counting
+   the terminating '\0' character) if n had been sufficiently large, if
+   successful, and a negative number if an encoding error ocurred.
+*/
 int snprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict format, ... );
+
+/* Equivalent to fprintf( stdout, format, ... ), except that the result is
+   written into the buffer pointed to by s, instead of stdout.
+*/
 int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ... );
+
+/* Equivalent to fscanf( stdin, format, ... ), except that the input is read
+   from the buffer pointed to by s, instead of stdin.
+*/
 int sscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ... );
+
+/* Equivalent to fprintf( stream, format, ... ), except that the argument stack
+   is passed as va_list parameter. Note that va_list is not declared by
+   <stdio.h>.
+*/
 int vfprintf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+
+/* Equivalent to fscanf( stream, format, ... ), except that the argument stack
+   is passed as va_list parameter. Note that va_list is not declared by
+   <stdio.h>.
+*/
 int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+
+/* Equivalent to fprintf( stdout, format, ... ), except that the argument stack
+   is passed as va_list parameter. Note that va_list is not declared by
+   <stdio.h>.
+*/
 int vprintf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+
+/* Equivalent to fscanf( stdin, format, ... ), except that the argument stack
+   is passed as va_list parameter. Note that va_list is not declared by
+   <stdio.h>.
+*/
 int vscanf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+
+/* Equivalent to snprintf( s, n, format, ... ), except that the argument stack
+   is passed as va_list parameter. Note that va_list is not declared by
+   <stdio.h>.
+   */
 int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+
+/* Equivalent to fprintf( stdout, format, ... ), except that the argument stack
+   is passed as va_list parameter, and the result is written to the buffer
+   pointed to by s, instead of stdout. Note that va_list is not declared by
+   <stdio.h>.
+*/
 int vsprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+
+/* Equivalent to fscanf( stdin, format, ... ), except that the argument stack
+   is passed as va_list parameter, and the input is read from the buffer
+   pointed to by s, instead of stdin. Note that va_list is not declared by
+   <stdio.h>.
+*/
 int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
 
 /* Character input/output functions */

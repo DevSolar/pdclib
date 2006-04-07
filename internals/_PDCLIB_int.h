@@ -263,13 +263,13 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 
 struct
 {
-    _PDCLIB_fd_t   handle;   /* OS-specific file descriptor */
-    _PDCLIB_fpos_t position; /* file position indicator */
-    void *         buffer;   /* file buffer */
-    size_t         bufsize;  /* size of buffer */
-    int            status;   /* misc. status bits */
-  /*mbstate_t      mbstate;*//* multibyte parse state */ /* TODO: Unmask. */
-    FILE *         next;     /* provisions for linked list handling */
+    _PDCLIB_fd_t            handle;   /* OS-specific file descriptor */
+    _PDCLIB_fpos_t          position; /* file position indicator */
+    void *                  buffer;   /* file buffer */
+    _PDCLIB_size_t          bufsize;  /* size of buffer */
+    int                     status;   /* misc. status bits */
+  /*mbstate_t               mbstate;    multibyte parse state - TODO: Unmask. */
+    struct _PDCLIB_file_t * next;     /* provisions for linked list handling */
 } _PDCLIB_file_t;
 
 /* -------------------------------------------------------------------------- */
