@@ -50,7 +50,7 @@ struct status_t
    s - the buffer into which the character shall be delivered
    TODO: Overruns.
 */
-#define DELIVER( x ) if ( status->i < status->n ) status->s[status->i] = x; ++(status->i)
+#define DELIVER( x ) do { if ( status->i < status->n ) status->s[status->i] = x; ++(status->i); } while ( 0 )
 
 /* TODO: Left / right alignment - requires track-keeping of width and printed chars.
    "Father function", die für right alignment "tail recursive" gerufen wird, und
@@ -139,9 +139,9 @@ static void padwrap( int value, struct status_t * status )
             ++(status->this);
         }
     }
-    if ( status->i == status->n )
+    if ( status->i >= status->n )
     {
-        status->s[status->i] = '\0';
+        status->s[status->n - 1] = '\0';
     }
 }
 
