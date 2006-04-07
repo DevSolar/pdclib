@@ -6,7 +6,7 @@ AUXFILES := Makefile Readme.txt
 PROJDIRS := functions includes internals
 SRCFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.c")
 HDRFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.h")
-INTFILES := atomax digits seed strtox_main strtox_prelim rename remove _Exit
+INTFILES := atomax digits lengthmods seed strtox_main strtox_prelim rename remove _Exit
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 TSTFILES := $(patsubst %.c,%.t,$(SRCFILES))
 REGFILES := $(filter-out $(patsubst %,functions/_PDCLIB/%.r,$(INTFILES)),$(patsubst %.c,%.r,$(SRCFILES)))
@@ -42,6 +42,9 @@ dist:
 
 todolist:
 	-@for file in $(ALLFILES); do grep -H TODO $$file; done; true
+
+fixmelist:
+	-@for file in $(ALLFILES); do grep -H FIXME $$file; done; true
 
 %.o: %.c Makefile
 	@$(CC) $(CFLAGS) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@

@@ -6,7 +6,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-char _PDCLIB_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+char _PDCLIB_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 #ifdef TEST
 
