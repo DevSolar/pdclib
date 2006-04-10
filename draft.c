@@ -35,26 +35,14 @@ void parse_out( const char * spec, va_list ap );
 
 struct status_t
 {
-    int    base;  /* base to which the value shall be converted              */
-    int    flags; /* flags and length modifiers                              */
-    size_t n;     /* maximum number of characters to be written              */
-    size_t i;     /* number of characters already written                    */
-    size_t this;  /* number of output chars in the current conversion        */
-    char * s;     /* target buffer                                           */
-    size_t width; /* width of current field                                  */
-    int    prec;  /* precision of current field                              */
-};
-
-union value_t
-{
-      int8_t  int8;
-     uint8_t uint8;
-     int16_t  int16;
-    uint16_t uint16;
-     int32_t  int32;
-    uint32_t uint32;
-     int64_t  int64;
-    uint64_t uint64; 
+    int          base;  /* base to which the value shall be converted              */
+    int_fast16_t flags; /* flags and length modifiers                              */
+    size_t       n;     /* maximum number of characters to be written              */
+    size_t       i;     /* number of characters already written                    */
+    size_t       this;  /* number of output chars in the current conversion        */
+    char *       s;     /* target buffer                                           */
+    size_t       width; /* width of current field                                  */
+    size_t       prec;  /* precision of current field                              */
 };
 
 /* x - the character to be delivered
@@ -64,11 +52,6 @@ union value_t
    TODO: Overruns.
 */
 #define DELIVER( x ) do { if ( status->i < status->n ) status->s[status->i] = x; ++(status->i); } while ( 0 )
-
-/* TODO: Left / right alignment - requires track-keeping of width and printed chars.
-   "Father function", die für right alignment "tail recursive" gerufen wird, und
-   "after" für left alignment? Parameter als struct?
-*/
 
 static void int2base( intmax_t value, struct status_t * status )
 {
@@ -315,36 +298,6 @@ void parse_out( const char * spec, va_list ap )
             return;
     }
 }
-
-/*
-static void int2base( int value, int base, struct status_t * status )
-
-#define E_minus   1<<0
-#define E_plus    1<<1
-#define E_alt     1<<2
-#define E_space   1<<3
-#define E_zero    1<<4
-#define E_done    1<<5
-#define E_char    1<<6
-#define E_short   1<<7
-#define E_long    1<<8
-#define E_llong   1<<9
-#define E_intmax  1<<10
-#define E_size    1<<11
-#define E_ptrdiff 1<<12
-#define E_double  1<<13
-#define E_lower   1<<14
-
-        struct status_t
-{
-    int    flags; 
-    size_t n;     
-    size_t i;     
-    char * s;     
-    size_t width; 
-    size_t prec;  
-};
-*/
 
 #define TESTCASE( _flags, _n, _width, _prec, _value, _base, _expect ) \
     status.flags = _flags | E_term; \
