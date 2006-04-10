@@ -14,22 +14,22 @@
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
 */
-#define E_minus   1<<0
-#define E_plus    1<<1
-#define E_alt     1<<2
-#define E_space   1<<3
-#define E_zero    1<<4
-#define E_done    1<<5
-#define E_char    1<<6
-#define E_short   1<<7
-#define E_long    1<<8
-#define E_llong   1<<9
-#define E_intmax  1<<10
-#define E_size    1<<11
-#define E_ptrdiff 1<<12
-#define E_double  1<<13
-#define E_lower   1<<14
-#define E_term    1<<15
+#define E_minus    1<<0
+#define E_plus     1<<1
+#define E_alt      1<<2
+#define E_space    1<<3
+#define E_zero     1<<4
+#define E_done     1<<5
+#define E_char     1<<6
+#define E_short    1<<7
+#define E_long     1<<8
+#define E_llong    1<<9
+#define E_intmax   1<<10
+#define E_size     1<<11
+#define E_ptrdiff  1<<12
+#define E_double   1<<13
+#define E_lower    1<<14
+#define E_usigned  1<<15
 
 void parse_out( const char * spec, va_list ap );
 
@@ -76,7 +76,7 @@ static void int2base( intmax_t value, struct status_t * status )
         {
             preface[ preidx++ ] = '-';
         }
-        else
+        else if ( ! ( status->flags & E_usigned ) )
         {
             if ( status->flags & E_plus )
             {
@@ -146,6 +146,7 @@ static void padwrap( intmax_t value, struct status_t * status )
 
 static void upadwrap( uintmax_t value, struct status_t * status )
 {
+    status->flags |= E_usigned;
     ++(status->this);
     if ( ( value / status->base ) != 0 )
     {
@@ -334,7 +335,7 @@ void parse_out( const char * spec, va_list ap )
 }
 
 #define TESTCASE( _flags, _n, _width, _prec, _value, _base, _expect ) \
-    status.flags = _flags | E_term; \
+    status.flags = _flags; \
     status.n = _n; \
     status.i = 0; \
     status.width = _width; \
@@ -350,7 +351,7 @@ void parse_out( const char * spec, va_list ap )
     } \
 
 #define UTESTCASE( _flags, _n, _width, _prec, _value, _base, _expect ) \
-    status.flags = _flags | E_term; \
+    status.flags = _flags; \
     status.n = _n; \
     status.i = 0; \
     status.width = _width; \
@@ -372,57 +373,87 @@ int main()
     int tmp;
     char * buffer = malloc( 50 );
     status.s = malloc( 50 );
-#if 0
-    TESTCASE( E_plus, 5, 0, 0, 1234, 10, "%+d" );
-    TESTCASE( E_space, 3, 0, 0, 1234, 10, "% d" );
-    TESTCASE( E_space, 3, 0, 0, -1234, 10, "% d" );
-    TESTCASE( E_plus, 3, 0, 0, -1234, 10, "%+d" );
-    TESTCASE( E_done, 4, 0, 0, 65535, 16, "%X" );
-    TESTCASE( E_lower | E_alt, 4, 0, 0, 65534, 16, "%#x" );
-    TESTCASE( E_done, 4, 0, 0, 62, 8, "%o" );
-    TESTCASE( E_alt, 4, 0, 0, 62, 8, "%#o" );
-    TESTCASE( E_done, 6, 6, 0, 1234, 10, "%6d" );
-    TESTCASE( E_minus, 6, 6, 0, 1234, 10, "%-6d" );
-    TESTCASE( E_minus, 6, 2, 0, 1234, 10, "%-2d" );
-    TESTCASE( E_done, 6, 2, 0, 1234, 10, "%2d" );
-    TESTCASE( E_zero, 6, 6, 0, -1234, 10, "%06d" );
-    /* TODO: These two are *unsigned* conversions! */
-    TESTCASE( E_zero, 7, 7, 0, -65535, 16, "%07X" );
-    TESTCASE( E_zero, 7, 7, 0, -65535, 10, "%07u" );
-
-    TESTCASE( E_zero | E_minus, 6, 6, 0, 1234, 10, "%-06d" );
-    TESTCASE( E_plus, 6, 6, 0, 1234, 10, "%+6d" );
-    TESTCASE( E_space, 6, 6, 0, 1234, 10, "% 6d" );
-    TESTCASE( E_space, 6, 6, 0, -1234, 10, "% 6d" );
-    TESTCASE( E_space | E_minus, 6, 6, 0, -1234, 10, "%- 6d" );
-#endif
-    puts( "--- Serious Tests ---\n" );
     puts( "- Signed min / max -\n" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, CHAR_MIN, 10, "%hhd" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, CHAR_MAX, 10, "%hhd" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, 0, 10, "%hhd" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, SHRT_MIN, 10, "%hd" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, SHRT_MAX, 10, "%hd" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, 0, 10, "%hd" );
+    TESTCASE( E_char, SIZE_MAX, 0, 0, CHAR_MIN, 10, "%hhd" );
+    TESTCASE( E_char, SIZE_MAX, 0, 0, CHAR_MAX, 10, "%hhd" );
+    TESTCASE( E_char, SIZE_MAX, 0, 0, 0, 10, "%hhd" );
+    TESTCASE( E_short, SIZE_MAX, 0, 0, SHRT_MIN, 10, "%hd" );
+    TESTCASE( E_short, SIZE_MAX, 0, 0, SHRT_MAX, 10, "%hd" );
+    TESTCASE( E_short, SIZE_MAX, 0, 0, 0, 10, "%hd" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, INT_MIN, 10, "%d" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, INT_MAX, 10, "%d" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, 0, 10, "%d" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, LONG_MIN, 10, "%ld" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, LONG_MAX, 10, "%ld" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, 0l, 10, "%ld" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, LLONG_MIN, 10, "%lld" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, LLONG_MAX, 10, "%lld" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, 0ll, 10, "%lld" ); 
+    TESTCASE( E_long, SIZE_MAX, 0, 0, LONG_MIN, 10, "%ld" );
+    TESTCASE( E_long, SIZE_MAX, 0, 0, LONG_MAX, 10, "%ld" );
+    TESTCASE( E_long, SIZE_MAX, 0, 0, 0l, 10, "%ld" );
+    TESTCASE( E_llong, SIZE_MAX, 0, 0, LLONG_MIN, 10, "%lld" );
+    TESTCASE( E_llong, SIZE_MAX, 0, 0, LLONG_MAX, 10, "%lld" );
+    TESTCASE( E_llong, SIZE_MAX, 0, 0, 0ll, 10, "%lld" ); 
     puts( "- Unsigned min / max -\n" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, UCHAR_MAX, 10, "%hhu" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%hhu" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, USHRT_MAX, 10, "%hu" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%hu" );
+    UTESTCASE( E_char, SIZE_MAX, 0, 0, UCHAR_MAX, 10, "%hhu" );
+    UTESTCASE( E_char, SIZE_MAX, 0, 0, (unsigned char)-1, 10, "%hhu" );
+    UTESTCASE( E_short, SIZE_MAX, 0, 0, USHRT_MAX, 10, "%hu" );
+    UTESTCASE( E_short, SIZE_MAX, 0, 0, (unsigned short)-1, 10, "%hu" );
     UTESTCASE( E_done, SIZE_MAX, 0, 0, UINT_MAX, 10, "%u" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%u" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, ULONG_MAX, 10, "%lu" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1l, 10, "%lu" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, ULLONG_MAX, 10, "%llu" );
-    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1ll, 10, "%llu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1u, 10, "%u" );
+    UTESTCASE( E_long, SIZE_MAX, 0, 0, ULONG_MAX, 10, "%lu" );
+    UTESTCASE( E_long, SIZE_MAX, 0, 0, -1ul, 10, "%lu" );
+    UTESTCASE( E_llong, SIZE_MAX, 0, 0, ULLONG_MAX, 10, "%llu" );
+    UTESTCASE( E_llong, SIZE_MAX, 0, 0, -1ull, 10, "%llu" );
+    puts( "- Hex and Octal, normal and alternative, upper and lowercase -\n" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, UINT_MAX, 16, "%X" );
+    UTESTCASE( E_alt, SIZE_MAX, 0, 0, -1u, 16, "%#X" );
+    UTESTCASE( E_done | E_lower, SIZE_MAX, 0, 0, UINT_MAX, 16, "%x" );
+    UTESTCASE( E_alt | E_lower, SIZE_MAX, 0, 0, -1u, 16, "%#x" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, UINT_MAX, 8, "%o" );
+    UTESTCASE( E_alt, SIZE_MAX, 0, 0, -1u, 8, "%#o" );
+    puts( "- Plus flag -\n" );
+    TESTCASE( E_plus, SIZE_MAX, 0, 0, INT_MIN, 10, "%+d" );
+    TESTCASE( E_plus, SIZE_MAX, 0, 0, INT_MAX, 10, "%+d" );
+    TESTCASE( E_plus, SIZE_MAX, 0, 0, 0, 10, "%+d" );
+    UTESTCASE( E_plus, SIZE_MAX, 0, 0, UINT_MAX, 10, "%+u" );
+    UTESTCASE( E_plus, SIZE_MAX, 0, 0, -1u, 10, "%+u" );
+    puts( "- Space flag -\n" );
+    TESTCASE( E_space, SIZE_MAX, 0, 0, INT_MIN, 10, "% d" );
+    TESTCASE( E_space, SIZE_MAX, 0, 0, INT_MAX, 10, "% d" );
+    TESTCASE( E_space, SIZE_MAX, 0, 0, 0, 10, "% d" );
+    UTESTCASE( E_space, SIZE_MAX, 0, 0, UINT_MAX, 10, "% u" );
+    UTESTCASE( E_space, SIZE_MAX, 0, 0, -1u, 10, "% u" );
+    puts( "- Field width -\n" );
+    TESTCASE( E_done, SIZE_MAX, 9, 0, INT_MIN, 10, "%9d" );
+    TESTCASE( E_done, SIZE_MAX, 9, 0, INT_MAX, 10, "%9d" );
+    TESTCASE( E_done, SIZE_MAX, 10, 0, INT_MIN, 10, "%10d" );
+    TESTCASE( E_done, SIZE_MAX, 10, 0, INT_MAX, 10, "%10d" );
+    TESTCASE( E_done, SIZE_MAX, 11, 0, INT_MIN, 10, "%11d" );
+    TESTCASE( E_done, SIZE_MAX, 11, 0, INT_MAX, 10, "%11d" );
+    TESTCASE( E_done, SIZE_MAX, 12, 0, INT_MIN, 10, "%12d" );
+    TESTCASE( E_done, SIZE_MAX, 12, 0, INT_MAX, 10, "%12d" );
+    puts( "- Field width (left bound) -\n" );
+    TESTCASE( E_minus, SIZE_MAX, 9, 0, INT_MIN, 10, "%-9d" );
+    TESTCASE( E_minus, SIZE_MAX, 9, 0, INT_MAX, 10, "%-9d" );
+    TESTCASE( E_minus, SIZE_MAX, 10, 0, INT_MIN, 10, "%-10d" );
+    TESTCASE( E_minus, SIZE_MAX, 10, 0, INT_MAX, 10, "%-10d" );
+    TESTCASE( E_minus, SIZE_MAX, 11, 0, INT_MIN, 10, "%-11d" );
+    TESTCASE( E_minus, SIZE_MAX, 11, 0, INT_MAX, 10, "%-11d" );
+    TESTCASE( E_minus, SIZE_MAX, 12, 0, INT_MIN, 10, "%-12d" );
+    TESTCASE( E_minus, SIZE_MAX, 12, 0, INT_MAX, 10, "%-12d" );
+    puts( "- Field width, zero padding -\n");
+    TESTCASE( E_done | E_zero, SIZE_MAX, 9, 0, INT_MIN, 10, "%09d" );
+    TESTCASE( E_done | E_zero, SIZE_MAX, 9, 0, INT_MAX, 10, "%09d" );
+    TESTCASE( E_done | E_zero, SIZE_MAX, 10, 0, INT_MIN, 10, "%010d" );
+    TESTCASE( E_done | E_zero, SIZE_MAX, 10, 0, INT_MAX, 10, "%010d" );
+    TESTCASE( E_done | E_zero, SIZE_MAX, 11, 0, INT_MIN, 10, "%011d" );
+    TESTCASE( E_done | E_zero, SIZE_MAX, 11, 0, INT_MAX, 10, "%011d" );
+    TESTCASE( E_done | E_zero, SIZE_MAX, 12, 0, INT_MIN, 10, "%012d" );
+    TESTCASE( E_done | E_zero, SIZE_MAX, 12, 0, INT_MAX, 10, "%012d" );
+    puts( "- Field width, zero padding (left bound) -\n" );
+    TESTCASE( E_minus | E_zero, SIZE_MAX, 9, 0, INT_MIN, 10, "%-09d" );
+    TESTCASE( E_minus | E_zero, SIZE_MAX, 9, 0, INT_MAX, 10, "%-09d" );
+    TESTCASE( E_minus | E_zero, SIZE_MAX, 10, 0, INT_MIN, 10, "%-010d" );
+    TESTCASE( E_minus | E_zero, SIZE_MAX, 10, 0, INT_MAX, 10, "%-010d" );
+    TESTCASE( E_minus | E_zero, SIZE_MAX, 11, 0, INT_MIN, 10, "%-011d" );
+    TESTCASE( E_minus | E_zero, SIZE_MAX, 11, 0, INT_MAX, 10, "%-011d" );
+    TESTCASE( E_minus | E_zero, SIZE_MAX, 12, 0, INT_MIN, 10, "%-012d" );
+    TESTCASE( E_minus | E_zero, SIZE_MAX, 12, 0, INT_MAX, 10, "%-012d" );
     return 0;
 }
