@@ -359,7 +359,7 @@ static void int2base( int value, int base, struct status_t * status )
     rc = snprintf( buffer, _n, _expect, _value ); \
     if ( ( strcmp( status.s, buffer ) != 0 ) || ( status.i != rc ) ) \
     { \
-        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n", status.s, status.i, buffer, rc ); \
+        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status.s, status.i, buffer, rc ); \
     } \
 
 int main()
@@ -369,6 +369,7 @@ int main()
     int tmp;
     char * buffer = malloc( 50 );
     status.s = malloc( 50 );
+#if 0
     TESTCASE( E_plus, 5, 0, 0, 1234, 10, "%+d" );
     TESTCASE( E_space, 3, 0, 0, 1234, 10, "% d" );
     TESTCASE( E_space, 3, 0, 0, -1234, 10, "% d" );
@@ -391,9 +392,9 @@ int main()
     TESTCASE( E_space, 6, 6, 0, 1234, 10, "% 6d" );
     TESTCASE( E_space, 6, 6, 0, -1234, 10, "% 6d" );
     TESTCASE( E_space | E_minus, 6, 6, 0, -1234, 10, "%- 6d" );
-
-    puts( "--- Serious Tests ---" );
-    puts( "- Signed min / max -" );
+#endif
+    puts( "--- Serious Tests ---\n" );
+    puts( "- Signed min / max -\n" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, CHAR_MIN, 10, "%hhd" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, CHAR_MAX, 10, "%hhd" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, 0, 10, "%hhd" );
@@ -409,5 +410,16 @@ int main()
     TESTCASE( E_done, SIZE_MAX, 0, 0, LLONG_MIN, 10, "%lld" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, LLONG_MAX, 10, "%lld" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, 0ll, 10, "%lld" ); 
+    puts( "- Unsigned min / max -\n" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, UCHAR_MAX, 10, "%hhu" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%hhu" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, USHRT_MAX, 10, "%hu" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%hu" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, UINT_MAX, 10, "%u" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%u" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, ULONG_MAX, 10, "%lu" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, -1l, 10, "%lu" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, ULLONG_MAX, 10, "%llu" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, -1ll, 10, "%llu" );
     return 0;
 }
