@@ -144,6 +144,40 @@ static void padwrap( intmax_t value, struct status_t * status )
     }
 }
 
+static void upadwrap( uintmax_t value, struct status_t * status )
+{
+    ++(status->this);
+    if ( ( value / status->base ) != 0 )
+    {
+        int2base( value / status->base, status );
+    }
+    int digit = value % status->base;
+    if ( digit < 0 )
+    {
+        digit *= -1;
+    }
+    if ( status->flags & E_lower )
+    {
+        DELIVER( _PDCLIB_digits[ digit ] );
+    }
+    else
+    {
+        DELIVER( toupper( _PDCLIB_digits[ digit ] ) );
+    }
+    if ( status->flags & E_minus )
+    {
+        while ( status->this < status->width )
+        {
+            DELIVER( ' ' );
+            ++(status->this);
+        }
+    }
+    if ( status->i >= status->n )
+    {
+        status->s[status->n - 1] = '\0';
+    }
+}
+
 void parse_out( const char * spec, va_list ap )
 {
     /* TODO: '%' handled correctly? */
@@ -315,6 +349,22 @@ void parse_out( const char * spec, va_list ap )
         printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status.s, status.i, buffer, rc ); \
     } \
 
+#define UTESTCASE( _flags, _n, _width, _prec, _value, _base, _expect ) \
+    status.flags = _flags | E_term; \
+    status.n = _n; \
+    status.i = 0; \
+    status.width = _width; \
+    status.prec = _prec; \
+    status.base = _base; \
+    status.this = 0; \
+    memset( status.s, '\0', 50 ); \
+    upadwrap( _value, &status ); \
+    rc = snprintf( buffer, _n, _expect, _value ); \
+    if ( ( strcmp( status.s, buffer ) != 0 ) || ( status.i != rc ) ) \
+{ \
+        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status.s, status.i, buffer, rc ); \
+} \
+
 int main()
 {
     struct status_t status;
@@ -364,15 +414,15 @@ int main()
     TESTCASE( E_done, SIZE_MAX, 0, 0, LLONG_MAX, 10, "%lld" );
     TESTCASE( E_done, SIZE_MAX, 0, 0, 0ll, 10, "%lld" ); 
     puts( "- Unsigned min / max -\n" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, UCHAR_MAX, 10, "%hhu" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%hhu" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, USHRT_MAX, 10, "%hu" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%hu" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, UINT_MAX, 10, "%u" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%u" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, ULONG_MAX, 10, "%lu" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, -1l, 10, "%lu" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, ULLONG_MAX, 10, "%llu" );
-    TESTCASE( E_done, SIZE_MAX, 0, 0, -1ll, 10, "%llu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, UCHAR_MAX, 10, "%hhu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%hhu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, USHRT_MAX, 10, "%hu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%hu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, UINT_MAX, 10, "%u" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1, 10, "%u" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, ULONG_MAX, 10, "%lu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1l, 10, "%lu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, ULLONG_MAX, 10, "%llu" );
+    UTESTCASE( E_done, SIZE_MAX, 0, 0, -1ll, 10, "%llu" );
     return 0;
 }
