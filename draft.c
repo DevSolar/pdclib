@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
+#include <limits.h>
 
 #undef TEST
 #include </home/solar/src/pdclib/functions/_PDCLIB/digits.c>
@@ -44,6 +45,18 @@ struct status_t
     int    prec;  /* precision of current field                              */
 };
 
+union value_t
+{
+      int8_t  int8;
+     uint8_t uint8;
+     int16_t  int16;
+    uint16_t uint16;
+     int32_t  int32;
+    uint32_t uint32;
+     int64_t  int64;
+    uint64_t uint64; 
+};
+
 /* x - the character to be delivered
    i - pointer to number of characters already delivered in this call
    n - pointer to maximum number of characters to be delivered in this call
@@ -57,7 +70,7 @@ struct status_t
    "after" für left alignment? Parameter als struct?
 */
 
-static void int2base( int value, struct status_t * status )
+static void int2base( intmax_t value, struct status_t * status )
 {
     ++(status->this);
     if ( ( value / status->base ) != 0 )
@@ -114,21 +127,24 @@ static void int2base( int value, struct status_t * status )
             }
         }
     }
-    if ( value < 0 )
     {
-        value *= -1;
+    int digit = value % status->base;
+    if ( digit < 0 )
+    {
+        digit *= -1;
     }
     if ( status->flags & E_lower )
     {
-        DELIVER( _PDCLIB_digits[ value % status->base ] );
+        DELIVER( _PDCLIB_digits[ digit ] );
     }
     else
     {
-        DELIVER( toupper( _PDCLIB_digits[ value % status->base ] ) );
+        DELIVER( toupper( _PDCLIB_digits[ digit ] ) );
+    }
     }
 }
 
-static void padwrap( int value, struct status_t * status )
+static void padwrap( intmax_t value, struct status_t * status )
 {
     int2base( value, status );
     if ( status->flags & E_minus )
@@ -338,18 +354,21 @@ static void int2base( int value, int base, struct status_t * status )
     status.prec = _prec; \
     status.base = _base; \
     status.this = 0; \
-    memset( status.s, '\0', 20 ); \
+    memset( status.s, '\0', 50 ); \
     padwrap( _value, &status ); \
-    printf( "Output '%s', RC %d \t- ", status.s, status.i ); \
     rc = snprintf( buffer, _n, _expect, _value ); \
-    printf( "Expect '%s', RC %d\n", buffer, rc );
+    if ( ( strcmp( status.s, buffer ) != 0 ) || ( status.i != rc ) ) \
+    { \
+        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n", status.s, status.i, buffer, rc ); \
+    } \
 
 int main()
 {
     struct status_t status;
     int rc;
-    char * buffer = malloc( 20 );
-    status.s = malloc( 20 );
+    int tmp;
+    char * buffer = malloc( 50 );
+    status.s = malloc( 50 );
     TESTCASE( E_plus, 5, 0, 0, 1234, 10, "%+d" );
     TESTCASE( E_space, 3, 0, 0, 1234, 10, "% d" );
     TESTCASE( E_space, 3, 0, 0, -1234, 10, "% d" );
@@ -363,11 +382,32 @@ int main()
     TESTCASE( E_minus, 6, 2, 0, 1234, 10, "%-2d" );
     TESTCASE( E_done, 6, 2, 0, 1234, 10, "%2d" );
     TESTCASE( E_zero, 6, 6, 0, -1234, 10, "%06d" );
+    /* TODO: These two are *unsigned* conversions! */
     TESTCASE( E_zero, 7, 7, 0, -65535, 16, "%07X" );
+    TESTCASE( E_zero, 7, 7, 0, -65535, 10, "%07u" );
+
     TESTCASE( E_zero | E_minus, 6, 6, 0, 1234, 10, "%-06d" );
     TESTCASE( E_plus, 6, 6, 0, 1234, 10, "%+6d" );
     TESTCASE( E_space, 6, 6, 0, 1234, 10, "% 6d" );
     TESTCASE( E_space, 6, 6, 0, -1234, 10, "% 6d" );
     TESTCASE( E_space | E_minus, 6, 6, 0, -1234, 10, "%- 6d" );
+
+    puts( "--- Serious Tests ---" );
+    puts( "- Signed min / max -" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, CHAR_MIN, 10, "%hhd" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, CHAR_MAX, 10, "%hhd" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, 0, 10, "%hhd" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, SHRT_MIN, 10, "%hd" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, SHRT_MAX, 10, "%hd" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, 0, 10, "%hd" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, INT_MIN, 10, "%d" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, INT_MAX, 10, "%d" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, 0, 10, "%d" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, LONG_MIN, 10, "%ld" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, LONG_MAX, 10, "%ld" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, 0l, 10, "%ld" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, LLONG_MIN, 10, "%lld" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, LLONG_MAX, 10, "%lld" );
+    TESTCASE( E_done, SIZE_MAX, 0, 0, 0ll, 10, "%lld" ); 
     return 0;
 }
