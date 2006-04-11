@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <string.h>
 #include <limits.h>
+#include <stddef.h>
 
 #undef TEST
 #include </home/solar/src/pdclib/functions/_PDCLIB/digits.c>
@@ -29,20 +30,18 @@
 #define E_ptrdiff  1<<12
 #define E_double   1<<13
 #define E_lower    1<<14
-#define E_usigned  1<<15
-
-void parse_out( const char * spec, va_list ap );
+#define E_unsigned 1<<15
 
 struct status_t
 {
-    int          base;  /* base to which the value shall be converted              */
-    int_fast16_t flags; /* flags and length modifiers                              */
-    size_t       n;     /* maximum number of characters to be written              */
-    size_t       i;     /* number of characters already written                    */
-    size_t       this;  /* number of output chars in the current conversion        */
-    char *       s;     /* target buffer                                           */
-    size_t       width; /* width of current field                                  */
-    size_t       prec;  /* precision of current field                              */
+    int           base;  /* base to which the value shall be converted       */
+    int_fast16_t  flags; /* flags and length modifiers                       */
+    size_t        n;     /* maximum number of characters to be written       */
+    size_t        i;     /* number of characters already written             */
+    size_t        this;  /* number of output chars in the current conversion */
+    char *        s;     /* target buffer                                    */
+    size_t        width; /* width of current field                           */
+    size_t        prec;  /* precision of current field                       */
 };
 
 /* x - the character to be delivered
@@ -76,7 +75,7 @@ static void int2base( intmax_t value, struct status_t * status )
         {
             preface[ preidx++ ] = '-';
         }
-        else if ( ! ( status->flags & E_usigned ) )
+        else if ( ! ( status->flags & E_unsigned ) )
         {
             if ( status->flags & E_plus )
             {
@@ -129,6 +128,30 @@ static void int2base( intmax_t value, struct status_t * status )
 
 static void padwrap( intmax_t value, struct status_t * status )
 {
+    if ( status->flags & E_char )
+    {
+        value = (char)value;
+    }
+    else if ( status->flags & E_short )
+    {
+        value = (short)value;
+    }
+    else if ( status->flags & E_long )
+    {
+        value = (long)value;
+    }
+    else if ( status->flags & E_llong )
+    {
+        value = (long long)value;
+    }
+    else if ( status->flags & E_ptrdiff )
+    {
+        value = (ptrdiff_t)value;
+    }
+    else if ( ! ( status->flags & E_intmax ) )
+    {
+        value = (int)value;
+    }
     int2base( value, status );
     if ( status->flags & E_minus )
     {
@@ -146,11 +169,35 @@ static void padwrap( intmax_t value, struct status_t * status )
 
 static void upadwrap( uintmax_t value, struct status_t * status )
 {
-    status->flags |= E_usigned;
+    if ( status->flags & E_char )
+    {
+        value = (unsigned char)value;
+    }
+    else if ( status->flags & E_short )
+    {
+        value = (unsigned short)value;
+    }
+    else if ( status->flags & E_long )
+    {
+        value = (unsigned long)value;
+    }
+    else if ( status->flags & E_llong )
+    {
+        value = (unsigned long long)value;
+    }
+    else if ( status->flags & E_size )
+    {
+        value = (size_t)value;
+    }
+    else
+    {
+        value = (unsigned int)value;
+    }
+    status->flags |= E_unsigned;
     ++(status->this);
     if ( ( value / status->base ) != 0 )
     {
-        int2base( value / status->base, status );
+        int2base( (intmax_t)(value / status->base), status );
     }
     int digit = value % status->base;
     if ( digit < 0 )
@@ -179,43 +226,59 @@ static void upadwrap( uintmax_t value, struct status_t * status )
     }
 }
 
-void parse_out( const char * spec, va_list ap )
+void parse_out( const char * spec, struct status_t * status, va_list ap );
+
+void parse_out( const char * spec, struct status_t * status, va_list ap )
 {
-    /* TODO: '%' handled correctly? */
-    struct status_t status = { 0, 0, 0, 0, 0, NULL, 0, EOF };
+    /* TODO: "%%" handled correctly? */
+
+    /* Initializing status structure */
+    status->flags = 0;
+    status->base = 0;
+    status->this = 0;
+    status->width = 0;
+    status->prec = 0;
+
     /* First come 0..n flags */
-    while ( ! ( status.flags & E_done ) )
+    do
     {
-        switch ( *(++spec) )
+        switch ( *spec )
         {
             case '-':
-                status.flags |= E_minus;
+                status->flags |= E_minus;
+                ++spec;
                 break;
             case '+':
-                status.flags |= E_plus;
+                status->flags |= E_plus;
+                ++spec;
                 break;
             case '#':
-                status.flags |= E_alt;
+                status->flags |= E_alt;
+                ++spec;
                 break;
             case ' ':
-                status.flags |= E_space;
+                status->flags |= E_space;
+                ++spec;
                 break;
             case '0':
-                status.flags |= E_zero;
+                status->flags |= E_zero;
+                ++spec;
                 break;
             default:
-                status.flags |= E_done;
+                status->flags |= E_done;
                 break;
         }
-    }
+    } while ( ! ( status->flags & E_done ) );
+
+    /* Optional field width */
     if ( *spec == '*' )
     {
         /* Retrieve width value from argument stack */
-        if ( ( status.width = va_arg( ap, int ) ) < 0 )
+        if ( ( status->width = va_arg( ap, int ) ) < 0 )
         {
             /* Negative value is '-' flag plus absolute value */
-            status.flags |= E_minus;
-            status.width *= -1;
+            status->flags |= E_minus;
+            status->width *= -1;
         }
         ++spec;
     }
@@ -223,30 +286,36 @@ void parse_out( const char * spec, va_list ap )
     {
         /* If a width is given, strtol() will return its value. If not given,
            strtol() will return zero. In both cases, endptr will point to the
-           rest of the conversion specifier.
+           rest of the conversion specifier - just what we need.
         */
-        char * endptr;
-        status.width = (int)strtol( spec, &endptr, 10 );
-        spec = endptr;
+        status->width = (int)strtol( spec, (char**)&spec, 10 );
     }
+
+    /* Optional precision */
     if ( *spec == '.' )
     {
-        if ( *(++spec) == '*' )
+        ++spec;
+        if ( *spec == '*' )
         {
             /* Retrieve precision value from argument stack. A negative value
                is as if no precision is given - as precision is initalized to
                EOF (negative), there is no need for testing for negative here.
             */
-            status.prec = va_arg( ap, int );
+            status->prec = va_arg( ap, int );
         }
         else
         {
             char * endptr;
-            status.prec = (int)strtol( spec, &endptr, 10 );
-            spec = endptr;
+            status->prec = (int)strtol( spec, &endptr, 10 );
+            if ( spec == endptr )
+            {
+                /* TODO: Decimal point but no number - bad conversion specifier. */
+            }
         }
     }
-    /* We step one character ahead in any case, and step back only if we find
+
+    /* Optional length modifier
+       We step one character ahead in any case, and step back only if we find
        there has been no length modifier (or step ahead another character if it
        has been "hh" or "ll").
     */
@@ -255,58 +324,63 @@ void parse_out( const char * spec, va_list ap )
         case 'h':
             if ( *spec == 'h' )
             {
-                status.flags |= E_char;
+                status->flags |= E_char;
                 ++spec;
             }
             else
             {
-                status.flags |= E_short;
+                status->flags |= E_short;
             }
             break;
         case 'l':
             if ( *spec == 'l' )
             {
-                status.flags |= E_llong;
+                status->flags |= E_llong;
                 ++spec;
             }
             else
             {
-                status.flags |= E_long;
+                status->flags |= E_long;
             }
             break;
         case 'j':
-            status.flags |= E_intmax;
+            status->flags |= E_intmax;
             break;
         case 'z':
-            status.flags |= E_size;
+            status->flags |= E_size;
             break;
         case 't':
-            status.flags |= E_ptrdiff;
+            status->flags |= E_ptrdiff;
             break;
         case 'L':
-            status.flags |= E_double;
+            status->flags |= E_double;
             break;
         default:
-            ++spec;
+            --spec;
             break;
     }
+
+    /* Conversion specifier */
     switch ( *spec )
     {
         case 'd':
         case 'i':
-            /* int2base( 10, value, true ) */
+            status->base = 10;
             break;
         case 'o':
-            /* int2base( 8, value, true ) */
+            status->base = 8;
             break;
         case 'u':
-            /* uint2base( 10, value, true ) */
+            status->base = 10;
+            status->flags |= E_unsigned;
             break;
         case 'x':
-            /* uint2base( 16, value, true ) */
+            status->base = 16;
+            status->flags |= ( E_lower | E_unsigned );
             break;
         case 'X':
-            /* uint2base( 16, value, false ) */
+            status->flags = E_unsigned;
+            status->base = 16;
             break;
         case 'f':
         case 'F':
@@ -327,11 +401,63 @@ void parse_out( const char * spec, va_list ap )
         case 'n':
         case '%':
             // conversion specifier
+            /* TODO: May this be accompaigned by flags, width, precision, length modifier at all? */
             break;
         default:
-            // undefined
+            /* TODO: No conversion specifier. Bad conversion. */
             return;
     }
+    switch ( status->flags )
+    {
+        /* TODO */
+    }
+    if ( status->base != 0 )
+    {
+        /* Integer conversions */
+        switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_unsigned ) )
+        {
+            case E_char:
+                padwrap( (intmax_t)(char)va_arg( ap, int ), status );
+                break;
+            case E_char | E_unsigned:
+                upadwrap( (uintmax_t)(unsigned char)va_arg( ap, int ), status );
+                break;
+            case E_short:
+                padwrap( (intmax_t)(short)va_arg( ap, int ), status );
+                break;
+            case E_short | E_unsigned:
+                upadwrap( (uintmax_t)(unsigned short)va_arg( ap, int ), status );
+                break;
+            case 0:
+                padwrap( (intmax_t)va_arg( ap, int ), status );
+                break;
+            case E_unsigned:
+                upadwrap( (uintmax_t)va_arg( ap, unsigned int ), status );
+                break;
+            case E_long:
+                padwrap( (intmax_t)va_arg( ap, long ), status );
+                break;
+            case E_long | E_unsigned:
+                upadwrap( (uintmax_t)va_arg( ap, unsigned long ), status );
+                break;
+            case E_llong:
+                padwrap( (intmax_t)va_arg( ap, long long ), status );
+                break;
+            case E_llong | E_unsigned:
+                upadwrap( (uintmax_t)va_arg( ap, unsigned long long ), status );
+                break;
+        }
+    }
+}
+
+void parse_out_wrapper( const char * spec, struct status_t * status, ... );
+
+void parse_out_wrapper( const char * spec, struct status_t * status, ... )
+{
+    va_list ap;
+    va_start( ap, status );
+    parse_out( spec, status, ap );
+    va_end( ap );
 }
 
 #define TESTCASE( _flags, _n, _width, _prec, _value, _base, _expect ) \
@@ -343,12 +469,12 @@ void parse_out( const char * spec, va_list ap )
     status.base = _base; \
     status.this = 0; \
     memset( status.s, '\0', 50 ); \
-    padwrap( _value, &status ); \
+    padwrap( (intmax_t)_value, &status ); \
     rc = snprintf( buffer, _n, _expect, _value ); \
     if ( ( strcmp( status.s, buffer ) != 0 ) || ( status.i != rc ) ) \
     { \
         printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status.s, status.i, buffer, rc ); \
-    } \
+    }
 
 #define UTESTCASE( _flags, _n, _width, _prec, _value, _base, _expect ) \
     status.flags = _flags; \
@@ -359,20 +485,24 @@ void parse_out( const char * spec, va_list ap )
     status.base = _base; \
     status.this = 0; \
     memset( status.s, '\0', 50 ); \
-    upadwrap( _value, &status ); \
+    upadwrap( (uintmax_t)_value, &status ); \
     rc = snprintf( buffer, _n, _expect, _value ); \
     if ( ( strcmp( status.s, buffer ) != 0 ) || ( status.i != rc ) ) \
-{ \
+    { \
         printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status.s, status.i, buffer, rc ); \
-} \
+    }
 
-int main()
+int main( void )
 {
     struct status_t status;
     int rc;
-    int tmp;
     char * buffer = malloc( 50 );
-    status.s = malloc( 50 );
+    status.s = calloc( 50, 1 );
+    status.i = 0;
+    status.n = SIZE_MAX;
+    puts( "- parse_out() -\n" );
+    parse_out_wrapper( "d", &status, 1234 );
+    puts( status.s );
     puts( "- Signed min / max -\n" );
     TESTCASE( E_char, SIZE_MAX, 0, 0, CHAR_MIN, 10, "%hhd" );
     TESTCASE( E_char, SIZE_MAX, 0, 0, CHAR_MAX, 10, "%hhd" );
