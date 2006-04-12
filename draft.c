@@ -45,6 +45,117 @@ struct status_t
     FILE *        stream;/* for to-stream output                             */
 };
 
+void parse_out( const char * spec, struct status_t * status, va_list ap );
+void parse_out_wrapper( const char * spec, struct status_t * status, ... );
+
+#define TESTCASE( _n, _value, _expect ) \
+    status.n = _n; \
+    status.i = 0; \
+    memset( status.s, '\0', 50 ); \
+    spec = _expect; \
+    ++spec; \
+    parse_out_wrapper( spec, &status, _value ); \
+    rc = snprintf( buffer, _n, _expect, _value ); \
+    if ( ( strcmp( status.s, buffer ) != 0 ) || ( status.i != rc ) ) \
+{ \
+        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status.s, status.i, buffer, rc ); \
+}
+
+int main( void )
+{
+    struct status_t status;
+    int rc;
+    char * buffer = malloc( 50 );
+    const char * spec;
+    status.s = calloc( 50, 1 );
+    status.i = 0;
+    status.stream = NULL;
+    status.n = SIZE_MAX;
+    puts( "- Signed min / max -\n" );
+    TESTCASE( SIZE_MAX, CHAR_MIN, "%hhd" );
+    TESTCASE( SIZE_MAX, CHAR_MAX, "%hhd" );
+    TESTCASE( SIZE_MAX, 0, "%hhd" );
+    TESTCASE( SIZE_MAX, SHRT_MIN, "%hd" );
+    TESTCASE( SIZE_MAX, SHRT_MAX, "%hd" );
+    TESTCASE( SIZE_MAX, 0, "%hd" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%d" );
+    TESTCASE( SIZE_MAX, 0, "%d" );
+    TESTCASE( SIZE_MAX, LONG_MIN, "%ld" );
+    TESTCASE( SIZE_MAX, LONG_MAX, "%ld" );
+    TESTCASE( SIZE_MAX, 0l, "%ld" );
+    TESTCASE( SIZE_MAX, LLONG_MIN, "%lld" );
+    TESTCASE( SIZE_MAX, LLONG_MAX, "%lld" );
+    TESTCASE( SIZE_MAX, 0ll, "%lld" ); 
+    puts( "- Unsigned min / max -\n" );
+    TESTCASE( SIZE_MAX, UCHAR_MAX, "%hhu" );
+    TESTCASE( SIZE_MAX, (unsigned char)-1, "%hhu" );
+    TESTCASE( SIZE_MAX, USHRT_MAX, "%hu" );
+    TESTCASE( SIZE_MAX, (unsigned short)-1, "%hu" );
+    TESTCASE( SIZE_MAX, UINT_MAX, "%u" );
+    TESTCASE( SIZE_MAX, -1u, "%u" );
+    TESTCASE( SIZE_MAX, ULONG_MAX, "%lu" );
+    TESTCASE( SIZE_MAX, -1ul, "%lu" );
+    TESTCASE( SIZE_MAX, ULLONG_MAX, "%llu" );
+    TESTCASE( SIZE_MAX, -1ull, "%llu" );
+    puts( "- Hex and Octal, normal and alternative, upper and lowercase -\n" );
+    TESTCASE( SIZE_MAX, UINT_MAX, "%X" );
+    TESTCASE( SIZE_MAX, -1u, "%#X" );
+    TESTCASE( SIZE_MAX, UINT_MAX, "%x" );
+    TESTCASE( SIZE_MAX, -1u, "%#x" );
+    TESTCASE( SIZE_MAX, UINT_MAX, "%o" );
+    TESTCASE( SIZE_MAX, -1u, "%#o" );
+    puts( "- Plus flag -\n" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%+d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%+d" );
+    TESTCASE( SIZE_MAX, 0, "%+d" );
+    TESTCASE( SIZE_MAX, UINT_MAX, "%+u" );
+    TESTCASE( SIZE_MAX, -1u, "%+u" );
+    puts( "- Space flag -\n" );
+    TESTCASE( SIZE_MAX, INT_MIN, "% d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "% d" );
+    TESTCASE( SIZE_MAX, 0, "% d" );
+    TESTCASE( SIZE_MAX, UINT_MAX, "% u" );
+    TESTCASE( SIZE_MAX, -1u, "% u" );
+    puts( "- Field width -\n" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%9d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%9d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%10d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%10d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%11d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%11d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%12d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%12d" );
+    puts( "- Field width (left bound) -\n" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%-9d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%-9d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%-10d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%-10d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%-11d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%-11d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%-12d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%-12d" );
+    puts( "- Field width, zero padding -\n");
+    TESTCASE( SIZE_MAX, INT_MIN, "%09d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%09d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%010d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%010d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%011d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%011d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%012d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%012d" );
+    puts( "- Field width, zero padding (left bound) -\n" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%-09d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%-09d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%-010d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%-010d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%-011d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%-011d" );
+    TESTCASE( SIZE_MAX, INT_MIN, "%-012d" );
+    TESTCASE( SIZE_MAX, INT_MAX, "%-012d" );
+    return 0;
+}
+
 /* x - the character to be delivered
    i - pointer to number of characters already delivered in this call
    n - pointer to maximum number of characters to be delivered in this call
@@ -126,108 +237,6 @@ static void int2base( intmax_t value, struct status_t * status )
     }
     }
 }
-
-static void padwrap( intmax_t value, struct status_t * status )
-{
-    if ( status->flags & E_char )
-    {
-        value = (char)value;
-    }
-    else if ( status->flags & E_short )
-    {
-        value = (short)value;
-    }
-    else if ( status->flags & E_long )
-    {
-        value = (long)value;
-    }
-    else if ( status->flags & E_llong )
-    {
-        value = (long long)value;
-    }
-    else if ( status->flags & E_ptrdiff )
-    {
-        value = (ptrdiff_t)value;
-    }
-    else if ( ! ( status->flags & E_intmax ) )
-    {
-        value = (int)value;
-    }
-    int2base( value, status );
-    if ( status->flags & E_minus )
-    {
-        while ( status->this < status->width )
-        {
-            DELIVER( ' ' );
-            ++(status->this);
-        }
-    }
-    if ( status->i >= status->n )
-    {
-        status->s[status->n - 1] = '\0';
-    }
-}
-
-static void upadwrap( uintmax_t value, struct status_t * status )
-{
-    if ( status->flags & E_char )
-    {
-        value = (unsigned char)value;
-    }
-    else if ( status->flags & E_short )
-    {
-        value = (unsigned short)value;
-    }
-    else if ( status->flags & E_long )
-    {
-        value = (unsigned long)value;
-    }
-    else if ( status->flags & E_llong )
-    {
-        value = (unsigned long long)value;
-    }
-    else if ( status->flags & E_size )
-    {
-        value = (size_t)value;
-    }
-    else
-    {
-        value = (unsigned int)value;
-    }
-    status->flags |= E_unsigned;
-    ++(status->this);
-    if ( ( value / status->base ) != 0 )
-    {
-        int2base( (intmax_t)(value / status->base), status );
-    }
-    int digit = value % status->base;
-    if ( digit < 0 )
-    {
-        digit *= -1;
-    }
-    if ( status->flags & E_lower )
-    {
-        DELIVER( _PDCLIB_digits[ digit ] );
-    }
-    else
-    {
-        DELIVER( toupper( _PDCLIB_digits[ digit ] ) );
-    }
-    if ( status->flags & E_minus )
-    {
-        while ( status->this < status->width )
-        {
-            DELIVER( ' ' );
-            ++(status->this);
-        }
-    }
-    if ( status->i >= status->n )
-    {
-        status->s[status->n - 1] = '\0';
-    }
-}
-
-void parse_out( const char * spec, struct status_t * status, va_list ap );
 
 void parse_out( const char * spec, struct status_t * status, va_list ap )
 {
@@ -416,43 +425,82 @@ void parse_out( const char * spec, struct status_t * status, va_list ap )
     if ( status->base != 0 )
     {
         /* Integer conversions */
-        switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_unsigned ) )
+        /* TODO: Eliminate the padwrap as far as possible. */
+        if ( status->flags & E_unsigned )
         {
-            case E_char:
-                padwrap( (intmax_t)(char)va_arg( ap, int ), status );
-                break;
-            case E_char | E_unsigned:
-                upadwrap( (uintmax_t)(unsigned char)va_arg( ap, int ), status );
-                break;
-            case E_short:
-                padwrap( (intmax_t)(short)va_arg( ap, int ), status );
-                break;
-            case E_short | E_unsigned:
-                upadwrap( (uintmax_t)(unsigned short)va_arg( ap, int ), status );
-                break;
-            case 0:
-                padwrap( (intmax_t)va_arg( ap, int ), status );
-                break;
-            case E_unsigned:
-                upadwrap( (uintmax_t)va_arg( ap, unsigned int ), status );
-                break;
-            case E_long:
-                padwrap( (intmax_t)va_arg( ap, long ), status );
-                break;
-            case E_long | E_unsigned:
-                upadwrap( (uintmax_t)va_arg( ap, unsigned long ), status );
-                break;
-            case E_llong:
-                padwrap( (intmax_t)va_arg( ap, long long ), status );
-                break;
-            case E_llong | E_unsigned:
-                upadwrap( (uintmax_t)va_arg( ap, unsigned long long ), status );
-                break;
+            uintmax_t value;
+            switch ( status->flags & ( E_char | E_short | E_long | E_llong ) )
+            {
+                case E_char:
+                    value = (uintmax_t)(unsigned char)va_arg( ap, int );
+                    break;
+                case E_short:
+                    value = (uintmax_t)(unsigned short)va_arg( ap, int );
+                    break;
+                case 0:
+                    value = (uintmax_t)va_arg( ap, unsigned int );
+                    break;
+                case E_long:
+                    value = (uintmax_t)(unsigned long)va_arg( ap, unsigned long );
+                    break;
+                case E_llong:
+                    value = (uintmax_t)(unsigned long long)va_arg( ap, unsigned long long );
+                    break;
+            }
+            ++(status->this);
+            if ( ( value / status->base ) != 0 )
+            {
+                int2base( (intmax_t)(value / status->base), status );
+            }
+            int digit = value % status->base;
+            if ( digit < 0 )
+            {
+                digit *= -1;
+            }
+            if ( status->flags & E_lower )
+            {
+                DELIVER( _PDCLIB_digits[ digit ] );
+            }
+            else
+            {
+                DELIVER( toupper( _PDCLIB_digits[ digit ] ) );
+            }
+        }
+        else
+        {
+            switch ( status->flags & ( E_char | E_short | E_long | E_llong ) )
+            {
+                case E_char:
+                    int2base( (intmax_t)(char)va_arg( ap, int ), status );
+                    break;
+                case E_short:
+                    int2base( (intmax_t)(short)va_arg( ap, int ), status );
+                    break;
+                case 0:
+                    int2base( (intmax_t)va_arg( ap, int ), status );
+                    break;
+                case E_long:
+                    int2base( (intmax_t)va_arg( ap, long ), status );
+                    break;
+                case E_llong:
+                    int2base( (intmax_t)va_arg( ap, long long ), status );
+                    break;
+            }
+        }
+        if ( status->flags & E_minus )
+        {
+            while ( status->this < status->width )
+            {
+                DELIVER( ' ' );
+                ++(status->this);
+            }
+        }
+        if ( status->i >= status->n )
+        {
+            status->s[status->n - 1] = '\0';
         }
     }
 }
-
-void parse_out_wrapper( const char * spec, struct status_t * status, ... );
 
 void parse_out_wrapper( const char * spec, struct status_t * status, ... )
 {
@@ -460,112 +508,4 @@ void parse_out_wrapper( const char * spec, struct status_t * status, ... )
     va_start( ap, status );
     parse_out( spec, status, ap );
     va_end( ap );
-}
-
-#define TESTCASE( _n, _value, _expect ) \
-    status.n = _n; \
-    status.i = 0; \
-    memset( status.s, '\0', 50 ); \
-    spec = _expect; \
-    ++spec; \
-    parse_out_wrapper( spec, &status, _value ); \
-    rc = snprintf( buffer, _n, _expect, _value ); \
-    if ( ( strcmp( status.s, buffer ) != 0 ) || ( status.i != rc ) ) \
-    { \
-        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status.s, status.i, buffer, rc ); \
-    }
-
-int main( void )
-{
-    struct status_t status;
-    int rc;
-    char * buffer = malloc( 50 );
-    const char * spec;
-    status.s = calloc( 50, 1 );
-    status.i = 0;
-    status.stream = NULL;
-    status.n = SIZE_MAX;
-    puts( "- Signed min / max -\n" );
-    TESTCASE( SIZE_MAX, CHAR_MIN, "%hhd" );
-    TESTCASE( SIZE_MAX, CHAR_MAX, "%hhd" );
-    TESTCASE( SIZE_MAX, 0, "%hhd" );
-    TESTCASE( SIZE_MAX, SHRT_MIN, "%hd" );
-    TESTCASE( SIZE_MAX, SHRT_MAX, "%hd" );
-    TESTCASE( SIZE_MAX, 0, "%hd" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%d" );
-    TESTCASE( SIZE_MAX, 0, "%d" );
-    TESTCASE( SIZE_MAX, LONG_MIN, "%ld" );
-    TESTCASE( SIZE_MAX, LONG_MAX, "%ld" );
-    TESTCASE( SIZE_MAX, 0l, "%ld" );
-    TESTCASE( SIZE_MAX, LLONG_MIN, "%lld" );
-    TESTCASE( SIZE_MAX, LLONG_MAX, "%lld" );
-    TESTCASE( SIZE_MAX, 0ll, "%lld" ); 
-    puts( "- Unsigned min / max -\n" );
-    TESTCASE( SIZE_MAX, UCHAR_MAX, "%hhu" );
-    TESTCASE( SIZE_MAX, (unsigned char)-1, "%hhu" );
-    TESTCASE( SIZE_MAX, USHRT_MAX, "%hu" );
-    TESTCASE( SIZE_MAX, (unsigned short)-1, "%hu" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%u" );
-    TESTCASE( SIZE_MAX, -1u, "%u" );
-    TESTCASE( SIZE_MAX, ULONG_MAX, "%lu" );
-    TESTCASE( SIZE_MAX, -1ul, "%lu" );
-    TESTCASE( SIZE_MAX, ULLONG_MAX, "%llu" );
-    TESTCASE( SIZE_MAX, -1ull, "%llu" );
-    puts( "- Hex and Octal, normal and alternative, upper and lowercase -\n" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%X" );
-    TESTCASE( SIZE_MAX, -1u, "%#X" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%x" );
-    TESTCASE( SIZE_MAX, -1u, "%#x" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%o" );
-    TESTCASE( SIZE_MAX, -1u, "%#o" );
-    puts( "- Plus flag -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%+d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%+d" );
-    TESTCASE( SIZE_MAX, 0, "%+d" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%+u" );
-    TESTCASE( SIZE_MAX, -1u, "%+u" );
-    puts( "- Space flag -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "% d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "% d" );
-    TESTCASE( SIZE_MAX, 0, "% d" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "% u" );
-    TESTCASE( SIZE_MAX, -1u, "% u" );
-    puts( "- Field width -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%9d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%9d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%10d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%10d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%11d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%11d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%12d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%12d" );
-    puts( "- Field width (left bound) -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-9d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-9d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-10d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-10d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-11d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-11d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-12d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-12d" );
-    puts( "- Field width, zero padding -\n");
-    TESTCASE( SIZE_MAX, INT_MIN, "%09d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%09d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%010d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%010d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%011d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%011d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%012d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%012d" );
-    puts( "- Field width, zero padding (left bound) -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-09d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-09d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-010d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-010d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-011d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-011d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-012d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-012d" );
-    return 0;
 }
