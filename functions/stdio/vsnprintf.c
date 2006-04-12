@@ -11,8 +11,6 @@
 
 #ifndef REGTEST
 
-typedef char wchar_t;
-
 int vsnprintf( char * str, size_t size, const char * format, _PDCLIB_va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters. */
