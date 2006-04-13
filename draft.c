@@ -45,8 +45,9 @@ struct status_t
     FILE *        stream;/* for to-stream output                             */
 };
 
-void parse_out( const char * spec, struct status_t * status, va_list ap );
-void parse_out_wrapper( const char * spec, struct status_t * status, ... );
+const char * parse_out( const char * spec, struct status_t * status, va_list ap );
+const char * parse_out_wrapper( const char * spec, struct status_t * status, ... );
+int _PDCLIB_printf( FILE * stream, const char * format, va_list ap );
 
 #define TESTCASE( _n, _value, _expect ) \
     status.n = _n; \
@@ -238,10 +239,16 @@ static void int2base( intmax_t value, struct status_t * status )
     }
 }
 
-void parse_out( const char * spec, struct status_t * status, va_list ap )
+const char * parse_out( const char * spec, struct status_t * status, va_list ap )
 {
-    /* TODO: "%%" handled correctly? */
-
+    const char * orig_spec = spec;
+#if 0
+    if ( *(++spec) == '%' )
+    {
+        DELIVER( *spec );
+        return spec;
+    }
+#endif
     /* Initializing status structure */
     status->flags = 0;
     status->base = 0;
@@ -410,26 +417,21 @@ void parse_out( const char * spec, struct status_t * status, va_list ap )
         case 'p':
             /* uint2base( 16, (intptr_t)value, true ) */
         case 'n':
-        case '%':
-            // conversion specifier
-            /* TODO: May this be accompaigned by flags, width, precision, length modifier at all? */
             break;
         default:
-            /* TODO: No conversion specifier. Bad conversion. */
-            return;
+            /* No conversion specifier. Bad conversion. */
+            return orig_spec;
     }
-    switch ( status->flags )
-    {
-        /* TODO */
-    }
+
+    /* Do the actual output based on our findings */
     if ( status->base != 0 )
     {
         /* Integer conversions */
-        /* TODO: Eliminate the padwrap as far as possible. */
+        /* TODO: Check for invalid flag combinations. */
         if ( status->flags & E_unsigned )
         {
             uintmax_t value;
-            switch ( status->flags & ( E_char | E_short | E_long | E_llong ) )
+            switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_size ) )
             {
                 case E_char:
                     value = (uintmax_t)(unsigned char)va_arg( ap, int );
@@ -441,10 +443,13 @@ void parse_out( const char * spec, struct status_t * status, va_list ap )
                     value = (uintmax_t)va_arg( ap, unsigned int );
                     break;
                 case E_long:
-                    value = (uintmax_t)(unsigned long)va_arg( ap, unsigned long );
+                    value = (uintmax_t)va_arg( ap, unsigned long );
                     break;
                 case E_llong:
-                    value = (uintmax_t)(unsigned long long)va_arg( ap, unsigned long long );
+                    value = (uintmax_t)va_arg( ap, unsigned long long );
+                    break;
+                case E_size:
+                    value = (uintmax_t)va_arg( ap, size_t );
                     break;
             }
             ++(status->this);
@@ -468,7 +473,7 @@ void parse_out( const char * spec, struct status_t * status, va_list ap )
         }
         else
         {
-            switch ( status->flags & ( E_char | E_short | E_long | E_llong ) )
+            switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_intmax ) )
             {
                 case E_char:
                     int2base( (intmax_t)(char)va_arg( ap, int ), status );
@@ -485,6 +490,12 @@ void parse_out( const char * spec, struct status_t * status, va_list ap )
                 case E_llong:
                     int2base( (intmax_t)va_arg( ap, long long ), status );
                     break;
+                case E_ptrdiff:
+                    int2base( (intmax_t)va_arg( ap, ptrdiff_t ), status );
+                    break;
+                case E_intmax:
+                    int2base( va_arg( ap, intmax_t ), status );
+                    break;
             }
         }
         if ( status->flags & E_minus )
@@ -500,12 +511,36 @@ void parse_out( const char * spec, struct status_t * status, va_list ap )
             status->s[status->n - 1] = '\0';
         }
     }
+    return ++spec;
 }
 
-void parse_out_wrapper( const char * spec, struct status_t * status, ... )
+const char * parse_out_wrapper( const char * spec, struct status_t * status, ... )
 {
+    const char * rc;
     va_list ap;
     va_start( ap, status );
-    parse_out( spec, status, ap );
+    rc = parse_out( spec, status, ap );
     va_end( ap );
+    return rc;
+}
+
+int _PDCLIB_printf( FILE * stream, const char * format, va_list ap )
+{
+    char * buffer = malloc( 50 );
+    struct status_t status = { 0, 0, SIZE_MAX, 0, 0, /* stream->buffer */ buffer, 0, 0, stream };
+    while ( *format != '\0' )
+    {
+        const char * rc;
+        if ( ( *format != '%' ) || ( ( rc = parse_out( format, &status, ap ) ) == format ) )
+        {
+            /* No conversion specifier, print verbatim */
+            putc( *(format++), stream );
+        }
+        else
+        {
+            /* Continue parsing after conversion specifier */
+            format = rc;
+        }
+    }
+    return status.i;
 }
