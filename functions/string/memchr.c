@@ -38,4 +38,5 @@ int main( void )
     TESTCASE( memchr( abcde, '\0', 6 ) == &abcde[5] );
     return TEST_RESULTS;
 }
+
 #endif
