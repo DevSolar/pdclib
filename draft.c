@@ -1,16 +1,13 @@
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <ctype.h>
-#include <assert.h>
-#include <string.h>
-#include <limits.h>
-#include <stddef.h>
 
+/* These can be removed once integrated into PDCLIB make procedure */
 #undef TEST
 #include </home/solar/src/pdclib/functions/_PDCLIB/digits.c>
+#include </home/solar/src/pdclib/functions/_PDCLIB/Xdigits.c>
 
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
@@ -35,7 +32,7 @@
 struct status_t
 {
     int           base;  /* base to which the value shall be converted       */
-    int_fast16_t  flags; /* flags and length modifiers                       */
+    int_fast32_t  flags; /* flags and length modifiers                       */
     size_t        n;     /* maximum number of characters to be written       */
     size_t        i;     /* number of characters already written             */
     size_t        this;  /* number of output chars in the current conversion */
@@ -46,114 +43,103 @@ struct status_t
 };
 
 const char * parse_out( const char * spec, struct status_t * status, va_list ap );
-const char * parse_out_wrapper( const char * spec, struct status_t * status, ... );
-int _PDCLIB_printf( FILE * stream, const char * format, va_list ap );
+inline void test( char * buffer, size_t n, const char * expect, struct status_t * status, ... );
 
-#define TESTCASE( _n, _value, _expect ) \
-    status.n = _n; \
-    status.i = 0; \
-    memset( status.s, '\0', 50 ); \
-    spec = _expect; \
-    ++spec; \
-    parse_out_wrapper( spec, &status, _value ); \
-    rc = snprintf( buffer, _n, _expect, _value ); \
-    if ( ( strcmp( status.s, buffer ) != 0 ) || ( status.i != rc ) ) \
-{ \
-        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status.s, status.i, buffer, rc ); \
-}
+/* The following only for testing. */
+#include <limits.h>
+#include <string.h>
 
 int main( void )
 {
     struct status_t status;
-    int rc;
     char * buffer = malloc( 50 );
-    const char * spec;
     status.s = calloc( 50, 1 );
     status.i = 0;
     status.stream = NULL;
     status.n = SIZE_MAX;
     puts( "- Signed min / max -\n" );
-    TESTCASE( SIZE_MAX, CHAR_MIN, "%hhd" );
-    TESTCASE( SIZE_MAX, CHAR_MAX, "%hhd" );
-    TESTCASE( SIZE_MAX, 0, "%hhd" );
-    TESTCASE( SIZE_MAX, SHRT_MIN, "%hd" );
-    TESTCASE( SIZE_MAX, SHRT_MAX, "%hd" );
-    TESTCASE( SIZE_MAX, 0, "%hd" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%d" );
-    TESTCASE( SIZE_MAX, 0, "%d" );
-    TESTCASE( SIZE_MAX, LONG_MIN, "%ld" );
-    TESTCASE( SIZE_MAX, LONG_MAX, "%ld" );
-    TESTCASE( SIZE_MAX, 0l, "%ld" );
-    TESTCASE( SIZE_MAX, LLONG_MIN, "%lld" );
-    TESTCASE( SIZE_MAX, LLONG_MAX, "%lld" );
-    TESTCASE( SIZE_MAX, 0ll, "%lld" ); 
+//    inline void test( char * buffer, size_t n, const char * expect, struct status_t * status, ... );
+    test( buffer, SIZE_MAX, "%hhd", &status, CHAR_MIN );
+    test( buffer, SIZE_MAX, "%hhd", &status, CHAR_MAX );
+    test( buffer, SIZE_MAX, "%hhd", &status, 0 );
+    test( buffer, SIZE_MAX, "%hd", &status, SHRT_MIN );
+    test( buffer, SIZE_MAX, "%hd", &status, SHRT_MAX );
+    test( buffer, SIZE_MAX, "%hd", &status, 0 );
+    test( buffer, SIZE_MAX, "%d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%d", &status, 0 );
+    test( buffer, SIZE_MAX, "%ld", &status, LONG_MIN );
+    test( buffer, SIZE_MAX, "%ld", &status, LONG_MAX );
+    test( buffer, SIZE_MAX, "%ld", &status, 0l );
+    test( buffer, SIZE_MAX, "%lld", &status, LLONG_MIN );
+    test( buffer, SIZE_MAX, "%lld", &status, LLONG_MAX );
+    test( buffer, SIZE_MAX, "%lld", &status, 0ll );
     puts( "- Unsigned min / max -\n" );
-    TESTCASE( SIZE_MAX, UCHAR_MAX, "%hhu" );
-    TESTCASE( SIZE_MAX, (unsigned char)-1, "%hhu" );
-    TESTCASE( SIZE_MAX, USHRT_MAX, "%hu" );
-    TESTCASE( SIZE_MAX, (unsigned short)-1, "%hu" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%u" );
-    TESTCASE( SIZE_MAX, -1u, "%u" );
-    TESTCASE( SIZE_MAX, ULONG_MAX, "%lu" );
-    TESTCASE( SIZE_MAX, -1ul, "%lu" );
-    TESTCASE( SIZE_MAX, ULLONG_MAX, "%llu" );
-    TESTCASE( SIZE_MAX, -1ull, "%llu" );
+    test( buffer, SIZE_MAX, "%hhu", &status, UCHAR_MAX );
+    test( buffer, SIZE_MAX, "%hhu", &status, (unsigned char)-1 );
+    test( buffer, SIZE_MAX, "%hu", &status, USHRT_MAX );
+    test( buffer, SIZE_MAX, "%hu", &status, (unsigned short)-1 );
+    test( buffer, SIZE_MAX, "%u", &status, UINT_MAX );
+    test( buffer, SIZE_MAX, "%u", &status, -1u );
+    test( buffer, SIZE_MAX, "%lu", &status, ULONG_MAX );
+    test( buffer, SIZE_MAX, "%lu", &status, -1ul );
+    test( buffer, SIZE_MAX, "%llu", &status, ULLONG_MAX );
+    test( buffer, SIZE_MAX, "%llu", &status, -1ull );
     puts( "- Hex and Octal, normal and alternative, upper and lowercase -\n" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%X" );
-    TESTCASE( SIZE_MAX, -1u, "%#X" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%x" );
-    TESTCASE( SIZE_MAX, -1u, "%#x" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%o" );
-    TESTCASE( SIZE_MAX, -1u, "%#o" );
+    test( buffer, SIZE_MAX, "%X", &status, UINT_MAX );
+    test( buffer, SIZE_MAX, "%#X", &status, -1u );
+    test( buffer, SIZE_MAX, "%x", &status, UINT_MAX );
+    test( buffer, SIZE_MAX, "%#x", &status, -1u );
+    test( buffer, SIZE_MAX, "%o", &status, UINT_MAX );
+    test( buffer, SIZE_MAX, "%#o", &status, -1u );
     puts( "- Plus flag -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%+d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%+d" );
-    TESTCASE( SIZE_MAX, 0, "%+d" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "%+u" );
-    TESTCASE( SIZE_MAX, -1u, "%+u" );
+    test( buffer, SIZE_MAX, "%+d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%+d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%+d", &status, 0 );
+    test( buffer, SIZE_MAX, "%+u", &status, UINT_MAX );
+    test( buffer, SIZE_MAX, "%+u", &status, -1u );
     puts( "- Space flag -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "% d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "% d" );
-    TESTCASE( SIZE_MAX, 0, "% d" );
-    TESTCASE( SIZE_MAX, UINT_MAX, "% u" );
-    TESTCASE( SIZE_MAX, -1u, "% u" );
+    test( buffer, SIZE_MAX, "% d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "% d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "% d", &status, 0 );
+    test( buffer, SIZE_MAX, "% u", &status, UINT_MAX );
+    test( buffer, SIZE_MAX, "% u", &status, -1u );
     puts( "- Field width -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%9d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%9d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%10d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%10d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%11d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%11d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%12d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%12d" );
+    test( buffer, SIZE_MAX, "%9d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%9d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%10d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%10d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%11d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%11d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%12d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%12d", &status, INT_MAX );
     puts( "- Field width (left bound) -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-9d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-9d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-10d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-10d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-11d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-11d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-12d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-12d" );
+    test( buffer, SIZE_MAX, "%-9d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%-9d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%-10d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%-10d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%-11d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%-11d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%-12d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%-12d", &status, INT_MAX );
     puts( "- Field width, zero padding -\n");
-    TESTCASE( SIZE_MAX, INT_MIN, "%09d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%09d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%010d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%010d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%011d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%011d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%012d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%012d" );
+    test( buffer, SIZE_MAX, "%09d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%09d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%010d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%010d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%011d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%011d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%012d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%012d", &status, INT_MAX );
     puts( "- Field width, zero padding (left bound) -\n" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-09d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-09d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-010d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-010d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-011d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-011d" );
-    TESTCASE( SIZE_MAX, INT_MIN, "%-012d" );
-    TESTCASE( SIZE_MAX, INT_MAX, "%-012d" );
+    test( buffer, SIZE_MAX, "%-09d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%-09d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%-010d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%-010d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%-011d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%-011d", &status, INT_MAX );
+    test( buffer, SIZE_MAX, "%-012d", &status, INT_MIN );
+    test( buffer, SIZE_MAX, "%-012d", &status, INT_MAX );
     return 0;
 }
 
@@ -199,7 +185,7 @@ static void int2base( intmax_t value, struct status_t * status )
                 preface[ preidx++ ] = ' ';
             }
         }
-        if ( ! ( ( status->flags & E_minus ) || ( status->flags & E_zero ) ) )
+        if ( ! ( status->flags & ( E_minus | E_zero ) ) )
         {
             while ( ( status->this + preidx ) < status->width )
             {
@@ -234,7 +220,7 @@ static void int2base( intmax_t value, struct status_t * status )
     }
     else
     {
-        DELIVER( toupper( _PDCLIB_digits[ digit ] ) );
+        DELIVER( _PDCLIB_Xdigits[ digit ] );
     }
     }
 }
@@ -326,7 +312,8 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
             status->prec = (int)strtol( spec, &endptr, 10 );
             if ( spec == endptr )
             {
-                /* TODO: Decimal point but no number - bad conversion specifier. */
+                /* Decimal point but no number - bad conversion specifier. */
+                return orig_spec;
             }
         }
     }
@@ -468,7 +455,7 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
             }
             else
             {
-                DELIVER( toupper( _PDCLIB_digits[ digit ] ) );
+                DELIVER( _PDCLIB_Xdigits[ digit ] );
             }
         }
         else
@@ -514,17 +501,24 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
     return ++spec;
 }
 
-const char * parse_out_wrapper( const char * spec, struct status_t * status, ... )
+inline void test( char * buffer, size_t n, const char * expect, struct status_t * status, ... )
 {
-    const char * rc;
+    int rc;
     va_list ap;
     va_start( ap, status );
-    rc = parse_out( spec, status, ap );
-    va_end( ap );
-    return rc;
+    status->n = n;
+    status->i = 0;
+    memset( status->s, '\0', 50 );
+    parse_out( expect + 1, status, ap );
+    rc = vsnprintf( buffer, n, expect, ap );
+    if ( ( strcmp( status->s, buffer ) != 0 ) || ( status->i != rc ) )
+    {
+        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status->s, status->i, buffer, rc );
+    }
 }
 
-int _PDCLIB_printf( FILE * stream, const char * format, va_list ap )
+#if 0
+int _PDCLIB_fprintf( FILE * stream, const char * format, va_list ap )
 {
     char * buffer = malloc( 50 );
     struct status_t status = { 0, 0, SIZE_MAX, 0, 0, /* stream->buffer */ buffer, 0, 0, stream };
@@ -544,3 +538,4 @@ int _PDCLIB_printf( FILE * stream, const char * format, va_list ap )
     }
     return status.i;
 }
+#endif
