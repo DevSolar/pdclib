@@ -43,8 +43,8 @@ struct status_t
 };
 
 const char * parse_out( const char * spec, struct status_t * status, va_list ap );
-inline void test( char * buffer, size_t n, const char * expect, struct status_t * status, ... );
-int _PDCLIB_sprintf( char * buffer, const char * format, va_list ap );
+inline void test( size_t n, const char * expect, ... );
+int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap );
 
 /* The following only for testing. */
 #include <limits.h>
@@ -52,94 +52,88 @@ int _PDCLIB_sprintf( char * buffer, const char * format, va_list ap );
 
 int main( void )
 {
-    struct status_t status;
-    char * buffer = malloc( 50 );
-    status.s = calloc( 50, 1 );
-    status.i = 0;
-    status.stream = NULL;
-    status.n = SIZE_MAX;
     puts( "- Signed min / max -\n" );
-    test( buffer, SIZE_MAX, "%hhd", &status, CHAR_MIN );
-    test( buffer, SIZE_MAX, "%hhd", &status, CHAR_MAX );
-    test( buffer, SIZE_MAX, "%hhd", &status, 0 );
-    test( buffer, SIZE_MAX, "%hd", &status, SHRT_MIN );
-    test( buffer, SIZE_MAX, "%hd", &status, SHRT_MAX );
-    test( buffer, SIZE_MAX, "%hd", &status, 0 );
-    test( buffer, SIZE_MAX, "%d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%d", &status, 0 );
-    test( buffer, SIZE_MAX, "%ld", &status, LONG_MIN );
-    test( buffer, SIZE_MAX, "%ld", &status, LONG_MAX );
-    test( buffer, SIZE_MAX, "%ld", &status, 0l );
-    test( buffer, SIZE_MAX, "%lld", &status, LLONG_MIN );
-    test( buffer, SIZE_MAX, "%lld", &status, LLONG_MAX );
-    test( buffer, SIZE_MAX, "%lld", &status, 0ll );
+    test( SIZE_MAX, "%hhd", CHAR_MIN );
+    test( SIZE_MAX, "%hhd", CHAR_MAX );
+    test( SIZE_MAX, "%hhd", 0 );
+    test( SIZE_MAX, "%hd", SHRT_MIN );
+    test( SIZE_MAX, "%hd", SHRT_MAX );
+    test( SIZE_MAX, "%hd", 0 );
+    test( SIZE_MAX, "%d", INT_MIN );
+    test( SIZE_MAX, "%d", INT_MAX );
+    test( SIZE_MAX, "%d", 0 );
+    test( SIZE_MAX, "%ld", LONG_MIN );
+    test( SIZE_MAX, "%ld", LONG_MAX );
+    test( SIZE_MAX, "%ld", 0l );
+    test( SIZE_MAX, "%lld", LLONG_MIN );
+    test( SIZE_MAX, "%lld", LLONG_MAX );
+    test( SIZE_MAX, "%lld", 0ll );
     puts( "- Unsigned min / max -\n" );
-    test( buffer, SIZE_MAX, "%hhu", &status, UCHAR_MAX );
-    test( buffer, SIZE_MAX, "%hhu", &status, (unsigned char)-1 );
-    test( buffer, SIZE_MAX, "%hu", &status, USHRT_MAX );
-    test( buffer, SIZE_MAX, "%hu", &status, (unsigned short)-1 );
-    test( buffer, SIZE_MAX, "%u", &status, UINT_MAX );
-    test( buffer, SIZE_MAX, "%u", &status, -1u );
-    test( buffer, SIZE_MAX, "%lu", &status, ULONG_MAX );
-    test( buffer, SIZE_MAX, "%lu", &status, -1ul );
-    test( buffer, SIZE_MAX, "%llu", &status, ULLONG_MAX );
-    test( buffer, SIZE_MAX, "%llu", &status, -1ull );
+    test( SIZE_MAX, "%hhu", UCHAR_MAX );
+    test( SIZE_MAX, "%hhu", (unsigned char)-1 );
+    test( SIZE_MAX, "%hu", USHRT_MAX );
+    test( SIZE_MAX, "%hu", (unsigned short)-1 );
+    test( SIZE_MAX, "%u", UINT_MAX );
+    test( SIZE_MAX, "%u", -1u );
+    test( SIZE_MAX, "%lu", ULONG_MAX );
+    test( SIZE_MAX, "%lu", -1ul );
+    test( SIZE_MAX, "%llu", ULLONG_MAX );
+    test( SIZE_MAX, "%llu", -1ull );
     puts( "- Hex and Octal, normal and alternative, upper and lowercase -\n" );
-    test( buffer, SIZE_MAX, "%X", &status, UINT_MAX );
-    test( buffer, SIZE_MAX, "%#X", &status, -1u );
-    test( buffer, SIZE_MAX, "%x", &status, UINT_MAX );
-    test( buffer, SIZE_MAX, "%#x", &status, -1u );
-    test( buffer, SIZE_MAX, "%o", &status, UINT_MAX );
-    test( buffer, SIZE_MAX, "%#o", &status, -1u );
+    test( SIZE_MAX, "%X", UINT_MAX );
+    test( SIZE_MAX, "%#X", -1u );
+    test( SIZE_MAX, "%x", UINT_MAX );
+    test( SIZE_MAX, "%#x", -1u );
+    test( SIZE_MAX, "%o", UINT_MAX );
+    test( SIZE_MAX, "%#o", -1u );
     puts( "- Plus flag -\n" );
-    test( buffer, SIZE_MAX, "%+d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%+d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%+d", &status, 0 );
-    test( buffer, SIZE_MAX, "%+u", &status, UINT_MAX );
-    test( buffer, SIZE_MAX, "%+u", &status, -1u );
+    test( SIZE_MAX, "%+d", INT_MIN );
+    test( SIZE_MAX, "%+d", INT_MAX );
+    test( SIZE_MAX, "%+d", 0 );
+    test( SIZE_MAX, "%+u", UINT_MAX );
+    test( SIZE_MAX, "%+u", -1u );
     puts( "- Space flag -\n" );
-    test( buffer, SIZE_MAX, "% d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "% d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "% d", &status, 0 );
-    test( buffer, SIZE_MAX, "% u", &status, UINT_MAX );
-    test( buffer, SIZE_MAX, "% u", &status, -1u );
+    test( SIZE_MAX, "% d", INT_MIN );
+    test( SIZE_MAX, "% d", INT_MAX );
+    test( SIZE_MAX, "% d", 0 );
+    test( SIZE_MAX, "% u", UINT_MAX );
+    test( SIZE_MAX, "% u", -1u );
     puts( "- Field width -\n" );
-    test( buffer, SIZE_MAX, "%9d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%9d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%10d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%10d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%11d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%11d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%12d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%12d", &status, INT_MAX );
+    test( SIZE_MAX, "%9d", INT_MIN );
+    test( SIZE_MAX, "%9d", INT_MAX );
+    test( SIZE_MAX, "%10d", INT_MIN );
+    test( SIZE_MAX, "%10d", INT_MAX );
+    test( SIZE_MAX, "%11d", INT_MIN );
+    test( SIZE_MAX, "%11d", INT_MAX );
+    test( SIZE_MAX, "%12d", INT_MIN );
+    test( SIZE_MAX, "%12d", INT_MAX );
     puts( "- Field width (left bound) -\n" );
-    test( buffer, SIZE_MAX, "%-9d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%-9d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%-10d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%-10d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%-11d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%-11d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%-12d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%-12d", &status, INT_MAX );
+    test( SIZE_MAX, "%-9d", INT_MIN );
+    test( SIZE_MAX, "%-9d", INT_MAX );
+    test( SIZE_MAX, "%-10d", INT_MIN );
+    test( SIZE_MAX, "%-10d", INT_MAX );
+    test( SIZE_MAX, "%-11d", INT_MIN );
+    test( SIZE_MAX, "%-11d", INT_MAX );
+    test( SIZE_MAX, "%-12d", INT_MIN );
+    test( SIZE_MAX, "%-12d", INT_MAX );
     puts( "- Field width, zero padding -\n");
-    test( buffer, SIZE_MAX, "%09d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%09d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%010d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%010d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%011d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%011d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%012d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%012d", &status, INT_MAX );
+    test( SIZE_MAX, "%09d", INT_MIN );
+    test( SIZE_MAX, "%09d", INT_MAX );
+    test( SIZE_MAX, "%010d", INT_MIN );
+    test( SIZE_MAX, "%010d", INT_MAX );
+    test( SIZE_MAX, "%011d", INT_MIN );
+    test( SIZE_MAX, "%011d", INT_MAX );
+    test( SIZE_MAX, "%012d", INT_MIN );
+    test( SIZE_MAX, "%012d", INT_MAX );
     puts( "- Field width, zero padding (left bound) -\n" );
-    test( buffer, SIZE_MAX, "%-09d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%-09d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%-010d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%-010d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%-011d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%-011d", &status, INT_MAX );
-    test( buffer, SIZE_MAX, "%-012d", &status, INT_MIN );
-    test( buffer, SIZE_MAX, "%-012d", &status, INT_MAX );
+    test( SIZE_MAX, "%-09d", INT_MIN );
+    test( SIZE_MAX, "%-09d", INT_MAX );
+    test( SIZE_MAX, "%-010d", INT_MIN );
+    test( SIZE_MAX, "%-010d", INT_MAX );
+    test( SIZE_MAX, "%-011d", INT_MIN );
+    test( SIZE_MAX, "%-011d", INT_MAX );
+    test( SIZE_MAX, "%-012d", INT_MIN );
+    test( SIZE_MAX, "%-012d", INT_MAX );
     return 0;
 }
 
@@ -499,24 +493,27 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
     return ++spec;
 }
 
-inline void test( char * buffer, size_t n, const char * expect, struct status_t * status, ... )
+inline void test( size_t n, const char * expect, ... )
 {
+    char * buffer1 = malloc( 50 );
+    char * buffer2 = malloc( 50 );
     int myrc;
-    int rc;                                     // y
-    va_list ap;                                 // y
-    va_start( ap, status );                     // y
-    memset( status->s, '\0', 50 );              // n
-    myrc = _PDCLIB_sprintf( status->s, expect, ap );
-    rc = vsnprintf( buffer, n, expect, ap );    // n
-    if ( ( strcmp( status->s, buffer ) != 0 ) || ( myrc != rc ) )
+    int rc;
+    va_list ap;
+    va_start( ap, expect );
+    myrc = _PDCLIB_sprintf( buffer1, n, expect, ap );
+    rc = vsprintf( buffer2, expect, ap );
+    if ( ( strcmp( buffer1, buffer2 ) != 0 ) || ( myrc != rc ) )
     {
-        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", buffer, myrc, buffer, rc );
+        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", buffer1, myrc, buffer2, rc );
     }
+    free( buffer1 );
+    free( buffer2 );
 }
 
-int _PDCLIB_sprintf( char * buffer, const char * format, va_list ap )
+int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap )
 {
-    struct status_t status = { 0, 0, SIZE_MAX, 0, 0, buffer, 0, 0, NULL };
+    struct status_t status = { 0, 0, n, 0, 0, buffer, 0, 0, NULL };
     while ( *format != '\0' )
     {
         const char * rc;
@@ -531,6 +528,7 @@ int _PDCLIB_sprintf( char * buffer, const char * format, va_list ap )
             format = rc;
         }
     }
+    buffer[ status.i ] = '\0';
     return status.i;
 }
 
