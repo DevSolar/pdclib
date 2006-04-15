@@ -44,6 +44,7 @@ struct status_t
 
 const char * parse_out( const char * spec, struct status_t * status, va_list ap );
 inline void test( char * buffer, size_t n, const char * expect, struct status_t * status, ... );
+int _PDCLIB_sprintf( char * buffer, const char * format, va_list ap );
 
 /* The following only for testing. */
 #include <limits.h>
@@ -58,7 +59,6 @@ int main( void )
     status.stream = NULL;
     status.n = SIZE_MAX;
     puts( "- Signed min / max -\n" );
-//    inline void test( char * buffer, size_t n, const char * expect, struct status_t * status, ... );
     test( buffer, SIZE_MAX, "%hhd", &status, CHAR_MIN );
     test( buffer, SIZE_MAX, "%hhd", &status, CHAR_MAX );
     test( buffer, SIZE_MAX, "%hhd", &status, 0 );
@@ -228,13 +228,11 @@ static void int2base( intmax_t value, struct status_t * status )
 const char * parse_out( const char * spec, struct status_t * status, va_list ap )
 {
     const char * orig_spec = spec;
-#if 0
     if ( *(++spec) == '%' )
     {
         DELIVER( *spec );
         return spec;
     }
-#endif
     /* Initializing status structure */
     status->flags = 0;
     status->base = 0;
@@ -503,18 +501,37 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
 
 inline void test( char * buffer, size_t n, const char * expect, struct status_t * status, ... )
 {
-    int rc;
-    va_list ap;
-    va_start( ap, status );
-    status->n = n;
-    status->i = 0;
-    memset( status->s, '\0', 50 );
-    parse_out( expect + 1, status, ap );
-    rc = vsnprintf( buffer, n, expect, ap );
-    if ( ( strcmp( status->s, buffer ) != 0 ) || ( status->i != rc ) )
+    int myrc;
+    int rc;                                     // y
+    va_list ap;                                 // y
+    va_start( ap, status );                     // y
+    memset( status->s, '\0', 50 );              // n
+    myrc = _PDCLIB_sprintf( status->s, expect, ap );
+    rc = vsnprintf( buffer, n, expect, ap );    // n
+    if ( ( strcmp( status->s, buffer ) != 0 ) || ( myrc != rc ) )
     {
-        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", status->s, status->i, buffer, rc );
+        printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", buffer, myrc, buffer, rc );
     }
+}
+
+int _PDCLIB_sprintf( char * buffer, const char * format, va_list ap )
+{
+    struct status_t status = { 0, 0, SIZE_MAX, 0, 0, buffer, 0, 0, NULL };
+    while ( *format != '\0' )
+    {
+        const char * rc;
+        if ( ( *format != '%' ) || ( ( rc = parse_out( format, &status, ap ) ) == format ) )
+        {
+            /* No conversion specifier, print verbatim */
+            buffer[ status.i++ ] = *format;
+        }
+        else
+        {
+            /* Continue parsing after conversion specifier */
+            format = rc;
+        }
+    }
+    return status.i;
 }
 
 #if 0
