@@ -192,7 +192,6 @@ int main( void )
    i - pointer to number of characters already delivered in this call
    n - pointer to maximum number of characters to be delivered in this call
    s - the buffer into which the character shall be delivered
-   TODO: Overruns.
 */
 #define DELIVER( x ) do { if ( status->i < status->n ) { if ( status->stream != NULL ) putc( x, status->stream ); else status->s[status->i] = x; } ++(status->i); } while ( 0 )
 
@@ -227,7 +226,7 @@ static void int2base( intmax_t value, struct status_t * status )
         if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) )
         {
             /* Octal / hexadecimal prefix for "%#" conversions */
-            preface[ preidx++ ] = '0'; /* TODO: For octal, standard states "extend the precision" */
+            preface[ preidx++ ] = '0';
             if ( status->base == 16 )
             {
                 preface[ preidx++ ] = ( status->flags & E_lower ) ? 'x' : 'X';
@@ -268,7 +267,7 @@ static void int2base( intmax_t value, struct status_t * status )
                 for ( int i = 0; i < status->width - characters; ++i )
                 {
                     DELIVER( ' ' );
-                    ++(status->this); /* TODO: Probably have to do something so I still know how many zeroes are required, later. */
+                    ++(status->this);
                 }
             }
         }
@@ -282,7 +281,7 @@ static void int2base( intmax_t value, struct status_t * status )
         if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
         {
             /* If field is not left aligned, and zero padding is requested, do
-               so. TODO: This should include precision handling (probably).
+               so.
             */
             while ( status->this < status->width )
             {
@@ -290,6 +289,7 @@ static void int2base( intmax_t value, struct status_t * status )
                 ++(status->this);
             }
         }
+        /* Do the precision padding if necessary. */
         for ( int i = 0; i < prec_pads; ++i )
         {
             DELIVER( '0' );
@@ -324,7 +324,8 @@ const char * parse_out( const char * spec, struct status_t * status )
     const char * orig_spec = spec;
     if ( *(++spec) == '%' )
     {
-        return spec;
+        DELIVER( *spec );
+        return ++spec;
     }
     /* Initializing status structure */
     status->flags = 0;
