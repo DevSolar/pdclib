@@ -180,6 +180,9 @@ int main( void )
     test( SIZE_MAX, "%+0.6d", INT_MAX );
     test( SIZE_MAX, "%+06.3d", INT_MAX );
     test( SIZE_MAX, "%+03.6d", INT_MAX );
+    puts( "- Multiple outputs -\n" );
+    test( SIZE_MAX, "- %d", INT_MAX );
+    test( SIZE_MAX, "- %d %% %d", INT_MAX, INT_MIN );
     return 0;
 }
 
@@ -321,7 +324,6 @@ const char * parse_out( const char * spec, struct status_t * status )
     const char * orig_spec = spec;
     if ( *(++spec) == '%' )
     {
-        DELIVER( *spec );
         return spec;
     }
     /* Initializing status structure */
