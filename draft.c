@@ -53,7 +53,6 @@ int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap );
 
 int main( void )
 {
-    puts( "- Signed min / max -\n" );
     test( SIZE_MAX, "%hhd", CHAR_MIN );
     test( SIZE_MAX, "%hhd", CHAR_MAX );
     test( SIZE_MAX, "%hhd", 0 );
@@ -69,7 +68,6 @@ int main( void )
     test( SIZE_MAX, "%lld", LLONG_MIN );
     test( SIZE_MAX, "%lld", LLONG_MAX );
     test( SIZE_MAX, "%lld", 0ll );
-    puts( "- Unsigned min / max -\n" );
     test( SIZE_MAX, "%hhu", UCHAR_MAX );
     test( SIZE_MAX, "%hhu", (unsigned char)-1 );
     test( SIZE_MAX, "%hu", USHRT_MAX );
@@ -80,26 +78,22 @@ int main( void )
     test( SIZE_MAX, "%lu", -1ul );
     test( SIZE_MAX, "%llu", ULLONG_MAX );
     test( SIZE_MAX, "%llu", -1ull );
-    puts( "- Hex and Octal, normal and alternative, upper and lowercase -\n" );
     test( SIZE_MAX, "%X", UINT_MAX );
     test( SIZE_MAX, "%#X", -1u );
     test( SIZE_MAX, "%x", UINT_MAX );
     test( SIZE_MAX, "%#x", -1u );
     test( SIZE_MAX, "%o", UINT_MAX );
     test( SIZE_MAX, "%#o", -1u );
-    puts( "- Plus flag -\n" );
     test( SIZE_MAX, "%+d", INT_MIN );
     test( SIZE_MAX, "%+d", INT_MAX );
     test( SIZE_MAX, "%+d", 0 );
     test( SIZE_MAX, "%+u", UINT_MAX );
     test( SIZE_MAX, "%+u", -1u );
-    puts( "- Space flag -\n" );
     test( SIZE_MAX, "% d", INT_MIN );
     test( SIZE_MAX, "% d", INT_MAX );
     test( SIZE_MAX, "% d", 0 );
     test( SIZE_MAX, "% u", UINT_MAX );
     test( SIZE_MAX, "% u", -1u );
-    puts( "- Field width -\n" );
     test( SIZE_MAX, "%9d", INT_MIN );
     test( SIZE_MAX, "%9d", INT_MAX );
     test( SIZE_MAX, "%10d", INT_MIN );
@@ -108,7 +102,6 @@ int main( void )
     test( SIZE_MAX, "%11d", INT_MAX );
     test( SIZE_MAX, "%12d", INT_MIN );
     test( SIZE_MAX, "%12d", INT_MAX );
-    puts( "- Field width (left bound) -\n" );
     test( SIZE_MAX, "%-9d", INT_MIN );
     test( SIZE_MAX, "%-9d", INT_MAX );
     test( SIZE_MAX, "%-10d", INT_MIN );
@@ -117,7 +110,6 @@ int main( void )
     test( SIZE_MAX, "%-11d", INT_MAX );
     test( SIZE_MAX, "%-12d", INT_MIN );
     test( SIZE_MAX, "%-12d", INT_MAX );
-    puts( "- Field width, zero padding -\n");
     test( SIZE_MAX, "%09d", INT_MIN );
     test( SIZE_MAX, "%09d", INT_MAX );
     test( SIZE_MAX, "%010d", INT_MIN );
@@ -126,7 +118,6 @@ int main( void )
     test( SIZE_MAX, "%011d", INT_MAX );
     test( SIZE_MAX, "%012d", INT_MIN );
     test( SIZE_MAX, "%012d", INT_MAX );
-    puts( "- Field width, zero padding (left bound) -\n" );
     test( SIZE_MAX, "%-09d", INT_MIN );
     test( SIZE_MAX, "%-09d", INT_MAX );
     test( SIZE_MAX, "%-010d", INT_MIN );
@@ -135,7 +126,6 @@ int main( void )
     test( SIZE_MAX, "%-011d", INT_MAX );
     test( SIZE_MAX, "%-012d", INT_MIN );
     test( SIZE_MAX, "%-012d", INT_MAX );
-    puts( "- Limited n -\n" );
     test( 8, "%9d", INT_MAX );
     test( 8, "%9d", INT_MIN );
     test( 9, "%9d", INT_MAX );
@@ -160,7 +150,6 @@ int main( void )
     test( 12, "%12d", INT_MIN );
     test( 13, "%12d", INT_MAX );
     test( 13, "%12d", INT_MIN );
-    puts( "- Precision -\n" );
     test( SIZE_MAX, "%030.20d", INT_MAX );
     test( SIZE_MAX, "%.6x", UINT_MAX );
     test( SIZE_MAX, "%#6.3x", UINT_MAX );
@@ -180,7 +169,6 @@ int main( void )
     test( SIZE_MAX, "%+0.6d", INT_MAX );
     test( SIZE_MAX, "%+06.3d", INT_MAX );
     test( SIZE_MAX, "%+03.6d", INT_MAX );
-    puts( "- Multiple outputs -\n" );
     test( SIZE_MAX, "- %d", INT_MAX );
     test( SIZE_MAX, "- %d %% %d", INT_MAX, INT_MIN );
     return 0;
