@@ -53,7 +53,6 @@ int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap );
 
 int main( void )
 {
-    int rc;
     puts( "- Signed min / max -\n" );
     test( SIZE_MAX, "%hhd", CHAR_MIN );
     test( SIZE_MAX, "%hhd", CHAR_MAX );
@@ -161,48 +160,26 @@ int main( void )
     test( 12, "%12d", INT_MIN );
     test( 13, "%12d", INT_MAX );
     test( 13, "%12d", INT_MIN );
-    puts( "- Precision (tbd) -\n" );
-    {
-        const char * format = "%030.20d";
-        printf( "glibc  '" );
-        rc = printf( format, INT_MAX );
-        printf( "', RC %d\n", rc );
-        test( SIZE_MAX, format, INT_MAX );
-    }
-    puts( "- vanilla -" );
-    printf( "No width, no precision:     %#x\n", 42 );
-    printf( "Width, no precision:        %#6x\n", 42 );
-    printf( "No width, precision:        %#.6x\n", 42 );
-    printf( "Big width, small precision: %#6.3x\n", 42 );
-    printf( "Small width, big precision: %#3.6x\n", 42 );
-    printf( "No width, no precision:     %#d\n", 42 );
-    printf( "Width, no precision:        %#6d\n", 42 );
-    printf( "No width, precision:        %#.6d\n", 42 );
-    printf( "Big width, small precision: %#6.3d\n", 42 );
-    printf( "Small width, big precision: %#3.6d\n", 42 );
-    puts( "- zero flag -" );
-    printf( "No width, no precision:     %#0x\n", 42 );
-    printf( "Width, no precision:        %#06x\n", 42 );
-    printf( "No width, precision:        %#0.6x\n", 42 );
-    printf( "Big width, small precision: %#06.3x\n", 42 );
-    printf( "Small width, big precision: %#03.6x\n", 42 );
-    printf( "No width, no precision:     %#0d\n", 42 );
-    printf( "Width, no precision:        %#06d\n", 42 );
-    printf( "No width, precision:        %#0.6d\n", 42 );
-    printf( "Big width, small precision: %#06.3d\n", 42 );
-    printf( "Small width, big precision: %#03.6d\n", 42 );
-    puts( "- plus flag -" );
-    printf( "No width, no precision:     %#+d\n", 42 );
-    printf( "Width, no precision:        %#+6d\n", 42 );
-    printf( "No width, precision:        %#+.6d\n", 42 );
-    printf( "Big width, small precision: %#+6.3d\n", 42 );
-    printf( "Small width, big precision: %#+3.6d\n", 42 );
-    puts( "- plus and zero flag -" );
-    printf( "No width, no precision:     %#+0d\n", 42 );
-    printf( "Width, no precision:        %#+06d\n", 42 );
-    printf( "No width, precision:        %#+0.6d\n", 42 );
-    printf( "Big width, small precision: %#+06.3d\n", 42 );
-    printf( "Small width, big precision: %#+03.6d\n", 42 );
+    puts( "- Precision -\n" );
+    test( SIZE_MAX, "%030.20d", INT_MAX );
+    test( SIZE_MAX, "%.6x", UINT_MAX );
+    test( SIZE_MAX, "%#6.3x", UINT_MAX );
+    test( SIZE_MAX, "%#3.6x", UINT_MAX );
+    test( SIZE_MAX, "%.6d", INT_MIN );
+    test( SIZE_MAX, "%6.3d", INT_MIN );
+    test( SIZE_MAX, "%3.6d", INT_MIN );
+    test( SIZE_MAX, "%#0.6x", UINT_MAX );
+    test( SIZE_MAX, "%#06.3x", UINT_MAX );
+    test( SIZE_MAX, "%#03.6x", UINT_MAX );
+    test( SIZE_MAX, "%#0.6d", INT_MAX );
+    test( SIZE_MAX, "%#06.3d", INT_MAX );
+    test( SIZE_MAX, "%#03.6d", INT_MAX );
+    test( SIZE_MAX, "%#+.6d", INT_MAX );
+    test( SIZE_MAX, "%#+6.3d", INT_MAX );
+    test( SIZE_MAX, "%#+3.6d", INT_MAX );
+    test( SIZE_MAX, "%+0.6d", INT_MAX );
+    test( SIZE_MAX, "%+06.3d", INT_MAX );
+    test( SIZE_MAX, "%+03.6d", INT_MAX );
     return 0;
 }
 
@@ -270,6 +247,8 @@ static void int2base( intmax_t value, struct status_t * status )
                 preface[ preidx++ ] = ' ';
             }
         }
+        {
+        size_t prec_pads = ( status->prec > status->this ) ? ( status->prec - status->this ) : 0;
         if ( ! ( status->flags & ( E_minus | E_zero ) ) )
         {
             /* Space padding is only done if no zero padding or left alignment
@@ -307,6 +286,11 @@ static void int2base( intmax_t value, struct status_t * status )
                 DELIVER( '0' );
                 ++(status->this);
             }
+        }
+        for ( int i = 0; i < prec_pads; ++i )
+        {
+            DELIVER( '0' );
+        }
         }
     }
     /* Recursion tail - print the current digit. */
@@ -422,7 +406,8 @@ const char * parse_out( const char * spec, struct status_t * status )
             }
             spec = endptr;
         }
-        status->flags &= ! E_zero;
+        /* Having a precision cancels out any zero flag. */
+        status->flags ^= E_zero;
     }
 
     /* Optional length modifier
