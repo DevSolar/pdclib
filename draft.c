@@ -40,9 +40,10 @@ struct status_t
     size_t        width; /* width of current field                           */
     size_t        prec;  /* precision of current field                       */
     FILE *        stream;/* for to-stream output                             */
+    va_list       ap;    /* the argument stack passed to the printf function */
 };
 
-const char * parse_out( const char * spec, struct status_t * status, va_list ap );
+const char * parse_out( const char * spec, struct status_t * status );
 inline void test( size_t n, const char * expect, ... );
 int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap );
 
@@ -52,6 +53,7 @@ int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap );
 
 int main( void )
 {
+    int rc;
     puts( "- Signed min / max -\n" );
     test( SIZE_MAX, "%hhd", CHAR_MIN );
     test( SIZE_MAX, "%hhd", CHAR_MAX );
@@ -134,10 +136,79 @@ int main( void )
     test( SIZE_MAX, "%-011d", INT_MAX );
     test( SIZE_MAX, "%-012d", INT_MIN );
     test( SIZE_MAX, "%-012d", INT_MAX );
+    puts( "- Limited n -\n" );
+    test( 8, "%9d", INT_MAX );
+    test( 8, "%9d", INT_MIN );
+    test( 9, "%9d", INT_MAX );
+    test( 9, "%9d", INT_MIN );
+    test( 10, "%9d", INT_MAX );
+    test( 10, "%9d", INT_MIN );
+    test( 9, "%10d", INT_MAX );
+    test( 9, "%10d", INT_MIN );
+    test( 10, "%10d", INT_MAX );
+    test( 10, "%10d", INT_MIN );
+    test( 11, "%10d", INT_MAX );
+    test( 11, "%10d", INT_MIN );
+    test( 10, "%11d", INT_MAX );
+    test( 10, "%11d", INT_MIN );
+    test( 11, "%11d", INT_MAX );
+    test( 11, "%11d", INT_MIN );
+    test( 12, "%11d", INT_MAX );
+    test( 12, "%11d", INT_MIN );
+    test( 11, "%12d", INT_MAX );
+    test( 11, "%12d", INT_MIN );
+    test( 12, "%12d", INT_MAX );
+    test( 12, "%12d", INT_MIN );
+    test( 13, "%12d", INT_MAX );
+    test( 13, "%12d", INT_MIN );
+    puts( "- Precision (tbd) -\n" );
+    {
+        const char * format = "%030.20d";
+        printf( "glibc  '" );
+        rc = printf( format, INT_MAX );
+        printf( "', RC %d\n", rc );
+        test( SIZE_MAX, format, INT_MAX );
+    }
+    puts( "- vanilla -" );
+    printf( "No width, no precision:     %#x\n", 42 );
+    printf( "Width, no precision:        %#6x\n", 42 );
+    printf( "No width, precision:        %#.6x\n", 42 );
+    printf( "Big width, small precision: %#6.3x\n", 42 );
+    printf( "Small width, big precision: %#3.6x\n", 42 );
+    printf( "No width, no precision:     %#d\n", 42 );
+    printf( "Width, no precision:        %#6d\n", 42 );
+    printf( "No width, precision:        %#.6d\n", 42 );
+    printf( "Big width, small precision: %#6.3d\n", 42 );
+    printf( "Small width, big precision: %#3.6d\n", 42 );
+    puts( "- zero flag -" );
+    printf( "No width, no precision:     %#0x\n", 42 );
+    printf( "Width, no precision:        %#06x\n", 42 );
+    printf( "No width, precision:        %#0.6x\n", 42 );
+    printf( "Big width, small precision: %#06.3x\n", 42 );
+    printf( "Small width, big precision: %#03.6x\n", 42 );
+    printf( "No width, no precision:     %#0d\n", 42 );
+    printf( "Width, no precision:        %#06d\n", 42 );
+    printf( "No width, precision:        %#0.6d\n", 42 );
+    printf( "Big width, small precision: %#06.3d\n", 42 );
+    printf( "Small width, big precision: %#03.6d\n", 42 );
+    puts( "- plus flag -" );
+    printf( "No width, no precision:     %#+d\n", 42 );
+    printf( "Width, no precision:        %#+6d\n", 42 );
+    printf( "No width, precision:        %#+.6d\n", 42 );
+    printf( "Big width, small precision: %#+6.3d\n", 42 );
+    printf( "Small width, big precision: %#+3.6d\n", 42 );
+    puts( "- plus and zero flag -" );
+    printf( "No width, no precision:     %#+0d\n", 42 );
+    printf( "Width, no precision:        %#+06d\n", 42 );
+    printf( "No width, precision:        %#+0.6d\n", 42 );
+    printf( "Big width, small precision: %#+06.3d\n", 42 );
+    printf( "Small width, big precision: %#+03.6d\n", 42 );
     return 0;
 }
 
-/* x - the character to be delivered
+/* This macro delivers a given character to either a memory buffer or a stream,
+   depending on the contents of 'status' (struct status_t).
+   x - the character to be delivered
    i - pointer to number of characters already delivered in this call
    n - pointer to maximum number of characters to be delivered in this call
    s - the buffer into which the character shall be delivered
@@ -145,20 +216,38 @@ int main( void )
 */
 #define DELIVER( x ) do { if ( status->i < status->n ) { if ( status->stream != NULL ) putc( x, status->stream ); else status->s[status->i] = x; } ++(status->i); } while ( 0 )
 
+/* This function recursively converts a given integer value to a given base
+   into a character string. Persistent information - like the number of digits
+   parsed so far - is recorded in a struct status_t, which allows to avoid
+   overwriting snprintf() limits, and enables the function to do the necessary
+   padding / prefixing of the character string eventually printed.
+*/
 static void int2base( intmax_t value, struct status_t * status )
 {
+    /* Registering the character being printed at the end of the function here
+       already so it will be taken into account when the deepestmost recursion
+       does the prefix / padding stuff.
+    */
     ++(status->this);
     if ( ( value / status->base ) != 0 )
     {
+        /* More digits to be done - recurse deeper */
         int2base( value / status->base, status );
     }
     else
     {
-        char preface[3] = "\0\0";
+        /* We reached the last digit, the deepest point of our recursion, and
+           only now know how long the number to be printed actually is. Now we
+           have to do the sign, prefix, width, and precision padding stuff
+           before printing the numbers while we resurface from the recursion.
+        */
+        /* At worst, we need two prefix characters (hex prefix). */
+        char preface[3] = "\0";
         size_t preidx = 0;
         if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) )
         {
-            preface[ preidx++ ] = '0';
+            /* Octal / hexadecimal prefix for "%#" conversions */
+            preface[ preidx++ ] = '0'; /* TODO: For octal, standard states "extend the precision" */
             if ( status->base == 16 )
             {
                 preface[ preidx++ ] = ( status->flags & E_lower ) ? 'x' : 'X';
@@ -166,10 +255,12 @@ static void int2base( intmax_t value, struct status_t * status )
         }
         if ( value < 0 )
         {
+            /* Negative sign for negative values - at all times. */
             preface[ preidx++ ] = '-';
         }
         else if ( ! ( status->flags & E_unsigned ) )
         {
+            /* plus sign / extra space are only for unsigned conversions */
             if ( status->flags & E_plus )
             {
                 preface[ preidx++ ] = '+';
@@ -181,12 +272,25 @@ static void int2base( intmax_t value, struct status_t * status )
         }
         if ( ! ( status->flags & ( E_minus | E_zero ) ) )
         {
-            while ( ( status->this + preidx ) < status->width )
+            /* Space padding is only done if no zero padding or left alignment
+               is requested. Leave space for any prefixes determined above.
+            */
+            /* The number of characters to be printed, plus prefixes if any. */
+            /* This line contained probably the most stupid, time-wasting bug
+               I've ever perpetrated. Greetings to Samface, DevL, and all
+               sceners at Breakpoint 2006.
+            */
+            size_t characters = preidx + ( ( status->this > status->prec ) ? status->this : status->prec );
+            if ( status->width > characters )
             {
-                DELIVER( ' ' );
-                ++(status->this);
+                for ( int i = 0; i < status->width - characters; ++i )
+                {
+                    DELIVER( ' ' );
+                    ++(status->this); /* TODO: Probably have to do something so I still know how many zeroes are required, later. */
+                }
             }
         }
+        /* Now we did the padding, do the prefixes (if any). */
         preidx = 0;
         while ( preface[ preidx ] != '\0' )
         {
@@ -195,6 +299,9 @@ static void int2base( intmax_t value, struct status_t * status )
         }
         if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
         {
+            /* If field is not left aligned, and zero padding is requested, do
+               so. TODO: This should include precision handling (probably).
+            */
             while ( status->this < status->width )
             {
                 DELIVER( '0' );
@@ -202,6 +309,7 @@ static void int2base( intmax_t value, struct status_t * status )
             }
         }
     }
+    /* Recursion tail - print the current digit. */
     {
     int digit = value % status->base;
     if ( digit < 0 )
@@ -210,16 +318,21 @@ static void int2base( intmax_t value, struct status_t * status )
     }
     if ( status->flags & E_lower )
     {
+        /* Lowercase letters. Same array used for strto...(). */
         DELIVER( _PDCLIB_digits[ digit ] );
     }
     else
     {
+        /* Uppercase letters. Array only used here, only 0-F. */
         DELIVER( _PDCLIB_Xdigits[ digit ] );
     }
     }
 }
 
-const char * parse_out( const char * spec, struct status_t * status, va_list ap )
+/* This function is to be called with spec pointing to the leading '%' of a
+   printf() conversion specifier, with ap being 
+*/
+const char * parse_out( const char * spec, struct status_t * status )
 {
     const char * orig_spec = spec;
     if ( *(++spec) == '%' )
@@ -229,10 +342,10 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
     }
     /* Initializing status structure */
     status->flags = 0;
-    status->base = 0;
-    status->this = 0;
+    status->base  = 0;
+    status->this  = 0;
     status->width = 0;
-    status->prec = 0;
+    status->prec  = 0;
 
     /* First come 0..n flags */
     do
@@ -269,7 +382,7 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
     if ( *spec == '*' )
     {
         /* Retrieve width value from argument stack */
-        if ( ( status->width = va_arg( ap, int ) ) < 0 )
+        if ( ( status->width = va_arg( status->ap, int ) ) < 0 )
         {
             /* Negative value is '-' flag plus absolute value */
             status->flags |= E_minus;
@@ -296,7 +409,7 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
                is as if no precision is given - as precision is initalized to
                EOF (negative), there is no need for testing for negative here.
             */
-            status->prec = va_arg( ap, int );
+            status->prec = va_arg( status->ap, int );
         }
         else
         {
@@ -307,7 +420,9 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
                 /* Decimal point but no number - bad conversion specifier. */
                 return orig_spec;
             }
+            spec = endptr;
         }
+        status->flags &= ! E_zero;
     }
 
     /* Optional length modifier
@@ -413,22 +528,22 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
             switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_size ) )
             {
                 case E_char:
-                    value = (uintmax_t)(unsigned char)va_arg( ap, int );
+                    value = (uintmax_t)(unsigned char)va_arg( status->ap, int );
                     break;
                 case E_short:
-                    value = (uintmax_t)(unsigned short)va_arg( ap, int );
+                    value = (uintmax_t)(unsigned short)va_arg( status->ap, int );
                     break;
                 case 0:
-                    value = (uintmax_t)va_arg( ap, unsigned int );
+                    value = (uintmax_t)va_arg( status->ap, unsigned int );
                     break;
                 case E_long:
-                    value = (uintmax_t)va_arg( ap, unsigned long );
+                    value = (uintmax_t)va_arg( status->ap, unsigned long );
                     break;
                 case E_llong:
-                    value = (uintmax_t)va_arg( ap, unsigned long long );
+                    value = (uintmax_t)va_arg( status->ap, unsigned long long );
                     break;
                 case E_size:
-                    value = (uintmax_t)va_arg( ap, size_t );
+                    value = (uintmax_t)va_arg( status->ap, size_t );
                     break;
             }
             ++(status->this);
@@ -455,25 +570,25 @@ const char * parse_out( const char * spec, struct status_t * status, va_list ap 
             switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_intmax ) )
             {
                 case E_char:
-                    int2base( (intmax_t)(char)va_arg( ap, int ), status );
+                    int2base( (intmax_t)(char)va_arg( status->ap, int ), status );
                     break;
                 case E_short:
-                    int2base( (intmax_t)(short)va_arg( ap, int ), status );
+                    int2base( (intmax_t)(short)va_arg( status->ap, int ), status );
                     break;
                 case 0:
-                    int2base( (intmax_t)va_arg( ap, int ), status );
+                    int2base( (intmax_t)va_arg( status->ap, int ), status );
                     break;
                 case E_long:
-                    int2base( (intmax_t)va_arg( ap, long ), status );
+                    int2base( (intmax_t)va_arg( status->ap, long ), status );
                     break;
                 case E_llong:
-                    int2base( (intmax_t)va_arg( ap, long long ), status );
+                    int2base( (intmax_t)va_arg( status->ap, long long ), status );
                     break;
                 case E_ptrdiff:
-                    int2base( (intmax_t)va_arg( ap, ptrdiff_t ), status );
+                    int2base( (intmax_t)va_arg( status->ap, ptrdiff_t ), status );
                     break;
                 case E_intmax:
-                    int2base( va_arg( ap, intmax_t ), status );
+                    int2base( va_arg( status->ap, intmax_t ), status );
                     break;
             }
         }
@@ -502,7 +617,7 @@ inline void test( size_t n, const char * expect, ... )
     va_list ap;
     va_start( ap, expect );
     myrc = _PDCLIB_sprintf( buffer1, n, expect, ap );
-    rc = vsprintf( buffer2, expect, ap );
+    rc = vsnprintf( buffer2, n, expect, ap );
     if ( ( strcmp( buffer1, buffer2 ) != 0 ) || ( myrc != rc ) )
     {
         printf( "Output '%s', RC %d\nExpect '%s', RC %d\n\n", buffer1, myrc, buffer2, rc );
@@ -513,14 +628,14 @@ inline void test( size_t n, const char * expect, ... )
 
 int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap )
 {
-    struct status_t status = { 0, 0, n, 0, 0, buffer, 0, 0, NULL };
+    struct status_t status = { 0, 0, n, 0, 0, buffer, 0, 0, NULL, ap };
     while ( *format != '\0' )
     {
         const char * rc;
-        if ( ( *format != '%' ) || ( ( rc = parse_out( format, &status, ap ) ) == format ) )
+        if ( ( *format != '%' ) || ( ( rc = parse_out( format, &status ) ) == format ) )
         {
             /* No conversion specifier, print verbatim */
-            buffer[ status.i++ ] = *format;
+            buffer[ status.i++ ] = *(format++);
         }
         else
         {
@@ -535,8 +650,7 @@ int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap )
 #if 0
 int _PDCLIB_fprintf( FILE * stream, const char * format, va_list ap )
 {
-    char * buffer = malloc( 50 );
-    struct status_t status = { 0, 0, SIZE_MAX, 0, 0, /* stream->buffer */ buffer, 0, 0, stream };
+    struct status_t status = { 0, 0, SIZE_MAX, 0, 0, NULL, 0, 0, stream, ap };
     while ( *format != '\0' )
     {
         const char * rc;
