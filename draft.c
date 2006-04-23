@@ -25,9 +25,10 @@
 #define E_intmax   1<<10
 #define E_size     1<<11
 #define E_ptrdiff  1<<12
-#define E_double   1<<13
-#define E_lower    1<<14
-#define E_unsigned 1<<15
+#define E_intptr   1<<13
+#define E_double   1<<14
+#define E_lower    1<<15
+#define E_unsigned 1<<16
 
 struct status_t
 {
@@ -84,6 +85,7 @@ int main( void )
     test( SIZE_MAX, "%#x", -1u );
     test( SIZE_MAX, "%o", UINT_MAX );
     test( SIZE_MAX, "%#o", -1u );
+    test( SIZE_MAX, "%.0#o", 0 );
     test( SIZE_MAX, "%+d", INT_MIN );
     test( SIZE_MAX, "%+d", INT_MAX );
     test( SIZE_MAX, "%+d", 0 );
@@ -171,6 +173,9 @@ int main( void )
     test( SIZE_MAX, "%+03.6d", INT_MAX );
     test( SIZE_MAX, "- %d", INT_MAX );
     test( SIZE_MAX, "- %d %% %d", INT_MAX, INT_MIN );
+    test( SIZE_MAX, "%c", 'x' );
+    test( SIZE_MAX, "%s", "abcdef" );
+    test( SIZE_MAX, "%p", 0xdeadbeef );
     return 0;
 }
 
@@ -451,6 +456,7 @@ const char * parse_out( const char * spec, struct status_t * status )
     switch ( *spec )
     {
         case 'd':
+            /* FALLTHROUGH */
         case 'i':
             status->base = 10;
             break;
@@ -481,13 +487,30 @@ const char * parse_out( const char * spec, struct status_t * status )
         case 'A':
             break;
         case 'c':
-            break;
+            /* TODO: Flags, wide chars. */
+            DELIVER( va_arg( status->ap, int ) );
+            return ++spec;
         case 's':
-            break;
+            /* TODO: Flags, wide chars. */
+            {
+                char * s = va_arg( status->ap, char * );
+                while ( *s != '\0' )
+                {
+                    DELIVER( *(s++) );
+                }
+                return ++spec;
+            }
         case 'p':
-            /* uint2base( 16, (intptr_t)value, true ) */
-        case 'n':
+            /* TODO: E_long -> E_intptr */
+            status->base = 16;
+            status->flags |= ( E_lower | E_unsigned | E_alt | E_long );
             break;
+        case 'n':
+           {
+               int * val = va_arg( status->ap, int * );
+               *val = status->i;
+               return ++spec;
+           }
         default:
             /* No conversion specifier. Bad conversion. */
             return orig_spec;
