@@ -46,7 +46,8 @@ struct status_t
 
 const char * parse_out( const char * spec, struct status_t * status );
 inline void test( size_t n, const char * expect, ... );
-int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap );
+int _PDCLIB_vsnprintf( char * buffer, size_t n, const char * format, va_list ap );
+int _PDCLIB_snprintf( char * s, size_t n, const char * format, ... );
 
 /* The following only for testing. */
 #include <limits.h>
@@ -176,6 +177,16 @@ int main( void )
     test( SIZE_MAX, "%c", 'x' );
     test( SIZE_MAX, "%s", "abcdef" );
     test( SIZE_MAX, "%p", 0xdeadbeef );
+    {
+        char buffer[50];
+        int val1, val2, val3, val4;
+        snprintf( buffer, SIZE_MAX, "123456%n789%n", &val1, &val2 );
+        _PDCLIB_snprintf( buffer, SIZE_MAX, "123456%n789%n", &val3, &val4 );
+        if ( ( val1 != val3 ) || ( val2 != val4 ) )
+        {
+            printf( "Output %d/%d\nExpect %d/%d\n\n", val1, val2, val3, val4 );
+        }
+    }
     return 0;
 }
 
@@ -615,7 +626,7 @@ inline void test( size_t n, const char * expect, ... )
     int rc;
     va_list ap;
     va_start( ap, expect );
-    myrc = _PDCLIB_sprintf( buffer1, n, expect, ap );
+    myrc = _PDCLIB_vsnprintf( buffer1, n, expect, ap );
     rc = vsnprintf( buffer2, n, expect, ap );
     if ( ( strcmp( buffer1, buffer2 ) != 0 ) || ( myrc != rc ) )
     {
@@ -625,7 +636,7 @@ inline void test( size_t n, const char * expect, ... )
     free( buffer2 );
 }
 
-int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap )
+int _PDCLIB_vsnprintf( char * buffer, size_t n, const char * format, va_list ap )
 {
     struct status_t status = { 0, 0, n, 0, 0, buffer, 0, 0, NULL, ap };
     while ( *format != '\0' )
@@ -644,6 +655,13 @@ int _PDCLIB_sprintf( char * buffer, size_t n, const char * format, va_list ap )
     }
     buffer[ status.i ] = '\0';
     return status.i;
+}
+
+int _PDCLIB_snprintf( char * s, size_t n, const char * format, ... )
+{
+    va_list ap;
+    va_start( ap, format );
+    return _PDCLIB_vsnprintf( s, n, format, ap );
 }
 
 #if 0
