@@ -14,9 +14,12 @@
 
 int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ...)
 {
+    int rc;
     va_list ap;
     va_start( ap, format );
-    return vsnprintf( s, SIZE_MAX, format, ap );
+    rc = vsnprintf( s, SIZE_MAX, format, ap );
+    va_end( ap );
+    return rc;
 }
 
 #endif

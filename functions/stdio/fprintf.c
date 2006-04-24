@@ -13,9 +13,12 @@
 
 int fprintf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... )
 {
+    int rc;
     va_list ap;
     va_start( ap, format );
-    return vfprintf( stream, format, ap );
+    rc = vfprintf( stream, format, ap );
+    va_end( ap );
+    return rc;
 }
 
 #endif
