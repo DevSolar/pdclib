@@ -12,7 +12,9 @@
 
 #ifndef REGTEST
 
-int vsprintf( char * str, const char * format, _PDCLIB_va_list arg )
+int foo = SIZE_MAX;
+
+int vsprintf( char * str, const char * format, va_list arg )
 {
     return vsnprintf( str, SIZE_MAX, format, arg );
 }

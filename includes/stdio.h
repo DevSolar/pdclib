@@ -44,6 +44,9 @@ typedef struct _PDCLIB_file_t FILE;
 #define SEEK_END 2
 #define SEEK_SET 4
 
+#define stdin NULL
+#define stdout NULL
+
 /* Operations on files */
 
 /* Remove the given file.
