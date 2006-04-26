@@ -261,7 +261,7 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_FRW      8
 #define _PDCLIB_FBIN    16
 
-struct
+struct _PDCLIB_file_t
 {
     _PDCLIB_fd_t            handle;   /* OS-specific file descriptor */
     _PDCLIB_fpos_t          position; /* file position indicator */
@@ -270,21 +270,7 @@ struct
     int                     status;   /* misc. status bits */
   /*mbstate_t               mbstate;    multibyte parse state - TODO: Unmask. */
     struct _PDCLIB_file_t * next;     /* provisions for linked list handling */
-} _PDCLIB_file_t;
-
-/* -------------------------------------------------------------------------- */
-/* Declaration of helper functions (implemented in functions/_PDCLIB).        */
-/* -------------------------------------------------------------------------- */
-
-/* This is the main function called by atoi(), atol() and atoll().            */
-_PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
-
-/* Two helper functions used by strtol(), strtoul() and long long variants.   */
-const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
-_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, _PDCLIB_uintmax_t limdigit, char * sign );
-
-/* Digits array used by various integer conversion functions in <stdlib.h>    */
-extern char _PDCLIB_digits[];
+};
 
 /* -------------------------------------------------------------------------- */
 /* Internal data types                                                        */
@@ -310,6 +296,21 @@ struct _PDCLIB_memnode_t
     struct _PDCLIB_memnode_t * next;
 };
 
+/* Status structure required by _PDCLIB_print(). */
+struct _PDCLIB_status_t
+{
+    int              base;  /* base to which the value shall be converted    */
+    _PDCLIB_int_fast32_t flags; /* flags and length modifiers                */
+    _PDCLIB_size_t   n;     /* maximum number of characters to be written    */
+    _PDCLIB_size_t   i;     /* number of characters already written          */
+    _PDCLIB_size_t   this;  /* output chars in the current conversion        */
+    char *           s;     /* target buffer                                 */
+    _PDCLIB_size_t   width; /* width of current field                        */
+    _PDCLIB_size_t   prec;  /* precision of current field                    */
+    struct _PDCLIB_file_t * stream;/* for to-stream output                   */
+    _PDCLIB_va_list  arg;   /* argument stack passed to the printf function  */
+};
+
 #if 0
 
 /* fpos_t, an object type (not an array!) capable of storing any position
@@ -321,3 +322,20 @@ typedef unsigned long long int  _PDCLIB_fpos_t;
 typedef int                     _PDCLIB_fd_t;
 
 #endif
+
+/* -------------------------------------------------------------------------- */
+/* Declaration of helper functions (implemented in functions/_PDCLIB).        */
+/* -------------------------------------------------------------------------- */
+
+/* This is the main function called by atoi(), atol() and atoll().            */
+_PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
+
+/* Two helper functions used by strtol(), strtoul() and long long variants.   */
+const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
+_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, _PDCLIB_uintmax_t limdigit, char * sign );
+
+/* Digits array used by various integer conversion functions in <stdlib.h>    */
+extern char _PDCLIB_digits[];
+
+/* The worker for all printf() type of functions. */
+const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );

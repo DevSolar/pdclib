@@ -12,7 +12,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
 
-static const FILE * _PDCLIB_filelist = NULL;
+static FILE * _PDCLIB_filelist = NULL;
 
 static int filemode( char const * const mode )
 {

@@ -10,7 +10,7 @@
 
 #ifndef REGTEST
 
-int getchar( void )
+int (getchar)( void )
 {
     return fgetc( stdin );
 }

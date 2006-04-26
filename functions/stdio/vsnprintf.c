@@ -11,11 +11,27 @@
 
 #ifndef REGTEST
 
-int vsnprintf( char * str, size_t size, const char * format, _PDCLIB_va_list arg )
+int vsnprintf( char * s, size_t n, const char * format, _PDCLIB_va_list arg )
 {
-    /* TODO: This function should interpret format as multibyte characters. */
-    /* TODO: Implement */
-    return 0;
+    /* TODO: This function should interpret format as multibyte characters.  */
+    /* Members: base, flags, n, i, this, s, width, prec, stream, arg         */
+    struct _PDCLIB_status_t status = { 0, 0, n, 0, 0, s, 0, 0, NULL, arg };
+    while ( *format != '\0' )
+    {
+        const char * rc;
+        if ( ( *format != '%' ) || ( ( rc = _PDCLIB_print( format, &status ) ) == format ) )
+        {
+            /* No conversion specifier, print verbatim */
+            s[ status.i++ ] = *(format++);
+        }
+        else
+        {
+            /* Continue parsing after conversion specifier */
+            format = rc;
+        }
+    }
+    s[ status.i ] = '\0';
+    return status.i;
 }
 
 #endif

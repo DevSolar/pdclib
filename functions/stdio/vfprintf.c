@@ -8,13 +8,30 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #ifndef REGTEST
 
 int vfprintf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, va_list arg )
 {
-    /* TODO: Implement using vsnprintf() writing to file buffer */
-    return 0;
+    /* TODO: This function should interpret format as multibyte characters.  */
+    /* Members: base, flags, n, i, this, s, width, prec, stream, arg         */
+    struct _PDCLIB_status_t status = { 0, 0, SIZE_MAX, 0, 0, NULL, 0, 0, stream, arg };
+    while ( *format != '\0' )
+    {
+        const char * rc;
+        if ( ( *format != '%' ) || ( ( rc = _PDCLIB_print( format, &status ) ) == format ) )
+        {
+            /* No conversion specifier, print verbatim */
+            putc( *(format++), stream );
+        }
+        else
+        {
+            /* Continue parsing after conversion specifier */
+            format = rc;
+        }
+    }
+    return status.i;
 }
 
 #endif
