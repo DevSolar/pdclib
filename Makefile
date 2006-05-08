@@ -23,12 +23,12 @@ pdclib.a: $(OBJFILES)
 	@ar r pdclib.a $?
 
 test: testdrivers
-	-@rc=0; count=0; for file in $(TSTFILES); do ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"
+	-@rc=0; count=0; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"
 
 testdrivers: $(TSTFILES)
 
 regtest: regtestdrivers
-	-@rc=0; count=0; for file in $(REGFILES); do ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"
+	-@rc=0; count=0; for file in $(REGFILES); do echo " RTST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"
 
 regtestdrivers: $(REGFILES)
 
@@ -47,10 +47,13 @@ fixmelist:
 	-@for file in $(ALLFILES); do grep -H FIXME $$file; done; true
 
 %.o: %.c Makefile
+	@echo " CC	$@"
 	@$(CC) $(CFLAGS) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@
 
 %.t: %.c Makefile pdclib.a
+	@echo " CC	$@"
 	@$(CC) $(CFLAGS) -DTEST -std=c99 -I./includes -I./internals $< pdclib.a -o $@
 
 %.r: %.c Makefile
+	@echo " CC	$@"
 	@$(CC) $(CFLAGS) -DTEST -DREGTEST -std=c99 -I./internals $< -o $@
