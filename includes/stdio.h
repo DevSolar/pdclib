@@ -44,22 +44,9 @@ typedef struct _PDCLIB_file_t FILE;
 #define SEEK_END 2
 #define SEEK_SET 4
 
-/* This is a strictly internal structure required by the printf() function
-   family.
-*/
-struct _PDCLIB_status_t
-{
-    int             base;  /* base to which the value shall be converted     */
-    _PDCLIB_int_fast32_t flags; /* flags and length modifiers                */
-    size_t          n;     /* maximum number of characters to be written     */
-    size_t          i;     /* number of characters already written           */
-    size_t          this;  /* output chars in the current conversion         */
-    char *          s;     /* target buffer                                  */
-    size_t          width; /* width of current field                         */
-    size_t          prec;  /* precision of current field                     */
-    FILE *          stream;/* for to-stream output                           */
-    _PDCLIB_va_list ap;    /* argument stack passed to the printf function   */
-};
+extern FILE * stdin;
+extern FILE * stdout;
+extern FILE * stderr;
 
 /* Operations on files */
 
