@@ -7,13 +7,13 @@
 */
 
 #include <stdio.h>
-#include <stdint.h>
+#include <limits.h>
 
 #ifndef REGTEST
 
 char * gets( char * s )
 {
-    return fgets( s, SIZE_MAX, stdin );
+    return fgets( s, INT_MAX, stdin ); /* TODO: Replace with an unchecking call. */
 }
 
 #endif

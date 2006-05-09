@@ -8,6 +8,11 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+extern char * _PDCLIB_Xdigits;
 
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
