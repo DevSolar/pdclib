@@ -311,18 +311,6 @@ struct _PDCLIB_status_t
     _PDCLIB_va_list  arg;   /* argument stack passed to the printf function  */
 };
 
-#if 0
-
-/* fpos_t, an object type (not an array!) capable of storing any position
-   information of a file.
-*/
-typedef unsigned long long int  _PDCLIB_fpos_t;
-
-/* file descriptor - a type used by the OS to identify a stream */
-typedef int                     _PDCLIB_fd_t;
-
-#endif
-
 /* -------------------------------------------------------------------------- */
 /* Declaration of helper functions (implemented in functions/_PDCLIB).        */
 /* -------------------------------------------------------------------------- */
