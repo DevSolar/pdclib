@@ -30,6 +30,8 @@ int _PDCLIB_rename( const char * old, const char * new )
 #endif
 
 #ifdef TEST
+/* TODO: Work around the following undef */
+#undef SEEK_SET
 #include <_PDCLIB_test.h>
 
 int main( void )

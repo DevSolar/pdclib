@@ -33,6 +33,8 @@ int system( const char * string )
 }
 
 #ifdef TEST
+/* TODO: Work around the following undef */
+#undef SEEK_SET
 #include <_PDCLIB_test.h>
 
 #define SHELLCOMMAND "echo 'SUCCESS testing system()'"

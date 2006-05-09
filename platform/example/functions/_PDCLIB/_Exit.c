@@ -24,6 +24,8 @@ void _PDCLIB_Exit( int status )
 #endif
 
 #ifdef TEST
+/* TODO: Work around the following undef */
+#undef SEEK_SET
 #include <_PDCLIB_test.h>
 
 int main( void )
