@@ -46,6 +46,9 @@ todolist:
 fixmelist:
 	-@for file in $(ALLFILES); do grep -H FIXME $$file; done; true
 
+find:
+	@find functions/ includes/ internals/ platform/ -name "*\.[ch]" -type f | xargs grep $$FIND
+
 %.o: %.c Makefile
 	@echo " CC	$@"
 	@$(CC) $(CFLAGS) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@
