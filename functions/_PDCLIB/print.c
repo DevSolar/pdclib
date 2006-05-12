@@ -462,3 +462,14 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
     }
     return ++spec;
 }
+
+#ifdef TEST
+#include <_PDCLIB_test.h>
+
+int main( void )
+{
+    TESTCASE( NO_TESTDRIVER );
+    return TEST_RESULTS;
+}
+
+#endif
