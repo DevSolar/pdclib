@@ -14,7 +14,11 @@
 
 static FILE * _PDCLIB_filelist = NULL;
 
-static int filemode( char const * const mode )
+/* Helper function that parses the C-style mode string passed to fopen() into
+   the PDCLib flags.FREAD, FWRITE, FAPPEND, FRW (read-write) and FBIN (
+   mode).
+*/
+static unsigned int filemode( char const * const mode )
 {
     int rc = 0;
     switch ( mode[0] )
@@ -29,27 +33,31 @@ static int filemode( char const * const mode )
             rc |= _PDCLIB_FAPPEND;
             break;
         default:
-            return -1;
+            /* Other than read, write, or append - invalid */
+            return 0;
     }
     for ( size_t i = 1; i < 4; ++i )
     {
         switch ( mode[1] )
         {
             case '+':
-                if ( rc & _PDCLIB_FRW ) return -1;
+                if ( rc & _PDCLIB_FRW ) return 0; /* Duplicates are invalid */
                 rc |= _PDCLIB_FRW;
                 break;
             case 'b':
-                if ( rc & _PDCLIB_FBIN ) return -1;
+                if ( rc & _PDCLIB_FBIN ) return 0; /* Duplicates are invalid */
                 rc |= _PDCLIB_FBIN;
                 break;
             case '\0':
+                /* End of mode */
                 return rc;
             default:
-                return -1;
+                /* Other than read/write or binary - invalid. */
+                return 0;
         }
     }
-    return -1;
+    /* Longer than three chars - invalid. */
+    return 0;
 }
 
 FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
@@ -57,14 +65,24 @@ FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restr
     FILE * rc;
     if ( mode == NULL || filename == NULL || filename[0] == '\0' )
     {
+        /* Mode or filename invalid */
         return NULL;
     }
-    if ( ( rc = calloc( 1, sizeof( FILE ) ) ) == NULL ) return rc; /* no space for another FILE */
-    if ( ( rc->status = filemode( mode ) ) == -1 ) goto fail; /* invalid mode given */
-    if ( ( rc->handle = _PDCLIB_open( filename, rc->status ) ) == -1 ) goto fail; /* OS "open" failed */
+    if ( ( rc = calloc( 1, sizeof( FILE ) ) ) == NULL )
+    {
+        /* no memory for another FILE */
+        return NULL;
+    }
+    if ( ( rc->status = filemode( mode ) ) == 0 ) goto fail; /* invalid mode */
+    rc->handle = _PDCLIB_open( filename, rc->status );
+    if ( rc->handle == _PDCLIB_NOHANDLE ) goto fail; /* OS open() failed */
+
+    /* Adding to list of open files */
     rc->next = _PDCLIB_filelist;
     _PDCLIB_filelist = rc;
-    /* TODO: Continue here: Set up PDCLib FILE contents */
+    /* Setting buffer. TODO: Check for unbuffered? */
+    if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL goto fail;
+    /* TODO: Setting mbstate */
     return rc;
 fail:
     free( rc );
