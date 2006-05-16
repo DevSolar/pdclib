@@ -229,6 +229,11 @@ typedef char * _PDCLIB_va_list;
 /* The unique file descriptor returned by _PDCLIB_open(). */
 typedef int _PDCLIB_fd_t;
 
+/* The value (of type _PDCLIB_fd_t) returned by _PDCLIB_open() if the operation
+   failed.
+*/
+#define _PDCLIB_NOHANDLE -1
+
 /* A type in which to store file offsets. See fgetpos() / fsetpos(). */
 typedef struct
 {

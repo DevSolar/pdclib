@@ -20,7 +20,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-_PDCLIB_fd_t _PDCLIB_open( char const * const filename, int mode )
+_PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode )
 {
     int osmode = 0;
     if ( mode & _PDCLIB_FRW ) osmode |= O_RDWR;
