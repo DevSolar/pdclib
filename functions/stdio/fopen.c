@@ -81,7 +81,7 @@ FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restr
     rc->next = _PDCLIB_filelist;
     _PDCLIB_filelist = rc;
     /* Setting buffer. TODO: Check for unbuffered? */
-    if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL goto fail;
+    if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL ) goto fail;
     /* TODO: Setting mbstate */
     return rc;
 fail:
