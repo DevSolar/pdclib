@@ -33,7 +33,7 @@ void * _PDCLIB_allocpages( int n );
 /* A system call that opens a file identified by name in a given mode, and
    returns a file descriptor uniquely identifying that file.
 */
-_PDCLIB_fd_t _PDCLIB_open( char const * const filename, int mode );
+_PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode );
 
 /* A system call that writes n characters to a file identified by given file
    descriptor. Return the number of characters written.
