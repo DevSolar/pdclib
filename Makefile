@@ -99,7 +99,7 @@ help:
 
 %.o: %.c Makefile
 	@echo " CC	$@"
-	@$(CC) $(CFLAGS) -Wall -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@
+	@$(CC) $(CFLAGS) -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@
 
 %.t: %.c Makefile pdclib.a
 	@echo " CC	$@"
