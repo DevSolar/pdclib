@@ -27,14 +27,17 @@ PATCHFILES1 := $(shell ls platform/example/functions/_PDCLIB/*.c)
 # All files in platform/example/functions/stdlib (for development only)
 PATCHFILES2 := $(shell ls platform/example/functions/stdlib/*.c)
 
-CFLAGS := -Wall -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wconversion -Wstrict-prototypes
+CFLAGS := -Wall -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wconversion -Wstrict-prototypes -fno-builtin
 
-.PHONY: all clean dist tests testdrivers regtests regtestdrivers todos fixmes find links unlink help
+.PHONY: all clean dist test tests testdrivers regtests regtestdrivers todos fixmes find links unlink help
 
 all: pdclib.a
 
 pdclib.a: $(OBJFILES)
 	@ar r pdclib.a $?
+
+test: $(FILE)
+	$(FILE)
 
 tests: testdrivers
 	-@rc=0; count=0; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"
@@ -83,6 +86,7 @@ help:
 	@echo "all              - build pdclib.a"
 	@echo "clean            - remove all object files, dependency files and test drivers"
 	@echo "dist             - build pdclib.tgz (source tarball)"
+	@echo "test             - test a single testdriver (Usage: FILE=\"test.[rt]\" make test)"
 	@echo "tests            - build and run test drivers (link pdclib.a)"
 	@echo "  testdrivers    - build but do not run test drivers"
 	@echo "regtests         - build and run regression test drivers (link system clib)"
