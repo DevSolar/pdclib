@@ -23,9 +23,12 @@ static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, { 0, 0 }, 0, 0, 0, /* mbstate, 
 static struct _PDCLIB_file_t _PDCLIB_sout = { 1, { 0, 0 }, 0, 0, 0, /* mbstate, */ 0 };
 static struct _PDCLIB_file_t _PDCLIB_serr = { 2, { 0, 0 }, 0, 0, 0, /* mbstate, */ 0 };
 
+/* FIXME: Disabled for initial stdio.h development. */
+#if 0
 struct _PDCLIB_file_t * stdin  = &_PDCLIB_sin;
 struct _PDCLIB_file_t * stdout = &_PDCLIB_sout;
 struct _PDCLIB_file_t * stderr = &_PDCLIB_serr;
+#endif
 
 #endif
 
