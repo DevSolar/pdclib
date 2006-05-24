@@ -322,8 +322,9 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
 const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
 _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, _PDCLIB_uintmax_t limdigit, char * sign );
 
-/* Digits array used by various integer conversion functions in <stdlib.h>    */
+/* Digits arrays used by various integer conversion functions */
 extern char _PDCLIB_digits[];
+extern char _PDCLIB_Xdigits[];
 
 /* The worker for all printf() type of functions. */
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
