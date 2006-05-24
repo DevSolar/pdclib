@@ -326,5 +326,11 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCL
 extern char _PDCLIB_digits[];
 extern char _PDCLIB_Xdigits[];
 
-/* The worker for all printf() type of functions. */
+/* The worker for all printf() type of functions. The pointer spec should point
+   to the introducing '%' of a conversion specifier. The status structure is to
+   be that of the current printf() function, of which the members n, s, stream
+   and arg will be preserved, i will be updated, and all others will be trashed
+   by the function.
+   Returns a pointer to the first character not parsed as conversion specifier.
+*/
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );

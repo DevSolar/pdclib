@@ -277,7 +277,7 @@ int main( void )
     TESTCASE( strcmp( buffer, "x" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%s", "abcdef" ) == 6 );
     TESTCASE( strcmp( buffer, "abcdef" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%p", 0xdeadbeef ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%p", (void *)0xdeadbeef ) == 10 );
     TESTCASE( strcmp( buffer, "0xdeadbeef" ) == 0 );
     {
         int val1, val2;
