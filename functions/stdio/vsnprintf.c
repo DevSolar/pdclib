@@ -46,12 +46,12 @@ int vsnprintf( char * s, size_t n, const char * format, _PDCLIB_va_list arg )
 
 static int testprintf( char * s, size_t n, const char * format, ... )
 {
-    int rc;
+    int i;
     va_list arg;
     va_start( arg, format );
-    rc = vsnprintf( s, n, format, arg );
+    i = vsnprintf( s, n, format, arg );
     va_end( arg );
-    return rc;
+    return i;
 }
 
 int main( void )
@@ -300,7 +300,7 @@ int main( void )
     TESTCASE( strcmp( buffer, "x" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%s", "abcdef" ) == 6 );
     TESTCASE( strcmp( buffer, "abcdef" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%p", 0xdeadbeef ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%p", (void *)0xdeadbeef ) == 10 );
     TESTCASE( strcmp( buffer, "0xdeadbeef" ) == 0 );
     {
         int val1, val2;
