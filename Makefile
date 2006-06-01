@@ -34,7 +34,7 @@ CFLAGS := -Wall -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings 
 all: pdclib.a
 
 pdclib.a: $(OBJFILES)
-	@ar r pdclib.a $?
+	@ar rc pdclib.a $?
 
 test: $(FILE)
 	$(FILE)
