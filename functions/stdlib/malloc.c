@@ -165,8 +165,6 @@ void * sbrk( intptr_t );
 int main( void )
 {
 #ifndef REGTEST
-    printf( "Start of malloc() testing...\n" );
-    {
     void * ptr1, * ptr2, * ptr3, * ptr4, * ptr5, * ptr6, * ptr7, * ptr8, * ptr9;
     char * pages_start = _PDCLIB_allocpages( 0 );
     /* allocating 10 byte; expected: 1 page allocation, node split */
@@ -239,8 +237,6 @@ int main( void )
     TESTCASE( memset( ptr9, 0, 4072 ) == ptr9 );
     TESTCASE( PAGETEST( 9 ) );
     NODETRACE( 17 );
-    printf( "End of malloc() testing.\n" );
-    }
 #else
     puts( "No testing of malloc() - test driver does not know internals of system function." );
 #endif

@@ -34,18 +34,20 @@ CFLAGS := -Wall -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings 
 all: pdclib.a
 
 pdclib.a: $(OBJFILES)
+	@echo " AR	$@"
 	@ar rc pdclib.a $?
+	@echo
 
 test: $(FILE)
 	$(FILE)
 
 tests: testdrivers
-	-@rc=0; count=0; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"
+	-@rc=0; count=0; echo; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"; echo
 
 testdrivers: $(TSTFILES)
 
 regtests: regtestdrivers
-	-@rc=0; count=0; for file in $(REGFILES); do echo " RTST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"
+	-@rc=0; count=0; echo; for file in $(REGFILES); do echo " RTST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"; echo
 
 regtestdrivers: $(REGFILES)
 
@@ -102,13 +104,13 @@ help:
 	@echo "help             - print this list"
 
 %.o: %.c Makefile
-	@echo " CC	$@"
+	@echo " CC	$(patsubst functions/%,%,$@)"
 	@$(CC) $(CFLAGS) -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@
 
 %.t: %.c Makefile pdclib.a
-	@echo " CC	$@"
+	@echo " CC	$(patsubst functions/%,%,$@)"
 	@$(CC) $(CFLAGS) -DTEST -std=c99 -I./includes -I./internals $< pdclib.a -o $@
 
 %.r: %.c Makefile
-	@echo " CC	$@"
+	@echo " CC	$(patsubst functions/%,%,$@)"
 	@$(CC) $(CFLAGS) -DTEST -DREGTEST -std=c99 -I./internals $< -o $@
