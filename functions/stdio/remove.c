@@ -24,7 +24,11 @@ int remove( const char * filename )
 
 int main( void )
 {
+#ifndef REGTEST
     TESTCASE( NO_TESTDRIVER );
+#else
+    puts( "No testing of remove() - test driver does not know internals of system function." );
+#endif
     return TEST_RESULTS;
 }
 

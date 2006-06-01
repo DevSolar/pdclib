@@ -242,7 +242,7 @@ int main( void )
     printf( "End of malloc() testing.\n" );
     }
 #else
-    printf( "No testing of malloc() - test driver does not know internals of system malloc().\n" );
+    puts( "No testing of malloc() - test driver does not know internals of system function." );
 #endif
     return TEST_RESULTS;
 }
