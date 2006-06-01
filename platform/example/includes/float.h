@@ -18,67 +18,63 @@
 #define FLT_EVAL_METHOD _PDCLIB_FLT_EVAL_METHOD
 #define DECIMAL_DIG     _PDCLIB_DECIMAL_DIG
 
-/* Produced by enquire version 5.1a, CWI, Amsterdam
-   http://www.cwi.nl/~steven/enquire.html  */
-
    /* Radix of exponent representation */
-#define FLT_RADIX 2
+#define FLT_RADIX      __FLT_RADIX__
    /* Number of base-FLT_RADIX digits in the significand of a float */
-#define FLT_MANT_DIG 24
+#define FLT_MANT_DIG   __FLT_MANT_DIG__
    /* Number of decimal digits of precision in a float */
-#define FLT_DIG 6
+#define FLT_DIG        __FLT_DIG__
    /* Difference between 1.0 and the minimum float greater than 1.0 */
-#define FLT_EPSILON 1.19209290e-07F
+#define FLT_EPSILON    __FLT_EPSILON__
    /* Minimum int x such that FLT_RADIX**(x-1) is a normalised float */
-#define FLT_MIN_EXP (-125)
+#define FLT_MIN_EXP    __FLT_MIN_EXP__
    /* Minimum normalised float */
-#define FLT_MIN 1.17549435e-38F
+#define FLT_MIN        __FLT_MIN__
    /* Minimum int x such that 10**x is a normalised float */
-#define FLT_MIN_10_EXP (-37)
+#define FLT_MIN_10_EXP __FLT_MIN_10_EXP__
    /* Maximum int x such that FLT_RADIX**(x-1) is a representable float */
-#define FLT_MAX_EXP 128
+#define FLT_MAX_EXP    __FLT_MAX_EXP__
    /* Maximum float */
-#define FLT_MAX 3.40282347e+38F
+#define FLT_MAX        __FLT_MAX__
    /* Maximum int x such that 10**x is a representable float */
-#define FLT_MAX_10_EXP 38
+#define FLT_MAX_10_EXP __FLT_MAX_10_EXP__
 
    /* Number of base-FLT_RADIX digits in the significand of a double */
-#define DBL_MANT_DIG 53
+#define DBL_MANT_DIG   __DBL_MANT_DIG__
    /* Number of decimal digits of precision in a double */
-#define DBL_DIG 15
+#define DBL_DIG        __DBL_DIG__
    /* Difference between 1.0 and the minimum double greater than 1.0 */
-#define DBL_EPSILON 2.2204460492503131e-16
+#define DBL_EPSILON    __DBL_EPSILON__
    /* Minimum int x such that FLT_RADIX**(x-1) is a normalised double */
-#define DBL_MIN_EXP (-1021)
+#define DBL_MIN_EXP    __DBL_MIN_EXP__
    /* Minimum normalised double */
-#define DBL_MIN 2.2250738585072014e-308
+#define DBL_MIN        __DBL_MIN__
    /* Minimum int x such that 10**x is a normalised double */
-#define DBL_MIN_10_EXP (-307)
+#define DBL_MIN_10_EXP __DBL_MIN_10_EXP__
    /* Maximum int x such that FLT_RADIX**(x-1) is a representable double */
-#define DBL_MAX_EXP 1024
+#define DBL_MAX_EXP    __DBL_MAX_EXP__
    /* Maximum double */
-#define DBL_MAX 1.7976931348623157e+308
+#define DBL_MAX        __DBL_MAX__
    /* Maximum int x such that 10**x is a representable double */
-#define DBL_MAX_10_EXP 308
+#define DBL_MAX_10_EXP __DBL_MAX_10_EXP__
 
    /* Number of base-FLT_RADIX digits in the significand of a long double */
-#define LDBL_MANT_DIG 113
+#define LDBL_MANT_DIG   __LDBL_MANT_DIG__
    /* Number of decimal digits of precision in a long double */
-#define LDBL_DIG 33
+#define LDBL_DIG        __LDBL_DIG__
    /* Difference between 1.0 and the minimum long double greater than 1.0 */
-#define LDBL_EPSILON 1.92592994438723585305597794258492732e-34L
+#define LDBL_EPSILON    __LDBL_EPSILON__
    /* Minimum int x such that FLT_RADIX**(x-1) is a normalised long double */
-#define LDBL_MIN_EXP (-16381)
+#define LDBL_MIN_EXP    __LDBL_MIN_EXP__
    /* Minimum normalised long double */
-#define LDBL_MIN 3.36210314311209350626267781732175260e-4932L
+#define LDBL_MIN        __LDBL_MIN__
    /* Minimum int x such that 10**x is a normalised long double */
-#define LDBL_MIN_10_EXP (-4931)
+#define LDBL_MIN_10_EXP __LDBL_MIN_10_EXP__
    /* Maximum int x such that FLT_RADIX**(x-1) is a representable long double */
-#define LDBL_MAX_EXP 16384
+#define LDBL_MAX_EXP    __LDBL_MAX_EXP__
    /* Maximum long double */
-#define LDBL_MAX 1.18973149535723176508575932662800702e+4932L
+#define LDBL_MAX        __LDBL_MAX__
    /* Maximum int x such that 10**x is a representable long double */
-#define LDBL_MAX_10_EXP 4932
+#define LDBL_MAX_10_EXP __LDBL_MAX_10_EXP__
 
 #endif
-
