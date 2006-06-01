@@ -24,7 +24,11 @@ int rename( const char * old, const char * new )
 
 int main( void )
 {
+#ifndef REGTEST
     TESTCASE( NO_TESTDRIVER );
+#else
+    puts( "No testing of rename() - test driver does not know internals of system function." );
+#endif
     return TEST_RESULTS;
 }
 
