@@ -113,4 +113,4 @@ help:
 
 %.r: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -DTEST -DREGTEST -std=c99 -I./internals $< -o $@
+	@$(CC) $(CFLAGS) -Wno-format -DTEST -DREGTEST -std=c99 -I./internals $< -o $@
