@@ -238,7 +238,7 @@ int main( void )
     TESTCASE( PAGETEST( 9 ) );
     NODETRACE( 17 );
 #else
-    puts( "No testing of malloc() - test driver does not know internals of system function." );
+    puts( " NOTEST malloc() test driver is PDCLib-specific." );
 #endif
     return TEST_RESULTS;
 }
