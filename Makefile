@@ -10,7 +10,7 @@ SRCFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.c")
 # All header files of the project
 HDRFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.h")
 # All .c files in functions/_PDCLIB that do not have a regression test driver
-INTFILES := _Exit atomax digits open print rename seed stdinit strtox_main strtox_prelim
+INTFILES := _Exit atomax digits open print remove rename seed stdinit strtox_main strtox_prelim
 # All object files in the library
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 # All test drivers (.t)
