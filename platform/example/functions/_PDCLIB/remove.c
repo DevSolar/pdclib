@@ -22,7 +22,7 @@ int _PDCLIB_remove( const char * filename )
     int prev_errno = errno;
     int rc;
     errno = 0;
-    if ( ( ( rc = unlink( filename ) ) != 0 ) && ( errno == EPERM ) )
+    if ( ( ( rc = unlink( filename ) ) != 0 ) && ( errno == EISDIR ) )
     {
         rc = rmdir( filename );
     }
@@ -37,9 +37,30 @@ int _PDCLIB_remove( const char * filename )
 #undef SEEK_SET
 #include <_PDCLIB_test.h>
 
+#include <stdlib.h>
+#include <string.h>
+
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    char filename[ L_tmpnam + 6 ] = "touch ";
+    tmpnam( filename + 6 );
+    /* create file */
+    system( filename );
+    /* file is actually readable */
+    TESTCASE( fopen( filename + 6, "r" ) != NULL );
+    /* remove function does not return error */
+    TESTCASE( _PDCLIB_remove( filename + 6 ) == 0 );
+    /* file is no longer readable */
+    TESTCASE( fopen( filename + 6, "r" ) == NULL );
+    /* remove function does return error */
+    TESTCASE( _PDCLIB_remove( filename + 6 ) != 0 );
+    memcpy( filename, "mkdir", 5 );
+    /* create directory */
+    system( filename );
+    /* remove function does not return error */
+    TESTCASE( _PDCLIB_remove( filename + 6 ) == 0 );
+    /* remove function does return error */
+    TESTCASE( _PDCLIB_remove( filename + 6 ) != 0 );
     return TEST_RESULTS;
 }
 
