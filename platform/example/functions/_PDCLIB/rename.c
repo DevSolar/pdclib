@@ -38,10 +38,8 @@ int _PDCLIB_rename( const char * old, const char * new )
 
 int main( void )
 {
-    char filename1[ L_tmpnam + 6 ] = "touch ";
-    char filename2[ L_tmpnam ];
-    tmpnam( filename1 + 6 );
-    tmpnam( filename2);
+    char filename1[] = "touch testfile1";
+    char filename2[] = "testfile2";
     /* check that neither file exists */
     TESTCASE( fopen( filename1 + 6, "r" ) == NULL );
     TESTCASE( fopen( filename2, "r" ) == NULL );

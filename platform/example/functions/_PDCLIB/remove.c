@@ -42,9 +42,7 @@ int _PDCLIB_remove( const char * filename )
 
 int main( void )
 {
-    char filename[ L_tmpnam + 6 ] = "touch ";
-    tmpnam( filename + 6 );
-    /* create file */
+    char filename[] = "touch testfile";
     system( filename );
     /* file is actually readable */
     TESTCASE( fopen( filename + 6, "r" ) != NULL );
