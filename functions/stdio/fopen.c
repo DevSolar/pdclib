@@ -12,10 +12,11 @@
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
 
-static FILE * _PDCLIB_filelist = NULL;
+/* FIXME: This approach is a possible attack vector. */
+struct _PDCLIB_file_t * _PDCLIB_filelist = NULL;
 
 /* Helper function that parses the C-style mode string passed to fopen() into
-   the PDCLib flags.FREAD, FWRITE, FAPPEND, FRW (read-write) and FBIN (
+   the PDCLib flags FREAD, FWRITE, FAPPEND, FRW (read-write) and FBIN (binary
    mode).
 */
 static unsigned int filemode( char const * const mode )
@@ -38,7 +39,7 @@ static unsigned int filemode( char const * const mode )
     }
     for ( size_t i = 1; i < 4; ++i )
     {
-        switch ( mode[1] )
+        switch ( mode[i] )
         {
             case '+':
                 if ( rc & _PDCLIB_FRW ) return 0; /* Duplicates are invalid */
@@ -60,15 +61,15 @@ static unsigned int filemode( char const * const mode )
     return 0;
 }
 
-FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
+struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
 {
-    FILE * rc;
+    struct _PDCLIB_file_t * rc;
     if ( mode == NULL || filename == NULL || filename[0] == '\0' )
     {
         /* Mode or filename invalid */
         return NULL;
     }
-    if ( ( rc = calloc( 1, sizeof( FILE ) ) ) == NULL )
+    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) ) ) == NULL )
     {
         /* no memory for another FILE */
         return NULL;
@@ -80,8 +81,9 @@ FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restr
     /* Adding to list of open files */
     rc->next = _PDCLIB_filelist;
     _PDCLIB_filelist = rc;
-    /* Setting buffer. TODO: Check for unbuffered? */
+    /* Setting buffer, and mark as internal. TODO: Check for unbuffered? */
     if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL ) goto fail;
+    rc->status |= _PDCLIB_LIBBUFFER;
     /* TODO: Setting mbstate */
     return rc;
 fail:
@@ -96,7 +98,30 @@ fail:
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    TESTCASE( filemode( "r" ) == _PDCLIB_FREAD );
+    TESTCASE( filemode( "w" ) == _PDCLIB_FWRITE );
+    TESTCASE( filemode( "a" ) == _PDCLIB_FAPPEND );
+    TESTCASE( filemode( "r+" ) == ( _PDCLIB_FREAD | _PDCLIB_FRW ) );
+    TESTCASE( filemode( "w+" ) == ( _PDCLIB_FWRITE | _PDCLIB_FRW ) );
+    TESTCASE( filemode( "a+" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FRW ) );
+    TESTCASE( filemode( "rb" ) == ( _PDCLIB_FREAD | _PDCLIB_FBIN ) );
+    TESTCASE( filemode( "wb" ) == ( _PDCLIB_FWRITE | _PDCLIB_FBIN ) );
+    TESTCASE( filemode( "ab" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FBIN ) );
+    TESTCASE( filemode( "r+b" ) == ( _PDCLIB_FREAD | _PDCLIB_FRW | _PDCLIB_FBIN ) );
+    TESTCASE( filemode( "w+b" ) == ( _PDCLIB_FWRITE | _PDCLIB_FRW | _PDCLIB_FBIN ) );
+    TESTCASE( filemode( "a+b" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FRW | _PDCLIB_FBIN ) );
+    TESTCASE( filemode( "rb+" ) == ( _PDCLIB_FREAD | _PDCLIB_FRW | _PDCLIB_FBIN ) );
+    TESTCASE( filemode( "wb+" ) == ( _PDCLIB_FWRITE | _PDCLIB_FRW | _PDCLIB_FBIN ) );
+    TESTCASE( filemode( "ab+" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FRW | _PDCLIB_FBIN ) );
+    TESTCASE( fopen( NULL, NULL ) == NULL );
+    TESTCASE( fopen( NULL, "w" ) == NULL );
+    TESTCASE( fopen( "", NULL ) == NULL );
+    TESTCASE( fopen( "", "w" ) == NULL );
+    TESTCASE( fopen( "foo", "" ) == NULL );
+    TESTCASE( fopen( "testfile", "wq" ) == NULL ); /* Illegal mode */
+    TESTCASE( fopen( "testfile", "wr" ) == NULL ); /* Illegal mode */
+    TESTCASE( fopen( "testfile", "w" ) != NULL );
+    system( "rm testfile" );
     return TEST_RESULTS;
 }
 
