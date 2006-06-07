@@ -255,11 +255,11 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 /* -------------------------------------------------------------------------- */
 
 /* Flags for representing mode (see fopen()). */
-#define _PDCLIB_FREAD    1
-#define _PDCLIB_FWRITE   2
-#define _PDCLIB_FAPPEND  4
-#define _PDCLIB_FRW      8
-#define _PDCLIB_FBIN    16
+#define _PDCLIB_FREAD    1u
+#define _PDCLIB_FWRITE   2u
+#define _PDCLIB_FAPPEND  4u
+#define _PDCLIB_FRW      8u
+#define _PDCLIB_FBIN    16u
 
 struct _PDCLIB_file_t
 {
