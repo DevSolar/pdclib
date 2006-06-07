@@ -45,8 +45,10 @@ _PDCLIB_size_t _PDCLIB_write( _PDCLIB_fd_t fd, char const * buffer, _PDCLIB_size
 */
 _PDCLIB_size_t _PDCLIB_read( _PDCLIB_fd_t fd, char * buffer, _PDCLIB_size_t n );
 
-/* A system call that closes a file identified by given file descriptor. */
-void _PDCLIB_close( _PDCLIB_fd_t fd );
+/* A system call that closes a file identified by given file descriptor. Return
+   zero on success, non-zero otherwise.
+*/
+int _PDCLIB_close( _PDCLIB_fd_t fd );
 
 /* A system call that removes a file identified by name. Return zero on success,
    non-zero otherwise.
