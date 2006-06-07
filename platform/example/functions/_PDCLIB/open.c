@@ -39,7 +39,7 @@ _PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode )
             osmode = O_WRONLY | O_CREAT | O_TRUNC;
             break;
         case _PDCLIB_FAPPEND: /* "a" */
-            osmode = O_APPEND | O_CREAT;
+            osmode = O_WRONLY | O_APPEND | O_CREAT;
             break;
         case _PDCLIB_FREAD | _PDCLIB_FRW: /* "r+" */
             osmode = O_RDWR;
@@ -69,6 +69,9 @@ _PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode )
 #include <_PDCLIB_test.h>
 
 #include <stdlib.h>
+#include <string.h>
+
+#include <errno.h>
 
 int main( void )
 {
@@ -76,12 +79,56 @@ int main( void )
        incremented by one on each successful open.
     */
     _PDCLIB_fd_t fh;
-    TESTCASE( _PDCLIB_open( "testfile2", _PDCLIB_FREAD ) == _PDCLIB_NOHANDLE );
-    TESTCASE( ( fh = _PDCLIB_open( "testfile1", _PDCLIB_FWRITE ) ) != _PDCLIB_NOHANDLE );
+    char buffer[ 10 ];
+    /* Trying to read non-existent file. */
+    TESTCASE( _PDCLIB_open( "testfile", _PDCLIB_FREAD ) == _PDCLIB_NOHANDLE );
+    /* Writing to file, trying to read from it. */
+    TESTCASE( ( fh = _PDCLIB_open( "testfile", _PDCLIB_FWRITE ) ) != _PDCLIB_NOHANDLE );
     TESTCASE( write( fh, "test", 4 ) == 4 );
+    TESTCASE( lseek( fh, 0, SEEK_SET ) == 0 );
+    TESTCASE( read( fh, buffer, 4 ) == -1 );
     TESTCASE( close( fh ) == 0 );
-    TESTCASE( _PDCLIB_open( "testfile1", _PDCLIB_FREAD ) != _PDCLIB_NOHANDLE );
-    system( "rm testfile1" );
+    /* Reading from file, trying to write to it. */
+    TESTCASE( ( fh = _PDCLIB_open( "testfile", _PDCLIB_FREAD ) ) != _PDCLIB_NOHANDLE );
+    TESTCASE( write( fh, "test", 4 ) == -1 );
+    TESTCASE( close( fh ) == 0 );
+    /* Appending to file, trying to read from it. */
+    TESTCASE( ( fh = _PDCLIB_open( "testfile", _PDCLIB_FAPPEND ) ) != _PDCLIB_NOHANDLE );
+    TESTCASE( write( fh, "app", 3 ) == 3 );
+    TESTCASE( lseek( fh, 0, SEEK_SET ) == 0 );
+    TESTCASE( read( fh, buffer, 10 ) == -1 );
+    TESTCASE( write( fh, "end", 3 ) == 3 );
+    TESTCASE( close( fh ) == 0 );
+    /* Reading and writing from file ("r+"). */
+    TESTCASE( ( fh = _PDCLIB_open( "testfile", _PDCLIB_FREAD | _PDCLIB_FRW ) ) != _PDCLIB_NOHANDLE );
+    TESTCASE( read( fh, buffer, 10 ) == 10 );
+    TESTCASE( memcmp( buffer, "testappend", 10 ) == 0 );
+    TESTCASE( lseek( fh, 0, SEEK_SET ) == 0 );
+    TESTCASE( write( fh, "wedo", 4 ) == 4 );
+    TESTCASE( lseek( fh, 0, SEEK_SET ) == 0 );
+    TESTCASE( read( fh, buffer, 10 ) == 10 );
+    TESTCASE( memcmp( buffer, "wedoappend", 10 ) == 0 );
+    TESTCASE( close( fh ) == 0 );
+    /* Writing and reading from file ("w+"). */
+    TESTCASE( ( fh = _PDCLIB_open( "testfile", _PDCLIB_FWRITE | _PDCLIB_FRW ) ) != _PDCLIB_NOHANDLE );
+    TESTCASE( write( fh, "test", 4 ) == 4 );
+    TESTCASE( lseek( fh, 1, SEEK_SET ) == 1 );
+    TESTCASE( read( fh, buffer, 2 ) == 2 );
+    TESTCASE( memcmp( buffer, "es", 2 ) == 0 );
+    TESTCASE( write( fh, "sie", 3 ) == 3 );
+    TESTCASE( lseek( fh, 0, SEEK_SET ) == 0 );
+    TESTCASE( read( fh, buffer, 6 ) == 6 );
+    TESTCASE( memcmp( buffer, "tessie", 6 ) == 0 );
+    TESTCASE( close( fh ) == 0 );
+    /* Appending and reading from file ("a+"). */
+    TESTCASE( ( fh = _PDCLIB_open( "testfile", _PDCLIB_FAPPEND | _PDCLIB_FRW ) ) != _PDCLIB_NOHANDLE );
+    TESTCASE( write( fh, "baby", 4 ) == 4 );
+    TESTCASE( lseek( fh, 0, SEEK_SET ) == 0 );
+    TESTCASE( read( fh, buffer, 10 ) == 10 );
+    TESTCASE( memcmp( buffer, "tessiebaby", 10 ) == 0 );
+    TESTCASE( close( fh ) == 0 );
+    /* Cleaning up. */
+    system( "rm testfile" );
     return TEST_RESULTS;
 }
 
