@@ -98,6 +98,7 @@ fail:
 
 int main( void )
 {
+#ifndef REGTEST
     TESTCASE( filemode( "r" ) == _PDCLIB_FREAD );
     TESTCASE( filemode( "w" ) == _PDCLIB_FWRITE );
     TESTCASE( filemode( "a" ) == _PDCLIB_FAPPEND );
@@ -122,6 +123,9 @@ int main( void )
     TESTCASE( fopen( "testfile", "wr" ) == NULL ); /* Illegal mode */
     TESTCASE( fopen( "testfile", "w" ) != NULL );
     system( "rm testfile" );
+#else
+    puts( " NOTEST fopen() test driver is PDCLib-specific." );
+#endif
     return TEST_RESULTS;
 }
 
