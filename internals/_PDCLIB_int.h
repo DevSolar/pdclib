@@ -254,16 +254,19 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 /* Various <stdio.h> internals                                                */
 /* -------------------------------------------------------------------------- */
 
-/* Flags for representing mode (see fopen()). */
-#define _PDCLIB_FREAD    1u
-#define _PDCLIB_FWRITE   2u
-#define _PDCLIB_FAPPEND  4u 
-#define _PDCLIB_FRW      8u
-#define _PDCLIB_FBIN    16u
+/* Flags for representing mode (see fopen()). Note these must fit the same
+   status field as the _IO?BF flags in <stdio.h> and the internal flags below.
+*/
+#define _PDCLIB_FREAD    8u
+#define _PDCLIB_FWRITE   16u
+#define _PDCLIB_FAPPEND  32u 
+#define _PDCLIB_FRW      64u
+#define _PDCLIB_FBIN    128u
 
 /* Internal flags, made to fit the same status field as the flags above. */
-#define _PDCLIB_WROTELAST 32u
-#define _PDCLIB_LIBBUFFER 64u
+#define _PDCLIB_WROTELAST  256u
+#define _PDCLIB_LIBBUFFER  512u
+#define _PDCLIB_VIRGINSTR 1024u
 
 struct _PDCLIB_file_t
 {

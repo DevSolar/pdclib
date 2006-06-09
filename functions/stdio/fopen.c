@@ -77,13 +77,12 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     if ( ( rc->status = filemode( mode ) ) == 0 ) goto fail; /* invalid mode */
     rc->handle = _PDCLIB_open( filename, rc->status );
     if ( rc->handle == _PDCLIB_NOHANDLE ) goto fail; /* OS open() failed */
-
     /* Adding to list of open files */
     rc->next = _PDCLIB_filelist;
     _PDCLIB_filelist = rc;
     /* Setting buffer, and mark as internal. TODO: Check for unbuffered? */
     if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL ) goto fail;
-    rc->status |= _PDCLIB_LIBBUFFER;
+    rc->status |= ( _PDCLIB_LIBBUFFER | _PDCLIB_VIRGINSTR );
     /* TODO: Setting mbstate */
     return rc;
 fail:
