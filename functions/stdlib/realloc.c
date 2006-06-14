@@ -16,25 +16,28 @@
 
 void * realloc( void * ptr, size_t size )
 {
+    void * newptr = NULL;
     if ( ptr == NULL )
     {
         return malloc( size );
     }
+    if ( size > 0 )
     {
-    struct _PDCLIB_memnode_t * baseptr = (struct _PDCLIB_memnode_t *)( (char *)ptr - sizeof( struct _PDCLIB_memnode_t ) );
-    if ( baseptr->size >= size )
-    {
-        return ptr;
+        struct _PDCLIB_memnode_t * baseptr = (struct _PDCLIB_memnode_t *)( (char *)ptr - sizeof( struct _PDCLIB_memnode_t ) );
+        if ( baseptr->size >= size )
+        {
+            /* Current memnode is large enough; nothing to do. */
+            return ptr;
+        }
+        else
+        {
+            /* Get larger memnode and copy over contents. */
+            newptr = malloc( size );
+            memcpy( newptr, ptr, baseptr->size );
+        }
     }
-    else
-    {
-        void * newptr = malloc( size );
-        memcpy( newptr, ptr, baseptr->size );
-        free( ptr );
-        return newptr;
-    }
-    }
-    return NULL;
+    free( ptr );
+    return newptr;
 }
 
 #endif
