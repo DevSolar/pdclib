@@ -82,6 +82,7 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     _PDCLIB_filelist = rc;
     /* Setting buffer, and mark as internal. TODO: Check for unbuffered? */
     if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL ) goto fail;
+    rc->bufsize = BUFSIZ;
     rc->status |= ( _PDCLIB_LIBBUFFER | _PDCLIB_VIRGINSTR );
     /* TODO: Setting mbstate */
     return rc;
