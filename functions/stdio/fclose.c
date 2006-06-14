@@ -51,7 +51,6 @@ int fclose( struct _PDCLIB_file_t * stream )
 int main( void )
 {
 #ifndef REGTEST
-    /* FIXME: This is basically fopen() checking. Flushing and buffer-freeing is not checked. */
     struct _PDCLIB_file_t * file1;
     struct _PDCLIB_file_t * file2;
     TESTCASE( _PDCLIB_filelist == NULL );
@@ -66,7 +65,7 @@ int main( void )
     TESTCASE( fclose( file1 ) == 0 );
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file2 ) == 0 );
-    TESTCASE( _PDCLIB_filelist == NULL ); /* FIXME: fails */
+    TESTCASE( _PDCLIB_filelist == NULL );
     system( "rm testfile1 testfile2" );
 #else
     puts( " NOTEST fclose() test driver is PDCLib-specific." );
