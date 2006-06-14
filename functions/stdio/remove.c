@@ -20,15 +20,33 @@ int remove( const char * filename )
 #endif
 
 #ifdef TEST
+/* TODO: Work around the following undef */
+#undef SEEK_SET
 #include <_PDCLIB_test.h>
+
+#include <stdlib.h>
+#include <string.h>
 
 int main( void )
 {
-#ifndef REGTEST
-    TESTCASE( NO_TESTDRIVER );
-#else
-    puts( " NOTEST remove() test driver is PDCLib-specific." );
-#endif
+    /* TODO: Extend to internal testing (buffer etc.) */
+    char filename[] = "touch testfile";
+    system( filename );
+    /* file is actually readable */
+    TESTCASE( fopen( filename + 6, "r" ) != NULL );
+    /* remove function does not return error */
+    TESTCASE( remove( filename + 6 ) == 0 );
+    /* file is no longer readable */
+    TESTCASE( fopen( filename + 6, "r" ) == NULL );
+    /* remove function does return error */
+    TESTCASE( remove( filename + 6 ) != 0 );
+    memcpy( filename, "mkdir", 5 );
+    /* create directory */
+    system( filename );
+    /* remove function does not return error */
+    TESTCASE( remove( filename + 6 ) == 0 );
+    /* remove function does return error */
+    TESTCASE( remove( filename + 6 ) != 0 );
     return TEST_RESULTS;
 }
 
