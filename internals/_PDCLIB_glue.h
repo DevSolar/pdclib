@@ -36,7 +36,8 @@ void * _PDCLIB_allocpages( int n );
 _PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode );
 
 /* A system call that writes n characters to a file identified by given file
-   descriptor. Return the number of characters written.
+   descriptor. Return the number of characters actually written, or zero if
+   an error occured.
 */
 _PDCLIB_size_t _PDCLIB_write( _PDCLIB_fd_t fd, char const * buffer, _PDCLIB_size_t n );
 
