@@ -26,6 +26,7 @@ long long int strtoll( const char * s, char ** endptr, int base )
     else
     {
         /* FIXME: This breaks on some machines that round negatives wrongly */
+        /* FIXME: Sign error not caught by testdriver */
         rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MIN, (uintmax_t)( LLONG_MIN / -base ), (uintmax_t)( -( LLONG_MIN % base ) ), &sign );
     }
     if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;

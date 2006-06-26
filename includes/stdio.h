@@ -713,7 +713,7 @@ char * gets( char * s );
 /* Equivalent to fputc( c, stdout ), but may be implemented as a macro that
    evaluates its parameter more than once.
 */
-int putchar( int c );
+#define putchar( c ) putc( c, stdout )
 
 /* Write the string s (not including the terminating \0) to stdout, and append
    a newline to the output. Returns a value >= 0 when successful, EOF if a

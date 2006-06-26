@@ -40,7 +40,7 @@
    n - pointer to maximum number of characters to be delivered in this call
    s - the buffer into which the character shall be delivered
 */
-#define DELIVER( x ) do { if ( status->i < status->n ) { if ( status->stream != NULL ) putc( x, status->stream ); else status->s[status->i] = x; } ++(status->i); } while ( 0 )
+#define DELIVER( x ) do { if ( status->i < status->n ) { if ( status->stream != NULL ) { status->stream->buffer[status->stream->bufidx++] = x; if ( ( status->stream->bufidx == status->stream->bufsize ) || ( ( status->stream->status & _IOLBF ) && ( x == '\n' ) ) || ( status->stream->status & _IONBF ) ) fflush( status->stream ); } else status->s[status->i] = x; } ++(status->i); } while ( 0 )
 
 /* This function recursively converts a given integer value to a character
    stream. The conversion is done under the control of a given status struct
@@ -116,6 +116,26 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
                 for ( int i = 0; i < status->width - characters; ++i )
                 {
                     DELIVER( ' ' );
+                    /*
+                    do
+                    {
+                        if ( status->i < status->n )
+                        {
+                            if ( status->stream != 0 )
+                                do
+                                {
+                                    status->stream->buffer[status->stream->bufidx++] = (char)' ',
+                                    if ( ( status->stream->bufidx == status->stream->bufsize )
+                                      || ( ( status->stream->status & 2 ) && (char)' ' == '\n' )
+                                      || ( status->stream->status & 4 ) )
+                                        fflush( status->stream )
+                                } while (0),
+                                ' ';
+                            else status->s[status->i] = ' ';
+                        }
+                        ++(status->i);
+                    } while ( 0 );
+                    */
                     ++(status->this);
                 }
             }
