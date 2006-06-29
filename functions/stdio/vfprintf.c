@@ -39,9 +39,26 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
+static int testprintf( FILE * stream, const char * format, ... )
+{
+    int i;
+    va_list arg;
+    va_start( arg, format );
+    i = vfprintf( stream, format, arg );
+    va_end( arg );
+    return i;
+}
+
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    FILE * fh;
+    TESTCASE( testprintf( stdout, "Hallo\n" ) == 6 );
+#if 0
+    TESTCASE( ( fh = fopen( "testfile", "w" ) ) != NULL );
+    TESTCASE( testprintf( fh, "Hallo\n" ) );
+    TESTCASE( fclose( fh ) == 0 );
+    TESTCASE( remove( "testfile" ) == 0 );
+#endif
     return TEST_RESULTS;
 }
 
