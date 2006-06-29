@@ -31,7 +31,7 @@ typedef _PDCLIB_size_t size_t;
 
 /* The following are platform-dependant, and defined in _PDCLIB_config.h. */
 typedef _PDCLIB_fpos_t        fpos_t;
-//typedef struct _PDCLIB_file_t FILE;
+typedef struct _PDCLIB_file_t FILE;
 #define EOF -1
 #define BUFSIZ _PDCLIB_BUFSIZ
 #define FOPEN_MAX _PDCLIB_FOPEN_MAX
@@ -44,9 +44,9 @@ typedef _PDCLIB_fpos_t        fpos_t;
 #define SEEK_END 2
 #define SEEK_SET 4
 
-//extern FILE * stdin;
-//extern FILE * stdout;
-//extern FILE * stderr;
+extern struct _PDCLIB_file_t * stdin;
+extern struct _PDCLIB_file_t * stdout;
+extern struct _PDCLIB_file_t * stderr;
 
 /* Operations on files */
 
