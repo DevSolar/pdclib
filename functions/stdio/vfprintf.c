@@ -24,6 +24,7 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
         {
             /* No conversion specifier, print verbatim */
             putc( *(format++), stream );
+            status.i++;
         }
         else
         {
@@ -37,6 +38,7 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
 #endif
 
 #ifdef TEST
+#include <stdlib.h>
 #include <_PDCLIB_test.h>
 
 static int testprintf( FILE * stream, const char * format, ... )
@@ -52,13 +54,10 @@ static int testprintf( FILE * stream, const char * format, ... )
 int main( void )
 {
     FILE * fh;
-    TESTCASE( testprintf( stdout, "Hallo\n" ) == 6 );
-#if 0
     TESTCASE( ( fh = fopen( "testfile", "w" ) ) != NULL );
-    TESTCASE( testprintf( fh, "Hallo\n" ) );
+    TESTCASE( testprintf( fh, "Hallo\n" ) == 6 );
     TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( remove( "testfile" ) == 0 );
-#endif
+    /* FIXME: Testfile doesn't exist... */
     return TEST_RESULTS;
 }
 

@@ -22,7 +22,7 @@ int feof( struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Testing covered by clearerr(). */
     return TEST_RESULTS;
 }
 

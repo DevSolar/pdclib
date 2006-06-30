@@ -39,9 +39,21 @@ int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_rest
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
+#include <string.h>
+
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    FILE * fh;
+    char buffer[100];
+    char text[] = "SUCCESS testing fputs().";
+    TESTCASE( ( fh = fopen( "testfile", "w" ) ) != NULL );
+    TESTCASE( fputs( text, fh ) != EOF );
+    TESTCASE( fclose( fh ) == 0 );
+    TESTCASE( ( fh = fopen( "testfile", "r" ) ) != NULL );
+    TESTCASE( fread( buffer, 1, strlen( text ), fh ) == strlen( text ) );
+    TESTCASE( memcmp( buffer, text, strlen( text ) ) == 0 );
+    TESTCASE( fclose( fh ) == 0 );
+    TESTCASE( remove( "testfile" ) == 0 );
     return TEST_RESULTS;
 }
 

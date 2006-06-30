@@ -7,13 +7,16 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <_PDCLIB_glue.h>
 
 #ifndef REGTEST
 
 void _Exit( int status )
 {
-    /* TODO: Flush and close open streams. Remove tmpfile() files. */
+    /* TODO: Flush and close open streams. Remove tmpfile() files. Make this
+       called on process termination automatically.
+    */
     _PDCLIB_Exit( status );
 }
 

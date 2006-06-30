@@ -28,7 +28,7 @@ int printf( const char * _PDCLIB_restrict format, ... )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    TESTCASE( printf( "SUCCESS testing printf().\n" ) == 26 );
     return TEST_RESULTS;
 }
 
