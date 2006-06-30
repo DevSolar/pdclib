@@ -21,12 +21,16 @@ int fputc( int c, struct _PDCLIB_file_t * stream )
     */
     stream->buffer[stream->bufidx++] = (char)c;
     if ( ( stream->bufidx == stream->bufsize )                   /* _IOFBF */
-           || ( ( stream->status & _IOLBF ) && (char)c == '\n' ) /* _IOLBF */
+           || ( ( stream->status & _IOLBF ) && ( (char)c == '\n' ) ) /* _IOLBF */
            || ( stream->status & _IONBF )                        /* _IONBF */
     )
     {
         /* buffer filled, unbuffered stream, or end-of-line. */
         fflush( stream );
+    }
+    else
+    {
+        stream->status |= _PDCLIB_WROTELAST;
     }
     return c;
 }
@@ -38,7 +42,15 @@ int fputc( int c, struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    FILE * fh;
+    char buffer[100];
+    TESTCASE( ( fh = fopen( "testfile", "w" ) ) != NULL );
+    TESTCASE( fputc( '!', fh ) == '!' );
+    TESTCASE( fclose( fh ) == 0 );
+    TESTCASE( ( fh = fopen( "testfile", "r" ) ) != NULL );
+    TESTCASE( fread( buffer, 1, 1, fh ) == 1 );
+    TESTCASE( buffer[0] == '!' );
+    TESTCASE( fclose( fh ) == 0 );
     return TEST_RESULTS;
 }
 

@@ -21,10 +21,12 @@
 /* TODO: This is proof-of-concept, requires finetuning. */
 static char _PDCLIB_sin_buffer[BUFSIZ];
 static char _PDCLIB_sout_buffer[BUFSIZ];
+static char _PDCLIB_serr_buffer[BUFSIZ];
 
-static struct _PDCLIB_file_t _PDCLIB_serr = { 2, { 0 }, NULL, 0, 0, 0u, /* mbstate, */ NULL };
-static struct _PDCLIB_file_t _PDCLIB_sout = { 1, { 0 }, _PDCLIB_sout_buffer, BUFSIZ, 0, 0u, /* mbstate, */ &_PDCLIB_serr };
-static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, { 0 }, _PDCLIB_sin_buffer, BUFSIZ, 0, 0u, /* mbstate, */ &_PDCLIB_sout };
+/* FIXME: serr should handle one character. Buffering on out / in? */
+static struct _PDCLIB_file_t _PDCLIB_serr = { 2, { 0 }, _PDCLIB_serr_buffer, BUFSIZ, 0, _IONBF, /* mbstate, */ NULL };
+static struct _PDCLIB_file_t _PDCLIB_sout = { 1, { 0 }, _PDCLIB_sout_buffer, BUFSIZ, 0, _IOLBF, /* mbstate, */ &_PDCLIB_serr };
+static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, { 0 }, _PDCLIB_sin_buffer, BUFSIZ, 0, _IOLBF, /* mbstate, */ &_PDCLIB_sout };
 
 struct _PDCLIB_file_t * stdin  = &_PDCLIB_sin;
 struct _PDCLIB_file_t * stdout = &_PDCLIB_sout;

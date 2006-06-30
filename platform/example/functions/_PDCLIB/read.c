@@ -1,18 +1,20 @@
 /* $Id$ */
 
-/* ferror( FILE * )
+/* _PDCLIB_read( _PDCLIB_fd_t, char *, _PDCLIB_size_t )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdio.h>
+#include <_PDCLIB_glue.h>
 
 #ifndef REGTEST
 
-int ferror( struct _PDCLIB_file_t * stream )
+int read(int, void *, unsigned int);
+
+_PDCLIB_size_t _PDCLIB_read( _PDCLIB_fd_t fd, char * buffer, _PDCLIB_size_t n )
 {
-    return stream->status & _PDCLIB_ERRORFLAG;
+    return read( fd, buffer, n );
 }
 
 #endif
@@ -22,7 +24,7 @@ int ferror( struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    /* Testing covered by clearerr(). */
+    TESTCASE( NO_TESTDRIVER );
     return TEST_RESULTS;
 }
 

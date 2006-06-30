@@ -121,12 +121,12 @@ void * malloc( size_t size )
             if ( _PDCLIB_memlist.last == NULL )
             {
                 _PDCLIB_memlist.first = splitnode;
-                splitnode->next = NULL;
             }
             else
             {
                 _PDCLIB_memlist.last->next = splitnode;
             }
+            splitnode->next = NULL; /* TODO: This is bug #7, uncovered by testdriver yet. */
             _PDCLIB_memlist.last = splitnode;
         }
         return (char *)newnode + sizeof( struct _PDCLIB_memnode_t );

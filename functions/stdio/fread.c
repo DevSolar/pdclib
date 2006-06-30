@@ -1,18 +1,19 @@
 /* $Id$ */
 
-/* ferror( FILE * )
+/* fread( void *, size_t, size_t, FILE * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
 #include <stdio.h>
+#include <_PDCLIB_glue.h>
 
 #ifndef REGTEST
 
-int ferror( struct _PDCLIB_file_t * stream )
+size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
-    return stream->status & _PDCLIB_ERRORFLAG;
+    return _PDCLIB_read( stream->handle, ptr, size * nmemb );
 }
 
 #endif
@@ -22,7 +23,7 @@ int ferror( struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    /* Testing covered by clearerr(). */
+    /* Testing handled by fwrite(). */
     return TEST_RESULTS;
 }
 
