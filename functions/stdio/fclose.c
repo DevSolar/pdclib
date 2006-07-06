@@ -29,12 +29,13 @@ int fclose( struct _PDCLIB_file_t * stream )
             _PDCLIB_close( stream->handle );
             if ( previous != NULL )
             {
-                previous->next = current->next;
+                previous->next = stream->next;
             }
             else
             {
-                _PDCLIB_filelist = current->next;
+                _PDCLIB_filelist = stream->next;
             }
+            free( stream );
             return 0;
         }
         previous = current;
