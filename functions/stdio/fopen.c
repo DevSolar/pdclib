@@ -53,13 +53,23 @@ fail:
 
 int main( void )
 {
+    /* Some of the tests are not executed for regression tests, as the libc on
+       my system is at once less forgiving (segfaults on mode NULL) and more
+       forgiving (accepts undefined modes).
+    */
+#ifndef REGTEST
     TESTCASE( fopen( NULL, NULL ) == NULL );
+#endif
     TESTCASE( fopen( NULL, "w" ) == NULL );
+#ifndef REGTEST
     TESTCASE( fopen( "", NULL ) == NULL );
+#endif
     TESTCASE( fopen( "", "w" ) == NULL );
     TESTCASE( fopen( "foo", "" ) == NULL );
-    TESTCASE( fopen( "testfile", "wq" ) == NULL ); /* Illegal mode */
-    TESTCASE( fopen( "testfile", "wr" ) == NULL ); /* Illegal mode */
+#ifndef REGTEST
+    TESTCASE( fopen( "testfile", "wq" ) == NULL ); /* Undefined mode */
+    TESTCASE( fopen( "testfile", "wr" ) == NULL ); /* Undefined mode */
+#endif
     TESTCASE( fopen( "testfile", "w" ) != NULL );
     system( "rm testfile" );
     return TEST_RESULTS;
