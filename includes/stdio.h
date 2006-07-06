@@ -400,24 +400,9 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
 
 /* TODO: fscanf() documentation */
 /*
-   Write output to the given stream, as defined by the given format string and
-   0..n subsequent arguments (the argument stack).
-
-   The format string is written to the given stream verbatim, except for any
-   conversion specifiers included, which start with the letter '%' and are
-   documented below. If the given conversion specifiers require more arguments
-   from the argument stack than provided, behaviour is undefined. Additional
-   arguments not required by conversion specifiers are evaluated but otherwise
-   ignored.
-
-   (The standard specifies the format string is allowed to contain multibyte
-   character sequences as long as it starts and ends in initial shift state,
-   but this is not yet supported by this implementation, which interprets the
-   format string as sequence of char.)
-   TODO: Add multibyte support to printf() functions.
-
-   Read input from the given stream, as defined by the given format string and
-   0..n subsequent arguments (the argument stack).
+   Read input from a given stream, as defined by the given format string, and
+   store converted input in the objects pointed to by 0..n subsequent arguments
+   (the argument stack).
 
    The format string contains a sequence of directives that are expected to
    match the input. If such a directive fails to match, the function returns
@@ -433,53 +418,22 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
      argument stack, behaviour is undefined. Additional arguments not required
      by any conversion specifications are evaluated, but otherwise ignored.
 
-The format shall be a multibyte character sequence, beginning and ending in its initial
-shift state. The format is composed of zero or more directives: one or more white-space
-characters, an ordinary multibyte character (neither % nor a white-space character), or a
-conversion speci?cation. Each conversion speci?cation is introduced by the character %.
-After the %, the following appear in sequence:
-? An optional assignment-suppressing character *.
-? An optional nonzero decimal integer that speci?es the maximum ?eld width (in
-    characters).
-? An optional length modi?er that speci?es the size of the receiving object.
-? A conversion speci?er character that speci?es the type of conversion to be applied.
-The fscanf function executes each directive of the format in turn. If a directive fails, as
-detailed below, the function returns. Failures are described as input failures (due to the
-occurrence of an encoding error or the unavailability of input characters), or matching
-failures (due to inappropriate input).
-A directive composed of white-space character(s) is executed by reading input up to the
-?rst non-white-space character (which remains unread), or until no more characters can
-be read.
-A directive that is an ordinary multibyte character is executed by reading the next
-characters of the stream. If any of those characters differ from the ones composing the
-directive, the directive fails and the differing and subsequent characters remain unread.
-Similarly, if end-of-?le, an encoding error, or a read error prevents a character from being
-read, the directive fails.
-A directive that is a conversion speci?cation de?nes a set of matching input sequences, as
-described below for each speci?er. A conversion speci?cation is executed in the
-following steps:
-Input white-space characters (as speci?ed by the isspace function) are skipped, unless
-the speci?cation includes a [, c, or n speci?er.241)
-These white-space characters are not counted against a speci?ed ?eld width.
-An input item is read from the stream, unless the speci?cation includes an n speci?er. An
-input item is de?ned as the longest sequence of input characters which does not exceed
-any speci?ed ?eld width and which is, or is a pre?x of, a matching input sequence.242)
-fscanf pushes back at most one input character onto the input stream. Therefore, some sequences
-that are acceptable to strtod, strtol, etc., are unacceptable to fscanf.
-The ?rst character, if any, after the input item remains unread. If the length of the input
-item is zero, the execution of the directive fails; this condition is a matching failure unless
-end-of-?le, an encoding error, or a read error prevented input from the stream, in which
-case it is an input failure.
-Except in the case of a % speci?er, the input item (or, in the case of a %n directive, the
-count of input characters) is converted to a type appropriate to the conversion speci?er. If
-the input item is not a matching sequence, the execution of the directive fails: this
-condition is a matching failure. Unless assignment suppression was indicated by a *, the
-result of the conversion is placed in the object pointed to by the ?rst argument following
-the format argument that has not already received a conversion result. If this object
-does not have an appropriate type, or if the result of the conversion cannot be represented
-in the object, the behavior is unde?ned.
-The length modi?ers and their meanings are:
-   
+   (The standard specifies the format string is allowed to contain multibyte
+   character sequences as long as it starts and ends in initial shift state,
+   but this is not yet supported by this implementation, which interprets the
+   format string as sequence of char.)
+   TODO: Add multibyte support to scanf() functions.
+
+   A conversion specifier consists of:
+   - Optional assignment-suppressing character ('*') that makes the conversion
+     read input as usual, but does not assign the conversion result.
+   - Optional maximum field width as decimal integer.
+   - Optional length modifier specifying the size of the argument (one of "hh",
+     "ll", or one of the characters "hljztL").
+   - Conversion specifier character specifying the type of conversion to be
+     applied (and the type of the next argument from the argument stack). One
+     of the characters "diouxXaAeEfFgGcs[pn%".
+
    LENGTH MODIFIERS
    hh  For "diouxXn" conversions, the next pointer from the argument stack is
        assumed to point to a variable of of char width.
@@ -581,6 +535,15 @@ The length modi?ers and their meanings are:
    %    Matches a single, verbatim '%' character.
 
    A, E, F, G and X are valid, and equivalent to their lowercase counterparts.
+
+   All conversions except [, c, or n imply that whitespace characters from the
+   input stream are consumed until a non-whitespace character is encountered.
+   Such whitespaces do not count against a maximum field width.
+
+   Conversions push at most one character back into the input stream. That
+   implies that some character sequences converted by the strtol() and strtod()
+   function families are not converted identically by the scnaf() function
+   family.
 
    Returns the number of input items successfully assigned. This can be zero if
    an early mismatch occurs. Returns EOF if an input failure occurs before the
