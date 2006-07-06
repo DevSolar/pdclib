@@ -344,3 +344,6 @@ extern char _PDCLIB_Xdigits[];
    Returns a pointer to the first character not parsed as conversion specifier.
 */
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
+
+/* Parsing any fopen() style filemode string into a number of flags. */
+unsigned int _PDCLIB_filemode( const char * mode );
