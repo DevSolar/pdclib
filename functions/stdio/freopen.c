@@ -25,6 +25,7 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
 {
     /* FIXME: This is ad-hoc (to make the vprintf() testdriver work), and must be checked. */
     /* FIXME: If filename is NULL, change mode. */
+    /* TODO: This function can change wide orientation of a stream */
     if ( filename == NULL ) return NULL;
     if ( stream->status & _PDCLIB_WROTELAST ) fflush( stream );
     if ( stream->status & _PDCLIB_LIBBUFFER ) free( stream->buffer );
