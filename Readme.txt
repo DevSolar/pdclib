@@ -54,10 +54,10 @@ Internals
 
 As a namespace convention, everything (files, typedefs, functions,
 macros) not defined in ISO/IEC 9899 is prefixed with _PDCLIB_*.
-As identifiers starting with '_' and a capital letter are reserved
-for the implementation, and the chances of you compiler using an
-identifier in the _PDCLIB_* range are slim, any strictly conforming
-application should work with PDCLib.
+The standard defines any identifiers starting with '_' and a capital
+letter as reserved for the implementation, and since the chances of
+your compiler using an identifier in the _PDCLIB_* range are slim,
+any strictly conforming application should work with PDCLib.
 
 PDCLib consists of several parts:
 
@@ -66,32 +66,43 @@ PDCLib consists of several parts:
 3) internal header files keeping complex stuff out of the standard
    headers;
 4) the central, platform-specific file _PDCLIB_config.h;
-5) optimization overlay implementation files (optional).
+5) platform-specific implementation files;
+6) platform-specific, optimized "overlay" implementations (optional).
 
-The standard headers only contain what they are defined to contain.
-Where additional logic or macro magic is necessary, that is deferred
-to the internal files. This has been done so that the headers are
-actually educational as to what they provide (as opposed to how the
-library does it).
+The standard headers (in ./includes/) only contain what they are
+defined to contain. Where additional logic or macro magic is
+necessary, that is deferred to the internal files. This has been done
+so that the headers are actually educational as to what they provide
+(as opposed to how the library does it).
 
-There is a seperate implementation file for every function defined
-by the standard, named {function}.c. Not only does this avoid linking
-in huge amounts of unused code when you use but a single function,
-it also allows the optimization overlay to work (see below).
+Note that there *might* be some feature to remove this additional
+level of indirection for a production release, to ease the workload
+put on the preprocessor.
 
-Then there are internal header files, which contain all the "black
-magic" and "code fu" that were kept out of the standard headers. You
-should not have to touch them if you want to adapt PDCLib to a new
-platform. If you do, note that the PDCLib author would consider it
-a serious design flaw, and would be happy to fix it in the next PDCLib
-release. Any adaption work should be covered by the config header
-(and, possibly, the optimization overlay).
+There is a seperate implementation file (in ./function/{header}/) for
+every function defined by the standard, named {function}.c. Not only
+does this avoid linking in huge amounts of unused code when you use
+but a single function, it also allows the optimization overlay to work
+(see below).
+
+(The directory ./functions/_PDCLIB/ contains internal and helper
+functions that are not part of the standard.)
+
+Then there are internal header files (in ./internal/), which contain
+all the "black magic" and "code fu" that was kept out of the standard
+headers. You should not have to touch them if you want to adapt PDCLib
+to a new platform. If you *do* have to touch them, note that the PDCLib
+author would consider it a serious design flaw, and would be happy to
+fix it in the next PDCLib release. Any adaption work should be covered
+by the steps detailed below.
 
 For adapting PDCLib to a new platform (the trinity of CPU, operating
-system, and compiler), open _PDCLIB_config.h in your favourite text
-editor, have a look at the comments, and modify it as appropriate for
-your platform. That should be all that is actually required for such
-an adaption (see previous paragraph).
+system, and compiler), make a copy of the ./platform/example/ directory
+(named after your target platform), and modify the files of your copy
+to suit the constraints of your platform. When you are done, copy the
+contents of your platform directory over the source directory structure
+of PDCLib (or link them into the appropriate places). That should be
+all that is actually required to make PDCLib work for your platform.
 
 Of course, your platform might provide more efficient replacements
 for the generic implementations offered by PDCLib. The math functions
@@ -115,17 +126,16 @@ so correctly, but they are not very efficient when compared to hand-
 crafted assembler or compiler build-ins. So the author wanted to
 provide a means to modify PDCLib to run more efficiently on a given
 platform, without cluttering the main branch with tons of #ifdef
-statements and "featureset defines" that grow stale quickly.
+statements and "featureset #defines" that grow stale quickly.
 
 The solution is the "optimization overlay". Every function has its
-own implementation file, and _PDCLIB_config.h should be the only
-header that must be modified. So, a platform-specific overlay is
-copied over the main PDCLib branch - replacing _PDCLIB_config.h and
-any number of implementation files - to create a PDCLib adapted /
-optimized for the platform in question. That overlay could be part
-of the PDCLib source tree (for established platforms where maintainers
-won't bother with PDCLib), or part of that platform's source tree
-(for under-development platforms PDCLib maintainers won't bother with).
+own implementation file, which makes it possible to replace them
+piecemeal by copying a platform-specific overlay over the main PDCLib
+branch to create a PDCLib adapted / optimized for the platform in
+question. That overlay could be part of the PDCLib source tree (for
+established platforms where maintainers won't bother with PDCLib), or
+part of that platform's source tree (for under-development platforms
+PDCLib maintainers won't bother with).
 
 So, to use PDCLib on your given platform, you unpack PDCLib (as you
 obviously have done already since you are reading this), and copy
@@ -155,8 +165,8 @@ Implementations for parts of <stdlib.h>. Still missing are the floating
 point conversions, and the wide-/multibyte-character functions.
 
 v0.5 - unreleased
-Implementations for parts of <stdio.h>. Bug fixes. Still no locale /
-wide-char support. Enabled all GCC compiler warnings I could find, and
-fixed everything that threw a warning. Fixed all open bugs in the v0.4
-release.
-
+Implementations for parts of <stdio.h>. Still no locale / wide-char
+support. Enabled all GCC compiler warnings I could find, and fixed
+everything that threw a warning. (You see this, maintainers of Open
+Source software? No warnings whatsoever. Stop telling me it cannot
+be done.) Fixed all known bugs in the v0.4 release.
