@@ -35,8 +35,8 @@ Everyone involved in the first, "public" attempt at PDCLib, for bearing with me
 when I restarted from scratch, thanks.
 
 Lennart Fridén and Sammy Nordström, who have been great pals even after I sunk
-another project that had eaten countless hours of work between the three of us,
-thanks.
+some other project that had eaten countless hours of work between the three of
+us, thanks.
 
 My wife and daughter, for sharing husband and daddy with this strange machine,
 thanks.
@@ -65,23 +65,21 @@ obsessive when it comes to coding style. ;-)
 - every function, every static data item that could possibly be shared, got its
   own implementation file. This means the library itself is probably larger than
   strictly necessary, and might take a couple of clock cycles longer to link,
-  but it reduces size of fully-linked object files / executables.
+  but it reduces size of object files and executables.
 
 - where possible, I tried to share functionality between similar functions (as
   can be seen in the atoi() and strtol() function families). This means one or
   two additional function calls, but again reduces memory footprint and eases
   maintenance of the library.
 
-- standard function arguments are named exactly as in the standard document.
+- function arguments are named exactly as in the standard document.
 
 - the standard is taken quite literally in places. For example, memcpy() really
   copies char-wise. This runs contrary to earlier claims of performance, but is
   consistent with the *letter* of the standard, and you will probably use your
   compiler builtins (through a platform overlay) anyhow.
 
-- every file (except the top-level *.txt files) has an Id and a Name tag, so
-  that the CVS Id string is on file for *every* code file, and the release tag
-  is on file for every code file in a release package.
+- every file has an Id tag, so that it is on file for *every* code file.
 
 - PDCLib code has no bias towards POSIX; indeed the absence of POSIX tidbits is
   one of its hallmarks. However, PDCLib also has no bias *against* POSIX, and
