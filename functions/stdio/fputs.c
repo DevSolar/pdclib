@@ -16,16 +16,21 @@ int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_rest
        constraints honored?)
     */
     /* FIXME: Proper buffering handling. */
+    char written;
     while ( stream->bufidx < stream->bufsize )
     {
-        if ( ( stream->buffer[stream->bufidx++] = *(s++) ) == '\0' )
+        written = ( stream->buffer[stream->bufidx++] = *(s++) );
+        if ( ( written == '\0' ) ||
+             ( ( stream->status & _IOLBF ) && ( written == '\n' ) ) ||
+             ( stream->status & _IONBF ) )
         {
             break;
         }
     }
     fflush( stream );
-    if ( *(s-1) != '\0' )
+    if ( written != '\0' )
     {
+        /* FIXME: For _IONBF, this recurses once per character - unacceptable. */
         return fputs( s, stream );
     }
     else

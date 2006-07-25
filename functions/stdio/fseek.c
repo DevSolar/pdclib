@@ -12,6 +12,10 @@
 
 int fseek( struct _PDCLIB_file_t * stream, long int offset, int whence )
 {
+    if ( stream->status & _PDCLIB_WROTELAST )
+    {
+        fflush( stream );
+    }
     /* TODO: Implement. */
     return 0;
 }

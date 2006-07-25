@@ -12,6 +12,10 @@
 
 int fsetpos( struct _PDCLIB_file_t * stream, const _PDCLIB_fpos_t * pos )
 {
+    if ( stream->status & _PDCLIB_WROTELAST )
+    {
+        fflush( stream );
+    }
     /* TODO: Implement. */
     return 0;
 }

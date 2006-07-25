@@ -12,6 +12,10 @@
 
 void rewind( struct _PDCLIB_file_t * stream )
 {
+    if ( stream->status & _PDCLIB_WROTELAST )
+    {
+        fflush( stream );
+    }
     /* TODO: Implement. */
     return;
 }
