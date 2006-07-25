@@ -38,7 +38,11 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL ) goto fail;
     rc->bufsize = BUFSIZ;
     rc->bufidx = 0;
-    rc->status |= ( _PDCLIB_LIBBUFFER | _PDCLIB_VIRGINSTR );
+    /* Setting buffer to _IOLBF because "when opened, a stream is fully
+       buffered if and only if it can be determined not to refer to an
+       interactive device."
+    */
+    rc->status |= ( _PDCLIB_LIBBUFFER | _PDCLIB_VIRGINSTR /* | _IOLBF */ ); /* FIXME: Uncommenting the _IOLBF here breaks output. */
     /* TODO: Setting mbstate */
     return rc;
 fail:
