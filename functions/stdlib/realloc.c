@@ -32,7 +32,10 @@ void * realloc( void * ptr, size_t size )
         else
         {
             /* Get larger memnode and copy over contents. */
-            newptr = malloc( size );
+            if ( ( newptr = malloc( size ) ) == NULL )
+            {
+                return NULL;
+            }
             memcpy( newptr, ptr, baseptr->size );
         }
     }
@@ -52,3 +55,4 @@ int main( void )
 }
 
 #endif
+
