@@ -118,8 +118,6 @@ typedef unsigned char      _PDCLIB_uint8_t;
 #define _PDCLIB_INT8_MAX   _PDCLIB_CHAR_MAX
 #define _PDCLIB_INT8_MIN   _PDCLIB_CHAR_MIN
 #define _PDCLIB_UINT8_MAX  _PDCLIB_UCHAR_MAX
-#define _PDCLIB_INT8_LITERAL
-#define _PDCLIB_UINT8_LITERAL
 #else
 #error Unsupported width of char (not 8 bits).
 #endif
@@ -131,16 +129,12 @@ typedef unsigned int       _PDCLIB_uint16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_INT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_INT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_UINT_MAX
-#define _PDCLIB_INT16_LITERAL
-#define _PDCLIB_UINT16_LITERAL
 #elif   _PDCLIB_SHRT_BYTES == 2
 typedef signed short       _PDCLIB_int16_t;
 typedef unsigned short     _PDCLIB_uint16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_SHRT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_SHRT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_USHRT_MAX
-#define _PDCLIB_INT16_LITERAL  s
-#define _PDCLIB_UINT16_LITERAL us
 #else
 #error Neither 'short' nor 'int' are 16-bit.
 #endif
