@@ -187,17 +187,17 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* Expand to an integer constant of specified value and type int_leastN_t */
 
-#define INT8_C( value )  concat( value, _PDCLIB_INT8_LITERAL )
-#define INT16_C( value ) concat( value, _PDCLIB_INT16_LITERAL )
-#define INT32_C( value ) concat( value, _PDCLIB_INT32_LITERAL )
-#define INT64_C( value ) concat( value, _PDCLIB_INT64_LITERAL )
+#define INT8_C( value )  value
+#define INT16_C( value ) value
+#define INT32_C( value ) _PDCLIB_concat( value, _PDCLIB_INT32_LITERAL )
+#define INT64_C( value ) _PDCLIB_concat( value, _PDCLIB_INT64_LITERAL )
 
 /* Expand to an integer constant of specified value and type uint_leastN_t */
 
-#define UINT8_C( value )  concat( value, _PDCLIB_UINT8_LITERAL )
-#define UINT16_C( value ) concat( value, _PDCLIB_UINT16_LITERAL )
-#define UINT32_C( value ) concat( value, _PDCLIB_UINT32_LITERAL )
-#define UINT64_C( value ) concat( value, _PDCLIB_UINT64_LITERAL )
+#define UINT8_C( value )  value
+#define UINT16_C( value ) value
+#define UINT32_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT32_LITERAL )
+#define UINT64_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT64_LITERAL )
 
 /* 7.18.4.2 Macros for greatest-width integer constants */
 

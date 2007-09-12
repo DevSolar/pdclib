@@ -140,9 +140,9 @@ void * realloc( void * ptr, size_t size );
 */
 void abort( void );
 
-/* Register a function that will be called on exit(), _Exit(), or when main()
-   returns. At least 32 functions can be registered this way, and will be
-   called in reverse order of registration (last-in, first-out).
+/* Register a function that will be called on exit(), or when main() returns.
+   At least 32 functions can be registered this way, and will be called in
+   reverse order of registration (last-in, first-out).
    Returns zero if registration is successfull, nonzero if it failed.
 */
 int atexit( void (*func)( void ) ); 
