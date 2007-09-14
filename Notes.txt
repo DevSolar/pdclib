@@ -21,12 +21,12 @@ would not have been able to create PDCLib at this quality, thanks.
 Paul Bourke (author of mathlib), for allowing me access to a complete math
 library under public domain terms so I could use it as a reference, thanks.
 
-Peter ("Candy") Bindels (netizen of mega-tokyo.com), who located a copy of Cody
+Peter ("Candy") Bindels (netizen of osdev.org), who located a copy of Cody
 & Waite's "Software Manual for the Elementary Functions" for me and saved me
 serious cash in the process, thanks.
 
-Michael Moody, who contributed the generic implementation for <stdarg.h> which
-can now be found in <_PDCLIB_config.h> to the Public Domain, thanks.
+Michael Moody, who contributed the generic implementation for <stdarg.h> to
+the Public Domain which can now be found in <_PDCLIB_config.h>, thanks.
 
 Rod Pemberton, for pointing out several flaws in early versions of PDCLib and
 giving other valuable hints, thanks.
@@ -34,12 +34,16 @@ giving other valuable hints, thanks.
 Everyone involved in the first, "public" attempt at PDCLib, for bearing with me
 when I restarted from scratch, thanks.
 
+Everyone bearing with me during the "stdio block", a period of many months in
+which PDCLib received not a single update because I was stuck and could not
+find the energy to work it out.
+
 Lennart Fridén and Sammy Nordström, who have been great pals even after I sunk
 some other project that had eaten countless hours of work between the three of
 us, thanks.
 
-My wife and daughter, for sharing husband and daddy with this strange machine,
-thanks.
+My wife, daughter, and son for sharing husband and daddy with this strange
+machine, thanks.
 
 
 Style
@@ -58,9 +62,10 @@ obsessive when it comes to coding style. ;-)
   header guards defined in the *including* file, for a tiny bit of performance.
 
 - I always try to minimize the use of local variables. Wherever possible I used
-  the parameters directly, and deferred declaration of locals to the innermost
-  block of statements, in hopes that it might reduce memory footprint when the
-  library is compiled with a compiler that is not that great at optimization.
+  parameters passed by-value directly, and deferred declaration of locals to the
+  innermost block of statements, in hopes that it might reduce memory footprint
+  when the library is compiled with a compiler that is not that great at
+  optimization.
 
 - every function, every static data item that could possibly be shared, got its
   own implementation file. This means the library itself is probably larger than
@@ -96,3 +101,4 @@ obsessive when it comes to coding style. ;-)
   hopefully keeping overly ambitious editors from repeating my mistakes. The
   header files especially should be self-documenting to the point of being a
   suitable replacement for any library reference book you might be using.
+

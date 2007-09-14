@@ -12,6 +12,8 @@ This includes removing authorship notices, re-use of code parts in
 other software (with or without giving credit), and / or creating a
 commercial product based on it.
 
+This permission is not revocable by the author.
+
 This software is provided as-is. Use it at your own risk. There is
 no warranty whatsoever, neither expressed nor implied, and by using
 this software you accept that the author(s) shall not be held liable
@@ -40,6 +42,10 @@ Sick and tired of it, the author brought you this piece of software
 under a "license" that should not be neccessary in the first place:
 "Free" should have been enough.
 
+Unfortunately, German law does not even *allow* to declare a work to
+be "in the Public Domain", so the "free for all" license I intended
+had to be made expressively.
+
 What is it
 ----------
 
@@ -53,11 +59,11 @@ Internals
 ---------
 
 As a namespace convention, everything (files, typedefs, functions,
-macros) not defined in ISO/IEC 9899 is prefixed with _PDCLIB_*.
+macros) not defined in ISO/IEC 9899 is prefixed with _PDCLIB.
 The standard defines any identifiers starting with '_' and a capital
 letter as reserved for the implementation, and since the chances of
-your compiler using an identifier in the _PDCLIB_* range are slim,
-any strictly conforming application should work with PDCLib.
+your compiler using an identifier in the _PDCLIB range are slim,
+any strictly conforming application should work with this library.
 
 PDCLib consists of several parts:
 
@@ -91,16 +97,16 @@ functions that are not part of the standard.)
 Then there are internal header files (in ./internal/), which contain
 all the "black magic" and "code fu" that was kept out of the standard
 headers. You should not have to touch them if you want to adapt PDCLib
-to a new platform. If you *do* have to touch them, note that the PDCLib
-author would consider it a serious design flaw, and would be happy to
-fix it in the next PDCLib release. Any adaption work should be covered
-by the steps detailed below.
+to a new platform. Note that, if you *do* have to touch them, I would
+consider it a serious design flaw, and would be happy to fix it in the
+next PDCLib release. Any adaption work should be covered by the steps
+detailed below.
 
 For adapting PDCLib to a new platform (the trinity of CPU, operating
-system, and compiler), make a copy of the ./platform/example/ directory
-(named after your target platform), and modify the files of your copy
-to suit the constraints of your platform. When you are done, copy the
-contents of your platform directory over the source directory structure
+system, and compiler), make a copy of ./platform/example/ named
+./platform/{your_platform}/, and modify the files of your copy to suit
+the constraints of your platform. When you are done, copy the contents
+of your platform directory over the source directory structure
 of PDCLib (or link them into the appropriate places). That should be
 all that is actually required to make PDCLib work for your platform.
 
@@ -114,19 +120,19 @@ this, you might want to create an "optimization overlay" for PDCLib.
 Optimization Overlay
 --------------------
 
-The idea is to provide a generic implementation that is useable even
-on platforms the author never heard of - for example, the OS and/or
-compiler *you* just wrote and now need a C library for. That is
-actually what PDCLib was written for: To provide a C library for
+The basic idea of PDCLib is to provide a generic implementation that
+is useable even on platforms I have never heard of - for example, the
+OS and/or compiler *you* just wrote and now need a C library for. That
+is actually what PDCLib was written for: To provide a C library for
 compiler and OS builders that do not want the usual baggage of POSIX
 and GNU extensions, licensing considerations etc. etc.
 
 Thus, PDCLib provides generic implementations. They do work, and do
 so correctly, but they are not very efficient when compared to hand-
-crafted assembler or compiler build-ins. So the author wanted to
-provide a means to modify PDCLib to run more efficiently on a given
-platform, without cluttering the main branch with tons of #ifdef
-statements and "featureset #defines" that grow stale quickly.
+crafted assembler or compiler build-ins. So I wanted to provide a
+means to modify PDCLib to run more efficiently on a given platform,
+without cluttering the main branch with tons of #ifdef statements and
+"featureset #defines" that grow stale quickly.
 
 The solution is the "optimization overlay". Every function has its
 own implementation file, which makes it possible to replace them
@@ -170,3 +176,4 @@ support. Enabled all GCC compiler warnings I could find, and fixed
 everything that threw a warning. (You see this, maintainers of Open
 Source software? No warnings whatsoever. Stop telling me it cannot
 be done.) Fixed all known bugs in the v0.4 release.
+
