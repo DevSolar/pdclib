@@ -40,7 +40,20 @@
    n - pointer to maximum number of characters to be delivered in this call
    s - the buffer into which the character shall be delivered
 */
-#define DELIVER( x ) do { if ( status->i < status->n ) { if ( status->stream != NULL ) { status->stream->buffer[status->stream->bufidx++] = x; if ( ( status->stream->bufidx == status->stream->bufsize ) || ( ( status->stream->status & _IOLBF ) && ( x == '\n' ) ) || ( status->stream->status & _IONBF ) ) fflush( status->stream ); } else status->s[status->i] = x; } ++(status->i); } while ( 0 )
+#define DELIVER( x ) \
+do { \
+    if ( status->i < status->n ) { \
+        if ( status->stream != NULL ) { \
+            status->stream->buffer[status->stream->bufidx++] = x; \
+            if ( ( status->stream->bufidx == status->stream->bufsize ) \
+              || ( ( status->stream->status & _IOLBF ) && ( x == '\n' ) ) \
+              || ( status->stream->status & _IONBF ) ) \
+                fflush( status->stream ); \
+        } else \
+            status->s[status->i] = x; \
+    } \
+    ++(status->i); \
+} while ( 0 )
 
 /* This function recursively converts a given integer value to a character
    stream. The conversion is done under the control of a given status struct

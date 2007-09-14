@@ -235,10 +235,12 @@ typedef int _PDCLIB_fd_t;
 #define _PDCLIB_NOHANDLE -1
 
 /* A type in which to store file offsets. See fgetpos() / fsetpos(). */
+/* FIXME: The 'int' types here are placeholders. When changed, check out
+   stdinit.c, too. */
 typedef struct
 {
     int position;
-    int parse_state;
+    int mbstate;
 } _PDCLIB_fpos_t;
 
 /* The default size for file buffers. Must be at least 256. */

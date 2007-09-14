@@ -270,9 +270,9 @@ struct _PDCLIB_file_t
     _PDCLIB_fpos_t          position; /* file position indicator */
     char *                  buffer;   /* file buffer */
     _PDCLIB_size_t          bufsize;  /* size of buffer */
-    _PDCLIB_size_t          bufidx;   /* pointer into buffer */
+    _PDCLIB_size_t          bufidx;   /* index to point of action in buffer */
+    _PDCLIB_size_t          bufend;   /* index to end of pre-read buffer */
     unsigned int            status;   /* misc. status bits */
-  /*mbstate_t               mbstate;    multibyte parse state - TODO: Unmask. */
     struct _PDCLIB_file_t * next;     /* provisions for linked list handling */
 };
 
