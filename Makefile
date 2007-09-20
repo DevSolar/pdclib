@@ -10,7 +10,7 @@ SRCFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.c")
 # All header files of the project
 HDRFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.h")
 # All .c files in functions/_PDCLIB that do not have a regression test driver
-INTFILES := _Exit atomax digits open print remove rename seed stdinit strtox_main strtox_prelim
+INTFILES := _Exit atomax digits open print remove rename seed stdinit strtox_main strtox_prelim cleanstream fflush
 # All object files in the library
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 # All test drivers (.t)
@@ -109,8 +109,8 @@ help:
 
 %.t: %.c Makefile pdclib.a
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -DTEST -std=c99 -I./includes -I./internals $< pdclib.a -o $@
+	@$(CC) $(CFLAGS) -DTEST -g -std=c99 -I./includes -I./internals $< pdclib.a -o $@
 
 %.r: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -Wno-format -DTEST -DREGTEST -std=c99 -I./internals $< -o $@
+	@$(CC) $(CFLAGS) -Wno-format -DTEST -DREGTEST -g -std=c99 -I./internals $< -o $@
