@@ -12,8 +12,9 @@
 
 int read(int, void *, unsigned int);
 
-_PDCLIB_size_t _PDCLIB_read( _PDCLIB_fd_t fd, char * buffer, _PDCLIB_size_t n )
+_PDCLIB_size_t _PDCLIB_read( int fd, char * buffer, _PDCLIB_size_t n )
 {
+    /* FIXME: Might return value < n, might return -1 on error */
     return read( fd, buffer, n );
 }
 

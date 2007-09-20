@@ -12,8 +12,9 @@
 
 int write(int, const void *, unsigned int);
 
-_PDCLIB_size_t _PDCLIB_write( _PDCLIB_fd_t fd, char const * buffer, _PDCLIB_size_t n )
+_PDCLIB_size_t _PDCLIB_write( int fd, char const * buffer, _PDCLIB_size_t n )
 {
+    /* FIXME: Might return value < n, might return -1 on error */
     return write( fd, buffer, n );
 }
 

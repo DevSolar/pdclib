@@ -20,7 +20,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-_PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode )
+int _PDCLIB_open( char const * const filename, unsigned int mode )
 {
     /* FIXME: THIS IS NOT TO BE USED OUT-OF-THE-BOX.
        It is a proof-of-concept implementation. E.g. a stream may only be fully
@@ -78,7 +78,7 @@ int main( void )
     /* This testdriver assumes POSIX, i.e. _PDCLIB_fd_t being int and being
        incremented by one on each successful open.
     */
-    _PDCLIB_fd_t fh;
+    int fh;
     char buffer[ 10 ];
     /* Trying to read non-existent file. */
     TESTCASE( _PDCLIB_open( "testfile", _PDCLIB_FREAD ) == _PDCLIB_NOHANDLE );

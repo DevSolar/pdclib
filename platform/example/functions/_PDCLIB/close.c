@@ -20,7 +20,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-int _PDCLIB_close( _PDCLIB_fd_t fd )
+int _PDCLIB_close( int fd )
 {
     return close( fd );
 }
