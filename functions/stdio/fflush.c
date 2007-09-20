@@ -7,25 +7,35 @@
 */
 
 #include <stdio.h>
-#include <_PDCLIB_glue.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_glue.h>
+
+extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 int fflush( struct _PDCLIB_file_t * stream )
 {
-    /* FIXME: This is ad-hoc. */
-    if ( fwrite( stream->buffer, stream->bufidx, 1, stream ) == stream->bufidx )
+    if ( stream == NULL )
     {
-        stream->bufidx = 0;
-        return 0;
+        stream = _PDCLIB_filelist;
+        /* TODO: Check what happens when fflush( NULL ) encounters write errors, in other libs */
+        int rc = 0;
+        while ( stream != NULL )
+        {
+            if ( stream->bufidx > stream->bufend )
+            {
+                rc |= _PDCLIB_fflush( stream );
+            }
+            stream = stream->next;
+        }
+        return rc;
     }
     else
     {
-        stream->status |= _PDCLIB_ERRORFLAG;
-        return EOF;
+        return _PDCLIB_fflush( stream );
     }
 }
-
+                
 #endif
 
 #ifdef TEST
