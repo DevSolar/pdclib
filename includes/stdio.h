@@ -146,8 +146,7 @@ int fflush( struct _PDCLIB_file_t * stream );
    given.
 
    The stream is fully buffered if and only if it can be determined not to
-   refer to an interactive device. As the generic code of this implementation
-   cannot determine this, _IOLBF (line buffering) is used for all streams.
+   refer to an interactive device.
 
    If the mode string begins with but is longer than one of the above sequences
    the implementation is at liberty to ignore the additional characters, or do

@@ -61,3 +61,9 @@ int _PDCLIB_remove( const char * filename );
    must still be accessible by old name.
 */
 int _PDCLIB_rename( const char * old, const char * new );
+
+/* A system call that returns one if the given file descriptor refers to an
+   interactive device, and zero otherwise.
+ */
+int _PDCLIB_isinteractive( _PDCLIB_fd_t fd );
+
