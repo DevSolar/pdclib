@@ -258,11 +258,12 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_FBIN    128u
 
 /* Internal flags, made to fit the same status field as the flags above. */
-#define _PDCLIB_WROTELAST  256u
-#define _PDCLIB_LIBBUFFER  512u
-#define _PDCLIB_VIRGINSTR 1024u
-#define _PDCLIB_ERRORFLAG 2048u
-#define _PDCLIB_EOFFLAG   4096u
+#define _PDCLIB_LIBBUFFER    512u
+#define _PDCLIB_VIRGINSTR   1024u
+#define _PDCLIB_ERRORFLAG   2048u
+#define _PDCLIB_EOFFLAG     4096u
+#define _PDCLIB_WIDESTREAM  8192u
+#define _PDCLIB_BYTESTREAM 16384u
 
 struct _PDCLIB_file_t
 {
@@ -341,3 +342,8 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 
 /* Parsing any fopen() style filemode string into a number of flags. */
 unsigned int _PDCLIB_filemode( const char * mode );
+
+/* Writing out unwritten buffers to file. Returns 0 if successful, EOF if error
+   occured. Sets error flag of stream in case of error. 
+ */
+int _PDCLIB_fflush( struct _PDCLIB_file_t * stream );
