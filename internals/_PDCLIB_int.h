@@ -251,7 +251,7 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 /* Flags for representing mode (see fopen()). Note these must fit the same
    status field as the _IO?BF flags in <stdio.h> and the internal flags below.
 */
-#define _PDCLIB_FREAD    8u
+#define _PDCLIB_FREAD     8u
 #define _PDCLIB_FWRITE   16u
 #define _PDCLIB_FAPPEND  32u 
 #define _PDCLIB_FRW      64u
@@ -274,6 +274,7 @@ struct _PDCLIB_file_t
     _PDCLIB_size_t          bufidx;   /* index to point of action in buffer */
     _PDCLIB_size_t          bufend;   /* index to end of pre-read buffer */
     unsigned int            status;   /* misc. status bits */
+    char *                  filename; /* name used in fopen() / freopen() */
     struct _PDCLIB_file_t * next;     /* provisions for linked list handling */
 };
 
@@ -325,7 +326,7 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
 
 /* Two helper functions used by strtol(), strtoul() and long long variants.   */
 const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
-_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, _PDCLIB_uintmax_t limdigit, char * sign );
+_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, int limdigit, char * sign );
 
 /* Digits arrays used by various integer conversion functions */
 extern char _PDCLIB_digits[];
@@ -340,10 +341,16 @@ extern char _PDCLIB_Xdigits[];
 */
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
 
+/* Common denominator of puts() and fputs() */
+int _PDCLIB_puts( const char * s, const char * endl, struct _PDCLIB_file_t * stream );
+
 /* Parsing any fopen() style filemode string into a number of flags. */
 unsigned int _PDCLIB_filemode( const char * mode );
 
-/* Writing out unwritten buffers to file. Returns 0 if successful, EOF if error
-   occured. Sets error flag of stream in case of error. 
- */
-int _PDCLIB_fflush( struct _PDCLIB_file_t * stream );
+/* Writing out unwritten buffers of a specific stream. A NULL parameter (as is
+   possible with standard fflush()) is not supported.
+   Return 0 if successful, EOF if error occured. Set error flag of stream and
+   errno as appropriate in case of error.
+*/
+_PDCLIB_size_t _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream, _PDCLIB_size_t written, int retries );
+
