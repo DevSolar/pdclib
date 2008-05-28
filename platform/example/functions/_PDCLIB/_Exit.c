@@ -30,7 +30,9 @@ void _PDCLIB_Exit( int status )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    int UNEXPECTED_RETURN = 0;
+    _PDCLIB_Exit( 0 );
+    TESTCASE( UNEXPECTED_RETURN );
     return TEST_RESULTS;
 }
 

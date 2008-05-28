@@ -10,7 +10,7 @@ SRCFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.c")
 # All header files of the project
 HDRFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.h")
 # All .c files in functions/_PDCLIB that do not have a regression test driver
-INTFILES := _Exit atomax digits open print remove rename seed stdinit strtox_main strtox_prelim cleanstream fflush
+INTFILES := _Exit atomax digits open print remove rename seed stdinit strtox_main strtox_prelim cleanstream fflush filemode
 # All object files in the library
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 # All test drivers (.t)
@@ -27,9 +27,10 @@ PATCHFILES1 := $(shell ls platform/example/functions/_PDCLIB/*.c)
 # All files in platform/example/functions/stdlib (for development only)
 PATCHFILES2 := $(shell ls platform/example/functions/stdlib/*.c)
 
-CFLAGS := -Wall -pedantic -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wconversion -Wstrict-prototypes -fno-builtin
+WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wconversion -fno-builtin 
+CFLAGS := -g -std=c99 -I./internals $(WARNINGS) $(USERFLAGS)
 
-.PHONY: all clean dist test tests testdrivers regtests regtestdrivers todos fixmes find links unlink help
+.PHONY: all clean srcdist bindist test tests testdrivers regtests regtestdrivers todos fixmes find links unlink help
 
 all: pdclib.a
 
@@ -38,16 +39,16 @@ pdclib.a: $(OBJFILES)
 	@ar rc pdclib.a $?
 	@echo
 
-test: $(FILE)
-	$(FILE)
+test: functions/$(FILE)
+	functions/$(FILE)
 
 tests: testdrivers
-	-@rc=0; count=0; echo; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"; echo
+	-@rc=0; count=0; failed=""; echo; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done;
 
 testdrivers: $(TSTFILES)
 
 regtests: regtestdrivers
-	-@rc=0; count=0; echo; for file in $(REGFILES); do echo " RTST	$$file"; ./$$file; rc=`expr $$rc + $$?`; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"; echo
+	-@rc=0; count=0; failed=""; echo; for file in $(REGFILES); do echo " RTST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done;
 
 regtestdrivers: $(REGFILES)
 
@@ -56,7 +57,7 @@ regtestdrivers: $(REGFILES)
 clean:
 	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(REGFILES) pdclib.a pdclib.tgz; do if [ -f $$file ]; then rm $$file; fi; done
 
-dist:
+srcdist:
 	@tar czf pdclib.tgz $(ALLFILES)
 
 todos:
@@ -66,7 +67,7 @@ fixmes:
 	-@for file in $(ALLFILES); do grep -H FIXME $$file; done; true
 
 find:
-	@find functions/ includes/ internals/ platform/ -name "*\.[ch]" -type f | xargs grep $$FIND
+	@find functions/ includes/ internals/ platform/ old_stdio/ -name "*\.[ch]" -type f | xargs grep $$FIND
 
 links:
 	@echo "Linking platform/example..."
@@ -87,7 +88,7 @@ help:
 	@echo
 	@echo "all              - build pdclib.a"
 	@echo "clean            - remove all object files, dependency files and test drivers"
-	@echo "dist             - build pdclib.tgz (source tarball)"
+	@echo "srcdist          - build pdclib.tgz (source tarball)"
 	@echo "test             - test a single testdriver (Usage: FILE=\"test.[rt]\" make test)"
 	@echo "tests            - build and run test drivers (link pdclib.a)"
 	@echo "  testdrivers    - build but do not run test drivers"
@@ -102,15 +103,19 @@ help:
 	@echo "%.t              - build an individual test driver"
 	@echo "%.r              - build an individual regression test driver"
 	@echo "help             - print this list"
+	@echo
+	@echo "Any additional compiler flags you want to use can be passed as USERFLAGS"
+	@echo "(Usage: USERFLAGS=\"flags\" make [...])."
 
 %.o: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -DNDEBUG -MMD -MP -MT "$*.d $*.t" -g -std=c99 -I./includes -I./internals -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -MT "$*.d $*.t" -I./includes -c $< -o $@
 
 %.t: %.c Makefile pdclib.a
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -DTEST -g -std=c99 -I./includes -I./internals $< pdclib.a -o $@
+	@$(CC) $(CFLAGS) -DTEST -I./includes $< pdclib.a -o $@
 
 %.r: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -Wno-format -DTEST -DREGTEST -g -std=c99 -I./internals $< -o $@
+	@$(CC) $(CFLAGS) -Wno-format -DTEST -DREGTEST $< -o $@
+

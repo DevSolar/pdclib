@@ -22,12 +22,10 @@
 
 int _PDCLIB_open( char const * const filename, unsigned int mode )
 {
-    /* FIXME: THIS IS NOT TO BE USED OUT-OF-THE-BOX.
-       It is a proof-of-concept implementation. E.g. a stream may only be fully
-       buffered IF IT CAN BE DETERMINED NOT TO REFER TO AN INTERACTIVE DEVICE.
-       This logic is not represented here, as this is the EXAMPLE platform, and
-       actual platform overlays may differ widely. Another point is the value
-       for permissions being hardcoded to 0664 for file creations.
+    /* This is an example implementation of _PDCLIB_open() fit for use with
+       POSIX kernels.
+       FIXME: The permissions of newly created files should not be hardcoded
+       here.
     */
     int osmode;
     switch ( mode & ~_PDCLIB_FBIN )
@@ -133,3 +131,4 @@ int main( void )
 }
 
 #endif
+

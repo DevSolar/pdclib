@@ -15,7 +15,7 @@
 /* OS "glue", part 2                                                          */
 /* These are the functions you will have to touch, as they are where PDCLib   */
 /* interfaces with the operating system.                                      */
-/* They operate on data types partially defined by _PDCLIB_config.h.          */
+/* Some operate on data types defined by _PDCLIB_config.h.                    */
 /* -------------------------------------------------------------------------- */
 
 /* A system call that terminates the calling process, returning a given status
@@ -30,16 +30,18 @@ void _PDCLIB_Exit( int status ) _PDCLIB_NORETURN;
 */
 void * _PDCLIB_allocpages( int n );
 
-/* A system call that opens a file identified by name in a given mode, and
-   returns a file descriptor uniquely identifying that file.
+/* A system call that opens a file identified by name in a given mode. Return 
+   a file descriptor uniquely identifying that file.
+   (The mode is the return value of the _PDCLIB_filemode() function.)
 */
 _PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode );
 
-/* A system call that writes n characters to a file identified by given file
-   descriptor. Return the number of characters actually written, or zero if
-   an error occured.
+/* A system call that writes up to n characters to a file identified by given
+   file descriptor. Return the number of characters actually written, or -1
+   if an error occured. Note that the number of characters may well be lower
+   than n without an error having occured.
 */
-_PDCLIB_size_t _PDCLIB_write( _PDCLIB_fd_t fd, char const * buffer, _PDCLIB_size_t n );
+int _PDCLIB_write( struct _PDCLIB_file_t * stream, char const * buffer, int n );
 
 /* A system call that reads n characters into a buffer, from a file identified
    by given file descriptor. Return the number of characters read.
@@ -65,5 +67,5 @@ int _PDCLIB_rename( const char * old, const char * new );
 /* A system call that returns one if the given file descriptor refers to an
    interactive device, and zero otherwise.
  */
-int _PDCLIB_isinteractive( _PDCLIB_fd_t fd );
+int _PDCLIB_interactive_stream( _PDCLIB_fd_t fd );
 

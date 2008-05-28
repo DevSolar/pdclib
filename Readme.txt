@@ -170,6 +170,19 @@ v0.4 - 2005-02-06
 Implementations for parts of <stdlib.h>. Still missing are the floating
 point conversions, and the wide-/multibyte-character functions.
 
+v0.4.1 - 2006-11-16
+With v0.5 (<stdio.h>) taking longer than expected, v0.4.1 was set up as
+a backport of bugfixes in the current development code.
+- #1  realloc( NULL, size ) fails           (fixed)
+- #2  stdlib.h - insufficient documentation (fixed)
+- #4  Misspelled name in credits            (fixed)
+- #5  malloc() splits off too-small nodes   (fixed)
+- #6  qsort() stack overflow                (fixed)
+- #7  malloc() bug in list handling         (fixed)
+- #8  strncmp() does not terminate at '\0'  (fixed)
+- #9  stdint.h dysfunctional                (fixed)
+- #10 NULL redefinition warnings            (fixed)
+
 v0.5 - unreleased
 Implementations for parts of <stdio.h>. Still no locale / wide-char
 support. Enabled all GCC compiler warnings I could find, and fixed
