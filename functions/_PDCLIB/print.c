@@ -126,7 +126,7 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
             size_t characters = preidx + ( ( status->this > status->prec ) ? status->this : status->prec );
             if ( status->width > characters )
             {
-                for ( int i = 0; i < status->width - characters; ++i )
+                for ( size_t i = 0; i < status->width - characters; ++i )
                 {
                     DELIVER( ' ' );
                     /*
@@ -172,7 +172,7 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
             }
         }
         /* Do the precision padding if necessary. */
-        for ( int i = 0; i < prec_pads; ++i )
+        for ( size_t i = 0; i < prec_pads; ++i )
         {
             DELIVER( '0' );
         }
@@ -255,12 +255,26 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
     if ( *spec == '*' )
     {
         /* Retrieve width value from argument stack */
+#if 1
+        int width = va_arg( status->arg, int );
+        if ( width < 0 )
+        {
+            status->flags |= E_minus;
+            status->width = width * -1; /* FIXME: Should be abs( width ) */
+        }
+        else
+        {
+            status->width = width;
+        }
+#else
+        /* FIXME: Old version - with unsigned status->width, condition <0 is never true */
         if ( ( status->width = va_arg( status->arg, int ) ) < 0 )
         {
             /* Negative value is '-' flag plus absolute value */
             status->flags |= E_minus;
             status->width *= -1;
         }
+#endif
         ++spec;
     }
     else
