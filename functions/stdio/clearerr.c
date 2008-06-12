@@ -23,7 +23,7 @@ void clearerr( struct _PDCLIB_file_t * stream )
 int main( void )
 {
 #ifndef REGTEST
-    FILE file = { 0, { 0 }, NULL, 0, 0, 0, NULL };
+    FILE file = { 0, { 0, 0 }, NULL, 0, 0, 0, _IONBF, NULL, NULL };
     FILE * fh = &file;
     TESTCASE( ! ferror( fh ) );
     TESTCASE( ! feof( fh ) );

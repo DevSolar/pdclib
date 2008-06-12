@@ -58,7 +58,7 @@ int main( void )
     strcpy( buffer, "Test output\n" );
     /* Writing string to file */
     TESTCASE( ( fd = open( "testfile", O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU ) ) != -1 );
-    struct _PDCLIB_file_t file = { fd, { 0, 0 }, buffer, BUFSIZ, 12, 0, 0, NULL };
+    struct _PDCLIB_file_t file = { fd, { 0, 0 }, buffer, BUFSIZ, 12, 0, 0, NULL, NULL };
     TESTCASE( _PDCLIB_write( &file, file.buffer, 12 ) == 12 );
     TESTCASE( close( file.handle ) != -1 );
     /* Reading file back in */
