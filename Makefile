@@ -1,5 +1,8 @@
 # $Id$
 
+# This is where you chose which platform to compile for (see 'make links' / './platform')
+PLATFORM := example
+
 # This is a list of all non-source files that are part of the distribution.
 AUXFILES := Makefile Readme.txt
 
@@ -22,10 +25,10 @@ DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
 # All files belonging to the source distribution
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
-# All files in platform/example/functions/_PDCLIB (for development only)
-PATCHFILES1 := $(shell ls platform/example/functions/_PDCLIB/*.c)
-# All files in platform/example/functions/stdlib (for development only)
-PATCHFILES2 := $(shell ls platform/example/functions/stdlib/*.c)
+# All files in platform/$(PLATFORM)/functions/_PDCLIB (for development only)
+PATCHFILES1 := $(shell ls platform/$(PLATFORM)/functions/_PDCLIB/*.c)
+# All files in platform/$(PLATFORM)/functions/stdlib (for development only)
+PATCHFILES2 := $(shell ls platform/$(PLATFORM)/functions/stdlib/*.c)
 
 WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wconversion -fno-builtin 
 CFLAGS := -g -std=c99 -I./internals $(WARNINGS) $(USERFLAGS)
@@ -70,9 +73,9 @@ find:
 	@find functions/ includes/ internals/ platform/ old_stdio/ -name "*\.[ch]" -type f | xargs grep $$FIND
 
 links:
-	@echo "Linking platform/example..."
-	@cd internals && ln -s ../platform/example/internals/_PDCLIB_config.h
-	@cd includes && ln -s ../platform/example/includes/float.h
+	@echo "Linking platform/$(PLATFORM)..."
+	@cd internals && ln -s ../platform/$(PLATFORM)/internals/_PDCLIB_config.h
+	@cd includes && ln -s ../platform/$(PLATFORM)/includes/float.h
 	@cd functions/_PDCLIB && for file in $(PATCHFILES1); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
 	@cd functions/stdlib && for file in $(PATCHFILES2); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
 
@@ -97,8 +100,8 @@ help:
 	@echo "todos            - list all TODO comments in the sources"
 	@echo "fixmes           - list all FIXME comments in the sources"
 	@echo "find             - find a phrase in the sources (Usage: FIND=\"phrase\" make find)"
-	@echo "links            - link example platform files (development only)"
-	@echo "unlink           - remove links to example platform files (development only)"
+	@echo "links            - link platform files (development only)"
+	@echo "unlink           - remove links to platform files (development only)"
 	@echo "%.o              - build an individual object file"
 	@echo "%.t              - build an individual test driver"
 	@echo "%.r              - build an individual regression test driver"
