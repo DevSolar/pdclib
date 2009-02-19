@@ -15,6 +15,7 @@
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
 */
+/* FIXME: one too many flags to work on a 16-bit machine */
 #define E_minus    1<<0
 #define E_plus     1<<1
 #define E_alt      1<<2
