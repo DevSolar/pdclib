@@ -14,7 +14,8 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
-#include <unistd.h>
+
+extern void _exit( int status ) _PDCLIB_NORETURN;
 
 void _PDCLIB_Exit( int status )
 {
@@ -24,8 +25,6 @@ void _PDCLIB_Exit( int status )
 #endif
 
 #ifdef TEST
-/* TODO: Work around the following undef */
-#undef SEEK_SET
 #include <_PDCLIB_test.h>
 
 int main( void )

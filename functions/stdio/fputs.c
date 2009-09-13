@@ -9,57 +9,63 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_glue.h>
 
-int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+int fputs( const char * s, struct _PDCLIB_file_t * stream )
 {
-    /* FIXME: This is devoid of any error checking (file writeable? r/w
-       constraints honored?)
-    */
-    /* FIXME: Proper buffering handling. */
-    char written;
-    while ( stream->bufidx < stream->bufsize )
+    if ( _PDCLIB_prepwrite( stream ) == EOF )
     {
-        written = ( stream->buffer[stream->bufidx++] = *(s++) );
-        if ( ( written == '\0' ) ||
-             ( ( stream->status & _IOLBF ) && ( written == '\n' ) ) ||
-             ( stream->status & _IONBF ) )
+        return EOF;
+    }
+    while ( *s != '\0' )
+    {
+        /* Unbuffered and line buffered streams get flushed when fputs() does
+           write the terminating end-of-line. All streams get flushed if the
+           buffer runs full.
+        */
+        stream->buffer[ stream->bufidx++ ] = *s;
+        /* TODO: Should IOLBF flush on \n, or the correct EOL sequence of the system? */
+        if ( ( stream->bufidx == stream->bufsize )
+          || ( ( stream->status & _IOLBF ) && *s == '\n' ) )
         {
-            break;
+            if ( _PDCLIB_flushbuffer( stream ) == EOF )
+            {
+                return EOF;
+            }
+        }
+        ++s;
+    }
+    if ( stream->status & _IONBF )
+    {
+        if ( _PDCLIB_flushbuffer( stream ) == EOF )
+        {
+            return EOF;
         }
     }
-    fflush( stream );
-    if ( written != '\0' )
-    {
-        /* FIXME: For _IONBF, this recurses once per character - unacceptable. */
-        return fputs( s, stream );
-    }
-    else
-    {
-        return 1;
-    }
+    return 0;
 }
 
 #endif
-
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-#include <string.h>
-
 int main( void )
 {
+    char const * const testfile = "testfile";
+    char const * const message = "SUCCESS testing fputs()";
     FILE * fh;
-    char buffer[100];
-    char text[] = "SUCCESS testing fputs().";
-    TESTCASE( ( fh = fopen( "testfile", "w" ) ) != NULL );
-    TESTCASE( fputs( text, fh ) != EOF );
+    remove( testfile );
+    TESTCASE( ( fh = fopen( testfile, "w+" ) ) != NULL );
+    TESTCASE( fputs( message, fh ) >= 0 );
+    rewind( fh );
+    for ( size_t i = 0; i < 23; ++i )
+    {
+        TESTCASE( fgetc( fh ) == message[i] );
+    }
     TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( ( fh = fopen( "testfile", "r" ) ) != NULL );
-    TESTCASE( fread( buffer, 1, strlen( text ), fh ) == strlen( text ) );
-    TESTCASE( memcmp( buffer, text, strlen( text ) ) == 0 );
-    TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( remove( "testfile" ) == 0 );
+    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 
 #endif
+

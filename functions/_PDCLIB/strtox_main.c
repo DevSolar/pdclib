@@ -23,7 +23,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
         digit = x - _PDCLIB_digits;
         if ( ( rc < limval ) || ( ( rc == limval ) && ( digit <= limdigit ) ) )
         {
-            rc = rc * base + digit;
+            rc = rc * base + (unsigned)digit;
             ++(*p);
         }
         else

@@ -40,17 +40,14 @@
    i - pointer to number of characters already delivered in this call
    n - pointer to maximum number of characters to be delivered in this call
    s - the buffer into which the character shall be delivered
+   FIXME: ref. fputs() for a better way to buffer handling
 */
 #define DELIVER( x ) \
 do { \
     if ( status->i < status->n ) { \
-        if ( status->stream != NULL ) { \
-            status->stream->buffer[status->stream->bufidx++] = x; \
-            if ( ( status->stream->bufidx == status->stream->bufsize ) \
-              || ( ( status->stream->status & _IOLBF ) && ( x == '\n' ) ) \
-              || ( status->stream->status & _IONBF ) ) \
-                fflush( status->stream ); \
-        } else \
+        if ( status->stream != NULL ) \
+            putc( x, status->stream ); \
+        else \
             status->s[status->i] = x; \
     } \
     ++(status->i); \
@@ -532,9 +529,18 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 static int testprintf( char * buffer, size_t n, const char * format, ... )
 {
     /* Members: base, flags, n, i, this, s, width, prec, stream, arg         */
-    struct _PDCLIB_status_t status = { 0, 0, n, 0, 0, buffer, 0, 0, NULL, NULL };
-    memset( buffer, '\0', 100 );
+    struct _PDCLIB_status_t status;
+    status.base = 0;
+    status.flags = 0;
+    status.n = n;
+    status.i = 0;
+    status.this = 0;
+    status.s = buffer;
+    status.width = 0;
+    status.prec = 0;
+    status.stream = NULL;
     va_start( status.arg, format );
+    memset( buffer, '\0', 100 );
     if ( *(_PDCLIB_print( format, &status )) != '\0' )
     {
         printf( "_PDCLIB_print() did not return end-of-specifier on '%s'.\n", format );

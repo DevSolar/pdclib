@@ -6,9 +6,15 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <stdio.h>
+
 #ifndef REGTEST
-#include <unistd.h>
 #include <_PDCLIB_glue.h>
+
+#include </usr/include/errno.h>
+
+extern int unlink( const char * pathname );
+extern int link( const char * old, const char * new );
 
 int _PDCLIB_rename( const char * old, const char * new )
 {
@@ -19,19 +25,65 @@ int _PDCLIB_rename( const char * old, const char * new )
     */
     if ( link( old, new ) == 0 )
     {
-        return unlink( old );
+        if ( unlink( old ) == EOF )
+        {
+            switch ( errno )
+            {
+                case EACCES:
+                case EFAULT:
+                case EIO:
+                case EISDIR:
+                case ELOOP:
+                case ENAMETOOLONG:
+                case ENOENT:
+                case ENOMEM:
+                case ENOTDIR:
+                case EPERM:
+                case EROFS:
+                    _PDCLIB_errno = _PDCLIB_EIO;
+                    break;
+                default:
+                    _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+                    break;
+            }
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
     }
     else
     {
-        return -1;
+        switch ( errno )
+        {
+            case EACCES:
+            case EEXIST:
+            case EFAULT:
+            case EIO:
+            case ELOOP:
+            case EMLINK:
+            case ENAMETOOLONG:
+            case ENOENT:
+            case ENOMEM:
+            case ENOSPC:
+            case ENOTDIR:
+            case EPERM:
+            case EROFS:
+            case EXDEV:
+                _PDCLIB_errno = _PDCLIB_EIO;
+                break;
+            default:
+                _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+                break;
+        }
+        return EOF;
     }
 }
 
 #endif
 
 #ifdef TEST
-/* TODO: Work around the following undef */
-#undef SEEK_SET
 #include <_PDCLIB_test.h>
 
 #include <stdlib.h>
@@ -40,6 +92,8 @@ int main( void )
 {
     char filename1[] = "touch testfile1";
     char filename2[] = "testfile2";
+    remove( filename1 + 6 );
+    remove( filename2 );
     /* check that neither file exists */
     TESTCASE( fopen( filename1 + 6, "r" ) == NULL );
     TESTCASE( fopen( filename2, "r" ) == NULL );

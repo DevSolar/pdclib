@@ -21,13 +21,13 @@ long long int strtoll( const char * s, char ** endptr, int base )
     if ( base < 2 || base > 36 ) return 0;
     if ( sign == '+' )
     {
-        rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MAX, (uintmax_t)( LLONG_MAX / base ), (int)( LLONG_MAX % base ), &sign );
+        rc = (long long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MAX, (uintmax_t)( LLONG_MAX / base ), (int)( LLONG_MAX % base ), &sign );
     }
     else
     {
         /* FIXME: This breaks on some machines that round negatives wrongly */
         /* FIXME: Sign error not caught by testdriver */
-        rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MIN, (uintmax_t)( LLONG_MIN / -base ), (int)( -( LLONG_MIN % base ) ), &sign );
+        rc = (long long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MIN, (uintmax_t)( LLONG_MIN / -base ), (int)( -( LLONG_MIN % base ) ), &sign );
     }
     if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;
     return ( sign == '+' ) ? rc : -rc;

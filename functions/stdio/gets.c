@@ -7,13 +7,32 @@
 */
 
 #include <stdio.h>
-#include <limits.h>
 
 #ifndef REGTEST
 
+#define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
+#include <_PDCLIB_glue.h>
+
 char * gets( char * s )
 {
-    return fgets( s, INT_MAX, stdin ); /* TODO: Replace with an unchecking call. */
+    if ( _PDCLIB_prepread( stdin ) == EOF )
+    {
+        return NULL;
+    }
+    char * dest = s;
+    while ( ( *dest = stdin->buffer[stdin->bufidx++] ) != '\n' )
+    {
+        if ( stdin->bufidx == stdin->bufend )
+        {
+            if ( _PDCLIB_fillbuffer( stdin ) == EOF )
+            {
+                return NULL;
+            }
+        }
+        ++dest;
+    }
+    *dest = '\n';
+    return s;
 }
 
 #endif
@@ -28,3 +47,4 @@ int main( void )
 }
 
 #endif
+

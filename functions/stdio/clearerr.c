@@ -22,37 +22,33 @@ void clearerr( struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-#ifndef REGTEST
-    FILE file = { 0, { 0, 0 }, NULL, 0, 0, 0, _IONBF, NULL, NULL };
-    FILE * fh = &file;
+    FILE * fh;
+    remove( "testfile" );
+    TESTCASE( ( fh = fopen( "testfile", "w+" ) ) != NULL );
+    /* Flags should be clear */
     TESTCASE( ! ferror( fh ) );
     TESTCASE( ! feof( fh ) );
-    fh->status |= _PDCLIB_ERRORFLAG;
+    /* Reading from input stream - should provoke error */
+    TESTCASE( fgetc( fh ) == EOF );
     TESTCASE( ferror( fh ) );
     TESTCASE( ! feof( fh ) );
+    /* clearerr() should clear flags */
     clearerr( fh );
     TESTCASE( ! ferror( fh ) );
     TESTCASE( ! feof( fh ) );
-    fh->status |= _PDCLIB_EOFFLAG;
+    /* Reading from empty stream - should provoke EOF */
+    rewind( fh );
+    TESTCASE( fgetc( fh ) == EOF );
     TESTCASE( ! ferror( fh ) );
     TESTCASE( feof( fh ) );
+    /* clearerr() should clear flags */
     clearerr( fh );
     TESTCASE( ! ferror( fh ) );
     TESTCASE( ! feof( fh ) );
-    fh->status |= _PDCLIB_EOFFLAG | _PDCLIB_ERRORFLAG;
-    TESTCASE( ferror( fh ) );
-    TESTCASE( feof( fh ) );
-    clearerr( fh );
-    TESTCASE( ! ferror( fh ) );
-    TESTCASE( ! feof( fh ) );
-#else
-    /* TODO: The above is ad-hoc and PDCLib specific. A better test driver
-       should be internals-agnostic (provoking the error / eof flag by
-       "regular" operations).
-    */
-    TESTCASE( NO_TESTDRIVER );
-#endif
+    TESTCASE( fclose( fh ) == 0 );
+    remove( "testfile" );
     return TEST_RESULTS;
 }
 
 #endif
+

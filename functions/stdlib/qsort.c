@@ -41,14 +41,14 @@ void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *,
 {
     char * i;
     char * j;
-    _PDCLIB_ptrdiff_t thresh  = T * size;
-    char * base_              = (char *)base;
-    char * limit              = base_ + nmemb * size;
+    _PDCLIB_size_t thresh = T * size;
+    char * base_          = (char *)base;
+    char * limit          = base_ + nmemb * size;
     PREPARE_STACK;
 
     for ( ;; )
     {
-        if ( limit - base_ > thresh ) /* QSort for more than T elements. */
+        if ( (size_t)( limit - base_ ) > thresh ) /* QSort for more than T elements. */
         {
             /* We work from second to last - first will be pivot element. */
             i = base_ + size;

@@ -22,7 +22,7 @@ int atexit( void (*func)( void ) )
     else
     {
         _PDCLIB_regstack[ --_PDCLIB_regptr ] = func;
-	return 0;
+        return 0;
     }
 }
 

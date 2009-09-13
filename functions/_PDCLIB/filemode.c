@@ -14,7 +14,7 @@
 */
 unsigned int _PDCLIB_filemode( char const * const mode )
 {
-    int rc = 0;
+    unsigned rc = 0;
     switch ( mode[0] )
     {
         case 'r':
@@ -24,7 +24,7 @@ unsigned int _PDCLIB_filemode( char const * const mode )
             rc |= _PDCLIB_FWRITE;
             break;
         case 'a':
-            rc |= _PDCLIB_FAPPEND;
+            rc |= _PDCLIB_FAPPEND | _PDCLIB_FWRITE;
             break;
         default:
             /* Other than read, write, or append - invalid */
@@ -61,19 +61,19 @@ int main( void )
 {
     TESTCASE( _PDCLIB_filemode( "r" ) == _PDCLIB_FREAD );
     TESTCASE( _PDCLIB_filemode( "w" ) == _PDCLIB_FWRITE );
-    TESTCASE( _PDCLIB_filemode( "a" ) == _PDCLIB_FAPPEND );
+    TESTCASE( _PDCLIB_filemode( "a" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FWRITE ) );
     TESTCASE( _PDCLIB_filemode( "r+" ) == ( _PDCLIB_FREAD | _PDCLIB_FRW ) );
     TESTCASE( _PDCLIB_filemode( "w+" ) == ( _PDCLIB_FWRITE | _PDCLIB_FRW ) );
-    TESTCASE( _PDCLIB_filemode( "a+" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FRW ) );
+    TESTCASE( _PDCLIB_filemode( "a+" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FWRITE | _PDCLIB_FRW ) );
     TESTCASE( _PDCLIB_filemode( "rb" ) == ( _PDCLIB_FREAD | _PDCLIB_FBIN ) );
     TESTCASE( _PDCLIB_filemode( "wb" ) == ( _PDCLIB_FWRITE | _PDCLIB_FBIN ) );
-    TESTCASE( _PDCLIB_filemode( "ab" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FBIN ) );
+    TESTCASE( _PDCLIB_filemode( "ab" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FWRITE | _PDCLIB_FBIN ) );
     TESTCASE( _PDCLIB_filemode( "r+b" ) == ( _PDCLIB_FREAD | _PDCLIB_FRW | _PDCLIB_FBIN ) );
     TESTCASE( _PDCLIB_filemode( "w+b" ) == ( _PDCLIB_FWRITE | _PDCLIB_FRW | _PDCLIB_FBIN ) );
-    TESTCASE( _PDCLIB_filemode( "a+b" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FRW | _PDCLIB_FBIN ) );
+    TESTCASE( _PDCLIB_filemode( "a+b" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FWRITE | _PDCLIB_FRW | _PDCLIB_FBIN ) );
     TESTCASE( _PDCLIB_filemode( "rb+" ) == ( _PDCLIB_FREAD | _PDCLIB_FRW | _PDCLIB_FBIN ) );
     TESTCASE( _PDCLIB_filemode( "wb+" ) == ( _PDCLIB_FWRITE | _PDCLIB_FRW | _PDCLIB_FBIN ) );
-    TESTCASE( _PDCLIB_filemode( "ab+" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FRW | _PDCLIB_FBIN ) );
+    TESTCASE( _PDCLIB_filemode( "ab+" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FWRITE | _PDCLIB_FRW | _PDCLIB_FBIN ) );
     TESTCASE( _PDCLIB_filemode( "x" ) == 0 );
     TESTCASE( _PDCLIB_filemode( "r++" ) == 0 );
     TESTCASE( _PDCLIB_filemode( "wbb" ) == 0 );

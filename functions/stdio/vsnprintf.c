@@ -15,7 +15,18 @@ int vsnprintf( char * s, size_t n, const char * format, _PDCLIB_va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
     /* Members: base, flags, n, i, this, s, width, prec, stream, arg         */
-    struct _PDCLIB_status_t status = { 0, 0, n, 0, 0, s, 0, 0, NULL, arg };
+    struct _PDCLIB_status_t status;
+    status.base = 0;
+    status.flags = 0;
+    status.n = n;
+    status.i = 0;
+    status.this = 0;
+    status.s = s;
+    status.width = 0;
+    status.prec = 0;
+    status.stream = NULL;
+    va_copy( status.arg, arg );
+    // = { 0, 0, n, 0, 0, s, 0, 0, NULL };
     while ( *format != '\0' )
     {
         const char * rc;
@@ -31,6 +42,7 @@ int vsnprintf( char * s, size_t n, const char * format, _PDCLIB_va_list arg )
         }
     }
     s[ status.i ] = '\0';
+    va_end( status.arg );
     return status.i;
 }
 
@@ -313,3 +325,4 @@ int main( void )
 }
 
 #endif
+

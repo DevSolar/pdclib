@@ -27,7 +27,7 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
     /* FIXME: If filename is NULL, change mode. */
     /* TODO: This function can change wide orientation of a stream */
     if ( filename == NULL ) return NULL;
-    if ( stream->status & _PDCLIB_WROTELAST ) fflush( stream );
+    if ( stream->status & _PDCLIB_FWRITE ) fflush( stream );
     if ( stream->status & _PDCLIB_LIBBUFFER ) free( stream->buffer );
     _PDCLIB_close( stream->handle );
     clearerr( stream );
@@ -37,7 +37,7 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
     if ( ( stream->buffer = malloc( BUFSIZ ) ) == NULL ) return NULL;
     stream->bufsize = BUFSIZ;
     stream->bufidx = 0;
-    stream->status |= ( _PDCLIB_LIBBUFFER | _PDCLIB_VIRGINSTR );
+    stream->status |= _PDCLIB_LIBBUFFER;
     /* TODO: Setting mbstate */
     return stream;
 }

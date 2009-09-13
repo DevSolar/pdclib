@@ -15,10 +15,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
+extern int close( int fd );
 
 int _PDCLIB_close( int fd )
 {

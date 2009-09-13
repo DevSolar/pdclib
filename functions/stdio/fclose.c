@@ -24,9 +24,23 @@ int fclose( struct _PDCLIB_file_t * stream )
     {
         if ( stream == current )
         {
-            if ( stream->status & _PDCLIB_WROTELAST ) fflush( stream );
-            if ( stream->status & _PDCLIB_LIBBUFFER ) free( stream->buffer );
+            /* Flush buffer */
+            if ( stream->status & _PDCLIB_FWRITE )
+            {
+                if ( _PDCLIB_flushbuffer( stream ) == EOF )
+                {
+                    /* Flush failed, errno already set */
+                    return EOF;
+                }
+            }
+            /* Free buffer */
+            if ( stream->status & _PDCLIB_LIBBUFFER )
+            {
+                free( stream->buffer );
+            }
+            /* Close handle */
             _PDCLIB_close( stream->handle );
+            /* Remove stream from list */
             if ( previous != NULL )
             {
                 previous->next = stream->next;
@@ -35,12 +49,14 @@ int fclose( struct _PDCLIB_file_t * stream )
             {
                 _PDCLIB_filelist = stream->next;
             }
+            /* Free stream */
             free( stream );
             return 0;
         }
         previous = current;
         current = current->next;
     }
+    _PDCLIB_errno = _PDCLIB_EIO;
     return -1;
 }
 
@@ -54,7 +70,9 @@ int main( void )
 #ifndef REGTEST
     struct _PDCLIB_file_t * file1;
     struct _PDCLIB_file_t * file2;
-    TESTCASE( _PDCLIB_filelist == NULL );
+    remove( "testfile1" );
+    remove( "testfile2" );
+    TESTCASE( _PDCLIB_filelist == stdin );
     TESTCASE( ( file1 = fopen( "testfile1", "w" ) ) != NULL );
     TESTCASE( _PDCLIB_filelist == file1 );
     TESTCASE( ( file2 = fopen( "testfile2", "w" ) ) != NULL );
@@ -66,8 +84,9 @@ int main( void )
     TESTCASE( fclose( file1 ) == 0 );
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file2 ) == 0 );
-    TESTCASE( _PDCLIB_filelist == NULL );
-    system( "rm testfile1 testfile2" );
+    TESTCASE( _PDCLIB_filelist == stdin );
+    remove( "testfile1" );
+    remove( "testfile2" );
 #else
     puts( " NOTEST fclose() test driver is PDCLib-specific." );
 #endif
@@ -75,3 +94,4 @@ int main( void )
 }
 
 #endif
+

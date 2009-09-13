@@ -12,8 +12,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
 
-/* FIXME: This approach is a possible attack vector. */
-struct _PDCLIB_file_t * _PDCLIB_filelist = NULL;
+extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
 {
@@ -28,26 +27,44 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
         /* no memory for another FILE */
         return NULL;
     }
-    if ( ( rc->status = _PDCLIB_filemode( mode ) ) == 0 ) goto fail; /* invalid mode */
+    if ( ( rc->status = _PDCLIB_filemode( mode ) ) == 0 ) 
+    {
+        /* invalid mode */
+        free( rc );
+        return NULL;
+    }
     rc->handle = _PDCLIB_open( filename, rc->status );
-    if ( rc->handle == _PDCLIB_NOHANDLE ) goto fail; /* OS open() failed */
+    if ( rc->handle == _PDCLIB_NOHANDLE )
+    {
+        /* OS open() failed */
+        free( rc );
+        return NULL;
+    }
     /* Adding to list of open files */
     rc->next = _PDCLIB_filelist;
     _PDCLIB_filelist = rc;
     /* Setting buffer, and mark as internal. TODO: Check for unbuffered */
-    if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL ) goto fail;
+    if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL )
+    {
+        free( rc );
+        return NULL;
+    }
+    if ( ( rc->ungetbuf = malloc( _PDCLIB_UNGETCBUFSIZE ) ) == NULL )
+    {
+       free( rc->buffer );
+       free( rc );
+       return NULL;
+    }
     rc->bufsize = BUFSIZ;
     rc->bufidx = 0;
+    rc->ungetidx = 0;
     /* Setting buffer to _IOLBF because "when opened, a stream is fully
        buffered if and only if it can be determined not to refer to an
        interactive device."
     */
-    rc->status |= ( _PDCLIB_LIBBUFFER | _PDCLIB_VIRGINSTR /* | _IOLBF */ ); /* FIXME: Uncommenting the _IOLBF here breaks output. */
+    rc->status |= _PDCLIB_LIBBUFFER | _IOLBF;
     /* TODO: Setting mbstate */
     return rc;
-fail:
-    free( rc );
-    return NULL;
 }
 
 #endif
@@ -61,21 +78,16 @@ int main( void )
        my system is at once less forgiving (segfaults on mode NULL) and more
        forgiving (accepts undefined modes).
     */
-#ifndef REGTEST
-    TESTCASE( fopen( NULL, NULL ) == NULL );
-#endif
+    remove( "testfile" );
+    TESTCASE_NOREG( fopen( NULL, NULL ) == NULL );
     TESTCASE( fopen( NULL, "w" ) == NULL );
-#ifndef REGTEST
-    TESTCASE( fopen( "", NULL ) == NULL );
-#endif
+    TESTCASE_NOREG( fopen( "", NULL ) == NULL );
     TESTCASE( fopen( "", "w" ) == NULL );
     TESTCASE( fopen( "foo", "" ) == NULL );
-#ifndef REGTEST
-    TESTCASE( fopen( "testfile", "wq" ) == NULL ); /* Undefined mode */
-    TESTCASE( fopen( "testfile", "wr" ) == NULL ); /* Undefined mode */
-#endif
+    TESTCASE_NOREG( fopen( "testfile", "wq" ) == NULL ); /* Undefined mode */
+    TESTCASE_NOREG( fopen( "testfile", "wr" ) == NULL ); /* Undefined mode */
     TESTCASE( fopen( "testfile", "w" ) != NULL );
-    system( "rm testfile" );
+    remove( "testfile" );
     return TEST_RESULTS;
 }
 

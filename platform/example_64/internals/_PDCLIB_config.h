@@ -14,6 +14,14 @@
 /* The character (sequence) your platform uses as newline.                    */
 #define _PDCLIB_endl "\n"
 
+/* The number of attempts to complete an I/O operation before giving up.      */
+/* (Example: How often a buffer flushing is attempted before reporting fail.) */
+#define _PDCLIB_IO_RETRIES 1
+
+/* What the system should do after an I/O operation did not succeed, before   */
+/* trying again. (Empty by default.)                                          */
+#define _PDCLIB_IO_RETRY_OP( stream )
+
 /* exit() can signal success to the host environment by the value of zero or  */
 /* the constant EXIT_SUCCESS. Failure is signaled by EXIT_FAILURE. Note that  */
 /* any other return value is "implementation-defined", i.e. your environment  */
@@ -52,7 +60,7 @@
 /* compiler manuals.                                                          */
 #define _PDCLIB_SHRT_BYTES  2
 #define _PDCLIB_INT_BYTES   4
-#define _PDCLIB_LONG_BYTES  4
+#define _PDCLIB_LONG_BYTES  8
 #define _PDCLIB_LLONG_BYTES 8
 
 /* <stdlib.h> defines the div() function family that allows taking quotient   */
@@ -106,8 +114,8 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_FAST32 INT
 #define _PDCLIB_fast32 int
 
-#define _PDCLIB_FAST64 LLONG
-#define _PDCLIB_fast64 long long
+#define _PDCLIB_FAST64 LONG
+#define _PDCLIB_fast64 long
 
 /* -------------------------------------------------------------------------- */
 /* What follows are a couple of "special" typedefs and their limits. Again,   */
@@ -116,8 +124,8 @@ struct _PDCLIB_lldiv_t
 /* -------------------------------------------------------------------------- */
 
 /* The result type of substracting two pointers */
-#define _PDCLIB_ptrdiff int
-#define _PDCLIB_PTRDIFF INT
+#define _PDCLIB_ptrdiff long
+#define _PDCLIB_PTRDIFF LONG
 
 /* An integer type that can be accessed as atomic entity (think asynchronous
    interrupts). The type itself is not defined in a freestanding environment,
@@ -127,8 +135,8 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_SIG_ATOMIC INT
 
 /* Result type of the 'sizeof' operator (must be unsigned) */
-#define _PDCLIB_size unsigned int
-#define _PDCLIB_SIZE UINT
+#define _PDCLIB_size unsigned long
+#define _PDCLIB_SIZE ULONG
 
 /* Large enough an integer to hold all character codes of the largest supported
    locale.
@@ -136,8 +144,8 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_wchar unsigned short 
 #define _PDCLIB_WCHAR USHRT
 
-#define _PDCLIB_intptr int
-#define _PDCLIB_INTPTR INT
+#define _PDCLIB_intptr long
+#define _PDCLIB_INTPTR LONG
 
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
 #define _PDCLIB_intmax long long int
@@ -189,21 +197,14 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_offsetof( type, member ) ( (size_t) &( ( (type *) 0 )->member ) )
 
 /* Variable Length Parameter List Handling (<stdarg.h>)
-   The macros defined by <stdarg.h> are highly dependent on the calling
-   conventions used, and you probably have to replace them with builtins of
-   your compiler. The following generic implementation works only for pure
-   stack-based architectures, and only if arguments are aligned to pointer
-   type. Credits to Michael Moody, who contributed this to the Public Domain.
+   No way to cover x86_64 with a generic implementation, as it uses register-
+   based parameter passing. Using the GCC builtins here.
 */
-
-/* Internal helper macro. va_round is not part of <stdarg.h>. */
-#define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
-
-typedef char * _PDCLIB_va_list;
-#define _PDCLIB_va_arg( ap, type ) ( (ap) += (_PDCLIB_va_round(type)), ( *(type*) ( (ap) - (_PDCLIB_va_round(type)) ) ) )
-#define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
-#define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
-#define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
+typedef __builtin_va_list _PDCLIB_va_list;
+#define _PDCLIB_va_arg( ap, type ) ( __builtin_va_arg( ap, type ) )
+#define _PDCLIB_va_copy( dest, src ) ( __builtin_va_copy( dest, src ) )
+#define _PDCLIB_va_end( ap ) ( __builtin_va_end( ap ) )
+#define _PDCLIB_va_start( ap, parmN ) ( __builtin_va_start( ap, parmN ) )
 
 /* -------------------------------------------------------------------------- */
 /* OS "glue", part 1                                                          */
@@ -235,25 +236,6 @@ typedef int _PDCLIB_fd_t;
    failed.
 */
 #define _PDCLIB_NOHANDLE ( (_PDCLIB_fd_t) -1 )
-
-/* The default size for file buffers. Must be at least 256. */
-#define _PDCLIB_BUFSIZ 1024
-
-/* The minimum number of files the implementation can open simultaneously. Must
-   be at least 8. Depends largely on how the bookkeeping is done by fopen() /
-   freopen() / fclose(). The example implementation limits the number of open
-   files only by available memory.
-*/
-#define _PDCLIB_FOPEN_MAX 8
-
-/* Length of the longest filename the implementation guarantees to support. */
-#define _PDCLIB_FILENAME_MAX 128
-
-/* Buffer size for tmpnam(). */
-#define _PDCLIB_L_tmpnam 100
-
-/* Number of distinct file names that can be generated by tmpnam(). */
-#define _PDCLIB_TMP_MAX 50
 
 /* The values of SEEK_SET, SEEK_CUR and SEEK_END, used by fseek().
    Since at least one platform (POSIX) uses the same symbols for its own "seek"

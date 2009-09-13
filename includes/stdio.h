@@ -30,7 +30,7 @@ typedef _PDCLIB_size_t size_t;
 #define _IONBF 4
 
 /* The following are platform-dependant, and defined in _PDCLIB_config.h. */
-typedef _PDCLIB_fpos_t        fpos_t;
+typedef struct _PDCLIB_fpos_t fpos_t;
 typedef struct _PDCLIB_file_t FILE;
 #define EOF -1
 #define BUFSIZ _PDCLIB_BUFSIZ
@@ -40,9 +40,9 @@ typedef struct _PDCLIB_file_t FILE;
 #define TMP_MAX _PDCLIB_TMP_MAX
 
 /* See fseek(), third argument */
-#define SEEK_CUR 1
-#define SEEK_END 2
-#define SEEK_SET 4
+#define SEEK_CUR _PDCLIB_SEEK_CUR
+#define SEEK_END _PDCLIB_SEEK_END
+#define SEEK_SET _PDCLIB_SEEK_SET
 
 extern struct _PDCLIB_file_t * stdin;
 extern struct _PDCLIB_file_t * stdout;
