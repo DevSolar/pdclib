@@ -22,9 +22,12 @@ int fflush( struct _PDCLIB_file_t * stream )
         int rc = 0;
         while ( stream != NULL )
         {
-            if ( stream->bufidx > stream->bufend )
+            if ( stream->status & _PDCLIB_FWRITE )
             {
-                rc |= _PDCLIB_fflush( stream );
+                if ( _PDCLIB_flushbuffer( stream ) == EOF )
+                {
+                    rc = EOF;
+                }
             }
             stream = stream->next;
         }
@@ -32,7 +35,7 @@ int fflush( struct _PDCLIB_file_t * stream )
     }
     else
     {
-        return _PDCLIB_fflush( stream );
+        return _PDCLIB_flushbuffer( stream );
     }
 }
                 
@@ -43,7 +46,7 @@ int fflush( struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Testing covered by ftell.c */
     return TEST_RESULTS;
 }
 

@@ -259,23 +259,33 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 
 /* Internal flags, made to fit the same status field as the flags above. */
 #define _PDCLIB_LIBBUFFER    512u
-#define _PDCLIB_VIRGINSTR   1024u
-#define _PDCLIB_ERRORFLAG   2048u
-#define _PDCLIB_EOFFLAG     4096u
-#define _PDCLIB_WIDESTREAM  8192u
-#define _PDCLIB_BYTESTREAM 16384u
+#define _PDCLIB_ERRORFLAG   1024u
+#define _PDCLIB_EOFFLAG     2048u
+#define _PDCLIB_WIDESTREAM  4096u
+#define _PDCLIB_BYTESTREAM  8192u
 
+/* Position / status structure for getpos() / fsetpos(). */
+struct _PDCLIB_fpos_t
+{
+    _PDCLIB_uint64_t offset; /* File position offset */
+    int              status; /* Multibyte parsing state (unused, reserved) */
+};
+
+/* FILE structure */
 struct _PDCLIB_file_t
 {
-    _PDCLIB_fd_t            handle;   /* OS-specific file descriptor */
-    _PDCLIB_fpos_t          position; /* file position indicator */
-    char *                  buffer;   /* file buffer */
-    _PDCLIB_size_t          bufsize;  /* size of buffer */
-    _PDCLIB_size_t          bufidx;   /* index to point of action in buffer */
-    _PDCLIB_size_t          bufend;   /* index to end of pre-read buffer */
-    unsigned int            status;   /* misc. status bits */
-    char *                  filename; /* name used in fopen() / freopen() */
-    struct _PDCLIB_file_t * next;     /* provisions for linked list handling */
+    _PDCLIB_fd_t            handle;   /* OS file handle */
+    char *                  buffer;   /* Pointer to buffer memory */
+    _PDCLIB_size_t          bufsize;  /* Size of buffer */
+    _PDCLIB_size_t          bufidx;   /* Index of current position in buffer */
+    _PDCLIB_size_t          bufend;   /* Index of last pre-read character in buffer */
+    struct _PDCLIB_fpos_t   pos;      /* Offset and multibyte parsing state */
+    _PDCLIB_size_t          ungetidx; /* Number of ungetc()'ed characters */
+    unsigned char *         ungetbuf; /* ungetc() buffer */
+    unsigned int            status;   /* Status flags; see above */
+    /* multibyte parsing status to be added later */
+    char *                  filename; /* Name the current stream has been opened with */
+    struct _PDCLIB_file_t * next;     /* Pointer to next struct (internal) */
 };
 
 /* -------------------------------------------------------------------------- */
@@ -341,16 +351,39 @@ extern char _PDCLIB_Xdigits[];
 */
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
 
-/* Common denominator of puts() and fputs() */
-int _PDCLIB_puts( const char * s, const char * endl, struct _PDCLIB_file_t * stream );
-
 /* Parsing any fopen() style filemode string into a number of flags. */
 unsigned int _PDCLIB_filemode( const char * mode );
 
-/* Writing out unwritten buffers of a specific stream. A NULL parameter (as is
-   possible with standard fflush()) is not supported.
-   Return 0 if successful, EOF if error occured. Set error flag of stream and
-   errno as appropriate in case of error.
+/* Sanity checking and preparing of read buffer, should be called first thing 
+   by any stdio read-data function.
+   Returns 0 on success, EOF on error.
+   On error, EOF / error flags and errno are set appropriately.
 */
-_PDCLIB_size_t _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream, _PDCLIB_size_t written, int retries );
+int _PDCLIB_prepread( struct _PDCLIB_file_t * stream );
+
+/* Sanity checking, should be called first thing by any stdio write-data
+   function.
+   Returns 0 on success, EOF on error.
+   On error, error flags and errno are set appropriately.
+*/
+int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream );
+
+/* -------------------------------------------------------------------------- */
+/* errno                                                                      */
+/* -------------------------------------------------------------------------- */
+
+extern int _PDCLIB_errno;
+int * _PDCLIB_errno_func( void );
+
+/* ERANGE and EDOM are specified by the standard. */
+#define _PDCLIB_ERANGE 1
+#define _PDCLIB_EDOM 2
+/* Used in the example implementation for any kind of I/O error. */
+#define _PDCLIB_EIO 3
+/* Used in the example implementation for "unknown error". */
+#define _PDCLIB_EUNKNOWN 4
+/* Used in the example implementation for "invalid parameter value". */
+#define _PDCLIB_EINVAL 5
+/* Used in the example implementation for "I/O retries exceeded". */
+#define _PDCLIB_ERETRY 6
 

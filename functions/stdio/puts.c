@@ -9,10 +9,43 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_glue.h>
+
+extern char * _PDCLIB_eol;
 
 int puts( const char * s )
 {
-    /* TODO: Implement. */
+    if ( _PDCLIB_prepwrite( stdout ) == EOF )
+    {
+        return EOF;
+    }
+    while ( *s != '\0' )
+    {
+        stdout->buffer[ stdout->bufidx++ ] = *s++;
+        if ( stdout->bufidx == stdout->bufsize )
+        {
+            if ( _PDCLIB_flushbuffer( stdout ) == EOF )
+            {
+                return EOF;
+            }
+        }
+    }
+    s = _PDCLIB_eol;
+    while ( *s != '\0' )
+    {
+        stdout->buffer[ stdout->bufidx++ ] = *s++;
+        if ( stdout->bufidx == stdout->bufsize )
+        {
+            if ( _PDCLIB_flushbuffer( stdout ) == EOF )
+            {
+                return EOF;
+            }
+        }
+    }
+    if ( stdout->status & ( _IOLBF | _IONBF ) )
+    {
+        return _PDCLIB_flushbuffer( stdout );
+    }
     return 0;
 }
 
@@ -23,8 +56,9 @@ int puts( const char * s )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    TESTCASE( puts( "SUCCESS testing puts()" ) >= 0 );
     return TEST_RESULTS;
 }
 
 #endif
+

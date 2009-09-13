@@ -8,9 +8,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <_PDCLIB_glue.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_glue.h>
 
 void _Exit( int status )
 {

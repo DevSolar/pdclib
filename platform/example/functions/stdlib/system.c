@@ -11,8 +11,9 @@
 /* This is an example implementation of system() fit for use with POSIX kernels.
 */
 
-#include <unistd.h>
-#include <sys/wait.h>
+extern int fork( void );
+extern int execve( const char * filename, char * const argv[], char * const envp[] );
+extern int wait( int * status );
 
 int system( const char * string )
 {
@@ -33,8 +34,6 @@ int system( const char * string )
 }
 
 #ifdef TEST
-/* TODO: Work around the following undef */
-#undef SEEK_SET
 #include <_PDCLIB_test.h>
 
 #define SHELLCOMMAND "echo 'SUCCESS testing system()'"

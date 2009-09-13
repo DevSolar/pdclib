@@ -20,8 +20,6 @@ int rename( const char * old, const char * new )
 #endif
 
 #ifdef TEST
-/* TODO: Work around the following undef */
-#undef SEEK_SET
 #include <_PDCLIB_test.h>
 
 #include <stdlib.h>
@@ -31,7 +29,9 @@ int main( void )
     /* TODO: Extend to internal testing (buffer etc.) */
     char filename1[] = "touch testfile1";
     char filename2[] = "testfile2";
-    /* check that neither file exists */
+    remove( filename1 + 6 );
+    remove( filename2 );
+    /* make sure that neither file exists */
     TESTCASE( fopen( filename1 + 6, "r" ) == NULL );
     TESTCASE( fopen( filename2, "r" ) == NULL );
     /* rename file 1 to file 2 - expected to fail */
@@ -68,3 +68,4 @@ int main( void )
 }
 
 #endif
+

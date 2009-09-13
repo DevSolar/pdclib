@@ -21,12 +21,12 @@ long int strtol( const char * s, char ** endptr, int base )
     if ( base < 2 || base > 36 ) return 0;
     if ( sign == '+' )
     {
-        rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LONG_MAX, (uintmax_t)( LONG_MAX / base ), (int)( LONG_MAX % base ), &sign );
+        rc = (long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LONG_MAX, (uintmax_t)( LONG_MAX / base ), (int)( LONG_MAX % base ), &sign );
     }
     else
     {
         /* FIXME: This breaks on some machines that round negatives wrongly */
-        rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LONG_MIN, (uintmax_t)( LONG_MIN / -base ), (int)( -( LONG_MIN % base ) ), &sign );
+        rc = (long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LONG_MIN, (uintmax_t)( LONG_MIN / -base ), (int)( -( LONG_MIN % base ) ), &sign );
     }
     if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;
     return ( sign == '+' ) ? rc : -rc;
@@ -106,7 +106,7 @@ int main( void )
     TESTCASE( strtol( "0x8000000000000000", NULL, 0 ) == LONG_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtol( "-0x7FFFFFFFFFFFFFFF", NULL, 0 ) == -0x8000000000000001 );
+    TESTCASE( strtol( "-0x7FFFFFFFFFFFFFFF", NULL, 0 ) == (long)0x8000000000000001 );
     TESTCASE( errno == 0 );
     TESTCASE( strtol( "-0x8000000000000000", NULL, 0 ) == LONG_MIN );
     TESTCASE( errno == 0 );

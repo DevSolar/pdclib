@@ -8,17 +8,20 @@
 
 #include <stdio.h>
 
+#include <_PDCLIB_glue.h>
+
 #ifndef REGTEST
 
 /* Write the value c (cast to unsigned char) to the given stream.
    Returns c if successful, EOF otherwise.
-   If a write error occurs, sets the error indicator of the stream is set.
+   If a write error occurs, the error indicator of the stream is set.
 */
 int fputc( int c, struct _PDCLIB_file_t * stream )
 {
-    /* FIXME: This is devoid of any error checking (file writeable? r/w
-    constraints honored?) (Text format translations?)
-    */
+    if ( _PDCLIB_prepwrite( stream ) == EOF )
+    {
+        return EOF;
+    }
     stream->buffer[stream->bufidx++] = (char)c;
     if ( ( stream->bufidx == stream->bufsize )                   /* _IOFBF */
            || ( ( stream->status & _IOLBF ) && ( (char)c == '\n' ) ) /* _IOLBF */
@@ -26,11 +29,7 @@ int fputc( int c, struct _PDCLIB_file_t * stream )
     )
     {
         /* buffer filled, unbuffered stream, or end-of-line. */
-        fflush( stream );
-    }
-    else
-    {
-        stream->status |= _PDCLIB_WROTELAST;
+        return ( _PDCLIB_flushbuffer( stream ) == 0 ) ? c : EOF;
     }
     return c;
 }
@@ -42,15 +41,7 @@ int fputc( int c, struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    FILE * fh;
-    char buffer[100];
-    TESTCASE( ( fh = fopen( "testfile", "w" ) ) != NULL );
-    TESTCASE( fputc( '!', fh ) == '!' );
-    TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( ( fh = fopen( "testfile", "r" ) ) != NULL );
-    TESTCASE( fread( buffer, 1, 1, fh ) == 1 );
-    TESTCASE( buffer[0] == '!' );
-    TESTCASE( fclose( fh ) == 0 );
+    /* Testing covered by ftell.c */
     return TEST_RESULTS;
 }
 

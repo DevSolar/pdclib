@@ -9,14 +9,22 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_glue.h>
 
-int fsetpos( struct _PDCLIB_file_t * stream, const _PDCLIB_fpos_t * pos )
+int fsetpos( struct _PDCLIB_file_t * stream, const struct _PDCLIB_fpos_t * pos )
 {
-    if ( stream->status & _PDCLIB_WROTELAST )
+    if ( stream->status & _PDCLIB_FWRITE )
     {
-        fflush( stream );
+        if ( _PDCLIB_flushbuffer( stream ) == EOF )
+        {
+            return EOF;
+        }
     }
-    /* TODO: Implement. */
+    if ( _PDCLIB_seek( stream, pos->offset, SEEK_SET ) == EOF )
+    {
+        return EOF;
+    }
+    stream->pos.status = pos->status;
     return 0;
 }
 

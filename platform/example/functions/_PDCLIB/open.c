@@ -20,6 +20,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "/usr/include/errno.h"
+
 int _PDCLIB_open( char const * const filename, unsigned int mode )
 {
     /* This is an example implementation of _PDCLIB_open() fit for use with
@@ -51,14 +53,41 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
         default: /* Invalid mode */
             return -1;
     }
+    int rc;
     if ( osmode & O_CREAT )
     {
-        return open( filename, osmode, S_IRUSR | S_IWUSR );
+        rc = open( filename, osmode, S_IRUSR | S_IWUSR );
     }
     else
     {
-        return open( filename, osmode );
+        rc = open( filename, osmode );
     }
+    if ( rc == -1 )
+    {
+        switch ( errno )
+        {
+            case EACCES:
+            case EFAULT:
+            case EINTR:
+            case EISDIR:
+            case ELOOP:
+            case EMFILE:
+            case ENAMETOOLONG:
+            case ENFILE:
+            case ENODEV:
+            case ENOENT:
+            case ENOMEM:
+            case ENOSPC:
+            case ENOTDIR:
+            case EOVERFLOW:
+            case EROFS:
+            case ETXTBSY:
+                _PDCLIB_errno = _PDCLIB_EIO;
+            default:
+                _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+        }
+    }
+    return rc;
 }
 
 #endif
@@ -69,8 +98,6 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
 #include <stdlib.h>
 #include <string.h>
 
-#include <errno.h>
-
 int main( void )
 {
     /* This testdriver assumes POSIX, i.e. _PDCLIB_fd_t being int and being
@@ -78,6 +105,7 @@ int main( void )
     */
     int fh;
     char buffer[ 10 ];
+    remove( "testfile" );
     /* Trying to read non-existent file. */
     TESTCASE( _PDCLIB_open( "testfile", _PDCLIB_FREAD ) == _PDCLIB_NOHANDLE );
     /* Writing to file, trying to read from it. */
@@ -126,7 +154,7 @@ int main( void )
     TESTCASE( memcmp( buffer, "tessiebaby", 10 ) == 0 );
     TESTCASE( _PDCLIB_close( fh ) == 0 );
     /* Cleaning up. */
-    system( "rm testfile" );
+    TESTCASE( remove( "testfile" ) == 0 );
     return TEST_RESULTS;
 }
 

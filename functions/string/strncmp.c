@@ -24,7 +24,7 @@ int strncmp( const char * s1, const char * s2, size_t n )
     }
     else
     {
-        return ( *s1 - *s2 );
+        return ( *(unsigned char *)s1 - *(unsigned char *)s2 );
     }
 }
 
@@ -36,6 +36,7 @@ int strncmp( const char * s1, const char * s2, size_t n )
 int main( void )
 {
     char cmpabcde[] = "abcde\0f";
+    char cmpabcd_[] = "abcde\xfc";
     char empty[] = "";
     char x[] = "x";
     TESTCASE( strncmp( abcde, cmpabcde, 5 ) == 0 );
@@ -47,6 +48,7 @@ int main( void )
     TESTCASE( strncmp( abcde, abcdx, 4 ) == 0 );
     TESTCASE( strncmp( abcde, x, 0 ) == 0 );
     TESTCASE( strncmp( abcde, x, 1 ) < 0 );
+    TESTCASE( strncmp( abcde, cmpabcd_, 10 ) < 0 );
     return TEST_RESULTS;
 }
 #endif

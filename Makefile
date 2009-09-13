@@ -13,7 +13,7 @@ SRCFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.c")
 # All header files of the project
 HDRFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.h")
 # All .c files in functions/_PDCLIB that do not have a regression test driver
-INTFILES := _Exit atomax digits open print remove rename seed stdinit strtox_main strtox_prelim cleanstream fflush filemode
+INTFILES := _Exit atomax digits open print remove rename seed stdinit strtox_main strtox_prelim cleanstream fflush filemode eol errno seek prepread prepwrite
 # All object files in the library
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 # All test drivers (.t)
@@ -29,13 +29,27 @@ ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 PATCHFILES1 := $(shell ls platform/$(PLATFORM)/functions/_PDCLIB/*.c)
 # All files in platform/$(PLATFORM)/functions/stdlib (for development only)
 PATCHFILES2 := $(shell ls platform/$(PLATFORM)/functions/stdlib/*.c)
+# All files in platform/$(PLATFORM)/functions/stdio (for development only)
+PATCHFILES3 := $(shell ls platform/$(PLATFORM)/functions/stdio/*.c)
 
-WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wconversion -fno-builtin 
+WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -fno-builtin 
 CFLAGS := -g -std=c99 -I./internals $(WARNINGS) $(USERFLAGS)
 
 .PHONY: all clean srcdist bindist test tests testdrivers regtests regtestdrivers todos fixmes find links unlink help
 
-all: pdclib.a
+all: pdclib.a testdrivers regtestdrivers
+	@echo
+	@echo "========================"
+	@echo "Executing library tests:"
+	@echo "========================"
+	@echo
+	@$(MAKE) tests | grep -v "^ TST" | grep -v "^Failed"
+	@echo
+	@echo "==========================="
+	@echo "Executing regression tests:"
+	@echo "==========================="
+	@echo
+	@$(MAKE) regtests | grep -v "^ RTST" | grep -v "^Failed"
 
 pdclib.a: $(OBJFILES)
 	@echo " AR	$@"
@@ -46,14 +60,16 @@ test: functions/$(FILE)
 	functions/$(FILE)
 
 tests: testdrivers
-	-@rc=0; count=0; failed=""; echo; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done;
+	-@rc=0; count=0; failed=""; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done; echo
 
 testdrivers: $(TSTFILES)
+	@echo
 
 regtests: regtestdrivers
-	-@rc=0; count=0; failed=""; echo; for file in $(REGFILES); do echo " RTST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done;
+	-@rc=0; count=0; failed=""; for file in $(REGFILES); do echo " RTST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done; echo
 
 regtestdrivers: $(REGFILES)
+	@echo
 
 -include $(DEPFILES)
 
@@ -70,7 +86,7 @@ fixmes:
 	-@for file in $(ALLFILES); do grep -H FIXME $$file; done; true
 
 find:
-	@find functions/ includes/ internals/ platform/ old_stdio/ -name "*\.[ch]" -type f | xargs grep $$FIND
+	@find functions/ includes/ internals/ platform/ -name "*\.[ch]" -type f | xargs grep $$FIND
 
 links:
 	@echo "Linking platform/$(PLATFORM)..."
@@ -78,6 +94,7 @@ links:
 	@cd includes && ln -s ../platform/$(PLATFORM)/includes/float.h
 	@cd functions/_PDCLIB && for file in $(PATCHFILES1); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
 	@cd functions/stdlib && for file in $(PATCHFILES2); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
+	@cd functions/stdio && for file in $(PATCHFILES3); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
 
 unlink:
 	@echo "Unlinking platform files..."
@@ -85,6 +102,7 @@ unlink:
 	@if [ -f includes/float.h ]; then rm includes/float.h; fi
 	@cd functions/_PDCLIB && for file in $(PATCHFILES1); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done
 	@cd functions/stdlib && for file in $(PATCHFILES2); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done
+	@cd functions/stdio && for file in $(PATCHFILES3); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done
 
 help:
 	@echo "Available make targets:"

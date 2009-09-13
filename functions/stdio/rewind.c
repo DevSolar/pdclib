@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* frewind( FILE * )
+/* rewind( FILE * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -12,12 +12,8 @@
 
 void rewind( struct _PDCLIB_file_t * stream )
 {
-    if ( stream->status & _PDCLIB_WROTELAST )
-    {
-        fflush( stream );
-    }
-    /* TODO: Implement. */
-    return;
+    stream->status &= ~ _PDCLIB_ERRORFLAG;
+    fseek( stream, 0L, SEEK_SET );
 }
 
 #endif
@@ -27,7 +23,7 @@ void rewind( struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Testing covered by ftell.c */
     return TEST_RESULTS;
 }
 

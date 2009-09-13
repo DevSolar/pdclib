@@ -6,8 +6,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <stdio.h>
+
 #ifndef REGTEST
-#include <_PDCLIB_int.h>
 
 struct _PDCLIB_file_t * tmpfile( void )
 {
@@ -15,7 +16,7 @@ struct _PDCLIB_file_t * tmpfile( void )
     return NULL;
 }
 
-#endif REGTEST
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

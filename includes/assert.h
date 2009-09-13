@@ -35,15 +35,15 @@ void _PDCLIB_assert( char const * const );
 #define assert( expression ) ( ( expression ) ? (void) 0 \
         : _PDCLIB_assert( "Assertion failed: " #expression \
                           ", function ", __func__, \
-			  ", file " __FILE__ \
-			  ", line " _PDCLIB_symbol2string( __LINE__ ) \
-			  "." _PDCLIB_endl ) )
+                          ", file " __FILE__ \
+                          ", line " _PDCLIB_symbol2string( __LINE__ ) \
+                          "." _PDCLIB_endl ) )
 #else
 #define assert( expression ) ( ( expression ) ? (void) 0 \
-	: _PDCLIB_assert( "Assertion failed: " #expression \
-	                  ", file " __FILE__ \
-	                  ", line " _PDCLIB_symbol2string( __LINE__ ) \
-	                  "." _PDCLIB_endl ) )
+        : _PDCLIB_assert( "Assertion failed: " #expression \
+                          ", file " __FILE__ \
+                          ", line " _PDCLIB_symbol2string( __LINE__ ) \
+                          "." _PDCLIB_endl ) )
 #endif
 #endif
 

@@ -10,10 +10,13 @@
 
 #ifndef REGTEST
 
-int ungetc( int c, struct _PDCLIB_file_t * stream )
+int ungetc( int c, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
-    /* TODO: Implement. */
-    return 0;
+    if ( c == EOF || stream->ungetidx == _PDCLIB_UNGETCBUFSIZE )
+    {
+        return -1;
+    }
+    return stream->ungetbuf[stream->ungetidx++] = (unsigned char) c;
 }
 
 #endif
@@ -23,7 +26,7 @@ int ungetc( int c, struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Testing covered by ftell.c */
     return TEST_RESULTS;
 }
 

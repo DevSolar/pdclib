@@ -8,12 +8,21 @@
 
 #include <stdio.h>
 
+#include <_PDCLIB_glue.h>
+
 #ifndef REGTEST
 
 int fgetc( struct _PDCLIB_file_t * stream )
 {
-    /* TODO: Implement. */
-    return 0;
+    if ( _PDCLIB_prepread( stream ) == EOF )
+    {
+        return EOF;
+    }
+    if ( stream->ungetidx > 0 )
+    {
+        return stream->ungetbuf[ stream->ungetidx-- ];
+    }
+    return stream->buffer[stream->bufidx++];
 }
 
 #endif
@@ -23,7 +32,7 @@ int fgetc( struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Testing covered by ftell.c */
     return TEST_RESULTS;
 }
 

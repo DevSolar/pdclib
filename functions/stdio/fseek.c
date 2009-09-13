@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* fseek( FILE *, long int, int )
+/* fseek( FILE *, long offset, int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -10,14 +10,23 @@
 
 #ifndef REGTEST
 
-int fseek( struct _PDCLIB_file_t * stream, long int offset, int whence )
+#include <_PDCLIB_glue.h>
+
+int fseek( struct _PDCLIB_file_t * _PDCLIB_restrict stream, long offset, int whence )
 {
-    if ( stream->status & _PDCLIB_WROTELAST )
+    if ( stream->status & _PDCLIB_FWRITE )
     {
-        fflush( stream );
+        if ( _PDCLIB_flushbuffer( stream ) == EOF )
+        {
+            return EOF;
+        }
     }
-    /* TODO: Implement. */
-    return 0;
+    stream->status &= ~ _PDCLIB_EOFFLAG;
+    if ( stream->status & _PDCLIB_FRW )
+    {
+        stream->status &= ~ ( _PDCLIB_FREAD | _PDCLIB_FWRITE );
+    }
+    return _PDCLIB_seek( stream, offset, whence );
 }
 
 #endif
@@ -27,8 +36,9 @@ int fseek( struct _PDCLIB_file_t * stream, long int offset, int whence )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Testing covered by ftell.c */
     return TEST_RESULTS;
 }
 
 #endif
+

@@ -34,11 +34,11 @@ giving other valuable hints, thanks.
 Everyone involved in the first, "public" attempt at PDCLib, for bearing with me
 when I restarted from scratch, thanks.
 
-Everyone bearing with me during the "stdio block", a period of many months in
+Everyone bearing with me during the "stdio block", a period of many years in
 which PDCLib received not a single update because I was stuck and could not
-find the energy to work it out.
+find the time and energy to work it out.
 
-Lennart Fridén and Sammy Nordström, who have been great pals even after I sunk
+Lennart Fridï¿½n and Sammy Nordstrï¿½m, who have been great pals even after I sunk
 some other project that had eaten countless hours of work between the three of
 us, thanks.
 
@@ -53,13 +53,14 @@ I followed a set of guidelines in creating PDCLib. If you find some piece that
 does not adhere to them, that's a bug worth reporting. I mean it. I am a bit
 obsessive when it comes to coding style. ;-)
 
-- all the stuff that is not part of the standard specification is "hidden" in
+- All the stuff that is not part of the standard specification is "hidden" in
   the _PDCLIB_* namespace - functions, variables, macros, files, directories.
   This is to make it easier to distinguish between what the standard dictates
   and what I added to make PDCLib work.
 
-- any internal includes (i.e. those not specified by the standard) have their
-  header guards defined in the *including* file, for a tiny bit of performance.
+- Any internal includes (i.e. those not specified by the standard) have their
+  header guards defined in the *including* file, for a tiny bit of compile-time
+  performance.
 
 - I always try to minimize the use of local variables. Wherever possible I used
   parameters passed by-value directly, and deferred declaration of locals to the
@@ -67,24 +68,25 @@ obsessive when it comes to coding style. ;-)
   when the library is compiled with a compiler that is not that great at
   optimization.
 
-- every function, every static data item that could possibly be shared, got its
+- Every function, every static data item that could possibly be shared, got its
   own implementation file. This means the library itself is probably larger than
   strictly necessary, and might take a couple of clock cycles longer to link,
   but it reduces size of object files and executables.
 
-- where possible, I tried to share functionality between similar functions (as
+- Where possible, I tried to share functionality between similar functions (as
   can be seen in the atoi() and strtol() function families). This means one or
   two additional function calls, but again reduces memory footprint and eases
   maintenance of the library.
 
-- function arguments are named exactly as in the standard document.
+- Function arguments are named exactly as in the standard document.
 
-- the standard is taken quite literally in places. For example, memcpy() really
-  copies char-wise. This runs contrary to earlier claims of performance, but is
-  consistent with the *letter* of the standard, and you will probably use your
-  compiler builtins (through a platform overlay) anyhow.
+- The standard is taken quite literally in places. For example, the default
+  implementations of memcpy() really copies char-wise. This runs contrary to
+  earlier claims of performance, but is consistent with the *letter* of the
+  standard, and you will probably use your compiler builtins (through a platform
+  overlay) anyhow.
 
-- every file has an Id tag, so that it is on file for *every* code file.
+- Every file has an Id tag, so that it is on file for *every* code file.
 
 - PDCLib code has no bias towards POSIX; indeed the absence of POSIX tidbits is
   one of its hallmarks. However, PDCLib also has no bias *against* POSIX, and
@@ -92,7 +94,7 @@ obsessive when it comes to coding style. ;-)
   sheer familiarity. (This is mainly referring to naming and parameter lists of
   OS "glue" functions.)
 
-- identifiers are tersely named, but not cryptically abbreviated, and should be
+- Identifiers are tersely named, but not cryptically abbreviated, and should be
   intuitive enough to allow easy understanding of PDCLib inner workings.
 
 - I disagree with the notion that good code needs no comments. Code tells you
