@@ -345,11 +345,20 @@ extern char _PDCLIB_Xdigits[];
 /* The worker for all printf() type of functions. The pointer spec should point
    to the introducing '%' of a conversion specifier. The status structure is to
    be that of the current printf() function, of which the members n, s, stream
-   and arg will be preserved, i will be updated, and all others will be trashed
+   and arg will be preserved; i will be updated; and all others will be trashed
    by the function.
    Returns a pointer to the first character not parsed as conversion specifier.
 */
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
+
+/* The worker for all scanf() type of functions. The pointer spec should point
+   to the introducing '%' of a conversion specifier. The status structure is to
+   be that of the current scanf() function, of which the member stream will be
+   preserved, n, i, and s will be updated; and all others will be trashed by the
+   function.
+   Returns a pointer to the first character not parsed as conversion specifier.
+*/
+const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status );
 
 /* Parsing any fopen() style filemode string into a number of flags. */
 unsigned int _PDCLIB_filemode( const char * mode );
