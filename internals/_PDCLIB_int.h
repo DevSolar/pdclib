@@ -317,10 +317,12 @@ struct _PDCLIB_status_t
 {
     int              base;  /* base to which the value shall be converted    */
     _PDCLIB_int_fast32_t flags; /* flags and length modifiers                */
-    _PDCLIB_size_t   n;     /* maximum number of characters to be written    */
+    _PDCLIB_size_t   n;     /* print: maximum characters to be written       */
+                            /* scan:  number matched conversion specifiers   */
     _PDCLIB_size_t   i;     /* number of characters already written          */
     _PDCLIB_size_t   this;  /* output chars in the current conversion        */
-    char *           s;     /* target buffer                                 */
+    char *           s;     /* print: target buffer                          */
+                            /* scan:  source string                          */
     _PDCLIB_size_t   width; /* width of current field                        */
     _PDCLIB_size_t   prec;  /* precision of current field                    */
     struct _PDCLIB_file_t * stream;/* for to-stream output                   */

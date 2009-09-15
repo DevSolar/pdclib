@@ -10,22 +10,16 @@
 #include <stdarg.h>
 
 #ifndef REGTEST
+#include <ctype.h>
 
 int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, va_list arg )
 {
     struct _PDCLIB_status_t status;
     status.base = 0;
     status.flags = 0;
-    /* In _PDCLIB_print, status.n holds the maximum number of characters to be
-       written. As we don't need that for the scanf() functions, we (ab)use
-       this field to hold the number of matching conversion specifiers.
-    */
     status.n = 0; 
     status.i = 0;
     status.this = 0;
-    /* In _PDCLIB_print, status.s is the string *printed to*. In the scanf()
-       functions, we (ab)use this field to hold the string *scanned from*.
-    */
     status.s = (char *)s;
     status.width = 0;
     status.prec = 0;
