@@ -35,19 +35,27 @@ int main( void )
     char * endptr;
     /* this, to base 36, overflows even a 256 bit integer */
     char overflow[] = "-ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ_";
+    /* tricky border case */
+    char tricky[] = "+0xz";
     errno = 0;
     /* basic functionality */
     TESTCASE( strtoull( "123", NULL, 10 ) == 123 );
     /* proper detecting of default base 10 */
-    TESTCASE( strtoull( "123", NULL, 0 ) == 123 );
+    TESTCASE( strtoull( "456", NULL, 0 ) == 456 );
     /* proper functioning to smaller base */
     TESTCASE( strtoull( "14", NULL, 8 ) == 12 );
     /* proper autodetecting of octal */
-    TESTCASE( strtoull( "014", NULL, 0 ) == 12 );
+    TESTCASE( strtoull( "016", NULL, 0 ) == 14 );
     /* proper autodetecting of hexadecimal, lowercase 'x' */
     TESTCASE( strtoull( "0xFF", NULL, 0 ) == 255 );
     /* proper autodetecting of hexadecimal, uppercase 'X' */
-    TESTCASE( strtoull( "0XFF", NULL, 0 ) == 255 );
+    TESTCASE( strtoull( "0Xa1", NULL, 0 ) == 161 );
+    /* proper handling of border case: 0x followed by non-hexdigit */
+    TESTCASE( strtoull( tricky, &endptr, 0 ) == 0 );
+    TESTCASE( endptr == tricky + 2 );
+    /* proper handling of border case: 0 followed by non-octdigit */
+    TESTCASE( strtoull( tricky, &endptr, 8 ) == 0 );
+    TESTCASE( endptr == tricky + 2 );
     /* errno should still be 0 */
     TESTCASE( errno == 0 );
     /* overflowing subject sequence must still return proper endptr */
@@ -60,7 +68,7 @@ int main( void )
     TESTCASE( errno == ERANGE );
     TESTCASE( ( endptr - overflow ) == 53 );
     /* testing skipping of leading whitespace */
-    TESTCASE( strtoull( " \n\v\t\f123", NULL, 0 ) == 123 );
+    TESTCASE( strtoull( " \n\v\t\f789", NULL, 0 ) == 789 );
     /* testing conversion failure */
     TESTCASE( strtoull( overflow, &endptr, 10 ) == 0 );
     TESTCASE( endptr == overflow );
@@ -69,4 +77,5 @@ int main( void )
     TESTCASE( endptr == overflow );
     return TEST_RESULTS;
 }
+
 #endif
