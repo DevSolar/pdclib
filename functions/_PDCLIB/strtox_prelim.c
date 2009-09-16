@@ -8,6 +8,7 @@
 
 #include <ctype.h>
 #include <stddef.h>
+#include <string.h>
 
 const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
 {
@@ -24,6 +25,15 @@ const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
         {
             *base = 16;
             ++p;
+            /* catching a border case here: "0x" followed by a non-digit should
+               be parsed as the unprefixed zero.
+               We have to "rewind" the parsing; having the base set to 16 if it
+               was zero previously does not hurt, as the result is zero anyway.
+            */
+            if ( memchr( _PDCLIB_digits, tolower(*p), *base ) == NULL )
+            {
+                p -= 2;
+            }
         }
         else if ( *base == 0 )
         {
