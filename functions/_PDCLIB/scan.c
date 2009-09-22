@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
@@ -27,36 +28,57 @@
 #define E_unsigned   1<<16
 
 
-static bool MATCH( const char x, struct _PDCLIB_status_t * status )
+#define MATCH_FAIL -1
+#define MATCH_ERROR -2
+
+static int MATCH( int c, struct _PDCLIB_status_t * status )
 {
     if ( status->stream != NULL )
     {
-        /* Matching against stream */
-        if ( status->stream->buffer[ status->stream->bufidx ] == x )
+        if ( ! _PDCLIB_prepread( status->stream ) )
         {
-            getc( status->stream );
-            ++(status->i);
-            return true;
+            return MATCH_ERROR;
+        }
+        if ( tolower( status->stream->buffer[ status->stream->bufidx ] ) == c )
+        {
+            /* recycling parameter */
+            c = getc( status->stream );
         }
         else
         {
-            return false;
+            return MATCH_FAIL;
         }
     }
     else
     {
-        /* Matching against string */
-        if ( *(status->s) == x )
+        if ( tolower( *(status->s) ) == c )
         {
-            ++(status->s);
-            ++(status->i);
-            return true;
+            /* recycling parameter */
+            c = *((status->s)++); /* TODO: \0 */
         }
         else
         {
-            return false;
+            return MATCH_FAIL;
         }
     }
+    ++(status->i);
+    ++(status->this);
+    return c;
+}
+
+
+static void UNGET( int c, struct _PDCLIB_status_t * status )
+{
+    if ( status->stream != NULL )
+    {
+        ungetc( c, status->stream ); /* TODO: Error? */
+    }
+    else
+    {
+        *(--(status->s)) = c;
+    }
+    --(status->i);
+    --(status->this);
 }
 
 
@@ -71,7 +93,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     }
     /* Initializing status structure */
     status->flags = 0;
-    status->base = 0;
+    status->base = -1;
     status->this = 0;
     status->width = 0;
     status->prec = 0;
@@ -150,7 +172,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             status->base = 10;
             break;
         case 'i':
-            /* status->base = 0; */
+            status->base = 0;
             break;
         case 'o':
             status->base = 8;
@@ -194,7 +216,58 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             /* No conversion specifier. Bad conversion. */
             return orig_spec;
     }
-    /* TODO: Actual conversions */
+    bool zero = false;
+    if ( status->base != -1 )
+    {
+        bool value = false;
+        int rc;
+        if ( ( rc = MATCH( '0', status ) ) >= 0 )
+        {
+            if ( ( rc = MATCH( 'x', status ) ) >= 0 )
+            {
+                if ( ( status->base == 0 ) || ( status->base == 16 ) )
+                {
+                    status->base = 16;
+                }
+                else
+                {
+                    UNGET( rc, status );
+                    value = true;
+                }
+            }
+            else if ( rc == MATCH_FAIL )
+            {
+                if ( status->base == 0 )
+                {
+                    status->base = 8;
+                }
+                else
+                {
+                    value = true;
+                }
+            }
+            else
+            {
+                /* TODO: MATCH_ERROR */
+            }
+        }
+        else if ( rc == MATCH_FAIL )
+        {
+            if ( status->base == 0 )
+            {
+                status->base = 10;
+            }
+        }
+        else
+        {
+            /* TODO: MATCH_ERROR */
+        }
+        /* TODO: Integer conversion */
+    }
+    else
+    {
+        /* TODO: Float conversions? */
+    }
     return NULL;
 }
 
