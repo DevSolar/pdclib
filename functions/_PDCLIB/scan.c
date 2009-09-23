@@ -10,7 +10,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <ctype.h>
+#include <string.h>
+#include <stddef.h>
 
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
@@ -28,42 +31,24 @@
 #define E_unsigned   1<<16
 
 
-#define MATCH_FAIL -1
-#define MATCH_ERROR -2
+#define ASSIGN( case_cond, type ) \
+    case case_cond: \
+        *( va_arg( status->arg, type * ) ) = (type)( value * sign ); \
+        break
 
-static int MATCH( int c, struct _PDCLIB_status_t * status )
+
+static int GET( struct _PDCLIB_status_t * status )
 {
+    ++(status->i);
+    ++(status->this);
     if ( status->stream != NULL )
     {
-        if ( ! _PDCLIB_prepread( status->stream ) )
-        {
-            return MATCH_ERROR;
-        }
-        if ( tolower( status->stream->buffer[ status->stream->bufidx ] ) == c )
-        {
-            /* recycling parameter */
-            c = getc( status->stream );
-        }
-        else
-        {
-            return MATCH_FAIL;
-        }
+        return getc( status->stream );
     }
     else
     {
-        if ( tolower( *(status->s) ) == c )
-        {
-            /* recycling parameter */
-            c = *((status->s)++); /* TODO: \0 */
-        }
-        else
-        {
-            return MATCH_FAIL;
-        }
+        return *((status->s)++);
     }
-    ++(status->i);
-    ++(status->this);
-    return c;
 }
 
 
@@ -84,12 +69,24 @@ static void UNGET( int c, struct _PDCLIB_status_t * status )
 
 const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 {
+    /* generic input character */
+    int rc;
     const char * orig_spec = spec;
     if ( *(++spec) == '%' )
     {
         /* %% -> match single '%' */
-        MATCH( *spec, status );
-        return ++spec;
+        rc = GET( status );
+        switch ( rc )
+        {
+            case EOF:
+                /* matching failure */
+                return NULL;
+            case '%':
+                return ++spec;
+            default:
+                UNGET( rc, status );
+                break;
+        }
     }
     /* Initializing status structure */
     status->flags = 0;
@@ -166,6 +163,10 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     }
 
     /* Conversion specifier */
+
+    /* whether valid input had been parsed */
+    bool value_parsed = false;
+
     switch ( *spec )
     {
         case 'd':
@@ -196,13 +197,56 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         case 'A':
             break;
         case 'c':
-            /* TODO */
-            break;
+        {
+            char * c = va_arg( status->arg, char * );
+            if ( status->width == SIZE_MAX )
+            {
+                status->width = 1;
+            }
+            while ( ( status->this < status->width ) &&
+                    ( ( rc = GET( status ) ) != EOF ) )
+            {
+                *(c++) = rc;
+                value_parsed = true;
+            }
+            return value_parsed ? spec : NULL;
+        }
         case 's':
-            /* TODO */
-            break;
+        {
+            char * c = va_arg( status->arg, char * );
+            while ( ( status->this < status->width ) && 
+                    ( ( rc = GET( status ) ) != EOF ) )
+            {
+                if ( isspace( rc ) )
+                {
+                    if ( value_parsed )
+                    {
+                        *c = '\0';
+                        return spec;
+                    }
+                    else
+                    {
+                        --(status->this);
+                    }
+                }
+                else
+                {
+                    value_parsed = true;
+                    *(c++) = rc;
+                }
+            }
+            /* width or input exhausted */
+            if ( value_parsed )
+            {
+                *c = '\0';
+                return spec;
+            }
+            else
+            {
+                return NULL;
+            }
+        }
         case 'p':
-            /* TODO */
             status->base = 16;
             status->flags |= E_unsigned;
             break;
@@ -216,60 +260,119 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             /* No conversion specifier. Bad conversion. */
             return orig_spec;
     }
-    bool zero = false;
+
     if ( status->base != -1 )
     {
-        bool value = false;
-        int rc;
-        if ( ( rc = MATCH( '0', status ) ) >= 0 )
+        /* integer conversion */
+        uintmax_t value = 0;
+        bool prefix_parsed = false;
+        int sign = 0;
+        while ( ( status->this < status->width ) &&
+                ( ( rc = GET( status ) ) != EOF ) )
         {
-            if ( ( rc = MATCH( 'x', status ) ) >= 0 )
+            if ( ! sign )
             {
-                if ( ( status->base == 0 ) || ( status->base == 16 ) )
+                switch ( rc )
                 {
-                    status->base = 16;
-                }
-                else
-                {
-                    UNGET( rc, status );
-                    value = true;
+                    case '-':
+                        sign = -1;
+                        break;
+                    case '+':
+                        sign = 1;
+                        break;
+                    default:
+                        sign = 1;
+                        UNGET( rc, status );
+                        break;
                 }
             }
-            else if ( rc == MATCH_FAIL )
+            else if ( ! prefix_parsed )
             {
-                if ( status->base == 0 )
+                prefix_parsed = true;
+                if ( rc != '0' )
                 {
-                    status->base = 8;
+                    if ( status->base == 0 )
+                    {
+                        status->base = 10;
+                    }
+                    UNGET( rc, status );
                 }
                 else
                 {
-                    value = true;
+                    if ( ( status->this < status->width ) &&
+                         ( ( rc = GET( status ) ) != EOF ) )
+                    {
+                        if ( tolower( rc ) == 'x' )
+                        {
+                            if ( ( status->base == 0 ) ||
+                                 ( status->base == 16 ) )
+                            {
+                                status->base = 16;
+                            }
+                            else
+                            {
+                                UNGET( rc, status );
+                                value_parsed = true;
+                            }
+                        }
+                        else
+                        {
+                            UNGET( rc, status );
+                            if ( status->base == 0 )
+                            {
+                                status->base = 8;
+                            }
+                            value_parsed = true;
+                        }
+                    }
                 }
             }
             else
             {
-                /* TODO: MATCH_ERROR */
+                char * digitptr = memchr( _PDCLIB_digits, tolower( rc ), status->base );
+                if ( digitptr == NULL )
+                {
+                    /* end of input item */
+                    break;
+                }
+                value *= status->base;
+                value += digitptr - _PDCLIB_digits;
+                value_parsed = true;
             }
         }
-        else if ( rc == MATCH_FAIL )
+        /* width exceeded, EOF, read error, non-matching character */
+        if ( ! value_parsed )
         {
-            if ( status->base == 0 )
-            {
-                status->base = 10;
-            }
+            /* matching error */
+            return NULL;
         }
-        else
+        switch ( status->flags & ( E_char | E_short | E_long | E_llong |
+                                   E_intmax | E_size | E_ptrdiff |
+                                   E_unsigned ) )
         {
-            /* TODO: MATCH_ERROR */
+            ASSIGN( E_char, char );
+            ASSIGN( E_char | E_unsigned, unsigned char );
+            ASSIGN( E_short, short );
+            ASSIGN( E_short | E_unsigned, unsigned short );
+            ASSIGN( 0, int );
+            ASSIGN( E_unsigned, unsigned int );
+            ASSIGN( E_long, long );
+            ASSIGN( E_long | E_unsigned, unsigned long );
+            ASSIGN( E_llong, long long );
+            ASSIGN( E_llong | E_unsigned, unsigned long long );
+            ASSIGN( E_intmax, intmax_t );
+            ASSIGN( E_intmax | E_unsigned, uintmax_t );
+            ASSIGN( E_size, size_t );
+            /* ASSIGN( E_size | E_unsigned, unsigned size_t ); */
+            ASSIGN( E_ptrdiff, ptrdiff_t );
+            /* ASSIGN( E_ptrdiff | E_unsigned, unsigned ptrdiff_t ); */
         }
-        /* TODO: Integer conversion */
+        return spec;
     }
-    else
-    {
-        /* TODO: Float conversions? */
-    }
+    /* TODO: Floats. */
     return NULL;
 }
+
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
