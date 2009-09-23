@@ -366,6 +366,9 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             /* ASSIGN( E_size | E_unsigned, unsigned size_t ); */
             ASSIGN( E_ptrdiff, ptrdiff_t );
             /* ASSIGN( E_ptrdiff | E_unsigned, unsigned ptrdiff_t ); */
+            default:
+                puts( "UNSUPPORTED SCANF FLAG COMBINATION" );
+                return NULL;
         }
         return spec;
     }
