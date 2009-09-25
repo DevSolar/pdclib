@@ -209,7 +209,15 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 *(c++) = rc;
                 value_parsed = true;
             }
-            return value_parsed ? spec : NULL;
+            if ( value_parsed )
+            {
+                ++status->n;
+                return ++spec;
+            }
+            else
+            {
+                return NULL;
+            }
         }
         case 's':
         {
@@ -239,7 +247,8 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             if ( value_parsed )
             {
                 *c = '\0';
-                return spec;
+                ++status->n;
+                return ++spec;
             }
             else
             {
@@ -370,7 +379,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 puts( "UNSUPPORTED SCANF FLAG COMBINATION" );
                 return NULL;
         }
-        return spec;
+        return ++spec;
     }
     /* TODO: Floats. */
     return NULL;
@@ -379,10 +388,13 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
+#include <limits.h>
 
+
+ 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Testing covered by fscanf.c */
     return TEST_RESULTS;
 }
 
