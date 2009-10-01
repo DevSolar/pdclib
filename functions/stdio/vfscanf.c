@@ -59,6 +59,11 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
         }
         else
         {
+            /* NULL return code indicates matching error */
+            if ( rc == NULL )
+            {
+                break;
+            }
             /* Continue parsing after conversion specifier */
             format = rc;
         }
