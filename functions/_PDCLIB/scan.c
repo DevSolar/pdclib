@@ -47,7 +47,7 @@ static int GET( struct _PDCLIB_status_t * status )
     }
     else
     {
-        return *((status->s)++);
+        return ( *status->s == '\0' ) ? EOF : *((status->s)++);
     }
 }
 
@@ -106,7 +106,12 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
        strtol() will return zero. In both cases, endptr will point to the
        rest of the conversion specifier - just what we need.
     */
+    char const * prev_spec = spec;
     status->width = (int)strtol( spec, (char**)&spec, 10 );
+    if ( spec == prev_spec )
+    {
+        status->width = SIZE_MAX;
+    }
 
     /* Optional length modifier
        We step one character ahead in any case, and step back only if we find
@@ -216,6 +221,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             }
             else
             {
+                /* FIXME: Need two kinds of "no match" here: zero width, and input error */
                 return NULL;
             }
         }
