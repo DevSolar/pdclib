@@ -26,7 +26,7 @@ int fseek( struct _PDCLIB_file_t * _PDCLIB_restrict stream, long offset, int whe
     {
         stream->status &= ~ ( _PDCLIB_FREAD | _PDCLIB_FWRITE );
     }
-    return _PDCLIB_seek( stream, offset, whence );
+    return ( _PDCLIB_seek( stream, offset, whence ) == offset ) ? 0 : EOF;
 }
 
 #endif
