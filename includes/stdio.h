@@ -44,9 +44,9 @@ typedef struct _PDCLIB_file_t FILE;
 #define SEEK_END _PDCLIB_SEEK_END
 #define SEEK_SET _PDCLIB_SEEK_SET
 
-extern struct _PDCLIB_file_t * stdin;
-extern struct _PDCLIB_file_t * stdout;
-extern struct _PDCLIB_file_t * stderr;
+extern FILE * stdin;
+extern FILE * stdout;
+extern FILE * stderr;
 
 /* Operations on files */
 
@@ -73,7 +73,7 @@ int rename( const char * old, const char * new );
    This implementation does not remove temporary files if the process aborts
    abnormally (e.g. abort()).
 */
-struct _PDCLIB_file_t * tmpfile( void );
+FILE * tmpfile( void );
 
 /* Generate a file name that is not equal to any existing filename AT THE TIME
    OF GENERATION. Generate a different name each time it is called.
@@ -93,7 +93,7 @@ char * tmpnam( char * s );
 /* Close the file associated with the given stream (after flushing its buffers).
    Returns zero if successful, EOF if any errors occur.
 */
-int fclose( struct _PDCLIB_file_t * stream );
+int fclose( FILE * stream );
 
 /* Flush the buffers of the given output stream. If the stream is an input
    stream, or an update stream with the last operation being an input operation,
@@ -103,7 +103,7 @@ int fclose( struct _PDCLIB_file_t * stream );
    Returns zero if successful, EOF if a write error occurs.
    Sets the error indicator of the stream if a write error occurs.
 */
-int fflush( struct _PDCLIB_file_t * stream );
+int fflush( FILE * stream );
 
 /* Open the file with the given filename in the given mode, and return a stream
    handle for it in which error and end-of-file indicator are cleared. Defined
@@ -155,7 +155,7 @@ int fflush( struct _PDCLIB_file_t * stream );
 
    Returns a pointer to the stream handle if successfull, NULL otherwise.
 */
-struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode );
+FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode );
 
 /* Close any file currently associated with the given stream. Open the file
    identified by the given filename with the given mode (equivalent to fopen()),
@@ -164,12 +164,12 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
    This implementation allows the following mode changes: TODO
    (Primary use of this function is to redirect stdin, stdout, and stderr.)
 */
-struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, struct _PDCLIB_file_t * _PDCLIB_restrict stream );
+FILE * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, FILE * _PDCLIB_restrict stream );
 
 /* If buf is a NULL pointer, call setvbuf( stream, NULL, _IONBF, BUFSIZ ).
    If buf is not a NULL pointer, call setvbuf( stream, buf, _IOFBF, BUFSIZ ).
 */
-void setbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf );
+void setbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf );
 
 /* Set the given stream to the given buffering mode. If buf is not a NULL
    pointer, use buf as file buffer (of given size). If buf is a NULL pointer,
@@ -180,7 +180,7 @@ void setbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
    setvbuf()) has been performed.
    Returns zero if successful, nonzero otherwise.
 */
-int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mode, size_t size );
+int setvbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mode, size_t size );
 
 /* Formatted input/output functions */
 
@@ -395,7 +395,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
    Returns the number of characters written if successful, a negative value
    otherwise.
 */
-int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
+int fprintf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
 
 /* TODO: fscanf() documentation */
 /*
@@ -548,7 +548,7 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
    an early mismatch occurs. Returns EOF if an input failure occurs before the
    first conversion.
 */
-int fscanf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
+int fscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
 
 /* Equivalent to fprintf( stdout, format, ... ). */
 int printf( const char * _PDCLIB_restrict format, ... );
@@ -580,13 +580,13 @@ int sscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict forma
    is passed as va_list parameter. Note that va_list is not declared by
    <stdio.h>.
 */
-int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+int vfprintf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
 
 /* Equivalent to fscanf( stream, format, ... ), except that the argument stack
    is passed as va_list parameter. Note that va_list is not declared by
    <stdio.h>.
 */
-int vfscanf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
 
 /* Equivalent to fprintf( stdout, format, ... ), except that the argument stack
    is passed as va_list parameter. Note that va_list is not declared by
@@ -627,7 +627,7 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
    If end-of-file is reached, the EOF indicator of the stream is set.
    If a read error occurs, the error indicator of the stream is set.
 */
-int fgetc( struct _PDCLIB_file_t * stream );
+int fgetc( FILE * stream );
 
 /* Read at most n-1 characters from given stream into the array s, stopping at
    \n or EOF. Terminate the read string with \n. If EOF is encountered before
@@ -636,20 +636,20 @@ int fgetc( struct _PDCLIB_file_t * stream );
    If a read error occurs, the error indicator of the stream is set. In this
    case, the contents of s are indeterminate.
 */
-char * fgets( char * _PDCLIB_restrict s, int n, struct _PDCLIB_file_t * _PDCLIB_restrict stream );
+char * fgets( char * _PDCLIB_restrict s, int n, FILE * _PDCLIB_restrict stream );
 
 /* Write the value c (cast to unsigned char) to the given stream.
    Returns c if successful, EOF otherwise.
    If a write error occurs, sets the error indicator of the stream is set.
 */
-int fputc( int c, struct _PDCLIB_file_t * stream );
+int fputc( int c, FILE * stream );
 
 /* Write the string s (not including the terminating \0) to the given stream.
    Returns a value >=0 if successful, EOF otherwise.
    This implementation does set the error indicator of the stream if a write
    error occurs.
 */
-int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_restrict stream );
+int fputs( const char * _PDCLIB_restrict s, FILE * _PDCLIB_restrict stream );
 
 /* Equivalent to fgetc( stream ), but may be implemented as a macro that
    evaluates its parameter more than once.
@@ -697,7 +697,7 @@ int puts( const char * s );
    behaviour is undefined. (Older versions of the library allowed such a call.)
    Returns the pushed-back character if successful, EOF if it fails.
 */
-int ungetc( int c, struct _PDCLIB_file_t * stream );
+int ungetc( int c, FILE * stream );
 
 /* Direct input/output functions */
 
@@ -708,7 +708,7 @@ int ungetc( int c, struct _PDCLIB_file_t * stream );
    indeterminate. If a partial element is read, its value is indeterminate.
    If size or nmemb are zero, the function does nothing and returns zero.
 */
-size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream );
+size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, FILE * _PDCLIB_restrict stream );
 
 /* Write up to nmemb elements of given size from buffer pointed to by ptr to
    the given stream. Returns the number of elements successfully written, which
@@ -717,7 +717,7 @@ size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PD
    indeterminate. If size or nmemb are zero, the function does nothing and
    returns zero.
 */
-size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream );
+size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, FILE * _PDCLIB_restrict stream );
 
 /* File positioning functions */
 
@@ -729,7 +729,7 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
    Returns zero if successful, nonzero otherwise.
    TODO: Implementation-defined errno setting for fgetpos().
 */
-int fgetpos( struct _PDCLIB_file_t * _PDCLIB_restrict stream, fpos_t * _PDCLIB_restrict pos );
+int fgetpos( FILE * _PDCLIB_restrict stream, fpos_t * _PDCLIB_restrict pos );
 
 /* Set the position indicator for the given stream to the given offset from:
    - the beginning of the file if whence is SEEK_SET,
@@ -743,7 +743,7 @@ int fgetpos( struct _PDCLIB_file_t * _PDCLIB_restrict stream, fpos_t * _PDCLIB_r
    Returns zero if successful, nonzero otherwise. If a read/write error occurs,
    the error indicator for the given stream is set.
 */
-int fseek( struct _PDCLIB_file_t * stream, long int offset, int whence );
+int fseek( FILE * stream, long int offset, int whence );
 
 /* Set the position indicator (and, where appropriate the mbstate_t status
    object) for the given stream to the given pos object (created by an earlier
@@ -755,7 +755,7 @@ int fseek( struct _PDCLIB_file_t * stream, long int offset, int whence );
    the error indicator for the given stream is set.
    TODO: Implementation-defined errno setting for fsetpos().
 */
-int fsetpos( struct _PDCLIB_file_t * stream, const fpos_t * pos );
+int fsetpos( FILE * stream, const fpos_t * pos );
 
 /* Return the current offset of the given stream from the beginning of the
    associated file. For text streams, the exact value returned is unspecified
@@ -764,27 +764,27 @@ int fsetpos( struct _PDCLIB_file_t * stream, const fpos_t * pos );
    Returns -1L if unsuccessful.
    TODO: Implementation-defined errno setting for ftell().
 */
-long int ftell( struct _PDCLIB_file_t * stream );
+long int ftell( FILE * stream );
 
 /* Equivalent to (void)fseek( stream, 0L, SEEK_SET ), except that the error
    indicator for the stream is also cleared.
 */
-void rewind( struct _PDCLIB_file_t * stream );
+void rewind( FILE * stream );
 
 /* Error-handling functions */
 
 /* Clear the end-of-file and error indicators for the given stream. */
-void clearerr( struct _PDCLIB_file_t * stream );
+void clearerr( FILE * stream );
 
 /* Return zero if the end-of-file indicator for the given stream is not set,
    nonzero otherwise.
 */
-int feof( struct _PDCLIB_file_t * stream );
+int feof( FILE * stream );
 
 /* Return zero if the error indicator for the given stream is not set, nonzero
    otherwise.
 */
-int ferror( struct _PDCLIB_file_t * stream );
+int ferror( FILE * stream );
 
 /* If s is neither a NULL pointer nor an empty string, print the string to
    stderr (with appended colon (':') and a space) first. In any case, print an
