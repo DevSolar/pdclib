@@ -11,7 +11,7 @@
 
 #ifndef REGTEST
 
-int vsnprintf( char * s, size_t n, const char * format, _PDCLIB_va_list arg )
+int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
     /* Members: base, flags, n, i, this, s, width, prec, stream, arg         */

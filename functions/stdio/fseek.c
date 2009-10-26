@@ -12,7 +12,7 @@
 
 #include <_PDCLIB_glue.h>
 
-int fseek( struct _PDCLIB_file_t * _PDCLIB_restrict stream, long offset, int whence )
+int fseek( struct _PDCLIB_file_t * stream, long offset, int whence )
 {
     if ( stream->status & _PDCLIB_FWRITE )
     {

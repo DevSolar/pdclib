@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* freopen( const char *, const char * )
+/* freopen( const char *, const char *, FILE * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -21,7 +21,7 @@
    (Primary use of this function is to redirect stdin, stdout, and stderr.)
 */
 
-struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, struct _PDCLIB_file_t * stream )
+struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     /* FIXME: This is ad-hoc (to make the vprintf() testdriver work), and must be checked. */
     /* FIXME: If filename is NULL, change mode. */

@@ -12,9 +12,9 @@
 
 #ifndef REGTEST
 
-int vsprintf( char * str, const char * format, va_list arg )
+int vsprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, va_list arg )
 {
-    return vsnprintf( str, SIZE_MAX, format, arg ); /* TODO: Replace with a non-checking call */
+    return vsnprintf( s, SIZE_MAX, format, arg ); /* TODO: Replace with a non-checking call */
 }
 
 #endif
