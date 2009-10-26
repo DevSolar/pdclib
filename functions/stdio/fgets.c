@@ -13,7 +13,7 @@
 #define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
 #include <_PDCLIB_glue.h>
 
-char * fgets( char * s, int size, struct _PDCLIB_file_t * stream )
+char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     if ( size <= 1 )
     {

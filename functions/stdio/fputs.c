@@ -11,7 +11,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
 
-int fputs( const char * s, struct _PDCLIB_file_t * stream )
+int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     if ( _PDCLIB_prepwrite( stream ) == EOF )
     {

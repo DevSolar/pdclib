@@ -26,27 +26,55 @@ int fscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-#include <limits.h>
 #include <string.h>
+
+char scanstring[] = "  1 23\00045\000\00067 ";
+
+void scantest( int testnr, FILE * fh, size_t position, char const * format, 
+               int expected_fscan_rc, char const * expected_fscan_output, size_t expected_fscan_length, 
+               int expected_sscan_rc, char const * expected_sscan_output, size_t expected_sscan_length )
+{
+    char buffer[15];
+    printf( "Test %d\n", testnr );
+    TESTCASE( memset( buffer, -1, 15 ) == buffer );
+    TESTCASE( fseek( fh, position, SEEK_SET ) == 0 );
+    TESTCASE( fscanf( fh, format, buffer ) == expected_fscan_rc );
+    TESTCASE( memcmp( buffer, expected_fscan_output, expected_fscan_length ) == 0 );
+    TESTCASE( memset( buffer, -1, 15 ) == buffer );
+    TESTCASE( sscanf( scanstring + position, format, buffer ) == expected_sscan_rc );
+    TESTCASE( memcmp( buffer, expected_sscan_output, expected_sscan_length ) == 0 );
+}
 
 int main( void )
 {
-    char teststring1[] = "  1 23\045\0\067 ";
-    char buffer[15];
     FILE * fh;
     TESTCASE( ( fh = fopen( "testfile", "w+" ) ) != NULL );
-    TESTCASE( fwrite( teststring1, 15, 1, fh ) == 1 );
+    TESTCASE( fwrite( scanstring, 14, 1, fh ) == 1 );
     rewind( fh );
-    /* */
-    TESTCASE( memset( buffer, CHAR_MAX, 15 ) == buffer ); \
-    TESTCASE( fseek( fh, 0, SEEK_SET ) == 0 ); \
-    TESTCASE( fscanf( fh, "%14c", buffer ) == 1 ); \
-    TESTCASE( memcmp( buffer, teststring1 + 0, 14 ) == 0 ); \
-    TESTCASE( buffer[ 14 ] == CHAR_MAX ); \
-    TESTCASE( memset( buffer, CHAR_MAX, 15 ) == buffer ); \
-    TESTCASE( sscanf( teststring1 + 14, "%14c", buffer ) ); \
-    TESTCASE( memcmp( buffer, teststring1 + 0, 14 ) == 0 ); \
-    TESTCASE( buffer[ 14 ] == CHAR_MAX );
+
+    /* %14c - full scan */
+    scantest( 1, fh, 0, "%14c",
+              1, "  1 23\00045\000\00067 \377", 15,
+              1, "  1 23\377", 7 );
+
+    /* %c - default to one, reading whitespace */
+    scantest( 2, fh, 0, "%c",
+              1, " \377", 2,
+              1, " \377", 2 );
+
+    /* %1c - reading zero byte */
+    scantest( 3, fh, 9, "%1c",
+              1, "\000\377", 2,
+              -1, "\377", 1 );
+
+    /* %0c - NOT reading EOF */
+    scantest( 4, fh, 13, "%0c",
+              0, "\377", 1,
+              0, "\377", 1 );
+              
+    TESTCASE( fclose( fh ) == 0 );
+    //TESTCASE( remove( "testfile" ) == 0 );
+
     return TEST_RESULTS;
 }
 

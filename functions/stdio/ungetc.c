@@ -10,7 +10,7 @@
 
 #ifndef REGTEST
 
-int ungetc( int c, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+int ungetc( int c, struct _PDCLIB_file_t * stream )
 {
     if ( c == EOF || stream->ungetidx == _PDCLIB_UNGETCBUFSIZE )
     {
