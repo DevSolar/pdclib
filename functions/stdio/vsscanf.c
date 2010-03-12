@@ -59,9 +59,14 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
         }
         else
         {
-            /* NULL return code indicates matching error */
+            /* NULL return code indicates input error */
             if ( rc == NULL )
             {
+                if ( status.n == 0 )
+                {
+                    /* input error before any conversion returns EOF */
+                    status.n = EOF;
+                }
                 break;
             }
             /* Continue parsing after conversion specifier */
