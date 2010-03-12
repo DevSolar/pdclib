@@ -25,6 +25,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
     status.prec = 0;
     status.stream = stream;
     va_copy( status.arg, arg );
+    // FIXME: This whole shebang should operate on STREAM, not S...
     while ( *format != '\0' )
     {
         const char * rc;

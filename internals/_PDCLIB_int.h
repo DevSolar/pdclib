@@ -319,14 +319,14 @@ struct _PDCLIB_status_t
     _PDCLIB_int_fast32_t flags; /* flags and length modifiers                */
     _PDCLIB_size_t   n;     /* print: maximum characters to be written       */
                             /* scan:  number matched conversion specifiers   */
-    _PDCLIB_size_t   i;     /* number of characters already written          */
-    _PDCLIB_size_t   this;  /* output chars in the current conversion        */
-    char *           s;     /* print: target buffer                          */
-                            /* scan:  source string                          */
-    _PDCLIB_size_t   width; /* width of current field                        */
-    _PDCLIB_size_t   prec;  /* precision of current field                    */
-    struct _PDCLIB_file_t * stream;/* for to-stream output                   */
-    _PDCLIB_va_list  arg;   /* argument stack passed to the printf function  */
+    _PDCLIB_size_t   i;     /* number of characters read/written             */
+    _PDCLIB_size_t   this;  /* chars read/written in the CURRENT conversion  */
+    char *           s;     /* *sprintf(): target buffer                     */
+                            /* *sscanf():  source string                     */
+    _PDCLIB_size_t   width; /* specified field width                         */
+    _PDCLIB_size_t   prec;  /* specified field precision                     */
+    struct _PDCLIB_file_t * stream; /* *fprintf() / *fscanf() stream         */
+    _PDCLIB_va_list  arg;   /* argument stack                                */
 };
 
 /* -------------------------------------------------------------------------- */
@@ -356,9 +356,11 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 /* The worker for all scanf() type of functions. The pointer spec should point
    to the introducing '%' of a conversion specifier. The status structure is to
    be that of the current scanf() function, of which the member stream will be
-   preserved, n, i, and s will be updated; and all others will be trashed by the
-   function.
-   Returns a pointer to the first character not parsed as conversion specifier.
+   preserved; n, i, and s will be updated; and all others will be trashed by
+   the function.
+   Returns a pointer to the first character not parsed as conversion specifier,
+   or NULL in case of error.
+   FIXME: Should distinguish between matching and input error
 */
 const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status );
 

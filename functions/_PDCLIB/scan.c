@@ -31,27 +31,46 @@
 #define E_unsigned   1<<16
 
 
+/* Helper macro for assigning a readily converted integer value to the correct
+   parameter type, used in a switch on status->flags (see E_* flags above).
+   case_cond: combination of the E_* flags above, used for the switch-case
+   type:      integer type, used to get the correct type from the parameter
+              stack as well as for cast target.
+*/
 #define ASSIGN( case_cond, type ) \
     case case_cond: \
         *( va_arg( status->arg, type * ) ) = (type)( value * sign ); \
         break
 
 
+/* Helper function to get a character from the string or stream, whatever is
+   used for input. When reading from a string, returns EOF on end-of-string
+   so that handling of the return value can be uniform for both streams and
+   strings.
+*/
 static int GET( struct _PDCLIB_status_t * status )
 {
-    ++(status->i);
-    ++(status->this);
+    int rc;
     if ( status->stream != NULL )
     {
-        return getc( status->stream );
+        rc = getc( status->stream );
     }
     else
     {
-        return ( *status->s == '\0' ) ? EOF : *((status->s)++);
+        rc = ( *status->s == '\0' ) ? EOF : (unsigned char)*((status->s)++);
     }
+    if ( rc != EOF )
+    {
+        ++(status->i);
+        ++(status->this);
+    }
+    return rc;
 }
 
 
+/* Helper function to put a read character back into the string or stream,
+   whatever is used for input.
+*/
 static void UNGET( int c, struct _PDCLIB_status_t * status )
 {
     if ( status->stream != NULL )
@@ -60,7 +79,7 @@ static void UNGET( int c, struct _PDCLIB_status_t * status )
     }
     else
     {
-        *(--(status->s)) = c;
+        --(status->s);
     }
     --(status->i);
     --(status->this);
@@ -79,7 +98,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         switch ( rc )
         {
             case EOF:
-                /* matching failure */
+                /* input error */
+                if ( status->n == 0 )
+                {
+                    status->n = -1;
+                }
                 return NULL;
             case '%':
                 return ++spec;
@@ -204,16 +227,19 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         case 'c':
         {
             char * c = va_arg( status->arg, char * );
+            /* for %c, default width is one */
             if ( status->width == SIZE_MAX )
             {
                 status->width = 1;
             }
+            /* reading until width reached or input exhausted */
             while ( ( status->this < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 *(c++) = rc;
                 value_parsed = true;
             }
+            /* width or input exhausted */
             if ( value_parsed )
             {
                 ++status->n;
@@ -221,7 +247,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             }
             else
             {
-                /* FIXME: Need two kinds of "no match" here: zero width, and input error */
+                /* input error, no character read */
+                if ( status->n == 0 )
+                {
+                    status->n = -1;
+                }
                 return NULL;
             }
         }
@@ -235,11 +265,13 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 {
                     if ( value_parsed )
                     {
+                        /* matching sequence terminated by whitespace */
                         *c = '\0';
                         return spec;
                     }
                     else
                     {
+                        /* leading whitespace not counted against width */
                         --(status->this);
                     }
                 }
@@ -258,6 +290,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             }
             else
             {
+                /* input error, no character read */
+                if ( status->n == 0 )
+                {
+                    status->n = -1;
+                }
                 return NULL;
             }
         }
@@ -285,8 +322,23 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         while ( ( status->this < status->width ) &&
                 ( ( rc = GET( status ) ) != EOF ) )
         {
-            if ( ! sign )
+            if ( isspace( rc ) )
             {
+                if ( sign )
+                {
+                    /* matching sequence terminated by whitespace */
+                    UNGET( rc, status );
+                    break;
+                }
+                else
+                {
+                    /* leading whitespace not counted against width */
+                    status->this--;
+                }
+            }
+            else if ( ! sign )
+            {
+                /* no sign parsed yet */
                 switch ( rc )
                 {
                     case '-':
@@ -296,6 +348,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                         sign = 1;
                         break;
                     default:
+                        /* not a sign; put back character */
                         sign = 1;
                         UNGET( rc, status );
                         break;
@@ -303,9 +356,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             }
             else if ( ! prefix_parsed )
             {
+                /* no prefix (0x... for hex, 0... for octal) parsed yet */
                 prefix_parsed = true;
                 if ( rc != '0' )
                 {
+                    /* not a prefix; if base not yet set, set to decimal */
                     if ( status->base == 0 )
                     {
                         status->base = 10;
@@ -314,11 +369,14 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 }
                 else
                 {
+                    /* starts with zero, so it might be a prefix. */
+                    /* check what follows next (might be 0x...) */
                     if ( ( status->this < status->width ) &&
                          ( ( rc = GET( status ) ) != EOF ) )
                     {
                         if ( tolower( rc ) == 'x' )
                         {
+                            /* 0x... would be prefix for hex base... */
                             if ( ( status->base == 0 ) ||
                                  ( status->base == 16 ) )
                             {
@@ -326,19 +384,28 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                             }
                             else
                             {
+                                /* ...unless already set to other value */
                                 UNGET( rc, status );
                                 value_parsed = true;
                             }
                         }
                         else
                         {
+                            /* 0... but not 0x.... would be octal prefix */
                             UNGET( rc, status );
                             if ( status->base == 0 )
                             {
                                 status->base = 8;
                             }
+                            /* in any case we have read a zero */
                             value_parsed = true;
                         }
+                    }
+                    else
+                    {
+                        /* failed to read beyond the initial zero */
+                        value_parsed = true;
+                        break;
                     }
                 }
             }
@@ -348,6 +415,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 if ( digitptr == NULL )
                 {
                     /* end of input item */
+                    UNGET( rc, status );
                     break;
                 }
                 value *= status->base;
@@ -355,12 +423,18 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 value_parsed = true;
             }
         }
-        /* width exceeded, EOF, read error, non-matching character */
+        /* width or input exhausted, or non-matching character */
         if ( ! value_parsed )
         {
-            /* matching error */
+            /* out of input before anything could be parsed - input error */
+            /* FIXME: if first character does not match, value_parsed is not set - but it is NOT an input error */
+            if ( status->n == 0 )
+            {
+                status->n = -1;
+            }
             return NULL;
         }
+        /* convert value to target type and assign to parameter */
         switch ( status->flags & ( E_char | E_short | E_long | E_llong |
                                    E_intmax | E_size | E_ptrdiff |
                                    E_unsigned ) )
@@ -383,8 +457,9 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             /* ASSIGN( E_ptrdiff | E_unsigned, unsigned ptrdiff_t ); */
             default:
                 puts( "UNSUPPORTED SCANF FLAG COMBINATION" );
-                return NULL;
+                return NULL; /* behaviour unspecified */
         }
+        ++(status->n);
         return ++spec;
     }
     /* TODO: Floats. */
