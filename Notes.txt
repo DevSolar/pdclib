@@ -1,4 +1,4 @@
-$Id$
+﻿$Id$
 
 Credits
 =======
@@ -30,6 +30,9 @@ the Public Domain which can now be found in <_PDCLIB_config.h>, thanks.
 
 Rod Pemberton, for pointing out several flaws in early versions of PDCLib and
 giving other valuable hints, thanks.
+
+Brian Damgaard, for a very friendly exchange over the fine details of the
+Quicksort algorithm and its implementation in PDCLib, thanks.
 
 Everyone involved in the first, "public" attempt at PDCLib, for bearing with me
 when I restarted from scratch, thanks.
