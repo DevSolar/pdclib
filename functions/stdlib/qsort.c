@@ -34,8 +34,11 @@ static inline void memswp( char * i, char * j, size_t size )
 #define PREPARE_STACK char * stack[STACKSIZE]; char * * stackptr = stack
 #define PUSH( base, limit ) stackptr[0] = base; stackptr[1] = limit; stackptr += 2
 #define POP( base, limit ) stackptr -= 2; base = stackptr[0]; limit = stackptr[1]
-/* TODO: This is platform-dependent */
-#define STACKSIZE 40
+/* TODO: Stack usage is log2( nmemb ) (minus what T shaves off the worst case).
+         Worst-case nmemb is platform dependent and should probably be 
+         configured through _PDCLIB_config.h.
+*/
+#define STACKSIZE 64
 
 void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *, const void * ) )
 {
