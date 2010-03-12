@@ -24,10 +24,6 @@ div_t div( int numer, int denom )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-#ifndef _PDCLIB_CONFIG_H
-#include <_PDCLIB_config.h>
-#endif
-
 int main( void )
 {
     div_t result;
@@ -37,8 +33,8 @@ int main( void )
     TESTCASE( result.quot == -2 && result.rem == -1 );
     result = div( 5, -2 );
     TESTCASE( result.quot == -2 && result.rem == 1 );
-    TESTCASE( sizeof( result.quot ) == _PDCLIB_INT_BYTES );
-    TESTCASE( sizeof( result.rem )  == _PDCLIB_INT_BYTES );
+    TESTCASE( sizeof( result.quot ) == sizeof( int ) );
+    TESTCASE( sizeof( result.rem )  == sizeof( int ) );
     return TEST_RESULTS;
 }
 

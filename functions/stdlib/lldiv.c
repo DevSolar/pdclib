@@ -24,10 +24,6 @@ lldiv_t lldiv( long long int numer, long long int denom )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-#ifndef _PDCLIB_CONFIG_H
-#include <_PDCLIB_config.h>
-#endif
-
 int main( void )
 {
     lldiv_t result;
@@ -37,8 +33,8 @@ int main( void )
     TESTCASE( result.quot == -2 && result.rem == -1 );
     result = lldiv( 5ll, -2ll );
     TESTCASE( result.quot == -2 && result.rem == 1 );
-    TESTCASE( sizeof( result.quot ) == _PDCLIB_LLONG_BYTES );
-    TESTCASE( sizeof( result.rem )  == _PDCLIB_LLONG_BYTES );
+    TESTCASE( sizeof( result.quot ) == sizeof( long long ) );
+    TESTCASE( sizeof( result.rem )  == sizeof( long long ) );
     return TEST_RESULTS;
 }
 
