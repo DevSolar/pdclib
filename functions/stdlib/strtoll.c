@@ -38,11 +38,6 @@ long long int strtoll( const char * s, char ** endptr, int base )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H
-#include <_PDCLIB_int.h>
-#endif
-
 #include <errno.h>
 
 int main( void )
@@ -94,7 +89,7 @@ int main( void )
     /* one-complement and signed magnitude just as well. Anyone having a   */
     /* platform to test this on?                                           */
     errno = 0;
-#if _PDCLIB_LLONG_BYTES == 8
+#if LLONG_MAX == 0x7fffffffffffffffLL
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoll( "0x7FFFFFFFFFFFFFFF", NULL, 0 ) == 0x7fffffffffffffff );
     TESTCASE( errno == 0 );
@@ -108,7 +103,7 @@ int main( void )
     TESTCASE( strtoll( "-0x8000000000000001", NULL, 0 ) == LLONG_MIN );
     TESTCASE( errno == ERANGE );
     /* TODO: test "odd" overflow, i.e. base is not power of two */
-#elif _PDCLIB_LONG_BYTES == 16
+#elif LLONG_MAX == 0x7fffffffffffffffffffffffffffffffLL
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoll( "0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", NULL, 0 ) == 0x7fffffffffffffffffffffffffffffff );
     TESTCASE( errno == 0 );
