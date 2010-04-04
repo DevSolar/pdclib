@@ -7,12 +7,12 @@
 */
 
 #include <stdio.h>
+#include <_PDCLIB_glue.h>
+
 #ifndef REGTEST
 
 #include <stdbool.h>
 #include <string.h>
-
-#include <_PDCLIB_glue.h>
 
 size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
