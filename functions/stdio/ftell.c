@@ -44,7 +44,7 @@ int main( void )
     */
     /* The following functions delegate their tests to here:
        fgetc fflush rewind fputc ungetc fseek
-       flushbuffer seek fillbuffer
+       flushbuffer seek fillbuffer prepread prepwrite
     */
     char * buffer = (char*)malloc( 4 );
     FILE * fh;

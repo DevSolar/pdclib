@@ -8,9 +8,9 @@
 
 #include <stdio.h>
 
-#ifndef REGTEST
-
 #include <_PDCLIB_glue.h>
+
+#ifndef REGTEST
 
 /* Write the value c (cast to unsigned char) to the given stream.
    Returns c if successful, EOF otherwise.

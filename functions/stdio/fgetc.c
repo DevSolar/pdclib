@@ -8,9 +8,9 @@
 
 #include <stdio.h>
 
-#ifndef REGTEST
-
 #include <_PDCLIB_glue.h>
+
+#ifndef REGTEST
 
 int fgetc( struct _PDCLIB_file_t * stream )
 {
