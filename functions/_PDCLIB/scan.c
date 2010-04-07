@@ -299,6 +299,9 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 return NULL;
             }
         }
+        case '[':
+            // TODO: SOLAR
+            break;
         case 'p':
             status->base = 16;
             status->flags |= E_unsigned;
@@ -318,8 +321,6 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     {
         /* integer conversion */
         uintmax_t value = 0;         /* absolute value read */
-        uintmax_t limit;             /* max. value allowed */
-        uintmax_t threshold;         /* overflow threshold */
         bool prefix_parsed = false;
         int sign = 0;
         while ( ( status->this < status->width ) &&
@@ -354,53 +355,6 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                         /* not a sign; put back character */
                         sign = 1;
                         UNGET( rc, status );
-                        break;
-                }
-                switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_intmax | E_size | E_ptrdiff | E_unsigned ) )
-                {
-                    case E_char:
-                        limit = ( sign == 1 ) ? CHAR_MAX : ( CHAR_MIN * sign );
-                        break;
-                    case E_char | E_unsigned:
-                        limit = UCHAR_MAX;
-                        break;
-                    case E_short:
-                        limit = ( sign == 1 ) ? SHRT_MAX : ( SHRT_MIN * sign );
-                        break;
-                    case E_short | E_unsigned:
-                        limit = USHRT_MAX;
-                        break;
-                    case E_long:
-                        limit = ( sign == 1 ) ? LONG_MAX : ( LONG_MIN * sign );
-                        break;
-                    case E_long | E_unsigned:
-                        limit = ULONG_MAX;
-                        break;
-                    case E_llong:
-                        limit = ( sign == 1 ) ? LLONG_MAX : ( LLONG_MIN * sign );
-                        break;
-                    case E_llong | E_unsigned:
-                        limit = ULLONG_MAX;
-                        break;
-                    case E_intmax:
-                        limit = ( sign == 1 ) ? INTMAX_MAX : ( INTMAX_MIN * sign );
-                        break;
-                    case E_intmax | E_unsigned:
-                        limit = UINTMAX_MAX;
-                        break;
-                    case E_size:
-                    case E_size | E_unsigned:
-                        limit = SIZE_MAX;
-                        break;
-                    case E_ptrdiff:
-                    case E_ptrdiff | E_unsigned:
-                        limit = ( sign == 1 ) ? PTRDIFF_MAX : ( PTRDIFF_MIN * sign );
-                        break;
-                    case E_unsigned:
-                        limit = UINT_MAX;
-                        break;
-                    default:
-                        limit = ( sign == 1 ) ? INT_MAX : ( INT_MIN * sign );
                         break;
                 }
             }
@@ -468,20 +422,9 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                     UNGET( rc, status );
                     break;
                 }
-                // SOLAR
-                // if ( ( ( limit - ( digitptr - _PDCLIB_digits ) ) / status->base ) >= value )
-                //if ( ( ( limit / status->base ) >= value ) && ( ( limit - ( digitptr - _PDCLIB_digits ) ) >= ( value * status->base ) ) )
-                {
-                    /* no overflow */
-                    value *= status->base;
-                    value += digitptr - _PDCLIB_digits;
-                    value_parsed = true;
-                }
-                //else
-                //{
-                //    value = limit;
-                //    threshold = 0;
-                //}
+                value *= status->base;
+                value += digitptr - _PDCLIB_digits;
+                value_parsed = true;
             }
         }
         /* width or input exhausted, or non-matching character */
