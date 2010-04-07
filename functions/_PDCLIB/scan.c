@@ -14,6 +14,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stddef.h>
+#include <limits.h>
 
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
@@ -37,7 +38,7 @@
    type:      integer type, used to get the correct type from the parameter
               stack as well as for cast target.
 */
-#define ASSIGN( case_cond, type ) \
+#define ASSIGN_VALUE_TO( case_cond, type ) \
     case case_cond: \
         *( va_arg( status->arg, type * ) ) = (type)( value * sign ); \
         break
@@ -316,7 +317,9 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     if ( status->base != -1 )
     {
         /* integer conversion */
-        uintmax_t value = 0;
+        uintmax_t value = 0;         /* absolute value read */
+        uintmax_t limit;             /* max. value allowed */
+        uintmax_t threshold;         /* overflow threshold */
         bool prefix_parsed = false;
         int sign = 0;
         while ( ( status->this < status->width ) &&
@@ -351,6 +354,53 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                         /* not a sign; put back character */
                         sign = 1;
                         UNGET( rc, status );
+                        break;
+                }
+                switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_intmax | E_size | E_ptrdiff | E_unsigned ) )
+                {
+                    case E_char:
+                        limit = ( sign == 1 ) ? CHAR_MAX : ( CHAR_MIN * sign );
+                        break;
+                    case E_char | E_unsigned:
+                        limit = UCHAR_MAX;
+                        break;
+                    case E_short:
+                        limit = ( sign == 1 ) ? SHRT_MAX : ( SHRT_MIN * sign );
+                        break;
+                    case E_short | E_unsigned:
+                        limit = USHRT_MAX;
+                        break;
+                    case E_long:
+                        limit = ( sign == 1 ) ? LONG_MAX : ( LONG_MIN * sign );
+                        break;
+                    case E_long | E_unsigned:
+                        limit = ULONG_MAX;
+                        break;
+                    case E_llong:
+                        limit = ( sign == 1 ) ? LLONG_MAX : ( LLONG_MIN * sign );
+                        break;
+                    case E_llong | E_unsigned:
+                        limit = ULLONG_MAX;
+                        break;
+                    case E_intmax:
+                        limit = ( sign == 1 ) ? INTMAX_MAX : ( INTMAX_MIN * sign );
+                        break;
+                    case E_intmax | E_unsigned:
+                        limit = UINTMAX_MAX;
+                        break;
+                    case E_size:
+                    case E_size | E_unsigned:
+                        limit = SIZE_MAX;
+                        break;
+                    case E_ptrdiff:
+                    case E_ptrdiff | E_unsigned:
+                        limit = ( sign == 1 ) ? PTRDIFF_MAX : ( PTRDIFF_MIN * sign );
+                        break;
+                    case E_unsigned:
+                        limit = UINT_MAX;
+                        break;
+                    default:
+                        limit = ( sign == 1 ) ? INT_MAX : ( INT_MIN * sign );
                         break;
                 }
             }
@@ -418,9 +468,20 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                     UNGET( rc, status );
                     break;
                 }
-                value *= status->base;
-                value += digitptr - _PDCLIB_digits;
-                value_parsed = true;
+                // SOLAR
+                // if ( ( ( limit - ( digitptr - _PDCLIB_digits ) ) / status->base ) >= value )
+                //if ( ( ( limit / status->base ) >= value ) && ( ( limit - ( digitptr - _PDCLIB_digits ) ) >= ( value * status->base ) ) )
+                {
+                    /* no overflow */
+                    value *= status->base;
+                    value += digitptr - _PDCLIB_digits;
+                    value_parsed = true;
+                }
+                //else
+                //{
+                //    value = limit;
+                //    threshold = 0;
+                //}
             }
         }
         /* width or input exhausted, or non-matching character */
@@ -428,7 +489,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         {
             /* out of input before anything could be parsed - input error */
             /* FIXME: if first character does not match, value_parsed is not set - but it is NOT an input error */
-            if ( status->n == 0 )
+            if ( ( status->n == 0 ) && ( rc == EOF ) )
             {
                 status->n = -1;
             }
@@ -439,22 +500,22 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                                    E_intmax | E_size | E_ptrdiff |
                                    E_unsigned ) )
         {
-            ASSIGN( E_char, char );
-            ASSIGN( E_char | E_unsigned, unsigned char );
-            ASSIGN( E_short, short );
-            ASSIGN( E_short | E_unsigned, unsigned short );
-            ASSIGN( 0, int );
-            ASSIGN( E_unsigned, unsigned int );
-            ASSIGN( E_long, long );
-            ASSIGN( E_long | E_unsigned, unsigned long );
-            ASSIGN( E_llong, long long );
-            ASSIGN( E_llong | E_unsigned, unsigned long long );
-            ASSIGN( E_intmax, intmax_t );
-            ASSIGN( E_intmax | E_unsigned, uintmax_t );
-            ASSIGN( E_size, size_t );
-            /* ASSIGN( E_size | E_unsigned, unsigned size_t ); */
-            ASSIGN( E_ptrdiff, ptrdiff_t );
-            /* ASSIGN( E_ptrdiff | E_unsigned, unsigned ptrdiff_t ); */
+            ASSIGN_VALUE_TO( E_char, char );
+            ASSIGN_VALUE_TO( E_char | E_unsigned, unsigned char );
+            ASSIGN_VALUE_TO( E_short, short );
+            ASSIGN_VALUE_TO( E_short | E_unsigned, unsigned short );
+            ASSIGN_VALUE_TO( 0, int );
+            ASSIGN_VALUE_TO( E_unsigned, unsigned int );
+            ASSIGN_VALUE_TO( E_long, long );
+            ASSIGN_VALUE_TO( E_long | E_unsigned, unsigned long );
+            ASSIGN_VALUE_TO( E_llong, long long );
+            ASSIGN_VALUE_TO( E_llong | E_unsigned, unsigned long long );
+            ASSIGN_VALUE_TO( E_intmax, intmax_t );
+            ASSIGN_VALUE_TO( E_intmax | E_unsigned, uintmax_t );
+            ASSIGN_VALUE_TO( E_size, size_t );
+            /* ASSIGN_VALUE_TO( E_size | E_unsigned, unsigned size_t ); */
+            ASSIGN_VALUE_TO( E_ptrdiff, ptrdiff_t );
+            /* ASSIGN_VALUE_TO( E_ptrdiff | E_unsigned, unsigned ptrdiff_t ); */
             default:
                 puts( "UNSUPPORTED SCANF FLAG COMBINATION" );
                 return NULL; /* behaviour unspecified */
