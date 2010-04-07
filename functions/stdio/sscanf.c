@@ -29,13 +29,10 @@ int sscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict forma
 #include <string.h>
 #include <limits.h>
 
-#define symbol2value( x ) #x
-#define symbol2string( x ) symbol2value( x )
-
-#define CHECK_TRUE( a ) do { if ( a == 0 ) { fprintf( stderr, "Unexpected failure in " symbol2string( __LINE__ ) ": '" #a "' evaluated to false.\n" ); rc += 1; } } while ( 0 )
-#define CHECK_FALSE( a ) do { if ( a != 0 ) { fprintf( stderr, "Unexpected failure in " symbol2string( __LINE__ ) ": '" #a "' evaluated to true.\n" ); rc += 1; } } while ( 0 )
-#define CHECK_EQUAL( a, b ) do { int x = a; int y = b; if ( x != y ) { fprintf( stderr, "Mismatch in " symbol2string( __LINE__ ) ": result is %d, expected %d.\n", x, y ); rc += 1; } } while ( 0 )
-#define CHECK_FEQUAL( a, b, T, F ) do { T x = a; T y = b; if ( x != y ) { fprintf( stderr, "Mismatch in " symbol2string( __LINE__ ) ": result is " F ", expected " F ".\n", x, y ); rc += 1; } } while ( 0 )
+#define CHECK_TRUE( a ) TESTCASE( a != 0 )
+#define CHECK_FALSE( a ) TESTCASE( a == 0 )
+#define CHECK_EQUAL( a, b ) do { int x = a; int y = b; TESTCASE( x == y ); } while ( 0 )
+#define CHECK_FEQUAL( a, b, T, F ) do { T x = a; T y = b; TESTCASE( x == y ); } while ( 0 )
 
 // literal matches, character matches, and basic integer matches
 void suite_one( void );
@@ -47,6 +44,8 @@ void suite_three( void );
 void suite_four( void );
 // string matches
 void suite_five( void );
+// 0xz special case
+void suite_six( void );
 
 int main()
 {
@@ -55,6 +54,11 @@ int main()
     suite_three();
     suite_four();
     suite_five();
+#ifndef REGTEST
+    // This test driver fails for many common libraries, so it's disabled for
+    // regression testing. See the function for explanation.
+    suite_six();
+#endif
 }
 
 // literal matches, character matches, and basic integer matches
@@ -1017,8 +1021,8 @@ void suite_three()
     char const * string = "-0x0 -0x000 -0x7f 0x80 0xff -0x7fff 0x8000\n"
                           "0xffff -0x7fffffff 0x80000000 0xffffffff\n"
                           "-0x7fffffffffffffff 0x8000000000000000\n"
-                          "0xffffffffffffffff -0x\n";
-    CHECK_EQUAL( string[145], '\n' );
+                          "0xffffffffffffffff\n";
+    CHECK_EQUAL( string[141], '\n' );
     {
     // reading 0, x
     unsigned char i = -1;
@@ -1034,14 +1038,6 @@ void suite_three()
     CHECK_EQUAL( sscanf( string + 0, "%hhx%n", &i, &n ), 1 );
     CHECK_EQUAL( i, 0 );
     CHECK_EQUAL( n, 4 );
-    }
-    {
-    // reading -0x, x
-    unsigned char i = -1;
-    int n;
-    CHECK_EQUAL( sscanf( string + 142, "%hhx%n", &i, &n ), 1 );
-    CHECK_EQUAL( i, 0 );
-    CHECK_EQUAL( n, 3 );
     }
     {
     // reading 0x000, x
@@ -1080,7 +1076,7 @@ void suite_three()
     signed char i = -1;
     int n;
     CHECK_EQUAL( sscanf( string + 18, "%hhi%n", &i, &n ), 1 );
-    CHECK_FEQUAL( i, -128, signed char, "%hd" );
+    CHECK_FEQUAL( i, -128, signed char, "%hhd" );
     CHECK_EQUAL( n, 4 );
     }
     {
@@ -1122,14 +1118,6 @@ void suite_three()
     CHECK_EQUAL( sscanf( string + 0, "%hx%n", &i, &n ), 1 );
     CHECK_EQUAL( i, 0 );
     CHECK_EQUAL( n, 4 );
-    }
-    {
-    // reading -0x, x
-    unsigned short i = -1;
-    int n;
-    CHECK_EQUAL( sscanf( string + 142, "%hx%n", &i, &n ), 1 );
-    CHECK_EQUAL( i, 0 );
-    CHECK_EQUAL( n, 3 );
     }
     {
     // reading 0x000, x
@@ -1212,14 +1200,6 @@ void suite_three()
     CHECK_EQUAL( n, 4 );
     }
     {
-    // reading -0x, x
-    unsigned int i = -1;
-    int n;
-    CHECK_EQUAL( sscanf( string + 142, "%x%n", &i, &n ), 1 );
-    CHECK_EQUAL( i, 0 );
-    CHECK_EQUAL( n, 3 );
-    }
-    {
     // reading 0x000, x
     unsigned int i = -1;
     int n;
@@ -1255,9 +1235,10 @@ void suite_three()
     // reading 0x80000000, i
     signed int i = -1;
     int n;
-    CHECK_EQUAL( sscanf( string + 62, "%i%n", &i, &n ), 1 );
-    CHECK_FEQUAL( i, 2147483647, signed int, "%d" ); // NOT overflowing, see strtol() specs.
-    CHECK_EQUAL( n, 10 );
+    //CHECK_EQUAL( sscanf( string + 62, "%i%n", &i, &n ), 1 );
+    CHECK_EQUAL( sscanf( "-0x80000000", "%i%n", &i, &n ), 1 );
+    CHECK_FEQUAL( i, -2147483648, signed int, "%d" );
+    CHECK_EQUAL( n, 11 );
     }
     {
     // reading ffffffff, x
@@ -1273,14 +1254,6 @@ void suite_three()
     int n;
     CHECK_EQUAL( sscanf( string + 73, "%x%n", &i, &n ), 1 );
     CHECK_FEQUAL( i, 4294967295, unsigned int, "%d" );
-    CHECK_EQUAL( n, 10 );
-    }
-    {
-    // reading 0xffffffff, i
-    signed int i = 0;
-    int n;
-    CHECK_EQUAL( sscanf( string + 73, "%i%n", &i, &n ), 1 );
-    CHECK_FEQUAL( i, 2147483647, signed int, "%d" ); // NOT overflowing; see strtol() specs.
     CHECK_EQUAL( n, 10 );
     }
 }
@@ -1599,4 +1572,74 @@ void suite_five()
     }
 }
 
+void suite_six()
+{
+    char const * string = "-0xz\n";
+    CHECK_EQUAL( string[4], '\n' );
+    {
+    // reading -0x, x
+    unsigned char i = 1;
+    int n = -1;
+    /* Most existing libraries disagree with this test driver, so a little
+       explanation of why PDCLib chose the implementation it did might be
+       necessary. All references are from ISO/IEC 9899:1999 "Programming
+       languages - C". Wording critical to the explanation is in UPPERCASE.
+       6.4.4.1 Integer constants - states that '0' is a valid (hexa)decimal
+           constant, whereas '0x' IS NOT.
+       7.19.6.2 The fscanf function - states...
+           ...in paragraph 9 that "an INPUT ITEM is defined as the longest
+               sequence of input characters [...] which is, OR IS A PREFIX OF,
+               a matching input sequence".
+           ...in paragraph 10 that "if the INPUT ITEM is not a matching
+               sequence, the execution of THE DIRECTIVE FAILS; this condition
+               is a matching failure".
+           ...in footnote 242) that "fscanf pushes back AT MOST ONE input
+               character onto the input stream."
+           ...in paragraph 12 that either of the conversion specifiers d, i,
+              o, u, or x "matches an [...] integer whose format is the same as
+              expected for THE SUBJECT SEQUENCE of the [strtol|strtoul]
+              function".
+       7.20.1.4 The strtol, strtoll, strtoul, and strtoull functions - states
+           in paragraph 3 that "the EXPECTED FORM OF THE SUBJECT SEQUENCE is
+           that of an integer constant AS DESCRIBED IN 6.4.4.1".
+       These parts of the standard result in the following reasoning:
+       - The longest sequence of input characters which is a prefix of a
+         matching input sequence is "-0x" (negative sign, hexadecimal-prefix).
+         The 'z' is the first character remaining unread as "-0xz" is not a
+         (prefix of a) matching input sequence. This is according to 7.19.6.2
+         paragraph 9.
+       - "0x", without a valid hexadecimal digit following it, is not a valid
+         integer constant according to 6.4.4.1.
+       - "0x" is thus also not of the expected form for a strto[u]l subject
+         sequence according to 7.20.1.4 paragraph 3. (strto[u]l() would parse
+         it as zero, but leave the "x" in the final string, i.e. outside the
+         subject sequence.)
+       - "0x" is therefore also not a matching sequence to the i or x
+         conversion specifier according to 7.19.6.2 paragraph 12.
+       - The conversion should therefore result in a matching failure
+         according to 7.19.6.2 paragraph 10.
+    */
+    CHECK_EQUAL( sscanf( string, "%hhx%n", &i, &n ), 0 );
+    CHECK_EQUAL( i, 1 );
+    CHECK_EQUAL( n, -1 );
+    }
+    {
+    // reading -0x, x
+    unsigned short i = 1;
+    int n = -1;
+    CHECK_EQUAL( sscanf( string, "%hx%n", &i, &n ), 0 );
+    CHECK_EQUAL( i, 1 );
+    CHECK_EQUAL( n, -1 );
+    }
+    {
+    // reading -0x, x
+    unsigned int i = 1;
+    int n = -1;
+    CHECK_EQUAL( sscanf( string, "%x%n", &i, &n ), 0 );
+    CHECK_EQUAL( i, 1 );
+    CHECK_EQUAL( n, -1 );
+    }
+}
+
 #endif
+
