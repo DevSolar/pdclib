@@ -141,7 +141,7 @@ struct _PDCLIB_lldiv_t
 
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
 #define _PDCLIB_intmax long long int
-#define _PDCLIB_INTMAX LLINT
+#define _PDCLIB_INTMAX LLONG
 /* You are also required to state the literal suffix for the intmax type      */
 #define _PDCLIB_INTMAX_LITERAL ll
 
