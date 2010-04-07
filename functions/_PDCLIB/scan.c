@@ -87,6 +87,14 @@ static void UNGET( int c, struct _PDCLIB_status_t * status )
 }
 
 
+/* Helper function to check if a character is part of a given scanset */
+static bool NOT_IN_SCANSET( const char * start_scanlist, const char * end_scanlist, bool negate_scanlist, int rc )
+{
+    // SOLAR
+    return true;
+}
+
+
 const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 {
     /* generic input character */
@@ -264,20 +272,23 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             {
                 if ( isspace( rc ) )
                 {
+                    UNGET( rc, status );
                     if ( value_parsed )
                     {
                         /* matching sequence terminated by whitespace */
                         *c = '\0';
-                        return spec;
+                        ++status->n;
+                        return ++spec;
                     }
                     else
                     {
-                        /* leading whitespace not counted against width */
-                        --(status->this);
+                        /* matching error */
+                        return NULL;
                     }
                 }
                 else
                 {
+                    /* match */
                     value_parsed = true;
                     *(c++) = rc;
                 }
@@ -300,8 +311,47 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             }
         }
         case '[':
-            // TODO: SOLAR
-            break;
+        {
+            const char * endspec = spec;
+            bool negative_scanlist = false;
+            if ( *(++endspec) == '^' )
+            {
+                negative_scanlist = true;
+                ++endspec;
+            }
+            spec = endspec;
+            do
+            {
+                // TODO: This can run beyond a malformed format string
+                ++endspec;
+            } while ( *endspec != ']' );
+            // read according to scanlist, equiv. to %s above
+            char * c = va_arg( status->arg, char * );
+            while ( ( status->this < status->width ) && 
+                    ( ( rc = GET( status ) ) != EOF ) )
+            {
+                if ( NOT_IN_SCANSET( spec, endspec, negative_scanlist, rc ) )
+                {
+                    break;
+                }
+                value_parsed = true;
+                *(c++) = rc;
+            }
+            if ( value_parsed )
+            {
+                *c = '\0';
+                ++status->n;
+                return ++endspec;
+            }
+            else
+            {
+                if ( status->n == 0 )
+                {
+                    status->n = -1;
+                }
+                return NULL;
+            }
+        }
         case 'p':
             status->base = 16;
             status->flags |= E_unsigned;
