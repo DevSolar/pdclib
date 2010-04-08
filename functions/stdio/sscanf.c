@@ -1544,7 +1544,9 @@ void suite_five()
     // missing on first character
     memset( buffer, '\0', BUFSIZE );
     int n;
-    CHECK_EQUAL( sscanf( string + 0, "%[b]%n", buffer, &n ), 0 );
+    int rc_ = sscanf( string + 0, "%[b]%n", buffer, &n );
+    CHECK_EQUAL( rc_, 0 );
+    //CHECK_EQUAL( sscanf( string + 0, "%[b]%n", buffer, &n ), 0 );
     CHECK_FALSE( memcmp( buffer, "", 1 ) );
     }
     {
