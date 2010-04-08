@@ -88,10 +88,40 @@ static void UNGET( int c, struct _PDCLIB_status_t * status )
 
 
 /* Helper function to check if a character is part of a given scanset */
-static bool NOT_IN_SCANSET( const char * start_scanlist, const char * end_scanlist, bool negate_scanlist, int rc )
+static bool IN_SCANSET( const char * scanlist, const char * end_scanlist, int rc )
 {
     // SOLAR
-    return true;
+    int previous = -1;
+    while ( scanlist != end_scanlist )
+    {
+        if ( ( *scanlist == '-' ) && ( previous != -1 ) )
+        {
+            /* possible scangroup ("a-z") */
+            if ( ++scanlist == end_scanlist )
+            {
+                /* '-' at end of scanlist does not describe a scangroup */
+                return rc == '-';
+            }
+            while ( ++previous <= (unsigned char)*scanlist )
+            {
+                if ( previous == rc )
+                {
+                    return true;
+                }
+            }
+            previous = -1;
+        }
+        else
+        {
+            /* not a scangroup, check verbatim */
+            if ( rc == (unsigned char)*scanlist )
+            {
+                return true;
+            }
+            previous = (unsigned char)(*scanlist++);
+        }
+    }
+    return false;
 }
 
 
@@ -330,9 +360,21 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             while ( ( status->this < status->width ) && 
                     ( ( rc = GET( status ) ) != EOF ) )
             {
-                if ( NOT_IN_SCANSET( spec, endspec, negative_scanlist, rc ) )
+                if ( negative_scanlist )
                 {
-                    break;
+                    if ( IN_SCANSET( spec, endspec, rc ) )
+                    {
+                        UNGET( rc, status );
+                        break;
+                    }
+                }
+                else
+                {
+                    if ( ! IN_SCANSET( spec, endspec, rc ) )
+                    {
+                        UNGET( rc, status );
+                        break;
+                    }
                 }
                 value_parsed = true;
                 *(c++) = rc;
@@ -345,7 +387,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             }
             else
             {
-                if ( status->n == 0 )
+                if ( rc == EOF )
                 {
                     status->n = -1;
                 }
