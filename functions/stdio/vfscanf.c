@@ -19,7 +19,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
     status.flags = 0;
     status.n = 0; 
     status.i = 0;
-    status.this = 0;
+    status.current = 0;
     status.s = NULL;
     status.width = 0;
     status.prec = 0;

@@ -315,18 +315,18 @@ struct _PDCLIB_memnode_t
 /* Status structure required by _PDCLIB_print(). */
 struct _PDCLIB_status_t
 {
-    int              base;  /* base to which the value shall be converted    */
+    int              base;   /* base to which the value shall be converted   */
     _PDCLIB_int_fast32_t flags; /* flags and length modifiers                */
-    _PDCLIB_size_t   n;     /* print: maximum characters to be written       */
-                            /* scan:  number matched conversion specifiers   */
-    _PDCLIB_size_t   i;     /* number of characters read/written             */
-    _PDCLIB_size_t   this;  /* chars read/written in the CURRENT conversion  */
-    char *           s;     /* *sprintf(): target buffer                     */
-                            /* *sscanf():  source string                     */
-    _PDCLIB_size_t   width; /* specified field width                         */
-    _PDCLIB_size_t   prec;  /* specified field precision                     */
+    _PDCLIB_size_t   n;      /* print: maximum characters to be written      */
+                             /* scan:  number matched conversion specifiers  */
+    _PDCLIB_size_t   i;      /* number of characters read/written            */
+    _PDCLIB_size_t   current;/* chars read/written in the CURRENT conversion */
+    char *           s;      /* *sprintf(): target buffer                    */
+                             /* *sscanf():  source string                    */
+    _PDCLIB_size_t   width;  /* specified field width                        */
+    _PDCLIB_size_t   prec;   /* specified field precision                    */
     struct _PDCLIB_file_t * stream; /* *fprintf() / *fscanf() stream         */
-    _PDCLIB_va_list  arg;   /* argument stack                                */
+    _PDCLIB_va_list  arg;    /* argument stack                               */
 };
 
 /* -------------------------------------------------------------------------- */

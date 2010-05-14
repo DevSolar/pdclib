@@ -67,7 +67,7 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
        already so it will be taken into account when the deepestmost recursion
        does the prefix / padding stuff.
     */
-    ++(status->this);
+    ++(status->current);
     if ( ( value / status->base ) != 0 )
     {
         /* More digits to be done - recurse deeper */
@@ -110,7 +110,7 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
             }
         }
         {
-        size_t prec_pads = ( status->prec > status->this ) ? ( status->prec - status->this ) : 0;
+        size_t prec_pads = ( status->prec > status->current ) ? ( status->prec - status->current ) : 0;
         if ( ! ( status->flags & ( E_minus | E_zero ) ) )
         {
             /* Space padding is only done if no zero padding or left alignment
@@ -121,7 +121,7 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
                I've ever perpetrated. Greetings to Samface, DevL, and all
                sceners at Breakpoint 2006.
             */
-            size_t characters = preidx + ( ( status->this > status->prec ) ? status->this : status->prec );
+            size_t characters = preidx + ( ( status->current > status->prec ) ? status->current : status->prec );
             if ( status->width > characters )
             {
                 for ( size_t i = 0; i < status->width - characters; ++i )
@@ -147,7 +147,7 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
                         ++(status->i);
                     } while ( 0 );
                     */
-                    ++(status->this);
+                    ++(status->current);
                 }
             }
         }
@@ -156,17 +156,17 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
         while ( preface[ preidx ] != '\0' )
         {
             DELIVER( preface[ preidx++ ] );
-            ++(status->this);
+            ++(status->current);
         }
         if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
         {
             /* If field is not left aligned, and zero padding is requested, do
                so.
             */
-            while ( status->this < status->width )
+            while ( status->current < status->width )
             {
                 DELIVER( '0' );
-                ++(status->this);
+                ++(status->current);
             }
         }
         /* Do the precision padding if necessary. */
@@ -208,7 +208,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
     /* Initializing status structure */
     status->flags = 0;
     status->base  = 0;
-    status->this  = 0;
+    status->current  = 0;
     status->width = 0;
     status->prec  = 0;
 
@@ -458,7 +458,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                     value = (uintmax_t)va_arg( status->arg, size_t );
                     break;
             }
-            ++(status->this);
+            ++(status->current);
             if ( ( value / status->base ) != 0 )
             {
                 int2base( (intmax_t)(value / status->base), status );
@@ -506,10 +506,10 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         }
         if ( status->flags & E_minus )
         {
-            while ( status->this < status->width )
+            while ( status->current < status->width )
             {
                 DELIVER( ' ' );
-                ++(status->this);
+                ++(status->current);
             }
         }
         if ( status->i >= status->n )
@@ -528,13 +528,13 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 
 static int testprintf( char * buffer, size_t n, const char * format, ... )
 {
-    /* Members: base, flags, n, i, this, s, width, prec, stream, arg         */
+    /* Members: base, flags, n, i, current, s, width, prec, stream, arg      */
     struct _PDCLIB_status_t status;
     status.base = 0;
     status.flags = 0;
     status.n = n;
     status.i = 0;
-    status.this = 0;
+    status.current = 0;
     status.s = buffer;
     status.width = 0;
     status.prec = 0;

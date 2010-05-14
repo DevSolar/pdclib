@@ -14,13 +14,13 @@
 int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
-    /* Members: base, flags, n, i, this, s, width, prec, stream, arg         */
+    /* Members: base, flags, n, i, current, s, width, prec, stream, arg         */
     struct _PDCLIB_status_t status;
     status.base = 0;
     status.flags = 0;
     status.n = n;
     status.i = 0;
-    status.this = 0;
+    status.current = 0;
     status.s = s;
     status.width = 0;
     status.prec = 0;

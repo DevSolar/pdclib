@@ -63,7 +63,7 @@ static int GET( struct _PDCLIB_status_t * status )
     if ( rc != EOF )
     {
         ++(status->i);
-        ++(status->this);
+        ++(status->current);
     }
     return rc;
 }
@@ -83,7 +83,7 @@ static void UNGET( int c, struct _PDCLIB_status_t * status )
         --(status->s);
     }
     --(status->i);
-    --(status->this);
+    --(status->current);
 }
 
 
@@ -153,7 +153,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     /* Initializing status structure */
     status->flags = 0;
     status->base = -1;
-    status->this = 0;
+    status->current = 0;
     status->width = 0;
     status->prec = 0;
 
@@ -272,7 +272,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 status->width = 1;
             }
             /* reading until width reached or input exhausted */
-            while ( ( status->this < status->width ) &&
+            while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 *(c++) = rc;
@@ -297,7 +297,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         case 's':
         {
             char * c = va_arg( status->arg, char * );
-            while ( ( status->this < status->width ) && 
+            while ( ( status->current < status->width ) && 
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 if ( isspace( rc ) )
@@ -357,7 +357,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             } while ( *endspec != ']' );
             // read according to scanlist, equiv. to %s above
             char * c = va_arg( status->arg, char * );
-            while ( ( status->this < status->width ) && 
+            while ( ( status->current < status->width ) && 
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 if ( negative_scanlist )
@@ -415,7 +415,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         uintmax_t value = 0;         /* absolute value read */
         bool prefix_parsed = false;
         int sign = 0;
-        while ( ( status->this < status->width ) &&
+        while ( ( status->current < status->width ) &&
                 ( ( rc = GET( status ) ) != EOF ) )
         {
             if ( isspace( rc ) )
@@ -429,7 +429,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 else
                 {
                     /* leading whitespace not counted against width */
-                    status->this--;
+                    status->current--;
                 }
             }
             else if ( ! sign )
@@ -467,7 +467,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 {
                     /* starts with zero, so it might be a prefix. */
                     /* check what follows next (might be 0x...) */
-                    if ( ( status->this < status->width ) &&
+                    if ( ( status->current < status->width ) &&
                          ( ( rc = GET( status ) ) != EOF ) )
                     {
                         if ( tolower( rc ) == 'x' )
