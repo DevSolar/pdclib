@@ -19,7 +19,7 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
     status.flags = 0;
     status.n = 0; 
     status.i = 0;
-    status.this = 0;
+    status.current = 0;
     status.s = (char *)s;
     status.width = 0;
     status.prec = 0;
