@@ -68,7 +68,8 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
     }
 
     /* parsed to end of string */
-    return ( tmp = NULL );
+    tmp = NULL;
+    return s1;
 }
 
 #endif
