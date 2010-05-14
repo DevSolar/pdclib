@@ -24,35 +24,39 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
     status.width = 0;
     status.prec = 0;
     status.stream = stream;
+    // = { 0, 0, 0, 0, 0, NULL, 0, 0, stream }
     va_copy( status.arg, arg );
-    // FIXME: This whole shebang should operate on STREAM, not S...
     while ( *format != '\0' )
     {
         const char * rc;
         if ( ( *format != '%' ) || ( ( rc = _PDCLIB_scan( format, &status ) ) == format ) )
         {
+            int c;
             /* No conversion specifier, match verbatim */
             if ( isspace( *format ) )
             {
                 /* Whitespace char in format string: Skip all whitespaces */
-                /* No whitespaces in input do not result in matching error */
-                while ( isspace( *status.s ) )
+                /* No whitespaces in input does not result in matching error */
+                while ( isspace( c = getc( stream ) ) )
                 {
-                    ++status.s;
                     ++status.i;
+                }
+                if ( c != EOF )
+                {
+                    ungetc( c, stream );
                 }
             }
             else
             {
                 /* Non-whitespace char in format string: Match verbatim */
-                if ( *status.s != *format )
+                if ( ( c = getc( stream ) ) != *format )
                 {
                     /* Matching error */
+                    ungetc( c, stream );
                     return status.n;
                 }
                 else
                 {
-                    ++status.s;
                     ++status.i;
                 }
             }
@@ -80,6 +84,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
 
 int main( void )
 {
+    /* TODO: Check whitespace / EOF / ungetc handling */
     TESTCASE( NO_TESTDRIVER );
     return TEST_RESULTS;
 }
