@@ -21,16 +21,16 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
         *s = '\0';
         return s;
     }
-    if ( _PDCLIB_prepread( stdin ) == EOF )
+    if ( _PDCLIB_prepread( stream ) == EOF )
     {
         return NULL;
     }
     char * dest = s;
-    while ( ( ( *dest = stdin->buffer[stdin->bufidx++] ) != '\n' ) && --size > 0 )
+    while ( ( ( *dest = stream->buffer[stream->bufidx++] ) != '\n' ) && --size > 0 )
     {
-        if ( stdin->bufidx == stdin->bufend )
+        if ( stream->bufidx == stream->bufend )
         {
-            if ( _PDCLIB_fillbuffer( stdin ) == EOF )
+            if ( _PDCLIB_fillbuffer( stream ) == EOF )
             {
                 /* EOF adds \0, error leaves target indeterminate, so we can
                    just add the \0 anyway.
