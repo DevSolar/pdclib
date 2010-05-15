@@ -1,4 +1,4 @@
-# $Id: Makefile 393 2010-03-12 11:08:14Z solar $
+# $Id$
 
 # This is where you chose which platform to compile for (see 'make links' / './platform')
 PLATFORM := example_cygwin
