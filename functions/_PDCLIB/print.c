@@ -15,7 +15,9 @@
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
 */
-/* FIXME: one too many flags to work on a 16-bit machine */
+/* FIXME: one too many flags to work on a 16-bit machine, join some (e.g. the
+          width flags) into a combined field.
+*/
 #define E_minus    1<<0
 #define E_plus     1<<1
 #define E_alt      1<<2
@@ -40,7 +42,7 @@
    i - pointer to number of characters already delivered in this call
    n - pointer to maximum number of characters to be delivered in this call
    s - the buffer into which the character shall be delivered
-   FIXME: ref. fputs() for a better way to buffer handling
+   TODO: ref. fputs() for a better way to buffer handling
 */
 #define DELIVER( x ) \
 do { \
@@ -253,7 +255,6 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
     if ( *spec == '*' )
     {
         /* Retrieve width value from argument stack */
-#if 1
         int width = va_arg( status->arg, int );
         if ( width < 0 )
         {
@@ -264,15 +265,6 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         {
             status->width = width;
         }
-#else
-        /* FIXME: Old version - with unsigned status->width, condition <0 is never true */
-        if ( ( status->width = va_arg( status->arg, int ) ) < 0 )
-        {
-            /* Negative value is '-' flag plus absolute value */
-            status->flags |= E_minus;
-            status->width *= -1;
-        }
-#endif
         ++spec;
     }
     else
