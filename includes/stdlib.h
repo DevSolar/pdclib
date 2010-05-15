@@ -52,6 +52,9 @@ long double strtold( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restri
    LLONG_MIN, LLONG_MAX, or ULLONG_MAX respectively, depending on the sign of
    the integer representation and the return type, and errno is set to ERANGE.
 */
+/* There is strtoimax() and strtoumax() in <inttypes.h> operating on intmax_t /
+   uintmax_t, if the long long versions do not suit your needs.
+*/
 long int strtol( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
 long long int strtoll( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
 unsigned long int strtoul( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
