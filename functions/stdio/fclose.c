@@ -14,7 +14,6 @@
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
-/* FIXME: Last file not removed from list. */
 int fclose( struct _PDCLIB_file_t * stream )
 {
     struct _PDCLIB_file_t * current = _PDCLIB_filelist;
