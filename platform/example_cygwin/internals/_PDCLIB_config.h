@@ -145,6 +145,15 @@ struct _PDCLIB_lldiv_t
 /* You are also required to state the literal suffix for the intmax type      */
 #define _PDCLIB_INTMAX_LITERAL ll
 
+/* <inttypes.h> defines imaxdiv(), which is equivalent to the div() function  */
+/* family (see further above) with intmax_t as basis.                         */
+
+struct _PDCLIB_imaxdiv_t
+{
+    _PDCLIB_intmax quot;
+    _PDCLIB_intmax rem;
+};
+
 /* -------------------------------------------------------------------------- */
 /* Floating Point                                                             */
 /* -------------------------------------------------------------------------- */
