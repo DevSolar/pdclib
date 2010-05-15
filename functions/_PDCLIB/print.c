@@ -259,7 +259,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         if ( width < 0 )
         {
             status->flags |= E_minus;
-            status->width = width * -1; /* FIXME: Should be abs( width ) */
+            status->width = abs( width );
         }
         else
         {
