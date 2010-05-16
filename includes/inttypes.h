@@ -13,6 +13,8 @@
 
 typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 
+#define SCNu32 "u"
+#define PRNu32 "u"
 /* TODO: Print / Scan Macros */
 /*
 PRId8   PRIdLEAST8   PRIdFAST8   PRIdMAX

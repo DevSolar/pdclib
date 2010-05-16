@@ -263,6 +263,7 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_EOFFLAG     2048u
 #define _PDCLIB_WIDESTREAM  4096u
 #define _PDCLIB_BYTESTREAM  8192u
+#define _PDCLIB_DELONCLOSE 16384u
 
 /* Position / status structure for getpos() / fsetpos(). */
 struct _PDCLIB_fpos_t

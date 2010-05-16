@@ -32,11 +32,6 @@ int fclose( struct _PDCLIB_file_t * stream )
                     return EOF;
                 }
             }
-            /* Free buffer */
-            if ( stream->status & _PDCLIB_LIBBUFFER )
-            {
-                free( stream->buffer );
-            }
             /* Close handle */
             _PDCLIB_close( stream->handle );
             /* Remove stream from list */

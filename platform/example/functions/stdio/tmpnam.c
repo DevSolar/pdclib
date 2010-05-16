@@ -7,14 +7,23 @@
 */
 
 #include <stdio.h>
-#include <stdarg.h>
 
 #ifndef REGTEST
 
+#include <string.h>
+#include <_PDCLIB_glue.h>
+
 char * tmpnam( char * s )
 {
-    /* TODO: Implement. */
-    return NULL;
+    static char filename[ L_tmpnam ];
+    FILE * file = tmpfile();
+    if ( s == NULL )
+    {
+        s = filename;
+    }
+    strcpy( s, file->filename );
+    fclose( file );
+    return s;
 }
 
 #endif
@@ -22,10 +31,13 @@ char * tmpnam( char * s )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
+#include <string.h>
+
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    TESTCASE( strlen( tmpnam( NULL ) ) < L_tmpnam );
     return TEST_RESULTS;
 }
 
 #endif
+
