@@ -11,20 +11,30 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
+#include <string.h>
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
 {
     struct _PDCLIB_file_t * rc;
+    size_t filename_len;
     if ( mode == NULL || filename == NULL || filename[0] == '\0' )
     {
         /* Mode or filename invalid */
         return NULL;
     }
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) ) ) == NULL )
+    /* To reduce the number of malloc calls, all data fields are concatenated:
+       * the FILE structure itself,
+       * ungetc buffer,
+       * filename buffer,
+       * data buffer.
+       Data buffer comes last because it might change in size ( setvbuf() ).
+    */
+    filename_len = strlen( filename ) + 1;
+    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + filename_len + BUFSIZ ) ) == NULL )
     {
-        /* no memory for another FILE */
+        /* no memory */
         return NULL;
     }
     if ( ( rc->status = _PDCLIB_filemode( mode ) ) == 0 ) 
@@ -40,21 +50,13 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
         free( rc );
         return NULL;
     }
-    /* Adding to list of open files */
-    rc->next = _PDCLIB_filelist;
-    _PDCLIB_filelist = rc;
-    /* Setting buffer, and mark as internal. TODO: Check for unbuffered */
-    if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL )
-    {
-        free( rc );
-        return NULL;
-    }
-    if ( ( rc->ungetbuf = malloc( _PDCLIB_UNGETCBUFSIZE ) ) == NULL )
-    {
-       free( rc->buffer );
-       free( rc );
-       return NULL;
-    }
+    /* Setting pointers into the memory block allocated above */
+    rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
+    rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
+    rc->buffer   = rc->filename + filename_len;
+    /* Copying filename to FILE structure */
+    strcpy( rc->filename, filename );
+    /* Initializing the rest of the structure */
     rc->bufsize = BUFSIZ;
     rc->bufidx = 0;
     rc->ungetidx = 0;
@@ -64,6 +66,9 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     */
     rc->status |= _PDCLIB_LIBBUFFER | _IOLBF;
     /* TODO: Setting mbstate */
+    /* Adding to list of open files */
+    rc->next = _PDCLIB_filelist;
+    _PDCLIB_filelist = rc;
     return rc;
 }
 
