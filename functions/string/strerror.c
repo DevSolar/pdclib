@@ -1,26 +1,19 @@
 /* $Id$ */
 
-/* perror( const char * )
+/* strerror( int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdio.h>
+#include <string.h>
 
 #ifndef REGTEST
 
-#include <errno.h>
-
 /* TODO: Doing this via a static array is not the way to do it. */
-void perror( const char * s )
+char * strerror( int errnum )
 {
-    if ( ( s != NULL ) && ( s[0] != '\n' ) )
-    {
-        fprintf( stderr, "%s: ", s );
-    }
-    fprintf( stderr, "%s\n", _PDCLIB_errno_texts[ errno ] );
-    return;
+    return (char *)_PDCLIB_errno_texts[ errnum ];
 }
 
 #endif
@@ -28,10 +21,12 @@ void perror( const char * s )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
+#include <stdio.h>
+#include <errno.h>
+
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    TESTCASE( strerror( ERANGE ) != strerror( EDOM ) );
     return TEST_RESULTS;
 }
-
 #endif

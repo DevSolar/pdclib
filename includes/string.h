@@ -180,9 +180,8 @@ void * memset( void * s, int c, size_t n );
 /* Map an error number to a (locale-specific) error message string. Error
    numbers are typically errno values, but any number is mapped to a message.
    TODO: PDCLib does not yet support locales.
-   TODO: strerror() not yet implemented.
-char * strerror( int errnum );
 */
+char * strerror( int errnum );
 
 /* Returns the length of the string s (excluding terminating '\0').
 */

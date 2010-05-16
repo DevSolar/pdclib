@@ -27,7 +27,6 @@ static unsigned char _PDCLIB_sin_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_sout_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_serr_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 
-/* FIXME: serr should handle one character. Buffering on out / in? */
 static struct _PDCLIB_file_t _PDCLIB_serr = { 2, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_serr_ungetbuf, _IONBF | _PDCLIB_FWRITE, NULL, NULL };
 static struct _PDCLIB_file_t _PDCLIB_sout = { 1, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sout_ungetbuf, _IOLBF | _PDCLIB_FWRITE, NULL, &_PDCLIB_serr };
 static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, _PDCLIB_sin_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sin_ungetbuf, _IOLBF | _PDCLIB_FREAD, NULL, &_PDCLIB_sout };
