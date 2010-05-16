@@ -184,8 +184,8 @@ a backport of bugfixes in the current development code.
 - #10 NULL redefinition warnings            (fixed)
 
 v0.5 - unreleased
-Implementations for <inttypes.h>, <errno.h>, and most parts of
-<stdio.h>.
+Implementations for <inttypes.h>, <errno.h>, most parts of <stdio.h>,
+and strerror() from <string.h>.
 Still no locale / wide-char support. Enabled all GCC compiler warnings I
 could find, and fixed everything that threw a warning. (You see this,
 maintainers of Open Source software? No warnings whatsoever. Stop telling
