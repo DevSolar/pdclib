@@ -258,7 +258,7 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_FBIN    128u
 
 /* Internal flags, made to fit the same status field as the flags above. */
-#define _PDCLIB_LIBBUFFER    512u
+#define _PDCLIB_FREEBUFFER   512u
 #define _PDCLIB_ERRORFLAG   1024u
 #define _PDCLIB_EOFFLAG     2048u
 #define _PDCLIB_WIDESTREAM  4096u

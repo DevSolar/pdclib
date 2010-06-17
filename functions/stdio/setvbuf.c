@@ -21,10 +21,11 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                we don't want to e.g. flush the stream for every character of a
                stream being printed.
             */
+            /* TODO: Check this */
             break;
         case _IOFBF:
         case _IOLBF:
-            if ( size > INT_MAX || size == NULL )
+            if ( size > INT_MAX || size == 0 )
             {
                 /* PDCLib only supports buffers up to INT_MAX in size. A size
                    of zero doesn't make sense.
@@ -36,31 +37,23 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                 /* User requested buffer size, but leaves it to library to
                    allocate the buffer.
                 */
+                /* If current buffer is big enough for requested size, but not
+                   over twice as big (and wasting memory space), we use the
+                   current buffer (i.e., do nothing), to save the malloc() / 
+                   free() overhead.
+                */
                 if ( ( stream->bufsize < size ) || ( stream->bufsize > ( size << 1 ) ) )
                 {
-                    /* If current buffer is big enough for requested size, but
-                       not over twice as big (and wasting memory space), we use
-                       the current buffer (i.e., do nothing), to save the
-                       malloc() / free() overhead.
-                    */
-                    /* Free the buffer allocated by fopen(), and allocate a new
-                       one.
-                    */
+                    /* Buffer too small, or much too large - allocate. */
                     if ( ( buf = (char *) malloc( size ) ) == NULL )
                     {
                         /* Out of memory error. */
                         return -1;
                     }
+                    /* This buffer must be free()d on fclose() */
+                    stream->status |= _PDCLIB_FREEBUFFER;
                 }
             }
-            else
-            {
-                /* User provided buffer -> set flag to not free() the buffer
-                   on fclose().
-                */
-                stream->status &= ~ _PDCLIB_LIBBUFFER;
-            }
-            free( stream->buffer );
             stream->buffer = buf;
             stream->bufsize = size;
             break;
