@@ -17,28 +17,43 @@
    identified by the given filename with the given mode (equivalent to fopen()),
    and associate it with the given stream. If filename is a NULL pointer,
    attempt to change the mode of the given stream.
-   This implementation allows the following mode changes: TODO
+   This implementation allows any mode changes.
    (Primary use of this function is to redirect stdin, stdout, and stderr.)
 */
-
 struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
-    /* FIXME: This is ad-hoc (to make the vprintf() testdriver work), and must be checked. */
-    /* FIXME: If filename is NULL, change mode. */
+    unsigned int status = stream->status & ( _IONBF | _IOLBF | _IOFBF | _PDCLIB_FREEBUFFER | _PDCLIB_DELONCLOSE );
     /* TODO: This function can change wide orientation of a stream */
-    if ( filename == NULL ) return NULL;
-    if ( stream->status & _PDCLIB_FWRITE ) fflush( stream );
-    if ( stream->status & _PDCLIB_LIBBUFFER ) free( stream->buffer );
+    if ( stream->status & _PDCLIB_FWRITE )
+    {
+        _PDCLIB_flushbuffer( stream );
+    }
     _PDCLIB_close( stream->handle );
     clearerr( stream );
-    if ( ( mode == NULL ) || ( filename[0] == '\0' ) ) return NULL;
-    if ( ( stream->status = _PDCLIB_filemode( mode ) ) == 0 ) return NULL;
-    stream->handle = _PDCLIB_open( filename, stream->status );
-    if ( ( stream->buffer = malloc( BUFSIZ ) ) == NULL ) return NULL;
-    stream->bufsize = BUFSIZ;
+    /* FIXME: Copy filename into the FILE structure. */
+    /* FIXME: filename cannot reside in "big block" memory */
+    if ( filename == NULL )
+    {
+        filename = stream->filename;
+    }
+    if ( ( mode == NULL ) || ( filename[0] == '\0' ) )
+    {
+        return NULL;
+    }
+    if ( ( stream->status = _PDCLIB_filemode( mode ) ) == 0 )
+    {
+        return NULL;
+    }
+    /* Re-add the flags we saved above */
+    stream->status |= status;
     stream->bufidx = 0;
-    stream->status |= _PDCLIB_LIBBUFFER;
+    stream->bufend = 0;
+    stream->ungetidx = 0;
     /* TODO: Setting mbstate */
+    if ( ( stream->handle = _PDCLIB_open( filename, stream->status ) ) == _PDCLIB_NOHANDLE )
+    {
+        return NULL;
+    }
     return stream;
 }
 

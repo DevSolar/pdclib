@@ -64,7 +64,7 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
        buffered if and only if it can be determined not to refer to an
        interactive device."
     */
-    rc->status |= _PDCLIB_LIBBUFFER | _IOLBF;
+    rc->status |= _IOLBF;
     /* TODO: Setting mbstate */
     /* Adding to list of open files */
     rc->next = _PDCLIB_filelist;

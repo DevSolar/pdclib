@@ -30,7 +30,7 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
        here.
     */
     int osmode;
-    switch ( mode & ~_PDCLIB_FBIN )
+    switch ( mode & ( _PDCLIB_FREAD | _PDCLIB_FWRITE | _PDCLIB_FAPPEND | _PDCLIB_FRW ) )
     {
         case _PDCLIB_FREAD: /* "r" */
             osmode = O_RDONLY;
