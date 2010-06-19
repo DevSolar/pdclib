@@ -43,8 +43,14 @@ int fclose( struct _PDCLIB_file_t * stream )
             {
                 _PDCLIB_filelist = stream->next;
             }
+            /* Delete tmpfile() */
+            if ( stream->status & _PDCLIB_DELONCLOSE )
+            {
+                remove( stream->filename );
+            }
             /* Free stream */
             free( stream );
+
             return 0;
         }
         previous = current;
