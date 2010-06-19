@@ -130,7 +130,7 @@ help:
 
 %.o: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -MMD -MP -MT "$*.d $*.t" -I./includes -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -MT "$*.d $*.t $*.o" -I./includes -c $< -o $@
 
 %.t: %.c Makefile pdclib.a
 	@echo " CC	$(patsubst functions/%,%,$@)"
