@@ -24,7 +24,7 @@
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 /* This is an example implementation of tmpfile() fit for use with POSIX
-   POSIX kernels.
+   kernels.
 */
 struct _PDCLIB_file_t * tmpfile( void )
 {
@@ -32,7 +32,7 @@ struct _PDCLIB_file_t * tmpfile( void )
     /* This is the chosen way to get high-quality randomness. Replace as
        appropriate.
     */
-    FILE * randomsource = fopen( "/dev/urandom", "rb" );
+    FILE * randomsource = fopen( "/proc/sys/kernel/random/uuid", "rb" );
     char filename[ L_tmpnam ];
     _PDCLIB_fd_t fd;
     if ( randomsource == NULL )
@@ -48,9 +48,9 @@ struct _PDCLIB_file_t * tmpfile( void )
            use high-quality randomness instead of a pseudo-random sequence to
            generate the filename candidate, which is *also* platform-dependent.
         */
-        uint32_t random;
-        fscanf( randomsource, "%" SCNu32, &random ); 
-        sprintf( filename, "/tmp/%010" PRNu32 ".tmp", random );
+        unsigned int random;
+        fscanf( randomsource, "%u", &random ); 
+        sprintf( filename, "/tmp/%u.tmp", random );
         /* Check if file of this name exists. Note that fopen() is a very weak
            check, which does not take e.g. access permissions into account
            (file might exist but not readable). Replace with something more
@@ -71,7 +71,7 @@ struct _PDCLIB_file_t * tmpfile( void )
         close( fd );
         return NULL;
     }
-    rc->status = _PDCLIB_filemode( "wb+" ) | _PDCLIB_LIBBUFFER | _IOLBF | _PDCLIB_DELONCLOSE;
+    rc->status = _PDCLIB_filemode( "wb+" ) | _IOLBF | _PDCLIB_DELONCLOSE;
     rc->handle = fd;
     rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
     rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
