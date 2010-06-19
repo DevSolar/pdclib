@@ -382,6 +382,9 @@ int _PDCLIB_prepread( struct _PDCLIB_file_t * stream );
 */
 int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream );
 
+/* Closing all streams on program exit */
+void _PDCLIB_closeall( void );
+
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */
 /* -------------------------------------------------------------------------- */

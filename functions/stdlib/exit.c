@@ -19,7 +19,7 @@
 */
 #define NUMBER_OF_SLOTS 40
 
-void (*_PDCLIB_regstack[ NUMBER_OF_SLOTS ])( void );
+void (*_PDCLIB_regstack[ NUMBER_OF_SLOTS ])( void ) = { _PDCLIB_closeall };
 size_t _PDCLIB_regptr = NUMBER_OF_SLOTS;
 
 void exit( int status )
