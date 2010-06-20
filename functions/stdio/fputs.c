@@ -24,9 +24,9 @@ int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_rest
            buffer runs full.
         */
         stream->buffer[ stream->bufidx++ ] = *s;
-        /* TODO: Should IOLBF flush on \n, or the correct EOL sequence of the system? */
-        if ( ( stream->bufidx == stream->bufsize )
-          || ( ( stream->status & _IOLBF ) && *s == '\n' ) )
+        if ( ( stream->bufidx == stream->bufsize ) ||
+             ( ( stream->status & _IOLBF ) && *s == '\n' )
+           )
         {
             if ( _PDCLIB_flushbuffer( stream ) == EOF )
             {
