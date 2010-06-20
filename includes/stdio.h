@@ -52,17 +52,18 @@ extern FILE * stderr;
 
 /* Remove the given file.
    Returns zero if successful, non-zero otherwise.
-   This implementation does detect if the filename corresponds to an open file,
-   and closes it before attempting the rename.
+   This implementation does detect if a file of that name is currently open,
+   and fails the remove in this case. This does not detect two distinct names
+   that merely result in the same file (e.g. "/home/user/foo" vs. "~/foo").
 */
 int remove( const char * filename );
 
 /* Rename the given old file to the given new name.
    Returns zero if successful, non-zero otherwise. 
    This implementation does detect if the old filename corresponds to an open
-   file, and closes it before attempting the rename.
-   If the already is a file with the new filename, behaviour is defined by the
-   OS.
+   file, and fails the rename in this case.
+   If there already is a file with the new filename, behaviour is defined by
+   the glue code (see functions/_PDCLIB/rename.c).
 */
 int rename( const char * old, const char * new );
 

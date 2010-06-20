@@ -15,7 +15,6 @@ imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom )
     imaxdiv_t rc;
     rc.quot = numer / denom;
     rc.rem  = numer % denom;
-    /* TODO: pre-C99 compilers might require modulus corrections */
     return rc;
 }
 
