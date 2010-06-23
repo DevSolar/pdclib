@@ -15,8 +15,16 @@
 int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
-    /* base, flags, n, i, current, s, width, prec, stream, arg */
-    struct _PDCLIB_status_t status = { 0, 0, SIZE_MAX, 0, 0, NULL, 0, 0, stream, NULL };
+    struct _PDCLIB_status_t status;
+    status.base = 0;
+    status.flags = 0;
+    status.n = SIZE_MAX;
+    status.i = 0;
+    status.current = 0;
+    status.s = NULL;
+    status.width = 0;
+    status.prec = 0;
+    status.stream = stream;
     va_copy( status.arg, arg );
 
     while ( *format != '\0' )
