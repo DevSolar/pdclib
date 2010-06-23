@@ -14,8 +14,17 @@
 
 int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, va_list arg )
 {
-    /* base, flag, n, i, current, s, width, prec, stream, arg */
-    struct _PDCLIB_status_t status = { 0, 0, 0, 0, 0, (char *)s, 0, 0, NULL, NULL };
+    /* TODO: This function should interpret format as multibyte characters.  */
+    struct _PDCLIB_status_t status;
+    status.base = 0;
+    status.flags = 0;
+    status.n = 0;
+    status.i = 0;
+    status.current = 0;
+    status.s = (char *) s;
+    status.width = 0;
+    status.prec = 0;
+    status.stream = NULL;
     va_copy( status.arg, arg );
 
     while ( *format != '\0' )
