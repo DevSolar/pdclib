@@ -26,7 +26,6 @@ intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict
     else
     {
         /* FIXME: This breaks on some machines that round negatives wrongly */
-        /* FIXME: Sign error not caught by testdriver */
         rc = (intmax_t)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)INTMAX_MIN, (uintmax_t)( INTMAX_MIN / -base ), (int)( -( INTMAX_MIN % base ) ), &sign );
     }
     if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) nptr;
@@ -91,34 +90,34 @@ int main( void )
     errno = 0;
 #if INTMAX_MAX == 0x7fffffffffffffffLL
     /* testing "even" overflow, i.e. base is power of two */
-    TESTCASE( strtoimax( "0x7FFFFFFFFFFFFFFF", NULL, 0 ) == 0x7fffffffffffffff );
+    TESTCASE( strtoimax( "9223372036854775807", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == 0 );
-    TESTCASE( strtoimax( "0x8000000000000000", NULL, 0 ) == INTMAX_MAX );
+    TESTCASE( strtoimax( "9223372036854775808", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtoimax( "-0x7FFFFFFFFFFFFFFF", NULL, 0 ) == (long long)0x8000000000000001 );
+    TESTCASE( strtoimax( "-9223372036854775807", NULL, 0 ) == (INTMAX_MIN + 1) );
     TESTCASE( errno == 0 );
-    TESTCASE( strtoimax( "-0x8000000000000000", NULL, 0 ) == INTMAX_MIN );
+    TESTCASE( strtoimax( "-9223372036854775808", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == 0 );
-    TESTCASE( strtoimax( "-0x8000000000000001", NULL, 0 ) == INTMAX_MIN );
+    TESTCASE( strtoimax( "-9223372036854775809", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == ERANGE );
     /* TODO: test "odd" overflow, i.e. base is not power of two */
-#elif INTMAX_MAX == 0x7fffffffffffffffffffffffffffffffLL
+#elif LLONG_MAX == 0x7fffffffffffffffffffffffffffffffLL
     /* testing "even" overflow, i.e. base is power of two */
-    TESTCASE( strtoimax( "0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", NULL, 0 ) == 0x7fffffffffffffffffffffffffffffff );
+    TESTCASE( strtoimax( "170141183460469231731687303715884105728", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == 0 );
-    TESTCASE( strtoimax( "0x80000000000000000000000000000000", NULL, 0 ) == INTMAX_MAX );
+    TESTCASE( strtoimax( "170141183460469231731687303715884105729", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtoimax( "-0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", NULL, 0 ) == -0x80000000000000000000000000000001 );
+    TESTCASE( strtoimax( "-170141183460469231731687303715884105728", NULL, 0 ) == (INTMAX_MIN + 1) );
     TESTCASE( errno == 0 );
-    TESTCASE( strtoimax( "-0x80000000000000000000000000000000", NULL, 0 ) == INTMAX_MIN );
+    TESTCASE( strtoimax( "-170141183460469231731687303715884105729", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == 0 );
-    TESTCASE( strtoimax( "-0x80000000000000000000000000000001", NULL, 0 ) == INTMAX_MIN );
+    TESTCASE( strtoimax( "-170141183460469231731687303715884105730", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == ERANGE );
     /* TODO: test "odd" overflow, i.e. base is not power of two */
 #else
-#error Unsupported width of 'long long' (neither 64 nor 128 bit).
+#error Unsupported width of 'intmax_t' (neither 64 nor 128 bit).
 #endif
     return TEST_RESULTS;
 }

@@ -101,7 +101,7 @@
 #elif _PDCLIB_LLONG_BYTES  == 16
 #define _PDCLIB_LLONG_MAX  0x7fffffffffffffffffffffffffffffffLL
 #define _PDCLIB_LLONG_MIN  (-0x7fffffffffffffffffffffffffffffffLL - 1LL)
-#define _PDCLIB_ULLONG_MAX 0xffffffffffffffffffffffffffffffffLL
+#define _PDCLIB_ULLONG_MAX 0xffffffffffffffffffffffffffffffffULL
 #else
 #error Unsupported width of 'long long' (neither 64 nor 128 bit).
 #endif

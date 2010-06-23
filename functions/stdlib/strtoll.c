@@ -84,9 +84,9 @@ int main( void )
     endptr = NULL;
     TESTCASE( strtoll( overflow, &endptr, 0 ) == 0 );
     TESTCASE( endptr == overflow );
-    /* These tests assume two-complement, but conversion should work for   */
-    /* one-complement and signed magnitude just as well. Anyone having a   */
-    /* platform to test this on?                                           */
+    /* TODO: These tests assume two-complement, but conversion should work */
+    /* for one-complement and signed magnitude just as well. Anyone having */
+    /* a platform to test this on?                                         */
     errno = 0;
 #if LLONG_MAX == 0x7fffffffffffffffLL
     /* testing "even" overflow, i.e. base is power of two */
