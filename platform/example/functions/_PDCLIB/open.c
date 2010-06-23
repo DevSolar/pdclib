@@ -26,8 +26,6 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
 {
     /* This is an example implementation of _PDCLIB_open() fit for use with
        POSIX kernels.
-       FIXME: The permissions of newly created files should not be hardcoded
-       here.
     */
     int osmode;
     switch ( mode & ( _PDCLIB_FREAD | _PDCLIB_FWRITE | _PDCLIB_FAPPEND | _PDCLIB_FRW ) )
@@ -56,7 +54,7 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
     int rc;
     if ( osmode & O_CREAT )
     {
-        rc = open( filename, osmode, S_IRUSR | S_IWUSR );
+        rc = open( filename, osmode, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
     }
     else
     {
