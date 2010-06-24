@@ -21,7 +21,7 @@ int NO_TESTDRIVER = 0;
 static int rc = 0;
 
 #define TESTCASE( x ) if ( x ) {} \
-                      else { rc += 1; printf( "FAILED: " __FILE__ ", line %d - " #x "\n", __LINE__ ); }
+                      else { rc += 1; printf( "FAILED: " __FILE__ ", line %d - %s\n", __LINE__, #x ); }
 
 #ifndef REGTEST
 #define TESTCASE_NOREG( x ) TESTCASE( x )
