@@ -17,7 +17,7 @@
 
 
 /* sscan */
-#define TESTSCAN( result, count, source, offset, format ) \
+#define TESTSCAN( result, count, source, offset, format, ... ) \
     do \
     { \
         int n = -1; \
