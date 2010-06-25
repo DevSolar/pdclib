@@ -1055,6 +1055,8 @@
     }
 
     // string matches
+    size_t const BUFSIZE = 1000;
+    char buffer[BUFSIZE];
     {
     // reading abc
     memset( buffer, '\0', BUFSIZE );
