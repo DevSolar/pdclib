@@ -1,0 +1,27 @@
+    char const * general     = "12345678901\0003-5+7\0009\3772 4 6 8 0\3771 \011 5%%  0";
+    char const * decimal     = "-0 +0 -128 +127 +255 -32768 +32767 +65535\n"
+                               "-2147483648 +2147483647 +4294967295\n"
+                               "-9223372036854775808 +9223372036854775807\n"
+                               "+18446744073709551615\n";
+    char const * hexadecimal = "-0x0 -0x000 -0x7f 0x80 0xff -0x7fff 0x8000\n"
+                               "0xffff -0x7fffffff 0x80000000 0xffffffff\n"
+                               "-0x7fffffffffffffff 0x8000000000000000\n"
+                               "0xffffffffffffffff\n";
+    char const * octal       = "+0000 -0000 +0177 +0377 -0377 +077777 +0177777\n"
+                               "-0177777 +017777777777 +037777777777\n"
+                               "-037777777777 +0777777777777777777777\n"
+                               "+01777777777777777777777\n"
+                               "-01777777777777777777777\n";
+    char const * alpha       = "abcdefgh-ijklmnop[qrs%uvw]xyz";
+    char const * special     = "-0xz\n";
+
+
+/* sscan */
+#define TESTSCAN( result, count, source, offset, format ) \
+    do \
+    { \
+        int n = -1; \
+        TESTCASE( SCANFUNC( source + offset, format "%n", __VA_ARGS__, &n ) == result ); \
+        TESTCASE( n == count ); \
+    } while ( 0 )
+
