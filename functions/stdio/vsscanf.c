@@ -79,20 +79,21 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
+#include "scan_test.h"
+
+static int SCANFUNC( char const * stream, char const * format, ... )
+{
+    va_list ap;
+    va_start( ap, format );
+    int result = vsscanf( stream, format, ap );
+    va_end( ap );
+    return result;
+}
+
 int main( void )
 {
-    char const * teststring1 = "abc  def";
-    char const * teststring2 = "abcdef";
-    char const * teststring3 = "abc%def";
-    int x;
-    TESTCASE( sscanf( teststring2, "abcdef%n", &x ) == 0 );
-    TESTCASE( x == 6 );
-    TESTCASE( sscanf( teststring1, "abc def%n", &x ) == 0 );
-    TESTCASE( x == 8 );
-    TESTCASE( sscanf( teststring2, "abc def%n", &x ) == 0 );
-    TESTCASE( x == 6 );
-    TESTCASE( sscanf( teststring3, "abc%%def%n", &x ) == 0 );
-    TESTCASE( x == 7 );
+#include "sscan_sources.incl"
+#include "scanf_testcases.incl"
     return TEST_RESULTS;
 }
 

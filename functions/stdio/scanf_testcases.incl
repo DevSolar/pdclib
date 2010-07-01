@@ -875,7 +875,6 @@
     // reading 0x80000000, i
     signed int i = -1;
     TESTSCAN( 1, 10, hexadecimal, 62, SCANPARMS( "%i", &i ) );
-    printf( "found %d, expected -2147483648\n", i );
     CHECK_FEQUAL( i, -2147483648, signed int, "%d" ); /* FIXME */
     }
     {
@@ -1163,18 +1162,30 @@
        - The conversion should therefore result in a matching failure
          according to 7.19.6.2 paragraph 10.
     */
+#ifdef REGTEST
+    printf( "        The following is likely to fail. Check stdio/scanf_testcases.c\n"
+            "        for an explanation why.\n" );
+#endif
     TESTSCAN( 0, -1, special, 0, SCANPARMS( "%hhx", &i ) ); /* May fail on regtest */
     CHECK_EQUAL( i, 1 ); /* FIXME */
     }
     {
     // reading -0x, x
     unsigned short i = 1;
+#ifdef REGTEST
+    printf( "        The following is likely to fail. Check stdio/scanf_testcases.c\n"
+            "        for an explanation why.\n" );
+#endif
     TESTSCAN( 0, -1, special, 0, SCANPARMS( "%hx", &i ) ); /* May fail on regtest */
     CHECK_EQUAL( i, 1 ); /* FIXME */
     }
     {
     // reading -0x, x
     unsigned int i = 1;
+#ifdef REGTEST
+    printf( "        The following is likely to fail. Check stdio/scanf_testcases.c\n"
+            "        for an explanation why.\n" );
+#endif
     TESTSCAN( 0, -1, special, 0, SCANPARMS( "%x", &i ) ); /* May fail on regtest */
     CHECK_EQUAL( i, 1 ); /* FIXME */
     }
