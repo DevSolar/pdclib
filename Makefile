@@ -74,7 +74,7 @@ regtestdrivers: $(REGFILES)
 -include $(DEPFILES)
 
 clean:
-	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(REGFILES) pdclib.a pdclib.tgz; do if [ -f $$file ]; then rm $$file; fi; done
+	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(REGFILES) pdclib.a pdclib.tgz scanf_testdata_*; do if [ -f $$file ]; then rm $$file; fi; done
 
 srcdist:
 	@tar czf pdclib.tgz $(ALLFILES)
