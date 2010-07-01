@@ -26,11 +26,13 @@ int fscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
+#include "scan_test.h"
+
 int main( void )
 {
-    /* FILE * fp = fopen( "functions/stdio/testfile.txt", "rb" ); */
-
-    TESTCASE( NO_TESTDRIVER );
+#define SCANFUNC( source, format, ... ) fscanf( source, format, __VA_ARGS__ )
+#include "fscan_sources.incl"
+#include "scanf_testcases.incl"
     return TEST_RESULTS;
 }
 

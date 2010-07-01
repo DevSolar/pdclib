@@ -83,11 +83,23 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
+#include "scan_test.h"
+
+static int SCANFUNC( FILE * stream, char const * format, ... )
+{
+    va_list ap;
+    va_start( ap, format );
+    int result = vfscanf( stream, format, ap );
+    va_end( ap );
+    return result;
+}
+
 int main( void )
 {
-    /* TODO: Check whitespace / EOF / ungetc handling */
-    TESTCASE( NO_TESTDRIVER );
+#include "fscan_sources.incl"
+#include "scanf_testcases.incl"
     return TEST_RESULTS;
 }
 
 #endif
+
