@@ -17,11 +17,25 @@
 
 
 /* sscan */
-#define TESTSCAN( result, count, source, offset, format, ... ) \
+#define TESTSCAN( result, count, source, offset, ... ) \
     do \
     { \
         int n = -1; \
-        TESTCASE( SCANFUNC( source + offset, format "%n", __VA_ARGS__, &n ) == result ); \
-        TESTCASE( n == count ); \
+        int res = SCANFUNC( source + offset, __VA_ARGS__ ); \
+        if ( res != result ) \
+        { \
+            rc += 1; \
+            printf( "FAILED: " __FILE__ ", line %d - expected result %d, got %d\n", __LINE__, result, res ); \
+        } \
+        if ( n != count ) \
+        { \
+            rc += 1; \
+            printf( "FAILED: " __FILE__ ", line %d - expected count %d, got %d\n", __LINE__, count, n ); \
+        } \
     } while ( 0 )
+
+#define SCAN( format )           format "%n",              &n
+#define SCANPARMS( format, ... ) format "%n", __VA_ARGS__, &n
+
+#define _PDCLIB_SSCAN
 

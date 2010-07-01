@@ -4,32 +4,32 @@
     {
     // matching six characters literally
     // should report six characters read
-    TESTSCAN( 0, 6, general, 0, "123456" );
+    TESTSCAN( 0, 6, general, 0, SCAN( "123456" ) );
     }
     {
     // matching a character, three whitespace chars, and another character
     // should report five characters read
-    TESTSCAN( 0, 5, general, 30, "1 5" );
+    TESTSCAN( 0, 5, general, 30, SCAN( "1 5" ) );
     }
     {
     // matching three characters, not matching whitespaces, and matching another three characters
     // should report six characters matched
-    TESTSCAN( 0, 6, general, 0, "123  456" );
+    TESTSCAN( 0, 6, general, 0, SCAN( "123  456" ) );
     }
     {
     // matching a character, two '%' characters, and two whitespaces
     // should report five characters matched
-    TESTSCAN( 0, 5, general, 34, "5%%%% " );
+    TESTSCAN( 0, 5, general, 34, SCAN( "5%%%% " ) );
     }
     {
     // seeking to last character in file, trying to match that char and a whitespace
     // should report one character matched and EOF
-    TESTSCAN( 0, 1, general, 39, "0 " );
+    TESTSCAN( 0, 1, general, 39, SCAN( "0 " ) );
     }
     {
     // seeking to end of file, trying to match a -1
     // should report error, not executing %n
-    TESTSCAN( 0, 1, general, 40, "\377" );
+    TESTSCAN( -1, -1, general, 40, SCAN( "\377" ) ); /* FIXME */
     }
 
     // -----------------------------------------------------------------------
@@ -39,16 +39,23 @@
     // reading a char array of specified width, including zero bytes
     // should report the characters read up to first zero
     char buffer[ 8 ];
+#ifdef _PDCLIB_SSCAN
+    int count = 1;
+    char expected[] = "1\177\177\177\177\177\177\177";
+#else 
+    int count = 7;
+    char expected[] = "1\0003-5+7";
+#endif
     memset( buffer, '\177', 8 );
-    TESTSCAN( 1, 1, general, 10, "%7c", buffer );
-    CHECK_FALSE( memcmp( buffer, "1\177\177", 3 ) );
+    TESTSCAN( 1, count, general, 10, SCANPARMS( "%7c", buffer ) );
+    CHECK_FALSE( memcmp( buffer, expected, 7 ) );
     }
     {
     // reading a char array of unspecified width when positioned at -1 value 
     // should default to width one, read the -1 value, no zero termination of the array
     char buffer[ 2 ];
     memset( buffer, '\177', 2 );
-    TESTSCAN( 1, 1, general, 19, "%c", buffer );
+    TESTSCAN( 1, 1, general, 19, SCANPARMS( "%c", buffer ) );
     CHECK_FALSE( memcmp( buffer, "\377\177", 2 ) );
     }
     {
@@ -56,7 +63,7 @@
     // should read the whitespace (literally), no zero termination of the array
     char buffer[ 2 ];
     memset( buffer, '\177', 2 );
-    TESTSCAN( 1, 1, general, 32, "%1c", buffer );
+    TESTSCAN( 1, 1, general, 32, SCANPARMS( "%1c", buffer ) );
     CHECK_FALSE( memcmp( buffer, "\011\177", 2 ) );
     }
     {
@@ -64,7 +71,7 @@
     // should read the character, and report EOF
     char buffer[ 2 ];
     memset( buffer, '\177', 2 );
-    TESTSCAN( 1, 1, general, 39, "%2c", buffer );
+    TESTSCAN( 1, 1, general, 39, SCANPARMS( "%2c", buffer ) );
     CHECK_FALSE( memcmp( buffer, "0\177", 2 ) );
     }
     {
@@ -72,7 +79,7 @@
     // should read the character, and NOT report EOF
     char buffer[ 2 ];
     memset( buffer, '\177', 2 );
-    TESTSCAN( 1, 1, general, 39, "%1c", buffer );
+    TESTSCAN( 1, 1, general, 39, SCANPARMS( "%1c", buffer ) );
     CHECK_FALSE( memcmp( buffer, "0\177", 2 ) );
     }
     {
@@ -80,7 +87,7 @@
     // should report input error before any conversion (-1)
     char buffer[ 2 ];
     memset( buffer, '\177', 2 );
-    TESTSCAN( -1, -1, general, 40, "%1c", buffer );
+    TESTSCAN( -1, -1, general, 40, SCANPARMS( "%1c", buffer ) );
     CHECK_FALSE( memcmp( buffer, "\177\177", 2 ) );
     }
 
@@ -90,52 +97,52 @@
     {
     // reading a whitespace-terminated integer
     int i;
-    TESTSCAN( 1, 1, general, 20, "%d", &i );
+    TESTSCAN( 1, 1, general, 20, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 2 );
     }
     {
     // reading a -1 terminated integer
     int i;
-    TESTSCAN( 1, 1, general, 18, "%d", &i );
+    TESTSCAN( 1, 1, general, 18, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 9 );
     }
     {
     // reading a EOF terminated integer
     int i = -1;
-    TESTSCAN( 1, 1, general, 39, "%d", &i );
+    TESTSCAN( 1, 1, general, 39, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // trying to read an integer when positioned at whitespace
     // should skip whitespaces
     int i = -1;
-    TESTSCAN( 1, 3, general, 32, "%d", &i );
+    TESTSCAN( 1, 3, general, 32, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 5 );
     }
     {
     // trying to read an integer when positioned at -1 value
     // should report matching failure
     int i = 0;
-    TESTSCAN( 0, -1, general, 19, "%d", &i, &n ), 0 );
+    TESTSCAN( 0, -1, general, 19, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // trying to read an integer when positioned at EOF
     // should report reading failure
     int i = 0;
-    TESTSCAN( -1, -1, general, 40, "%d", &i, &n ), -1 );
+    TESTSCAN( -1, -1, general, 40, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading a '-'-prefixed integer
     int i;
-    TESTSCAN( 1, 2, general, 13, "%d", &i );
+    TESTSCAN( 1, 2, general, 13, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, -5 );
     }
     {
     // reading a '+'-prefixed integer
     int i;
-    TESTSCAN( 1, 2, general, 15, "%d", &i );
+    TESTSCAN( 1, 2, general, 15, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 7 );
     }
 
@@ -143,567 +150,567 @@
     {
     // reading 0, d
     signed char i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%hhd", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%hhd", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, d
     signed char i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%hhd", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%hhd", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, d
     signed char i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%hhd", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%hhd", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -128, d
     signed char i = -1;
-    TESTSCAN( 1, 4, decimal, 6, "%hhd", &i );
+    TESTSCAN( 1, 4, decimal, 6, SCANPARMS( "%hhd", &i ) );
     CHECK_EQUAL( i, -128 );
     }
     {
     // reading 127, d
     signed char i = -1;
-    TESTSCAN( 1, 3, decimal, 12, "%hhd", &i );
+    TESTSCAN( 1, 3, decimal, 12, SCANPARMS( "%hhd", &i ) );
     CHECK_EQUAL( i, 127 );
     }
     {
     // reading +127, d
     signed char i = -1;
-    TESTSCAN( 1, 4, decimal, 11, "%hhd", &i );
+    TESTSCAN( 1, 4, decimal, 11, SCANPARMS( "%hhd", &i ) );
     CHECK_EQUAL( i, 127 );
     }
     {
     // reading 0, u
     unsigned char i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%hhu", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%hhu", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, u
     unsigned char i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%hhu", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%hhu", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, u
     unsigned char i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%hhu", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%hhu", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 127, u
     unsigned char i = -1;
-    TESTSCAN( 1, 3, decimal, 12, "%hhu", &i );
+    TESTSCAN( 1, 3, decimal, 12, SCANPARMS( "%hhu", &i ) );
     CHECK_EQUAL( i, 127 );
     }
     {
     // reading +127, u
     unsigned char i = -1;
-    TESTSCAN( 1, 4, decimal, 11, "%hhu", &i );
+    TESTSCAN( 1, 4, decimal, 11, SCANPARMS( "%hhu", &i ) );
     CHECK_EQUAL( i, 127 );
     }
     {
     // reading 255, u
     unsigned char i = 0;
-    TESTSCAN( 1, 3, decimal, 17, "%hhu", &i );
+    TESTSCAN( 1, 3, decimal, 17, SCANPARMS( "%hhu", &i ) );
     CHECK_EQUAL( i, 255 );
     }
     {
     // reading +255, u
     unsigned char i = 0;
-    TESTSCAN( 1, 4, decimal, 16, "%hhu", &i );
+    TESTSCAN( 1, 4, decimal, 16, SCANPARMS( "%hhu", &i ) );
     CHECK_EQUAL( i, 255 );
     }
     {
     // reading 0, i
     signed char i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%hhi", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%hhi", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, i
     signed char i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%hhi", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%hhi", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, i
     signed char i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%hhi", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%hhi", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -128, i
     signed char i = -1;
-    TESTSCAN( 1, 4, decimal, 6, "%hhi", &i );
+    TESTSCAN( 1, 4, decimal, 6, SCANPARMS( "%hhi", &i ) );
     CHECK_EQUAL( i, -128 );
     }
     {
     // reading 127, i
     signed char i = -1;
-    TESTSCAN( 1, 3, decimal, 12, "%hhi", &i );
+    TESTSCAN( 1, 3, decimal, 12, SCANPARMS( "%hhi", &i ) );
     CHECK_EQUAL( i, 127 );
     }
     {
     // reading +127, i
     signed char i = -1;
-    TESTSCAN( 1, 4, decimal, 11, "%hhi", &i );
+    TESTSCAN( 1, 4, decimal, 11, SCANPARMS( "%hhi", &i ) );
     CHECK_EQUAL( i, 127 );
     }
     {
     // reading 0, d
     signed short i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%hd", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%hd", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, d
     signed short i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%hd", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%hd", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, d
     signed short i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%hd", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%hd", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -32768, d
     signed short i = -1;
-    TESTSCAN( 1, 6, decimal, 21, "%hd", &i );
+    TESTSCAN( 1, 6, decimal, 21, SCANPARMS( "%hd", &i ) );
     CHECK_EQUAL( i, -32768 );
     }
     {
     // reading 32767, d
     signed short i = -1;
-    TESTSCAN( 1, 5, decimal, 29, "%hd", &i );
+    TESTSCAN( 1, 5, decimal, 29, SCANPARMS( "%hd", &i ) );
     CHECK_EQUAL( i, 32767 );
     }
     {
     // reading +32767, d
     signed short i = -1;
-    TESTSCAN( 1, 6, decimal, 28, "%hd", &i );
+    TESTSCAN( 1, 6, decimal, 28, SCANPARMS( "%hd", &i ) );
     CHECK_EQUAL( i, 32767 );
     }
     {
     // reading 0, u
     unsigned short i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%hu", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%hu", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, u
     unsigned short i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%hu", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%hu", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, u
     unsigned short i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%hu", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%hu", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 32767, u
     unsigned short i = -1;
-    TESTSCAN( 1, 5, decimal, 29, "%hu", &i );
+    TESTSCAN( 1, 5, decimal, 29, SCANPARMS( "%hu", &i ) );
     CHECK_EQUAL( i, 32767 );
     }
     {
     // reading +32767, u
     unsigned short i = -1;
-    TESTSCAN( 1, 6, decimal, 28, "%hu", &i );
+    TESTSCAN( 1, 6, decimal, 28, SCANPARMS( "%hu", &i ) );
     CHECK_EQUAL( i, 32767 );
     }
     {
     // reading 65535, u
     unsigned short i = 0;
-    TESTSCAN( 1, 5, decimal, 36, "%hu", &i );
+    TESTSCAN( 1, 5, decimal, 36, SCANPARMS( "%hu", &i ) );
     CHECK_EQUAL( i, 65535 );
     }
     {
     // reading +65535, u
     unsigned short i = 0;
-    TESTSCAN( 1, 6, decimal, 35, "%hu", &i );
+    TESTSCAN( 1, 6, decimal, 35, SCANPARMS( "%hu", &i ) );
     CHECK_EQUAL( i, 65535 );
     }
     {
     // reading 0, i
     signed short i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%hi", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%hi", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, i
     signed short i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%hi", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%hi", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, i
     signed short i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%hi", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%hi", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -32768, i
     signed short i = -1;
-    TESTSCAN( 1, 6, decimal, 21, "%hi", &i );
+    TESTSCAN( 1, 6, decimal, 21, SCANPARMS( "%hi", &i ) );
     CHECK_EQUAL( i, -32768 );
     }
     {
     // reading 32767, i
     signed short i = -1;
-    TESTSCAN( 1, 5, decimal, 29, "%hi", &i );
+    TESTSCAN( 1, 5, decimal, 29, SCANPARMS( "%hi", &i ) );
     CHECK_EQUAL( i, 32767 );
     }
     {
     // reading +32767, i
     signed short i = -1;
-    TESTSCAN( 1, 6, decimal, 28, "%hi", &i );
+    TESTSCAN( 1, 6, decimal, 28, SCANPARMS( "%hi", &i ) );
     CHECK_EQUAL( i, 32767 );
     }
     {
     // reading 0, d
     signed int i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%d", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, d
     signed int i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%d", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, d
     signed int i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%d", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -2147483648, d
     signed int i = -1;
-    TESTSCAN( 1, 11, decimal, 42, "%d", &i );
+    TESTSCAN( 1, 11, decimal, 42, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, -2147483648 );
     }
     {
     // reading 2147483647, d
     signed int i = -1;
-    TESTSCAN( 1, 10, decimal, 55, "%d", &i );
+    TESTSCAN( 1, 10, decimal, 55, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 2147483647 );
     }
     {
     // reading +2147483647, d
     signed int i = -1;
-    TESTSCAN( 1, 11, decimal, 54, "%d", &i );
+    TESTSCAN( 1, 11, decimal, 54, SCANPARMS( "%d", &i ) );
     CHECK_EQUAL( i, 2147483647 );
     }
     {
     // reading 0, u
     unsigned int i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%u", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%u", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, u
     unsigned int i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%u", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%u", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, u
     unsigned int i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%u", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%u", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 2147483647, u
     unsigned int i = -1;
-    TESTSCAN( 1, 10, decimal, 55, "%u", &i );
+    TESTSCAN( 1, 10, decimal, 55, SCANPARMS( "%u", &i ) );
     CHECK_EQUAL( i, 2147483647 );
     }
     {
     // reading +2147483647, u
     unsigned int i = -1;
-    TESTSCAN( 1, 11, decimal, 54, "%u", &i );
+    TESTSCAN( 1, 11, decimal, 54, SCANPARMS( "%u", &i ) );
     CHECK_EQUAL( i, 2147483647 );
     }
     {
     // reading 4294967295, u
     unsigned int i = 0;
-    TESTSCAN( 1, 10, decimal, 67, "%u", &i );
+    TESTSCAN( 1, 10, decimal, 67, SCANPARMS( "%u", &i ) );
     CHECK_FEQUAL( i, 4294967295, unsigned int, "%u" );
     }
     {
     // reading +4294967295, u
     unsigned int i = 0;
-    TESTSCAN( 1, 11, decimal, 66, "%u", &i );
+    TESTSCAN( 1, 11, decimal, 66, SCANPARMS( "%u", &i ) );
     CHECK_FEQUAL( i, 4294967295, unsigned int, "%u" );
     }
     {
     // reading 0, i
     signed int i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%i", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%i", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0, i
     signed int i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%i", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%i", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading +0, i
     signed int i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%i", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%i", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -2147483648, i
     signed int i = -1;
-    TESTSCAN( 1, 11, decimal, 42, "%i", &i );
+    TESTSCAN( 1, 11, decimal, 42, SCANPARMS( "%i", &i ) );
     CHECK_EQUAL( i, -2147483648 );
     }
     {
     // reading 2147483647, i
     signed int i = -1;
-    TESTSCAN( 1, 10, decimal, 55, "%i", &i );
+    TESTSCAN( 1, 10, decimal, 55, SCANPARMS( "%i", &i ) );
     CHECK_EQUAL( i, 2147483647 );
     }
     {
     // reading +2147483647, i
     signed int i = -1;
-    TESTSCAN( 1, 11, decimal, 54, "%i", &i );
+    TESTSCAN( 1, 11, decimal, 54, SCANPARMS( "%i", &i ) );
     CHECK_EQUAL( i, 2147483647 );
     }
     {
     // reading 0, d
     signed long i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%ld", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%ld", &i ) );
     CHECK_EQUAL( i, 0l );
     }
     {
     // reading -0, d
     signed long i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%ld", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%ld", &i ) );
     CHECK_EQUAL( i, 0l );
     }
     {
     // reading +0, d
     signed long i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%ld", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%ld", &i ) );
     CHECK_EQUAL( i, 0l );
     }
     {
     // reading -2147483648, d
     signed long i = -1;
-    TESTSCAN( 1, 11, decimal, 42, "%ld", &i );
+    TESTSCAN( 1, 11, decimal, 42, SCANPARMS( "%ld", &i ) );
     CHECK_EQUAL( i, -2147483648l );
     }
     {
     // reading 2147483647, d
     signed long i = -1;
-    TESTSCAN( 1, 10, decimal, 55, "%ld", &i );
+    TESTSCAN( 1, 10, decimal, 55, SCANPARMS( "%ld", &i ) );
     CHECK_EQUAL( i, 2147483647l );
     }
     {
     // reading +2147483647, d
     signed long i = -1;
-    TESTSCAN( 1, 11, decimal, 54, "%ld", &i );
+    TESTSCAN( 1, 11, decimal, 54, SCANPARMS( "%ld", &i ) );
     CHECK_EQUAL( i, 2147483647l );
     }
     {
     // reading 0, u
     unsigned long i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%lu", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%lu", &i ) );
     CHECK_EQUAL( i, 0ul );
     }
     {
     // reading -0, u
     unsigned long i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%lu", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%lu", &i ) );
     CHECK_EQUAL( i, 0ul );
     }
     {
     // reading +0, u
     unsigned long i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%lu", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%lu", &i ) );
     CHECK_EQUAL( i, 0ul );
     }
     {
     // reading 2147483647, u
     unsigned long i = -1;
-    TESTSCAN( 1, 10, decimal, 55, "%lu", &i );
+    TESTSCAN( 1, 10, decimal, 55, SCANPARMS( "%lu", &i ) );
     CHECK_EQUAL( i, 2147483647ul );
     }
     {
     // reading +2147483647, u
     unsigned long i = -1;
-    TESTSCAN( 1, 11, decimal, 54, "%lu", &i );
+    TESTSCAN( 1, 11, decimal, 54, SCANPARMS( "%lu", &i ) );
     CHECK_EQUAL( i, 2147483647ul );
     }
     {
     // reading 4294967295, u
     unsigned long i = 0;
-    TESTSCAN( 1, 10, decimal, 67, "%lu", &i );
+    TESTSCAN( 1, 10, decimal, 67, SCANPARMS( "%lu", &i ) );
     CHECK_FEQUAL( i, 4294967295ul, unsigned long, "%lu" );
     }
     {
     // reading +4294967295, u
     unsigned long i = 0;
-    TESTSCAN( 1, 11, decimal, 66, "%lu", &i );
+    TESTSCAN( 1, 11, decimal, 66, SCANPARMS( "%lu", &i ) );
     CHECK_FEQUAL( i, 4294967295ul, unsigned long, "%lu" );
     }
     {
     // reading 0, i
     signed long i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%li", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%li", &i ) );
     CHECK_EQUAL( i, 0l );
     }
     {
     // reading -0, i
     signed long i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%li", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%li", &i ) );
     CHECK_EQUAL( i, 0l );
     }
     {
     // reading +0, i
     signed long i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%li", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%li", &i ) );
     CHECK_EQUAL( i, 0l );
     }
     {
     // reading -2147483648, i
     signed long i = -1;
-    TESTSCAN( 1, 11, decimal, 42, "%li", &i );
+    TESTSCAN( 1, 11, decimal, 42, SCANPARMS( "%li", &i ) );
     CHECK_EQUAL( i, -2147483648l );
     }
     {
     // reading 2147483647, i
     signed long i = -1;
-    TESTSCAN( 1, 10, decimal, 55, "%li", &i );
+    TESTSCAN( 1, 10, decimal, 55, SCANPARMS( "%li", &i ) );
     CHECK_EQUAL( i, 2147483647l );
     }
     {
     // reading +2147483647, i
     signed long i = -1;
-    TESTSCAN( 1, 11, decimal, 54, "%li", &i );
+    TESTSCAN( 1, 11, decimal, 54, SCANPARMS( "%li", &i ) );
     CHECK_EQUAL( i, 2147483647l );
     }
     {
     // reading 0, d
     signed long long i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%lld", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%lld", &i ) );
     CHECK_EQUAL( i, 0ll );
     }
     {
     // reading -0, d
     signed long long i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%lld", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%lld", &i ) );
     CHECK_EQUAL( i, 0ll );
     }
     {
     // reading +0, d
     signed long long i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%lld", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%lld", &i ) );
     CHECK_EQUAL( i, 0ll );
     }
     {
     // reading -9223372036854775808, d
     signed long long i = -1;
-    TESTSCAN( 1, 20, decimal, 78, "%lli", &i );
+    TESTSCAN( 1, 20, decimal, 78, SCANPARMS( "%lli", &i ) );
     CHECK_FEQUAL( i, LLONG_MIN, signed long long, "%lli" ); // should be literal -9223372036854775808ll but GCC balks.
     CHECK_EQUAL( i < 0ll, 1 );
     }
     {
     // reading +9223372036854775807, d
     signed long long i = -1;
-    TESTSCAN( 1, 20, decimal, 99, "%lld", &i );
+    TESTSCAN( 1, 20, decimal, 99, SCANPARMS( "%lld", &i ) );
     CHECK_FEQUAL( i, 9223372036854775807ll, signed long long, "%lld" );
     }
     {
     // reading 0, u
     unsigned long long i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%llu", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%llu", &i ) );
     CHECK_EQUAL( i, 0ull );
     }
     {
     // reading -0, u
     unsigned long long i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%llu", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%llu", &i ) );
     CHECK_EQUAL( i, 0ull );
     }
     {
     // reading +0, u
     unsigned long long i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%llu", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%llu", &i ) );
     CHECK_EQUAL( i, 0ull );
     }
     {
     // reading 9223372036854775807, u
     unsigned long long i = -1;
-    TESTSCAN( 1, 19, decimal, 100, "%llu", &i );
+    TESTSCAN( 1, 19, decimal, 100, SCANPARMS( "%llu", &i ) );
     CHECK_FEQUAL( i, 9223372036854775807ull, unsigned long long, "%llu" );
     }
     {
     // reading +9223372036854775807, u
     unsigned long long i = -1;
-    TESTSCAN( 1, 20, decimal, 99, "%llu", &i );
+    TESTSCAN( 1, 20, decimal, 99, SCANPARMS( "%llu", &i ) );
     CHECK_FEQUAL( i, 9223372036854775807ull, unsigned long long, "%llu" );
     }
     {
     // reading 18446744073709551615, u
     unsigned long long i = 0;
-    TESTSCAN( 1, 20, decimal, 121, "%llu", &i );
+    TESTSCAN( 1, 20, decimal, 121, SCANPARMS( "%llu", &i ) );
     CHECK_FEQUAL( i, 18446744073709551615ull, unsigned long long, "%llu" );
     }
     {
     // reading +18446744073709551615, u
     unsigned long long i = 0;
-    TESTSCAN( 1, 21, decimal, 120, "%llu", &i );
+    TESTSCAN( 1, 21, decimal, 120, SCANPARMS( "%llu", &i ) );
     CHECK_FEQUAL( i, 18446744073709551615ull, unsigned long long, "%llu" );
     }
     {
     // reading 0, i
     signed long long i = -1;
-    TESTSCAN( 1, 1, decimal, 1, "%lli", &i );
+    TESTSCAN( 1, 1, decimal, 1, SCANPARMS( "%lli", &i ) );
     CHECK_EQUAL( i, 0ll );
     }
     {
     // reading -0, i
     signed long long i = -1;
-    TESTSCAN( 1, 2, decimal, 0, "%lli", &i );
+    TESTSCAN( 1, 2, decimal, 0, SCANPARMS( "%lli", &i ) );
     CHECK_EQUAL( i, 0ll );
     }
     {
     // reading +0, i
     signed long long i = -1;
-    TESTSCAN( 1, 2, decimal, 3, "%lli", &i );
+    TESTSCAN( 1, 2, decimal, 3, SCANPARMS( "%lli", &i ) );
     CHECK_EQUAL( i, 0ll );
     }
     {
     // reading -9223372036854775808, i
     signed long long i = -1;
-    TESTSCAN( 1, 20, decimal, 78, "%lli", &i );
+    TESTSCAN( 1, 20, decimal, 78, SCANPARMS( "%lli", &i ) );
     CHECK_FEQUAL( i, LLONG_MIN, signed long long, "%lli" ); // should be literal -9223372036854775808ll but GCC balks.
     CHECK_EQUAL( i < 0ll, 1 );
     }
     {
     // reading 9223372036854775807, i
     signed long long i = -1;
-    TESTSCAN( 1, 19, decimal, 100, "%lli", &i );
+    TESTSCAN( 1, 19, decimal, 100, SCANPARMS( "%lli", &i ) );
     CHECK_FEQUAL( i, 9223372036854775807ll, signed long long, "%lli" );
     }
     {
     // reading +9223372036854775807, i
     signed long long i = -1;
-    TESTSCAN( 1, 20, decimal, 99, "%lli", &i );
+    TESTSCAN( 1, 20, decimal, 99, SCANPARMS( "%lli", &i ) );
     CHECK_FEQUAL( i, 9223372036854775807ll, signed long long, "%lli" );
     }
 
@@ -711,176 +718,176 @@
     {
     // reading 0, x
     unsigned char i = -1;
-    TESTSCAN( 1, 1, hexadecimal, 3, "%hhx", &i );
+    TESTSCAN( 1, 1, hexadecimal, 3, SCANPARMS( "%hhx", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0x0, x
     unsigned char i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 0, "%hhx", &i );
+    TESTSCAN( 1, 4, hexadecimal, 0, SCANPARMS( "%hhx", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 0x000, x
     unsigned char i = -1;
-    TESTSCAN( 1, 6, hexadecimal, 5, "%hhx", &i );
+    TESTSCAN( 1, 6, hexadecimal, 5, SCANPARMS( "%hhx", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 0x0, i
     signed char i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 0, "%hhi", &i );
+    TESTSCAN( 1, 4, hexadecimal, 0, SCANPARMS( "%hhi", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 7f, x
     unsigned char i = -1;
-    TESTSCAN( 1, 2, hexadecimal, 15, "%hhx", &i );
+    TESTSCAN( 1, 2, hexadecimal, 15, SCANPARMS( "%hhx", &i ) );
     CHECK_EQUAL( i, 127 );
     }
     {
     // reading -0x7f, x
     unsigned char i = -1;
-    TESTSCAN( 1, 5, hexadecimal, 12, "%hhx", &i );
+    TESTSCAN( 1, 5, hexadecimal, 12, SCANPARMS( "%hhx", &i ) );
     CHECK_FEQUAL( i, -127, unsigned char, "%hhu" );
     }
     {
     // reading 0x80, i
     signed char i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 18, "%hhi", &i );
+    TESTSCAN( 1, 4, hexadecimal, 18, SCANPARMS( "%hhi", &i ) );
     CHECK_FEQUAL( i, -128, signed char, "%hhd" );
     }
     {
     // reading ff, x
     unsigned char i = -1;
-    TESTSCAN( 1, 2, hexadecimal, 25, "%hhx", &i );
+    TESTSCAN( 1, 2, hexadecimal, 25, SCANPARMS( "%hhx", &i ) );
     CHECK_EQUAL( i, 0xff );
     }
     {
     // reading 0xff, x
     unsigned char i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 23, "%hhx", &i );
+    TESTSCAN( 1, 4, hexadecimal, 23, SCANPARMS( "%hhx", &i ) );
     CHECK_EQUAL( i, 255 );
     }
     {
     // reading 0xff, i
     signed char i = 0;
-    TESTSCAN( 1, 4, hexadecimal, 23, "%hhi", &i );
+    TESTSCAN( 1, 4, hexadecimal, 23, SCANPARMS( "%hhi", &i ) );
     CHECK_EQUAL( i, -1 );
     }
     {
     // reading 0, x
     unsigned short i = -1;
-    TESTSCAN( 1, 1, hexadecimal, 3, "%hx", &i );
+    TESTSCAN( 1, 1, hexadecimal, 3, SCANPARMS( "%hx", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0x0, x
     unsigned short i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 0, "%hx", &i );
+    TESTSCAN( 1, 4, hexadecimal, 0, SCANPARMS( "%hx", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 0x000, x
     unsigned short i = -1;
-    TESTSCAN( 1, 6, hexadecimal, 5, "%hx", &i );
+    TESTSCAN( 1, 6, hexadecimal, 5, SCANPARMS( "%hx", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 0x0, i
     signed short i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 0, "%hi", &i );
+    TESTSCAN( 1, 4, hexadecimal, 0, SCANPARMS( "%hi", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 7fff, x
     unsigned short i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 31, "%hx", &i );
+    TESTSCAN( 1, 4, hexadecimal, 31, SCANPARMS( "%hx", &i ) );
     CHECK_EQUAL( i, 32767 );
     }
     {
     // reading -0x7fff, x
     unsigned short i = -1;
-    TESTSCAN( 1, 7, hexadecimal, 28, "%hx", &i );
+    TESTSCAN( 1, 7, hexadecimal, 28, SCANPARMS( "%hx", &i ) );
     CHECK_FEQUAL( i, -32767, unsigned short, "%hu" );
     }
     {
     // reading 0x8000, i
     signed short i = -1;
-    TESTSCAN( 1, 6, hexadecimal, 36, "%hi", &i );
+    TESTSCAN( 1, 6, hexadecimal, 36, SCANPARMS( "%hi", &i ) );
     CHECK_FEQUAL( i, -32768, signed short, "%hd" );
     }
     {
     // reading ffff, x
     unsigned short i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 45, "%hx", &i );
+    TESTSCAN( 1, 4, hexadecimal, 45, SCANPARMS( "%hx", &i ) );
     CHECK_EQUAL( i, 65535 );
     }
     {
     // reading 0xffff, x
     unsigned short i = -1;
-    TESTSCAN( 1, 6, hexadecimal, 43, "%hx", &i );
+    TESTSCAN( 1, 6, hexadecimal, 43, SCANPARMS( "%hx", &i ) );
     CHECK_EQUAL( i, 65535 );
     }
     {
     // reading 0xffff, i
     signed short i = 0;
-    TESTSCAN( 1, 6, hexadecimal, 43, "%hi", &i );
+    TESTSCAN( 1, 6, hexadecimal, 43, SCANPARMS( "%hi", &i ) );
     CHECK_FEQUAL( i, -1, signed short, "%hd" );
     }
     {
     // reading 0, x
     unsigned int i = -1;
-    TESTSCAN( 1, 1, hexadecimal, 3, "%x", &i );
+    TESTSCAN( 1, 1, hexadecimal, 3, SCANPARMS( "%x", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading -0x0, x
     unsigned int i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 0, "%x", &i );
+    TESTSCAN( 1, 4, hexadecimal, 0, SCANPARMS( "%x", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 0x000, x
     unsigned int i = -1;
-    TESTSCAN( 1, 6, hexadecimal, 5, "%x", &i );
+    TESTSCAN( 1, 6, hexadecimal, 5, SCANPARMS( "%x", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 0x0, i
     signed int i = -1;
-    TESTSCAN( 1, 4, hexadecimal, 0, "%i", &i );
+    TESTSCAN( 1, 4, hexadecimal, 0, SCANPARMS( "%i", &i ) );
     CHECK_EQUAL( i, 0 );
     }
     {
     // reading 7fffffff, x
     unsigned int i = -1;
-    TESTSCAN( 1, 8, hexadecimal, 53, "%x", &i );
+    TESTSCAN( 1, 8, hexadecimal, 53, SCANPARMS( "%x", &i ) );
     CHECK_EQUAL( i, 2147483647 );
     }
     {
     // reading -0x7fffffff, x
     unsigned int i = -1;
-    TESTSCAN( 1, 11, hexadecimal, 50, "%x", &i );
+    TESTSCAN( 1, 11, hexadecimal, 50, SCANPARMS( "%x", &i ) );
     CHECK_FEQUAL( i, -2147483647, unsigned int, "%u" );
     }
     {
     // reading 0x80000000, i
     signed int i = -1;
-    //TESTSCAN( 1, 11, hexadecimal, 62, "%i", &i );
-    CHECK_EQUAL( sscanf( "-0x80000000", "%i", &i );
-    CHECK_FEQUAL( i, -2147483648, signed int, "%d" );
+    TESTSCAN( 1, 10, hexadecimal, 62, SCANPARMS( "%i", &i ) );
+    printf( "found %d, expected -2147483648\n", i );
+    CHECK_FEQUAL( i, -2147483648, signed int, "%d" ); /* FIXME */
     }
     {
     // reading ffffffff, x
     unsigned int i = -1;
-    TESTSCAN( 1, 8, hexadecimal, 75, "%x", &i );
+    TESTSCAN( 1, 8, hexadecimal, 75, SCANPARMS( "%x", &i ) );
     CHECK_FEQUAL( i, 4294967295, unsigned int, "%d" );
     }
     {
     // reading 0xffffffff, x
     unsigned int i = -1;
-    TESTSCAN( 1, 10, hexadecimal, 73, "%x", &i );
+    TESTSCAN( 1, 10, hexadecimal, 73, SCANPARMS( "%x", &i ) );
     CHECK_FEQUAL( i, 4294967295, unsigned int, "%d" );
     }
 
@@ -888,169 +895,169 @@
     {
     // reading 0, o
     unsigned char i = -1;
-    TESTSCAN( 1, 1, octal, 4, "%hho", &i );
+    TESTSCAN( 1, 1, octal, 4, SCANPARMS( "%hho", &i ) );
     CHECK_EQUAL( i, 0u );
     }
     {
     // reading +0000, o
     unsigned char i = -1;
-    TESTSCAN( 1, 5, octal, 0, "%hho", &i );
+    TESTSCAN( 1, 5, octal, 0, SCANPARMS( "%hho", &i ) );
     CHECK_EQUAL( i, 0u );
     }
     {
     // reading -0000, o
     unsigned char i = -1;
-    TESTSCAN( 1, 5, octal, 6, "%hho", &i );
+    TESTSCAN( 1, 5, octal, 6, SCANPARMS( "%hho", &i ) );
     CHECK_EQUAL( i, 0u );
     }
     {
     // reading 0177, o
     unsigned char i = -1;
-    TESTSCAN( 1, 4, octal, 13, "%hho", &i );
+    TESTSCAN( 1, 4, octal, 13, SCANPARMS( "%hho", &i ) );
     CHECK_EQUAL( i, 127u );
     }
     {
     // reading +0177, o
     unsigned char i = -1;
-    TESTSCAN( 1, 5, octal, 12, "%hho", &i );
+    TESTSCAN( 1, 5, octal, 12, SCANPARMS( "%hho", &i ) );
     CHECK_EQUAL( i, 127u );
     }
     {
     // reading 0377, o
     unsigned char i = -1;
-    TESTSCAN( 1, 4, octal, 19, "%hho", &i );
+    TESTSCAN( 1, 4, octal, 19, SCANPARMS( "%hho", &i ) );
     CHECK_FEQUAL( i, 255u, unsigned char, "%hhu" );
     }
     {
     // reading +0377, o
     unsigned char i = -1;
-    TESTSCAN( 1, 5, octal, 18, "%hho", &i );
+    TESTSCAN( 1, 5, octal, 18, SCANPARMS( "%hho", &i ) );
     CHECK_FEQUAL( i, 255u, unsigned char, "%hhu" );
     }
     {
     // reading -0377, o
     unsigned char i = -1;
-    TESTSCAN( 1, 5, octal, 24, "%hho", &i );
+    TESTSCAN( 1, 5, octal, 24, SCANPARMS( "%hho", &i ) );
     CHECK_FEQUAL( i, 1u, unsigned char, "%hhu" );
     }
     {
     // reading 077777, o
     unsigned short i = -1;
-    TESTSCAN( 1, 6, octal, 31, "%ho", &i );
+    TESTSCAN( 1, 6, octal, 31, SCANPARMS( "%ho", &i ) );
     CHECK_EQUAL( i, 32767u );
     }
     {
     // reading +077777, o
     unsigned short i = -1;
-    TESTSCAN( 1, 7, octal, 30, "%ho", &i );
+    TESTSCAN( 1, 7, octal, 30, SCANPARMS( "%ho", &i ) );
     CHECK_EQUAL( i, 32767u );
     }
     {
     // reading 0177777, o
     unsigned short i = -1;
-    TESTSCAN( 1, 7, octal, 39, "%ho", &i );
+    TESTSCAN( 1, 7, octal, 39, SCANPARMS( "%ho", &i ) );
     CHECK_FEQUAL( i, 65535u, unsigned short, "%hu" );
     }
     {
     // reading +0177777, o
     unsigned short i = -1;
-    TESTSCAN( 1, 8, octal, 38, "%ho", &i );
+    TESTSCAN( 1, 8, octal, 38, SCANPARMS( "%ho", &i ) );
     CHECK_FEQUAL( i, 65535u, unsigned short, "%hu" );
     }
     {
     // reading -0177777, o
     unsigned short i = -1;
-    TESTSCAN( 1, 8, octal, 47, "%ho", &i );
+    TESTSCAN( 1, 8, octal, 47, SCANPARMS( "%ho", &i ) );
     CHECK_FEQUAL( i, 1u, unsigned short, "%hu" );
     }
     {
     // reading 017777777777, o
     unsigned int i = -1;
-    TESTSCAN( 1, 12, octal, 57, "%o", &i );
+    TESTSCAN( 1, 12, octal, 57, SCANPARMS( "%o", &i ) );
     CHECK_EQUAL( i, 2147483647u );
     }
     {
     // reading +017777777777, o
     unsigned int i = -1;
-    TESTSCAN( 1, 13, octal, 56, "%o", &i );
+    TESTSCAN( 1, 13, octal, 56, SCANPARMS( "%o", &i ) );
     CHECK_EQUAL( i, 2147483647u );
     }
     {
     // reading 037777777777, o
     unsigned int i = -1;
-    TESTSCAN( 1, 12, octal, 71, "%o", &i );
+    TESTSCAN( 1, 12, octal, 71, SCANPARMS( "%o", &i ) );
     CHECK_FEQUAL( i, 4294967295u, unsigned int, "%u" );
     }
     {
     // reading +037777777777, o
     unsigned int i = -1;
-    TESTSCAN( 1, 13, octal, 70, "%o", &i );
+    TESTSCAN( 1, 13, octal, 70, SCANPARMS( "%o", &i ) );
     CHECK_FEQUAL( i, 4294967295u, unsigned int, "%u" );
     }
     {
     // reading -037777777777, o
     unsigned int i = -1;
-    TESTSCAN( 1, 13, octal, 84, "%o", &i );
+    TESTSCAN( 1, 13, octal, 84, SCANPARMS( "%o", &i ) );
     CHECK_FEQUAL( i, 1u, unsigned int, "%u" );
     }
     {
     // reading 017777777777, o
     unsigned long i = -1;
-    TESTSCAN( 1, 12, octal, 57, "%lo", &i );
+    TESTSCAN( 1, 12, octal, 57, SCANPARMS( "%lo", &i ) );
     CHECK_EQUAL( i, 2147483647lu );
     }
     {
     // reading +017777777777, o
     unsigned long i = -1;
-    TESTSCAN( 1, 13, octal, 56, "%lo", &i );
+    TESTSCAN( 1, 13, octal, 56, SCANPARMS( "%lo", &i ) );
     CHECK_EQUAL( i, 2147483647lu );
     }
     {
     // reading 037777777777, o
     unsigned long i = -1;
-    TESTSCAN( 1, 12, octal, 71, "%lo", &i );
+    TESTSCAN( 1, 12, octal, 71, SCANPARMS( "%lo", &i ) );
     CHECK_FEQUAL( i, 4294967295lu, unsigned long, "%lu" );
     }
     {
     // reading +037777777777, o
     unsigned long i = -1;
-    TESTSCAN( 1, 13, octal, 70, "%lo", &i );
+    TESTSCAN( 1, 13, octal, 70, SCANPARMS( "%lo", &i ) );
     CHECK_FEQUAL( i, 4294967295lu, unsigned long, "%lu" );
     }
     {
     // reading -037777777777, o
     unsigned long i = -1;
-    TESTSCAN( 1, 13, octal, 84, "%lo", &i );
+    TESTSCAN( 1, 13, octal, 84, SCANPARMS( "%lo", &i ) );
     CHECK_FEQUAL( i, 1lu, unsigned long, "%lu" );
     }
     {
     // reading 0777777777777777777777, o
     unsigned long long i = -1;
-    TESTSCAN( 1, 22, octal, 99, "%llo", &i );
+    TESTSCAN( 1, 22, octal, 99, SCANPARMS( "%llo", &i ) );
     CHECK_FEQUAL( i, 9223372036854775807llu, unsigned long long, "%llu" );
     }
     {
     // reading +0777777777777777777777, o
     unsigned long long i = -1;
-    TESTSCAN( 1, 23, octal, 98, "%llo", &i );
+    TESTSCAN( 1, 23, octal, 98, SCANPARMS( "%llo", &i ) );
     CHECK_FEQUAL( i, 9223372036854775807llu, unsigned long long, "%llu" );
     }
     {
     // reading 01777777777777777777777, o
     unsigned long long i = -1;
-    TESTSCAN( 1, 23, octal, 123, "%llo", &i );
+    TESTSCAN( 1, 23, octal, 123, SCANPARMS( "%llo", &i ) );
     CHECK_FEQUAL( i, 18446744073709551615llu, unsigned long long, "%llu" );
     }
     {
     // reading +01777777777777777777777, o
     unsigned long long i = -1;
-    TESTSCAN( 1, 24, octal, 122, "%llo", &i );
+    TESTSCAN( 1, 24, octal, 122, SCANPARMS( "%llo", &i ) );
     CHECK_FEQUAL( i, 18446744073709551615llu, unsigned long long, "%llu" );
     }
     {
     // reading -01777777777777777777777, o
     unsigned long long i = -1;
-    TESTSCAN( 1, 24, octal, 147, "%llo", &i );
+    TESTSCAN( 1, 24, octal, 147, SCANPARMS( "%llo", &i ) );
     CHECK_FEQUAL( i, 1llu, unsigned long long, "%llu" );
     }
 
@@ -1060,55 +1067,55 @@
     {
     // reading abc
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( 1, 3, alpha, 0, "%[abc]", buffer );
+    TESTSCAN( 1, 3, alpha, 0, SCANPARMS( "%[abc]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "abc", 4 ) );
     }
     {
     // reading a-c
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( 1, 3, alpha, 0, "%[a-c]", buffer );
+    TESTSCAN( 1, 3, alpha, 0, SCANPARMS( "%[a-c]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "abc", 4 ) );
     }
     {
     // reading a-h
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( 1, 8, alpha, 0, "%[a-h]", buffer );
+    TESTSCAN( 1, 8, alpha, 0, SCANPARMS( "%[a-h]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "abcdefgh", 9 ) );
     }
     {
     // reading o-r, including [, seperate char
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( 1, 5, alpha, 15, "%[[o-qr]", buffer );
+    TESTSCAN( 1, 5, alpha, 15, SCANPARMS( "%[[o-qr]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "op[qr", 6 ) );
     }
     {
     // reading v-y, including ], two groups
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( 1, 5, alpha, 23, "%[]v-wx-y]", buffer );
+    TESTSCAN( 1, 5, alpha, 23, SCANPARMS( "%[]v-wx-y]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "vw]xy", 6 ) );
     }
     {
     // missing on first character
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( 0, -1, alpha, 0, "%[b]", buffer );
+    TESTSCAN( 0, -1, alpha, 0, SCANPARMS( "%[b]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "", 1 ) );
     }
     {
     // eof while reading, two groups
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( 1, 2, alpha, 27, "%[a-zA-Z]", buffer );
+    TESTSCAN( 1, 2, alpha, 27, SCANPARMS( "%[a-zA-Z]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "yz", 3 ) );
     }
     {
     // eof before reading
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( -1, -1, alpha, 29, "%[a-z]", buffer ) );
+    TESTSCAN( -1, -1, alpha, 29, SCANPARMS( "%[a-z]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "", 1 ) );
     }
     {
     // negation - [^...]
     memset( buffer, '\0', BUFSIZE );
-    TESTSCAN( 1, 3, alpha, 0, "%[^d-f]", buffer );
+    TESTSCAN( 1, 3, alpha, 0, SCANPARMS( "%[^d-f]", buffer ) );
     CHECK_FALSE( memcmp( buffer, "abc", 4 ) );
     }
 
@@ -1156,18 +1163,18 @@
        - The conversion should therefore result in a matching failure
          according to 7.19.6.2 paragraph 10.
     */
-    TESTSCAN( 0, -1, special, 0, "%hhx", &i );
-    CHECK_EQUAL( i, 1 );
+    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%hhx", &i ) ); /* May fail on regtest */
+    CHECK_EQUAL( i, 1 ); /* FIXME */
     }
     {
     // reading -0x, x
     unsigned short i = 1;
-    TESTSCAN( 0, -1, special, 0, "%hx", &i );
-    CHECK_EQUAL( i, 1 );
+    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%hx", &i ) ); /* May fail on regtest */
+    CHECK_EQUAL( i, 1 ); /* FIXME */
     }
     {
     // reading -0x, x
     unsigned int i = 1;
-    TESTSCAN( 0, -1, special, 0, "%x", &i );
-    CHECK_EQUAL( i, 1 );
+    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%x", &i ) ); /* May fail on regtest */
+    CHECK_EQUAL( i, 1 ); /* FIXME */
     }
