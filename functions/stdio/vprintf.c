@@ -36,11 +36,11 @@ static int testprintf( FILE * stream, size_t n, const char * format, ... )
 int main( void )
 {
     FILE * buffer;
-    TESTCASE( ( buffer = freopen( "testfile", "w", stdout ) ) != NULL );
+    TESTCASE( ( buffer = freopen( "testfile", "wb", stdout ) ) != NULL );
 #include "printf_testcases.incl"
     TESTCASE( fclose( buffer ) == 0 );
     char readbuffer[1000];
-    TESTCASE( ( buffer = fopen( "testfile", "r" ) ) != NULL );
+    TESTCASE( ( buffer = fopen( "testfile", "rb" ) ) != NULL );
     TESTCASE( fread( readbuffer, 1, 1000, buffer ) == 985 );
     TESTCASE( fclose( buffer ) == 0 );
     TESTCASE( remove( "testfile" ) == 0 );
