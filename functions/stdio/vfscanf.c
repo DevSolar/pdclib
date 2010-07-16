@@ -42,7 +42,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
                 {
                     ++status.i;
                 }
-                if ( c != EOF )
+                if ( ! feof( stream ) ) /* TODO: Check EOF status directly */
                 {
                     ungetc( c, stream );
                 }
@@ -50,10 +50,13 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
             else
             {
                 /* Non-whitespace char in format string: Match verbatim */
-                if ( ( c = getc( stream ) ) != *format )
+                if ( ( ( c = getc( stream ) ) != *format ) || feof( stream ) ) /* TODO: Check EOF status directly */
                 {
                     /* Matching error */
-                    ungetc( c, stream );
+                    if ( ! feof( stream ) ) /* TODO: Check EOF status directly */
+                    {
+                        ungetc( c, stream );
+                    }
                     return status.n;
                 }
                 else
