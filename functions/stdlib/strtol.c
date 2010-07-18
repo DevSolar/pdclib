@@ -88,7 +88,7 @@ int main( void )
     /* for one-complement and signed magnitude just as well. Anyone having */
     /* a platform to test this on?                                         */
     errno = 0;
-#if LONG_MAX == 0x7fffffffL
+#if LONG_MAX >> 30 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtol( "2147483647", NULL, 0 ) == 0x7fffffff );
     TESTCASE( errno == 0 );
@@ -105,7 +105,7 @@ int main( void )
     TESTCASE( strtol( "-2147483649", NULL, 0 ) == LONG_MIN );
     TESTCASE( errno == ERANGE );
     /* TODO: test "odd" overflow, i.e. base is not power of two */
-#elif LONG_MAX == 0x7fffffffffffffffL
+#elif LONG_MAX >> 62 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtol( "9223372036854775807", NULL, 0 ) == 0x7fffffffffffffff );
     TESTCASE( errno == 0 );
