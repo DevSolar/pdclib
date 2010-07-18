@@ -13,10 +13,10 @@
 
     FILE * hexadecimal = fopen( "scanf_testdata_hexadecimal", "wb+" );
     TESTCASE( hexadecimal != NULL );
-    TESTCASE( fwrite( "-0x0 -0x000 -0x7f 0x80 0xff -0x7fff 0x8000\n"
-                      "0xffff -0x7fffffff 0x80000000 0xffffffff\n"
-                      "-0x7fffffffffffffff 0x8000000000000000\n"
-                      "0xffffffffffffffff\n", 1, 142, hexadecimal ) == 142 );
+    TESTCASE( fwrite( "-0x0 -0x000 -0x7f -0x80 0xff -0x7fff -0x8000\n"
+                      "0xffff -0x7fffffff -0x80000000 0xffffffff\n"
+                      "-0x7fffffffffffffff -0x8000000000000000\n"
+                      "0xffffffffffffffff\n", 1, 146, hexadecimal ) == 146 );
     rewind( hexadecimal );
 
     FILE * octal = fopen( "scanf_testdata_octal", "wb+" );
