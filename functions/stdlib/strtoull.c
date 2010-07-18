@@ -76,14 +76,16 @@ int main( void )
     TESTCASE( strtoull( overflow, &endptr, 0 ) == 0 );
     TESTCASE( endptr == overflow );
     errno = 0;
-#if ULLONG_MAX == 0xffffffffffffffffLL
+/* long long -> 64 bit */
+#if ULLONG_MAX >> 63 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoull( "18446744073709551615", NULL, 0 ) == ULLONG_MAX );
     TESTCASE( errno == 0 );
     TESTCASE( strtoull( "18446744073709551616", NULL, 0 ) == ULLONG_MAX );
     TESTCASE( errno == ERANGE );
     /* TODO: test "odd" overflow, i.e. base is not power of two */
-#elif ULLONG_MAX == 0xffffffffffffffffffffffffffffffffLL
+/* long long -> 128 bit */
+#elif ULLONG_MAX >> 127 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoull( "340282366920938463463374607431768211455", NULL, 0 ) == ULLONG_MAX );
     TESTCASE( errno == 0 );

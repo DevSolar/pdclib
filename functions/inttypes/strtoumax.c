@@ -76,14 +76,16 @@ int main( void )
     TESTCASE( strtoumax( overflow, &endptr, 0 ) == 0 );
     TESTCASE( endptr == overflow );
     errno = 0;
-#if UINTMAX_MAX == 0xffffffffffffffffLL
+/* uintmax_t -> long long -> 64 bit */
+#if UINTMAX_MAX >> 63 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoumax( "18446744073709551615", NULL, 0 ) == UINTMAX_MAX );
     TESTCASE( errno == 0 );
     TESTCASE( strtoumax( "18446744073709551616", NULL, 0 ) == UINTMAX_MAX );
     TESTCASE( errno == ERANGE );
     /* TODO: test "odd" overflow, i.e. base is not power of two */
-#elif UINTMAX_MAX == 0xffffffffffffffffffffffffffffffffLL
+/* uintmax_t -> long long -> 128 bit */
+#elif UINTMAX_MAX >> 127 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoumax( "340282366920938463463374607431768211455", NULL, 0 ) == UINTMAX_MAX );
     TESTCASE( errno == 0 );
