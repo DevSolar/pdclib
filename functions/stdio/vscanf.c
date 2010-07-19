@@ -23,7 +23,7 @@ int vscanf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Simple wrapper to vfscanf(), no seperate testing. */
     return TEST_RESULTS;
 }
 
