@@ -33,10 +33,11 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
 int main( void )
 {
     FILE * buffer;
-    TESTCASE( ( buffer = fopen( "testfile", "wb" ) ) != NULL );
+    TESTCASE( ( buffer = fopen( "testing/testfile", "wb" ) ) != NULL );
 #include "printf_testcases.incl"
     TESTCASE( fclose( buffer ) == 0 );
 #include "fprintf_reftest.incl"
+    TESTCASE( remove( "testing/testfile" ) == 0 );
     return TEST_RESULTS;
 }
 

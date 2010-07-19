@@ -50,12 +50,12 @@
         int res = SCANFUNC( source, __VA_ARGS__ ); \
         if ( res != result ) \
         { \
-            rc += 1; \
+            TEST_RESULTS += 1; \
             printf( "FAILED: " __FILE__ ", line %d - expected result %d, got %d\n", __LINE__, result, res ); \
         } \
         if ( n != count ) \
         { \
-            rc += 1; \
+            TEST_RESULTS += 1; \
             printf( "FAILED: " __FILE__ ", line %d - expected count %d, got %d\n", __LINE__, count, n ); \
         } \
     } while ( 0 )

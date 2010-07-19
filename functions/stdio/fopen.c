@@ -83,16 +83,16 @@ int main( void )
        my system is at once less forgiving (segfaults on mode NULL) and more
        forgiving (accepts undefined modes).
     */
-    remove( "testfile" );
+    remove( "testing/testfile" );
     TESTCASE_NOREG( fopen( NULL, NULL ) == NULL );
     TESTCASE( fopen( NULL, "w" ) == NULL );
     TESTCASE_NOREG( fopen( "", NULL ) == NULL );
     TESTCASE( fopen( "", "w" ) == NULL );
     TESTCASE( fopen( "foo", "" ) == NULL );
-    TESTCASE_NOREG( fopen( "testfile", "wq" ) == NULL ); /* Undefined mode */
-    TESTCASE_NOREG( fopen( "testfile", "wr" ) == NULL ); /* Undefined mode */
-    TESTCASE( fopen( "testfile", "w" ) != NULL );
-    remove( "testfile" );
+    TESTCASE_NOREG( fopen( "testing/testfile", "wq" ) == NULL ); /* Undefined mode */
+    TESTCASE_NOREG( fopen( "testing/testfile", "wr" ) == NULL ); /* Undefined mode */
+    TESTCASE( fopen( "testing/testfile", "w" ) != NULL );
+    remove( "testing/testfile" );
     return TEST_RESULTS;
 }
 

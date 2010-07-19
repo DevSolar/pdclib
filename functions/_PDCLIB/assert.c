@@ -45,7 +45,7 @@ static int UNEXPECTED_ABORT = 1;
 static void aborthandler( int sig )
 {
     TESTCASE( ! EXPECTED_ABORT );
-    exit( (signed int)rc );
+    exit( (signed int)TEST_RESULTS );
 }
 
 #define NDEBUG

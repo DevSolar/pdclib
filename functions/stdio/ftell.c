@@ -48,8 +48,8 @@ int main( void )
     */
     char * buffer = (char*)malloc( 4 );
     FILE * fh;
-    remove( "testfile" );
-    TESTCASE( ( fh = fopen( "testfile", "w+" ) ) != NULL );
+    remove( testfile );
+    TESTCASE( ( fh = fopen( testfile, "w+" ) ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IOLBF, 4 ) == 0 );
     TESTCASE( fputc( '1', fh ) == '1' );
     TESTCASE( fputc( '2', fh ) == '2' );
@@ -77,7 +77,7 @@ int main( void )
     TESTCASE( fgetc( fh ) == '1' );
     TESTCASE( fclose( fh ) == 0 );
     /* TODO: t.b.c. */
-    remove( "testfile" );
+    remove( testfile );
     return TEST_RESULTS;
 }
 

@@ -70,23 +70,23 @@ int main( void )
 #ifndef REGTEST
     struct _PDCLIB_file_t * file1;
     struct _PDCLIB_file_t * file2;
-    remove( "testfile1" );
-    remove( "testfile2" );
+    remove( "testing/testfile1" );
+    remove( "testing/testfile2" );
     TESTCASE( _PDCLIB_filelist == stdin );
-    TESTCASE( ( file1 = fopen( "testfile1", "w" ) ) != NULL );
+    TESTCASE( ( file1 = fopen( "testing/testfile1", "w" ) ) != NULL );
     TESTCASE( _PDCLIB_filelist == file1 );
-    TESTCASE( ( file2 = fopen( "testfile2", "w" ) ) != NULL );
+    TESTCASE( ( file2 = fopen( "testing/testfile2", "w" ) ) != NULL );
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file2 ) == 0 );
     TESTCASE( _PDCLIB_filelist == file1 );
-    TESTCASE( ( file2 = fopen( "testfile1", "w" ) ) != NULL );
+    TESTCASE( ( file2 = fopen( "testing/testfile1", "w" ) ) != NULL );
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file1 ) == 0 );
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file2 ) == 0 );
     TESTCASE( _PDCLIB_filelist == stdin );
-    remove( "testfile1" );
-    remove( "testfile2" );
+    remove( "testing/testfile1" );
+    remove( "testing/testfile2" );
 #else
     puts( " NOTEST fclose() test driver is PDCLib-specific." );
 #endif

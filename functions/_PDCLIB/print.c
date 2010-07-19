@@ -536,7 +536,7 @@ static int testprintf( char * buffer, size_t n, const char * format, ... )
     if ( *(_PDCLIB_print( format, &status )) != '\0' )
     {
         printf( "_PDCLIB_print() did not return end-of-specifier on '%s'.\n", format );
-        ++rc;
+        ++TEST_RESULTS;
     }
     va_end( status.arg );
     return status.i;
