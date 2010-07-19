@@ -1,9 +1,22 @@
     {
 
+/* Be afraid. Be very afraid.
+   Virtually everything in the printf() / scanf() test drivers is heavily
+   depending on the platform, i.e. the width of the integer values. Since
+   we need widths, string representations in hex, octal and decimal and
+   whatnot, there is some heavy macro abuse coming up...
+*/
+
+#define sym2v( x ) #x
+#define sym2s( x ) sym2v( x )
+
 #if INT_MAX >> 15 == 1
 
 #define UINT_DIG 5
 #define INT_DIG  5
+#define INT_DIG_LESS1 "4"
+#define INT_DIG_PLUS1 "6"
+#define INT_DIG_PLUS2 "7"
 #define INT_HEXDIG "FFF"
 #define INT_hexdig "fff"
 #define INT_OCTDIG "177777"
@@ -21,6 +34,9 @@
 
 #define UINT_DIG 10
 #define INT_DIG  10
+#define INT_DIG_LESS1 "9"
+#define INT_DIG_PLUS1 "11"
+#define INT_DIG_PLUS2 "12"
 #define INT_HEXDIG "FFFFFFF"
 #define INT_hexdig "fffffff"
 #define INT_OCTDIG "37777777777"
@@ -38,6 +54,9 @@
 
 #define UINT_DIG 20
 #define INT_DIG  19
+#define INT_DIG_LESS1 "18"
+#define INT_DIG_PLUS1 "20"
+#define INT_DIG_PLUS2 "21"
 #define INT_HEXDIG "FFFFFFFFFFFFFFF"
 #define INT_hexdig "fffffffffffffff"
 #define INT_OCTDIG "1777777777777777777777"
@@ -174,160 +193,161 @@
     TESTCASE_SPRINTF( strcmp( buffer, ULONG_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%lu", -1ul ) == ULONG_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, ULONG_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%llu", ULLONG_MAX ) == 20 );
+    TESTCASE( testprintf( buffer, 100, "%llu", ULLONG_MAX ) == ULLONG_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, ULLONG_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%llu", -1ull ) == 20 );
+    TESTCASE( testprintf( buffer, 100, "%llu", -1ull ) == ULLONG_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, ULLONG_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%X", UINT_MAX ) == 8 );
+    TESTCASE( testprintf( buffer, 100, "%X", UINT_MAX ) == (int)strlen( INT_HEXDIG ) + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "F" INT_HEXDIG ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#X", -1u ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#X", -1u ) == (int)strlen( INT_HEXDIG ) + 3 );
     TESTCASE_SPRINTF( strcmp( buffer, "0XF" INT_HEXDIG ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%x", UINT_MAX ) == 8 );
+    TESTCASE( testprintf( buffer, 100, "%x", UINT_MAX ) == (int)strlen( INT_HEXDIG ) + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "f" INT_hexdig ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#x", -1u ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#x", -1u ) == (int)strlen( INT_HEXDIG ) + 3 );
     TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%o", UINT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%o", UINT_MAX ) == (int)strlen( INT_OCTDIG ) );
     TESTCASE_SPRINTF( strcmp( buffer, INT_OCTDIG ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#o", -1u ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%#o", -1u ) == (int)strlen( INT_OCTDIG ) + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "0" INT_OCTDIG ) == 0 );
     /* TODO: This test case is broken, doesn't test what it was intended to. */
     TESTCASE( testprintf( buffer, 100, "%.0#o", 0 ) == 5 );
     TESTCASE_SPRINTF( strcmp( buffer, "%.0#o" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%+d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%+d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%+d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%+d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+d", 0 ) == 2 );
     TESTCASE_SPRINTF( strcmp( buffer, "+0" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%+u", UINT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%+u", UINT_MAX ) == UINT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%+u", -1u ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%+u", -1u ) == UINT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "% d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "% d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "% d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "% d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, " " INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "% d", 0 ) == 2 );
     TESTCASE_SPRINTF( strcmp( buffer, " 0" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "% u", UINT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "% u", UINT_MAX ) == UINT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "% u", -1u ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "% u", -1u ) == UINT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
-    /* FIXME: Field widths are specific to 32/64 bit platform */
-    TESTCASE( testprintf( buffer, 100, "%9d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%" INT_DIG_LESS1 "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%9d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%" INT_DIG_LESS1 "d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%10d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%" sym2s(INT_DIG) "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%10d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%" sym2s(INT_DIG) "d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%11d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%" INT_DIG_PLUS1 "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%11d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%" INT_DIG_PLUS1 "d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, " " INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%12d", INT_MIN ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%" INT_DIG_PLUS2 "d", INT_MIN ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, " -" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%12d", INT_MAX ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%" INT_DIG_PLUS2 "d", INT_MAX ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, "  " INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-9d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%-" INT_DIG_LESS1 "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-9d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%-" INT_DIG_LESS1 "d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-10d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%-" sym2s(INT_DIG) "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-10d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%-" sym2s(INT_DIG) "d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-11d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%-" INT_DIG_PLUS1 "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-11d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%-" INT_DIG_PLUS1 "d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR " " ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-12d", INT_MIN ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%-" INT_DIG_PLUS2 "d", INT_MIN ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR " " ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-12d", INT_MAX ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%-" INT_DIG_PLUS2 "d", INT_MAX ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR "  " ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%09d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%0" INT_DIG_LESS1 "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%09d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%0" INT_DIG_LESS1 "d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%010d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%0" sym2s(INT_DIG) "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%010d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%0" sym2s(INT_DIG) "d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%011d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%0" INT_DIG_PLUS1 "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%011d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%0" INT_DIG_PLUS1 "d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "0" INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%012d", INT_MIN ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%0" INT_DIG_PLUS2 "d", INT_MIN ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, "-0" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%012d", INT_MAX ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%0" INT_DIG_PLUS2 "d", INT_MAX ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, "00" INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-09d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%-0" INT_DIG_LESS1 "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-09d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%-0" INT_DIG_LESS1 "d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-010d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%-0" sym2s(INT_DIG) "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-010d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%-0" sym2s(INT_DIG) "d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-011d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%-0" INT_DIG_PLUS1 "d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-011d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%-0" INT_DIG_PLUS1 "d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR " " ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-012d", INT_MIN ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%-0" INT_DIG_PLUS2 "d", INT_MIN ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR " " ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%-012d", INT_MAX ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "%-0" INT_DIG_PLUS2 "d", INT_MAX ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR "  " ) == 0 );
+    /* FIXME: This test not yet 32/64 bit agnostic */
     TESTCASE( testprintf( buffer, 100, "%030.20d", INT_MAX ) == 30 );
     TESTCASE_SPRINTF( strcmp( buffer, "          00000000002147483647" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%.6x", UINT_MAX ) == 8 );
+    TESTCASE( testprintf( buffer, 100, "%.6x", UINT_MAX ) == (int)strlen( INT_HEXDIG ) + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "f" INT_hexdig ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#6.3x", UINT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#6.3x", UINT_MAX ) == (int)strlen( INT_HEXDIG ) + 3 );
     TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#3.6x", UINT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#3.6x", UINT_MAX ) == (int)strlen( INT_HEXDIG ) + 3 );
     TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%.6d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%.6d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%6.3d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%6.3d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%3.6d", INT_MIN ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%3.6d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#0.6x", UINT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#0.6x", UINT_MAX ) == UINT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#06.3x", UINT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#06.3x", UINT_MAX ) == UINT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#03.6x", UINT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#03.6x", UINT_MAX ) == UINT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#0.6d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#0.6d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#06.3d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#06.3d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#03.6d", INT_MAX ) == 10 );
+    TESTCASE( testprintf( buffer, 100, "%#03.6d", INT_MAX ) == INT_DIG );
     TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#+.6d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%#+.6d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#+6.3d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%#+6.3d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%#+3.6d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%#+3.6d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%+0.6d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%+0.6d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%+06.3d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%+06.3d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%+03.6d", INT_MAX ) == 11 );
+    TESTCASE( testprintf( buffer, 100, "%+03.6d", INT_MAX ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
 #ifndef TEST_CONVERSION_ONLY
-    TESTCASE( testprintf( buffer, 100, "- %d", INT_MAX ) == 12 );
+    TESTCASE( testprintf( buffer, 100, "- %d", INT_MAX ) == INT_DIG + 2 );
     TESTCASE_SPRINTF( strcmp( buffer, "- " INT_MAX_DEZ_STR ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "- %d %% %d", INT_MAX, INT_MIN ) == 26 );
+    TESTCASE( testprintf( buffer, 100, "- %d %% %d", INT_MAX, INT_MIN ) == INT_DIG * 2 + 6 );
     TESTCASE_SPRINTF( strcmp( buffer, "- " INT_MAX_DEZ_STR " % -" INT_MIN_DEZ_STR ) == 0 );
 #endif
     TESTCASE( testprintf( buffer, 100, "%c", 'x' ) == 1 );
     TESTCASE_SPRINTF( strcmp( buffer, "x" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%s", "abcdef" ) == 6 );
     TESTCASE_SPRINTF( strcmp( buffer, "abcdef" ) == 0 );
+    /* FIXME: This test not yet 32/64 bit agnostic */
     TESTCASE( testprintf( buffer, 100, "%p", (void *)0xdeadbeef ) == 10 );
-    TESTCASE_SPRINTF( strcmp( buffer, "0xdeadbeef" ) == 0 ); /* FIXME */
+    TESTCASE_SPRINTF( strcmp( buffer, "0xdeadbeef" ) == 0 );
 #ifndef TEST_CONVERSION_ONLY
     {
         int val1, val2;
