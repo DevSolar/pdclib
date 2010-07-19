@@ -30,6 +30,8 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
 
 #define testprintf( stream, n, format, ... ) fprintf( stream, format, __VA_ARGS__ )
 
+#define TESTCASE_SPRINTF( x )
+
 int main( void )
 {
     FILE * buffer;
