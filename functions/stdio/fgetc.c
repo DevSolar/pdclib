@@ -20,9 +20,9 @@ int fgetc( struct _PDCLIB_file_t * stream )
     }
     if ( stream->ungetidx > 0 )
     {
-        return stream->ungetbuf[ --(stream->ungetidx) ];
+        return (unsigned char)stream->ungetbuf[ --(stream->ungetidx) ];
     }
-    return stream->buffer[stream->bufidx++];
+    return (unsigned char)stream->buffer[stream->bufidx++];
 }
 
 #endif
