@@ -80,32 +80,31 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
 int main( void )
 {
 #ifndef REGTEST
-    char const * const filename = "testfile";
     char buffer[ BUFFERSIZE ];
     FILE * fh;
-    remove( filename );
+    remove( testfile );
     /* full buffered, user-supplied buffer */
-    TESTCASE( ( fh = fopen( filename, "w" ) ) != NULL );
+    TESTCASE( ( fh = fopen( testfile, "w" ) ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IOFBF, BUFFERSIZE ) == 0 );
     TESTCASE( fh->buffer == buffer );
     TESTCASE( fh->bufsize == BUFFERSIZE );
     TESTCASE( ( fh->status & ( _IOFBF | _IONBF | _IOLBF ) ) == _IOFBF );
     TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( remove( filename ) == 0 );
+    TESTCASE( remove( testfile ) == 0 );
     /* line buffered, lib-supplied buffer */
-    TESTCASE( ( fh = fopen( filename, "w" ) ) != NULL );
+    TESTCASE( ( fh = fopen( testfile, "w" ) ) != NULL );
     TESTCASE( setvbuf( fh, NULL, _IOLBF, BUFFERSIZE ) == 0 );
     TESTCASE( fh->buffer != NULL );
     TESTCASE( fh->bufsize == BUFFERSIZE );
     TESTCASE( ( fh->status & ( _IOFBF | _IONBF | _IOLBF ) ) == _IOLBF );
     TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( remove( filename ) == 0 );
+    TESTCASE( remove( testfile ) == 0 );
     /* not buffered, user-supplied buffer */
-    TESTCASE( ( fh = fopen( filename, "w" ) ) != NULL );
+    TESTCASE( ( fh = fopen( testfile, "w" ) ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IONBF, BUFFERSIZE ) == 0 );
     TESTCASE( ( fh->status & ( _IOFBF | _IONBF | _IOLBF ) ) == _IONBF );
     TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( remove( filename ) == 0 );
+    TESTCASE( remove( testfile ) == 0 );
 #else
     puts( " NOTEST setvbuf() test driver is PDCLib-specific." );
 #endif
