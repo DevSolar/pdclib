@@ -1,9 +1,9 @@
-    FILE * general = fopen( "scanf_testdata_general", "wb+" );
+    FILE * general = fopen( "testing/scanf_testdata_general", "wb+" );
     TESTCASE( general != NULL );
     TESTCASE( fwrite( "12345678901\0003-5+7\0009\3772 4 6 8 0\3771 \011 5%%  0", 1, 40, general ) == 40 );
     rewind( general );
 
-    FILE * decimal = fopen( "scanf_testdata_decimal", "wb+" );
+    FILE * decimal = fopen( "testing/scanf_testdata_decimal", "wb+" );
     TESTCASE( decimal != NULL );
     TESTCASE( fwrite( "-0 +0 -128 +127 +255 -32768 +32767 +65535\n"
                       "-2147483648 +2147483647 +4294967295\n"
@@ -11,7 +11,7 @@
                       "+18446744073709551615\n", 1, 142, decimal ) == 142 );
     rewind( decimal );
 
-    FILE * hexadecimal = fopen( "scanf_testdata_hexadecimal", "wb+" );
+    FILE * hexadecimal = fopen( "testing/scanf_testdata_hexadecimal", "wb+" );
     TESTCASE( hexadecimal != NULL );
     TESTCASE( fwrite( "-0x0 -0x000 -0x7f -0x80 0xff -0x7fff -0x8000\n"
                       "0xffff -0x7fffffff -0x80000000 0xffffffff\n"
@@ -19,7 +19,7 @@
                       "0xffffffffffffffff\n", 1, 146, hexadecimal ) == 146 );
     rewind( hexadecimal );
 
-    FILE * octal = fopen( "scanf_testdata_octal", "wb+" );
+    FILE * octal = fopen( "testing/scanf_testdata_octal", "wb+" );
     TESTCASE( octal != NULL );
     TESTCASE( fwrite( "+0000 -0000 +0177 +0377 -0377 +077777 +0177777\n"
                       "-0177777 +017777777777 +037777777777\n"
@@ -28,13 +28,13 @@
                       "-01777777777777777777777\n", 1, 172, octal ) == 172 );
     rewind( octal );
 
-    FILE * alpha = fopen( "scanf_testdata_alpha", "wb+" );
+    FILE * alpha = fopen( "testing/scanf_testdata_alpha", "wb+" );
     TESTCASE( alpha != NULL );
     TESTCASE( fwrite( "abcdefgh-ijklmnop[qrs%uvw]xyz", 1, 29, alpha ) == 29 );
     rewind( alpha );
 
 #ifndef REGTEST
-    FILE * special = fopen( "scanf_testdata_special", "wb+" );
+    FILE * special = fopen( "testing/scanf_testdata_special", "wb+" );
     TESTCASE( special != NULL );
     TESTCASE( fwrite( "-0xz\n", 1, 5, special ) == 5 );
     rewind( special );
