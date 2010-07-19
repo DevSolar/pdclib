@@ -48,6 +48,11 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
                 /* Non-whitespace char in format string: Match verbatim */
                 if ( *status.s != *format )
                 {
+                    if ( *status.s == '\0' && status.n == 0 )
+                    {
+                        /* Early input error */
+                        return EOF;
+                    }
                     /* Matching error */
                     return status.n;
                 }
@@ -61,9 +66,13 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
         }
         else
         {
-            /* NULL return code indicates input error */
+            /* NULL return code indicates error */
             if ( rc == NULL )
             {
+                if ( ( *status.s == '\n' ) && ( status.n == 0 ) )
+                {
+                    status.n = EOF;
+                }
                 break;
             }
             /* Continue parsing after conversion specifier */
