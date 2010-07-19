@@ -33,6 +33,8 @@ static int testprintf( FILE * stream, size_t n, const char * format, ... )
     return i;
 }
 
+#define TESTCASE_SPRINTF( x )
+
 int main( void )
 {
     FILE * buffer;

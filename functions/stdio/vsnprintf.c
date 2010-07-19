@@ -54,7 +54,6 @@ int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restric
 #include <stdint.h>
 #include <string.h>
 
-
 static int testprintf( char * s, size_t n, const char * format, ... )
 {
     int i;
@@ -64,6 +63,8 @@ static int testprintf( char * s, size_t n, const char * format, ... )
     va_end( arg );
     return i;
 }
+
+#define TESTCASE_SPRINTF( x ) TESTCASE( x )
 
 int main( void )
 {

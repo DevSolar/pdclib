@@ -31,6 +31,8 @@ int snprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict
 
 #define testprintf( s, n, format, ... ) snprintf( s, n, format, __VA_ARGS__ )
 
+#define TESTCASE_SPRINTF( x ) TESTCASE( x )
+
 int main( void )
 {
     char buffer[100];

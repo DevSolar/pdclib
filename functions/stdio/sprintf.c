@@ -32,6 +32,8 @@ int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ..
 
 #define testprintf( s, n, format, ... ) sprintf( s, format, __VA_ARGS__ )
 
+#define TESTCASE_SPRINTF( x ) TESTCASE( x )
+
 int main( void )
 {
     char buffer[100];

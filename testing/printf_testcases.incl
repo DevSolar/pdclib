@@ -1,249 +1,340 @@
     {
 
-#if UINT_MAX >> 15 == 1
-#define _PDCLIB_UINT_DIG 5
-#define _PDCLIB_INT_DIG  5
-#define _PDCLIB_INT_HEXDIG FFFF
-#define _PDCLIB_INT_hexdig ffff
-#define _PDCLIB_INT_OCTDIG 177777
+#if INT_MAX >> 15 == 1
+
+#define UINT_DIG 5
+#define INT_DIG  5
+#define INT_HEXDIG "FFF"
+#define INT_hexdig "fff"
+#define INT_OCTDIG "177777"
+#define INT_MAX_DEZ_STR  "32767"
+#define INT_MIN_DEZ_STR  "32768"
+#define UINT_MAX_DEZ_STR "65535"
+#define INT_MAX_OCT_STR
+#define INT_MIN_OCT_STR
+#define UINT_MAX_OCT_STR
+#define INT_MAX_HEX_STR
+#define INT_MIN_HEX_STR
+#define UINT_MAX_HEX_STR
+
 #elif UINT_MAX >> 31 == 1
-#define _PDCLIB_UINT_DIG 10
-#define _PDCLIB_INT_DIG  10
-#define _PDCLIB_INT_HEXDIG FFFFFFFF
-#define _PDCLIB_INT_hexdig ffffffff
-#define _PDCLIB_INT_OCTDIG 37777777777
+
+#define UINT_DIG 10
+#define INT_DIG  10
+#define INT_HEXDIG "FFFFFFF"
+#define INT_hexdig "fffffff"
+#define INT_OCTDIG "37777777777"
+#define INT_MAX_DEZ_STR  "2147483647"
+#define INT_MIN_DEZ_STR  "2147483648"
+#define UINT_MAX_DEZ_STR "4294967295"
+#define INT_MAX_OCT_STR
+#define INT_MIN_OCT_STR
+#define UINT_MAX_OCT_STR
+#define INT_MAX_HEX_STR
+#define INT_MIN_HEX_STR
+#define UINT_MAX_HEX_STR
+
 #elif UINT_MAX >> 63 == 1
-#define _PDCLIB_UINT_DIG 20
-#define _PDCLIB_INT_DIG  19
-#define _PDCLIB_INT_HEXDIG FFFFFFFFFFFFFFFF
-#define _PDCLIB_INT_hexdig ffffffffffffffff
-#define _PDCLIB_INT_OCTDIG 1777777777777777777777
+
+#define UINT_DIG 20
+#define INT_DIG  19
+#define INT_HEXDIG "FFFFFFFFFFFFFFF"
+#define INT_hexdig "fffffffffffffff"
+#define INT_OCTDIG "1777777777777777777777"
+#define INT_MAX_DEZ_STR   "9223372036854775807"
+#define INT_MIN_DEZ_STR   "9223372036854775808"
+#define UINT_MAX_DEZ_STR "18446744073709551615"
+#define INT_MAX_OCT_STR
+#define INT_MIN_OCT_STR
+#define UINT_MAX_OCT_STR
+#define INT_MAX_HEX_STR
+#define INT_MIN_HEX_STR
+#define UINT_MAX_HEX_STR
+
 #else
+
 #error Unsupported width of 'int' (neither 16, 32, nor 64 bit).
+
 #endif
+
 
 #if ULONG_MAX >> 31 == 1
-#define _PDCLIB_ULONG_DIG 10
-#define _PDCLIB_LONG_DIG  10
+
+#define ULONG_DIG 10
+#define LONG_DIG  10
+#define LONG_MAX_DEZ_STR  "2147483647"
+#define LONG_MIN_DEZ_STR  "2147483648"
+#define ULONG_MAX_DEZ_STR "4294967296"
+#define LONG_MAX_OCT_STR
+#define LONG_MIN_OCT_STR
+#define ULONG_MAX_OCT_STR
+#define LONG_MAX_HEX_STR
+#define LONG_MIN_HEX_STR
+#define ULONG_MAX_HEX_STR
+
 #elif ULONG_MAX >> 63 == 1
-#define _PDCLIB_ULONG_DIG 20
-#define _PDCLIB_LONG_DIG  19
+
+#define ULONG_DIG 20
+#define LONG_DIG  19
+#define LONG_MAX_DEZ_STR   "9223372036854775807"
+#define LONG_MIN_DEZ_STR   "9223372036854775808"
+#define ULONG_MAX_DEZ_STR "18446744073709551615"
+#define LONG_MAX_OCT_STR
+#define LONG_MIN_OCT_STR
+#define ULONG_MAX_OCT_STR
+#define LONG_MAX_HEX_STR
+#define LONG_MIN_HEX_STR
+#define ULONG_MAX_HEX_STR
+
 #else
+
 #error Unsupported width of 'long' (neither 32 nor 64 bit).
+
 #endif
+
 
 #if ULLONG_MAX >> 63 == 1
-#define _PDCLIB_ULLONG_DIG 20
-#define _PDCLIB_LLONG_DIG  19
+
+#define ULLONG_DIG 20
+#define LLONG_DIG  19
+#define LLONG_MAX_DEZ_STR   "9223372036854775807"
+#define LLONG_MIN_DEZ_STR   "9223372036854775808"
+#define ULLONG_MAX_DEZ_STR "18446744073709551615"
+#define LLONG_MAX_OCT_STR
+#define LLONG_MIN_OCT_STR
+#define ULLONG_MAX_OCT_STR
+#define LLONG_MAX_HEX_STR
+#define LLONG_MIN_HEX_STR
+#define ULLONG_MAX_HEX_STR
+
 #elif ULLONG_MAX >> 127 == 1
-#define _PDCLIB_ULLONG_DIG 38
-#define _PDCLIB_LLONG_DIG  38
+
+#define ULLONG_DIG 38
+#define LLONG_DIG  38
+#define LLONG_MAX_DEZ_STR  "170141183460469231731687303715884105727"
+#define LLONG_MIN_DEZ_STR  "170141183460469231731687303715884105728"
+#define ULLONG_MAX_DEZ_STR "340282366920938463463374607431768211455"
+#define LLONG_MAX_OCT_STR
+#define LLONG_MIN_OCT_STR
+#define ULLONG_MAX_OCT_STR
+#define LLONG_MAX_HEX_STR
+#define LLONG_MIN_HEX_STR
+#define ULLONG_MAX_HEX_STR
+
 #else
+
 #error Unsupported width of 'long long' (neither 64 nor 128 bit).
+
 #endif
 
+
     TESTCASE( testprintf( buffer, 100, "%hhd", CHAR_MIN ) == 4 );
-    //TESTCASE( strcmp( buffer, "-128" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-128" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hhd", CHAR_MAX ) == 3 );
-    //TESTCASE( strcmp( buffer, "127" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "127" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hhd", 0 ) == 1 );
-    //TESTCASE( strcmp( buffer, "0" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hd", SHRT_MIN ) == 6 );
-    //TESTCASE( strcmp( buffer, "-32768" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-32768" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hd", SHRT_MAX ) == 5 );
-    //TESTCASE( strcmp( buffer, "32767" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "32767" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hd", 0 ) == 1 );
-    //TESTCASE( strcmp( buffer, "0" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%d", INT_MIN ) == _PDCLIB_INT_DIG + 1 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%d", INT_MAX ) == _PDCLIB_INT_DIG );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0" ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%d", INT_MIN ) == INT_DIG + 1 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%d", INT_MAX ) == INT_DIG );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%d", 0 ) == 1 );
-    //TESTCASE( strcmp( buffer, "0" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%ld", LONG_MIN ) == _PDCLIB_LONG_DIG + 1 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%ld", LONG_MAX ) == _PDCLIB_LONG_DIG );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0" ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%ld", LONG_MIN ) == LONG_DIG + 1 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" LONG_MIN_DEZ_STR ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%ld", LONG_MAX ) == LONG_DIG );
+    TESTCASE_SPRINTF( strcmp( buffer, LONG_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%ld", 0l ) == 1 );
-    //TESTCASE( strcmp( buffer, "0" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%lld", LLONG_MIN ) == _PDCLIB_LLONG_DIG + 1 );
-    //TESTCASE( strcmp( buffer, "-9223372036854775808" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%lld", LLONG_MAX ) == _PDCLIB_LLONG_DIG );
-    //TESTCASE( strcmp( buffer, "9223372036854775807" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0" ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%lld", LLONG_MIN ) == LLONG_DIG + 1 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" LLONG_MIN_DEZ_STR ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%lld", LLONG_MAX ) == LLONG_DIG );
+    TESTCASE_SPRINTF( strcmp( buffer, LLONG_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%lld", 0ll ) );
-    //TESTCASE( strcmp( buffer, "0" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hhu", UCHAR_MAX ) == 3 );
-    //TESTCASE( strcmp( buffer, "255" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "255" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hhu", (unsigned char)-1 ) == 3 );
-    //TESTCASE( strcmp( buffer, "255" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "255" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hu", USHRT_MAX ) == 5 );
-    //TESTCASE( strcmp( buffer, "65535" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "65535" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%hu", (unsigned short)-1 ) == 5 );
-    //TESTCASE( strcmp( buffer, "65535" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%u", UINT_MAX ) == _PDCLIB_UINT_DIG );
-    //TESTCASE( strcmp( buffer, "4294967295" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%u", -1u ) == _PDCLIB_UINT_DIG );
-    //TESTCASE( strcmp( buffer, "4294967295" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%lu", ULONG_MAX ) == _PDCLIB_ULONG_DIG );
-    //TESTCASE( strcmp( buffer, "4294967295" ) == 0 );
-    TESTCASE( testprintf( buffer, 100, "%lu", -1ul ) == _PDCLIB_ULONG_DIG );
-    //TESTCASE( strcmp( buffer, "4294967295" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "65535" ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%u", UINT_MAX ) == UINT_DIG );
+    TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%u", -1u ) == UINT_DIG );
+    TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%lu", ULONG_MAX ) == ULONG_DIG );
+    TESTCASE_SPRINTF( strcmp( buffer, ULONG_MAX_DEZ_STR ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%lu", -1ul ) == ULONG_DIG );
+    TESTCASE_SPRINTF( strcmp( buffer, ULONG_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%llu", ULLONG_MAX ) == 20 );
-    //TESTCASE( strcmp( buffer, "18446744073709551615" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, ULLONG_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%llu", -1ull ) == 20 );
-    //TESTCASE( strcmp( buffer, "18446744073709551615" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, ULLONG_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%X", UINT_MAX ) == 8 );
-    //TESTCASE( strcmp( buffer, "FFFFFFFF" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "F" INT_HEXDIG ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#X", -1u ) == 10 );
-    //TESTCASE( strcmp( buffer, "0XFFFFFFFF" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0XF" INT_HEXDIG ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%x", UINT_MAX ) == 8 );
-    //TESTCASE( strcmp( buffer, "ffffffff" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "f" INT_hexdig ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#x", -1u ) == 10 );
-    //TESTCASE( strcmp( buffer, "0xffffffff" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%o", UINT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "37777777777" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_OCTDIG ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#o", -1u ) == 12 );
-    //TESTCASE( strcmp( buffer, "037777777777" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0" INT_OCTDIG ) == 0 );
     /* TODO: This test case is broken, doesn't test what it was intended to. */
     TESTCASE( testprintf( buffer, 100, "%.0#o", 0 ) == 5 );
-    //TESTCASE( strcmp( buffer, "%.0#o" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "%.0#o" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "+2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+d", 0 ) == 2 );
-    //TESTCASE( strcmp( buffer, "+0" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "+0" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+u", UINT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "4294967295" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+u", -1u ) == 10 );
-    //TESTCASE( strcmp( buffer, "4294967295" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "% d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "% d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, " 2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, " " INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "% d", 0 ) == 2 );
-    //TESTCASE( strcmp( buffer, " 0" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, " 0" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "% u", UINT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "4294967295" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "% u", -1u ) == 10 );
-    //TESTCASE( strcmp( buffer, "4294967295" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, UINT_MAX_DEZ_STR ) == 0 );
+    /* FIXME: Field widths are specific to 32/64 bit platform */
     TESTCASE( testprintf( buffer, 100, "%9d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%9d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%10d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%10d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%11d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%11d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, " 2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, " " INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%12d", INT_MIN ) == 12 );
-    //TESTCASE( strcmp( buffer, " -2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, " -" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%12d", INT_MAX ) == 12 );
-    //TESTCASE( strcmp( buffer, "  2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "  " INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-9d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-9d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-10d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-10d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-11d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-11d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "2147483647 " ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR " " ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-12d", INT_MIN ) == 12 );
-    //TESTCASE( strcmp( buffer, "-2147483648 " ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR " " ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-12d", INT_MAX ) == 12 );
-    //TESTCASE( strcmp( buffer, "2147483647  " ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR "  " ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%09d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%09d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%010d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%010d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%011d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%011d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "02147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%012d", INT_MIN ) == 12 );
-    //TESTCASE( strcmp( buffer, "-02147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-0" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%012d", INT_MAX ) == 12 );
-    //TESTCASE( strcmp( buffer, "002147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "00" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-09d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-09d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-010d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-010d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-011d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-011d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "2147483647 " ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR " " ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-012d", INT_MIN ) == 12 );
-    //TESTCASE( strcmp( buffer, "-2147483648 " ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR " " ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%-012d", INT_MAX ) == 12 );
-    //TESTCASE( strcmp( buffer, "2147483647  " ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR "  " ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%030.20d", INT_MAX ) == 30 );
-    //TESTCASE( strcmp( buffer, "          00000000002147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "          00000000002147483647" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%.6x", UINT_MAX ) == 8 );
-    //TESTCASE( strcmp( buffer, "ffffffff" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "f" INT_hexdig ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#6.3x", UINT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "0xffffffff" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#3.6x", UINT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "0xffffffff" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%.6d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%6.3d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%3.6d", INT_MIN ) == 11 );
-    //TESTCASE( strcmp( buffer, "-2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "-" INT_MIN_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#0.6x", UINT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "0xffffffff" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#06.3x", UINT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "0xffffffff" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#03.6x", UINT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "0xffffffff" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0xf" INT_hexdig ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#0.6d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#06.3d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#03.6d", INT_MAX ) == 10 );
-    //TESTCASE( strcmp( buffer, "2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#+.6d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "+2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#+6.3d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "+2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%#+3.6d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "+2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+0.6d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "+2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+06.3d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "+2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%+03.6d", INT_MAX ) == 11 );
-    //TESTCASE( strcmp( buffer, "+2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "+" INT_MAX_DEZ_STR ) == 0 );
+#ifndef TEST_CONVERSION_ONLY
     TESTCASE( testprintf( buffer, 100, "- %d", INT_MAX ) == 12 );
-    //TESTCASE( strcmp( buffer, "- 2147483647" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "- " INT_MAX_DEZ_STR ) == 0 );
     TESTCASE( testprintf( buffer, 100, "- %d %% %d", INT_MAX, INT_MIN ) == 26 );
-    //TESTCASE( strcmp( buffer, "- 2147483647 % -2147483648" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "- " INT_MAX_DEZ_STR " % -" INT_MIN_DEZ_STR ) == 0 );
+#endif
     TESTCASE( testprintf( buffer, 100, "%c", 'x' ) == 1 );
-    //TESTCASE( strcmp( buffer, "x" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "x" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%s", "abcdef" ) == 6 );
-    //TESTCASE( strcmp( buffer, "abcdef" ) == 0 );
+    TESTCASE_SPRINTF( strcmp( buffer, "abcdef" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%p", (void *)0xdeadbeef ) == 10 );
-    //TESTCASE( strcmp( buffer, "0xdeadbeef" ) == 0 ); /* FIXME */
+    TESTCASE_SPRINTF( strcmp( buffer, "0xdeadbeef" ) == 0 ); /* FIXME */
+#ifndef TEST_CONVERSION_ONLY
     {
         int val1, val2;
         TESTCASE( testprintf( buffer, 100, "123456%n789%n", &val1, &val2 ) == 9 );
-        //TESTCASE( strcmp( buffer, "123456789" ) == 0 ); /* FIXME */
+        TESTCASE_SPRINTF( strcmp( buffer, "123456789" ) == 0 ); /* FIXME */
         TESTCASE( val1 == 6 );
         TESTCASE( val2 == 9 );
     }
+#endif
     }

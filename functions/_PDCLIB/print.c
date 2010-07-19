@@ -542,8 +542,16 @@ static int testprintf( char * buffer, size_t n, const char * format, ... )
     return status.i;
 }
 
+#define TEST_CONVERSION_ONLY
+
+#define TESTCASE_SPRINTF( x ) TESTCASE( x )
+
 int main( void )
 {
+    char buffer[100];
+#include "printf_testcases.incl"
+
+#if 0
     char buffer[100];
     TESTCASE( testprintf( buffer, 100, "%hhd", CHAR_MIN ) == 4 );
     TESTCASE( strcmp( buffer, "-128" ) == 0 );
@@ -783,6 +791,7 @@ int main( void )
     TESTCASE( strcmp( buffer, "abcdef" ) == 0 );
     TESTCASE( testprintf( buffer, 100, "%p", (void *)0xdeadbeef ) == 10 );
     TESTCASE( strcmp( buffer, "0xdeadbeef" ) == 0 );
+#endif
     return TEST_RESULTS;
 }
 
