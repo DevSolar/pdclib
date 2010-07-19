@@ -13,7 +13,9 @@
                                "+01777777777777777777777\n"
                                "-01777777777777777777777\n";
     char const * alpha       = "abcdefgh-ijklmnop[qrs%uvw]xyz";
+#ifndef REGTEST
     char const * special     = "-0xz\n";
+#endif
 
 
 /* sscan */
