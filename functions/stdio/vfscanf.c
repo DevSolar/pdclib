@@ -53,9 +53,13 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
                 if ( ( ( c = getc( stream ) ) != *format ) || feof( stream ) ) /* TODO: Check EOF status directly */
                 {
                     /* Matching error */
-                    if ( ! feof( stream ) ) /* TODO: Check EOF status directly */
+                    if ( ! feof( stream ) && ! ferror( stream ) ) /* TODO: Check EOF status directly */
                     {
                         ungetc( c, stream );
+                    }
+                    else if ( status.n == 0 )
+                    {
+                        return EOF;
                     }
                     return status.n;
                 }
