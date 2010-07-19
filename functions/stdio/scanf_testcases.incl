@@ -1118,10 +1118,8 @@
     CHECK_FALSE( memcmp( buffer, "abc", 4 ) );
     }
 
+#ifndef REGTEST
     // special bordercase
-    {
-    // reading -0x, x
-    unsigned char i = 1;
     /* Most existing libraries disagree with this test case, so a little
        explanation of why PDCLib chose the implementation it did might be
        necessary. All references are from ISO/IEC 9899:1999 "Programming
@@ -1162,30 +1160,22 @@
        - The conversion should therefore result in a matching failure
          according to 7.19.6.2 paragraph 10.
     */
-#ifdef REGTEST
-    printf( "        The following is likely to fail. Check stdio/scanf_testcases.c\n"
-            "        for an explanation why.\n" );
-#endif
-    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%hhx", &i ) ); /* May fail on regtest */
+    {
+    // reading -0x, x
+    unsigned char i = 1;
+    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%hhx", &i ) );
     CHECK_EQUAL( i, 1 ); /* FIXME */
     }
     {
     // reading -0x, x
     unsigned short i = 1;
-#ifdef REGTEST
-    printf( "        The following is likely to fail. Check stdio/scanf_testcases.c\n"
-            "        for an explanation why.\n" );
-#endif
-    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%hx", &i ) ); /* May fail on regtest */
+    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%hx", &i ) );
     CHECK_EQUAL( i, 1 ); /* FIXME */
     }
     {
     // reading -0x, x
     unsigned int i = 1;
-#ifdef REGTEST
-    printf( "        The following is likely to fail. Check stdio/scanf_testcases.c\n"
-            "        for an explanation why.\n" );
-#endif
-    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%x", &i ) ); /* May fail on regtest */
+    TESTSCAN( 0, -1, special, 0, SCANPARMS( "%x", &i ) );
     CHECK_EQUAL( i, 1 ); /* FIXME */
     }
+#endif

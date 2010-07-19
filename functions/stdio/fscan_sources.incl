@@ -33,10 +33,12 @@
     TESTCASE( fwrite( "abcdefgh-ijklmnop[qrs%uvw]xyz", 1, 29, alpha ) == 29 );
     rewind( alpha );
 
+#ifndef REGTEST
     FILE * special = fopen( "scanf_testdata_special", "wb+" );
     TESTCASE( special != NULL );
     TESTCASE( fwrite( "-0xz\n", 1, 5, special ) == 5 );
     rewind( special );
+#endif
 
 
 /* fscan */
