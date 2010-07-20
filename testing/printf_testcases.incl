@@ -348,6 +348,8 @@
     /* FIXME: This test not yet 32/64 bit agnostic */
     TESTCASE( testprintf( buffer, 100, "%p", (void *)0xdeadbeef ) == 10 );
     TESTCASE_SPRINTF( strcmp( buffer, "0xdeadbeef" ) == 0 );
+    TESTCASE( testprintf( buffer, 100, "%#6x", 1 ) == 6 );
+    TESTCASE_SPRINTF( strcmp( buffer, "0x0001" ) == 0 );
 #ifndef TEST_CONVERSION_ONLY
     {
         int val1, val2;

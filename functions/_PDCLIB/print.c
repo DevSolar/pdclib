@@ -451,6 +451,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                     break;
             }
             ++(status->current);
+            /* FIXME: The if clause means one-digit values do not get formatted */
             if ( ( value / status->base ) != 0 )
             {
                 int2base( (intmax_t)(value / status->base), status );
