@@ -55,6 +55,87 @@ do { \
     ++(status->i); \
 } while ( 0 )
 
+
+static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
+{
+    /* At worst, we need two prefix characters (hex prefix). */
+    char preface[3] = "\0";
+    size_t preidx = 0;
+    if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) )
+    {
+        /* Octal / hexadecimal prefix for "%#" conversions */
+        preface[ preidx++ ] = '0';
+        if ( status->base == 16 )
+        {
+            preface[ preidx++ ] = ( status->flags & E_lower ) ? 'x' : 'X';
+        }
+    }
+    if ( value < 0 )
+    {
+        /* Negative sign for negative values - at all times. */
+        preface[ preidx++ ] = '-';
+    }
+    else if ( ! ( status->flags & E_unsigned ) )
+    {
+        /* plus sign / extra space are only for unsigned conversions */
+        if ( status->flags & E_plus )
+        {
+            preface[ preidx++ ] = '+';
+        }
+        else if ( status->flags & E_space )
+        {
+            preface[ preidx++ ] = ' ';
+        }
+    }
+    {
+    size_t prec_pads = ( status->prec > status->current ) ? ( status->prec - status->current ) : 0;
+    if ( ! ( status->flags & ( E_minus | E_zero ) ) )
+    {
+        /* Space padding is only done if no zero padding or left alignment
+           is requested. Leave space for any prefixes determined above.
+        */
+        /* The number of characters to be printed, plus prefixes if any. */
+        /* This line contained probably the most stupid, time-wasting bug
+           I've ever perpetrated. Greetings to Samface, DevL, and all
+           sceners at Breakpoint 2006.
+        */
+        size_t characters = preidx + ( ( status->current > status->prec ) ? status->current : status->prec );
+        if ( status->width > characters )
+        {
+            for ( size_t i = 0; i < status->width - characters; ++i )
+            {
+                DELIVER( ' ' );
+                ++(status->current);
+            }
+        }
+    }
+    /* Now we did the padding, do the prefixes (if any). */
+    preidx = 0;
+    while ( preface[ preidx ] != '\0' )
+    {
+        DELIVER( preface[ preidx++ ] );
+        ++(status->current);
+    }
+    if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
+    {
+        /* If field is not left aligned, and zero padding is requested, do
+           so.
+        */
+        while ( status->current < status->width )
+        {
+            DELIVER( '0' );
+            ++(status->current);
+        }
+    }
+    /* Do the precision padding if necessary. */
+    for ( size_t i = 0; i < prec_pads; ++i )
+    {
+        DELIVER( '0' );
+    }
+    }
+}
+
+
 /* This function recursively converts a given integer value to a character
    stream. The conversion is done under the control of a given status struct
    and written either to a character string or a stream, depending on that
@@ -82,101 +163,7 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
            have to do the sign, prefix, width, and precision padding stuff
            before printing the numbers while we resurface from the recursion.
         */
-        /* At worst, we need two prefix characters (hex prefix). */
-        char preface[3] = "\0";
-        size_t preidx = 0;
-        if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) )
-        {
-            /* Octal / hexadecimal prefix for "%#" conversions */
-            preface[ preidx++ ] = '0';
-            if ( status->base == 16 )
-            {
-                preface[ preidx++ ] = ( status->flags & E_lower ) ? 'x' : 'X';
-            }
-        }
-        if ( value < 0 )
-        {
-            /* Negative sign for negative values - at all times. */
-            preface[ preidx++ ] = '-';
-        }
-        else if ( ! ( status->flags & E_unsigned ) )
-        {
-            /* plus sign / extra space are only for unsigned conversions */
-            if ( status->flags & E_plus )
-            {
-                preface[ preidx++ ] = '+';
-            }
-            else if ( status->flags & E_space )
-            {
-                preface[ preidx++ ] = ' ';
-            }
-        }
-        {
-        size_t prec_pads = ( status->prec > status->current ) ? ( status->prec - status->current ) : 0;
-        if ( ! ( status->flags & ( E_minus | E_zero ) ) )
-        {
-            /* Space padding is only done if no zero padding or left alignment
-               is requested. Leave space for any prefixes determined above.
-            */
-            /* The number of characters to be printed, plus prefixes if any. */
-            /* This line contained probably the most stupid, time-wasting bug
-               I've ever perpetrated. Greetings to Samface, DevL, and all
-               sceners at Breakpoint 2006.
-            */
-            size_t characters = preidx + ( ( status->current > status->prec ) ? status->current : status->prec );
-            if ( status->width > characters )
-            {
-                for ( size_t i = 0; i < status->width - characters; ++i )
-                {
-                    DELIVER( ' ' );
-                    /*
-                    do
-                    {
-                        if ( status->i < status->n )
-                        {
-                            if ( status->stream != 0 )
-                                do
-                                {
-                                    status->stream->buffer[status->stream->bufidx++] = (char)' ',
-                                    if ( ( status->stream->bufidx == status->stream->bufsize )
-                                      || ( ( status->stream->status & 2 ) && (char)' ' == '\n' )
-                                      || ( status->stream->status & 4 ) )
-                                        fflush( status->stream )
-                                } while (0),
-                                ' ';
-                            else status->s[status->i] = ' ';
-                        }
-                        ++(status->i);
-                    } while ( 0 );
-                    */
-                    ++(status->current);
-                }
-            }
-        }
-        /* Now we did the padding, do the prefixes (if any). */
-        preidx = 0;
-        while ( preface[ preidx ] != '\0' )
-        {
-            DELIVER( preface[ preidx++ ] );
-            ++(status->current);
-        }
-        if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
-        {
-            /* If field is not left aligned, and zero padding is requested, do
-               so.
-            */
-            while ( status->current < status->width )
-            {
-                DELIVER( '0' );
-                ++(status->current);
-            }
-        }
-        /* Do the precision padding if necessary. */
-        for ( size_t i = 0; i < prec_pads; ++i )
-        {
-            DELIVER( '0' );
-        }
-        }
+        intformat( value, status );
     }
     /* Recursion tail - print the current digit. */
     {
@@ -197,6 +184,7 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
     }
     }
 }
+
 
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
 {
@@ -452,9 +440,14 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             }
             ++(status->current);
             /* FIXME: The if clause means one-digit values do not get formatted */
+            /* Was introduced originally to get value to "safe" levels re. uintmax_t. */
             if ( ( value / status->base ) != 0 )
             {
                 int2base( (intmax_t)(value / status->base), status );
+            }
+            else
+            {
+                intformat( (intmax_t)value, status );
             }
             int digit = value % status->base;
             if ( digit < 0 )
