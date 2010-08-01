@@ -17,9 +17,9 @@ INTFILES := _Exit atomax digits open print scan remove rename seed stdinit strto
 # All object files in the library
 OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 # All test drivers (.t)
-TSTFILES := $(patsubst %.c,%.t,$(SRCFILES))
+TSTFILES := $(patsubst %.c,%_t,$(SRCFILES))
 # All regression test drivers (.r)
-REGFILES := $(filter-out $(patsubst %,functions/_PDCLIB/%.r,$(INTFILES)),$(patsubst %.c,%.r,$(SRCFILES)))
+REGFILES := $(filter-out $(patsubst %,functions/_PDCLIB/%_r,$(INTFILES)),$(patsubst %.c,%_r,$(SRCFILES)))
 # All dependency files (.d)
 DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
 # All files belonging to the source distribution
@@ -132,13 +132,13 @@ help:
 
 %.o: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -MMD -MP -MT "$*.d $*.t $*.o" -I./includes -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -I./includes -c $< -o $@
 
-%.t: %.c Makefile pdclib.a
+%_t: %.c Makefile pdclib.a
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -DTEST -I./includes $< pdclib.a -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -DTEST -I./includes $< pdclib.a -o $@
 
-%.r: %.c Makefile
+%_r: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -Wno-format -DTEST -DREGTEST $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -DTEST -DREGTEST $< -o $@
 
