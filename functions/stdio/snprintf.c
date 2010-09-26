@@ -31,7 +31,8 @@ int snprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict
 
 #define testprintf( s, n, format, ... ) snprintf( s, n, format, __VA_ARGS__ )
 
-#define TESTCASE_SPRINTF( x ) TESTCASE( x )
+#define TESTCASE_SPRINTF( x ) if ( strcmp( buffer, x ) == 0 ) {} \
+                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, buffer, #x ); }
 
 int main( void )
 {
