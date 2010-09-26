@@ -23,9 +23,9 @@ REGFILES := $(filter-out $(patsubst %,functions/_PDCLIB/%_r,$(INTFILES)),$(patsu
 # All library dependency files (.d)
 DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
 # All test driver dependency files (_t.d)
-TSTDEPFILES := $(patsubst %.c,%_t.d,$(TSTFILES))
+TSTDEPFILES := $(patsubst %,%.d,$(TSTFILES))
 # All regression test driver dependency files (_r.d)
-REGDEPFILES := $(patsubst %.c,%_r.d,$(REGFILES))
+REGDEPFILES := $(patsubst %,%.d,$(REGFILES))
 # All files belonging to the source distribution
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
@@ -75,9 +75,11 @@ regtests: regtestdrivers
 regtestdrivers: $(REGFILES)
 	@echo
 
--include $(DEPFILES) $(TSTDEPFILES) $(REGDEPFILES)
+#-include $(DEPFILES) $(TSTDEPFILES) $(REGDEPFILES)
 
 clean:
+	echo $(TSTFILES)
+	echo $(TSTDEPFILES)
 	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(TSTDEPFILES) $(REGFILES) $(REGDEPFILES) pdclib.a pdclib.tgz scanf_testdata_*; do if [ -f $$file ]; then rm $$file; fi; done
 
 srcdist:
