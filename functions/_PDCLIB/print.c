@@ -538,7 +538,8 @@ static int testprintf( char * buffer, size_t n, const char * format, ... )
 
 #define TEST_CONVERSION_ONLY
 
-#define TESTCASE_SPRINTF( x ) TESTCASE( x )
+#define TESTCASE_SPRINTF( x ) if ( strcmp( buffer, x ) == 0 ) {} \
+                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, buffer, #x ); }
 
 int main( void )
 {
