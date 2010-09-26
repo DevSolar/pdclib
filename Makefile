@@ -20,8 +20,12 @@ OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
 TSTFILES := $(patsubst %.c,%_t,$(SRCFILES))
 # All regression test drivers (.r)
 REGFILES := $(filter-out $(patsubst %,functions/_PDCLIB/%_r,$(INTFILES)),$(patsubst %.c,%_r,$(SRCFILES)))
-# All dependency files (.d)
+# All library dependency files (.d)
 DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
+# All test driver dependency files (_t.d)
+TSTDEPFILES := $(patsubst %.c,%_t.d,$(TSTFILES))
+# All regression test driver dependency files (_r.d)
+REGDEPFILES := $(patsubst %.c,%_r.d,$(REGFILES))
 # All files belonging to the source distribution
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
@@ -71,10 +75,10 @@ regtests: regtestdrivers
 regtestdrivers: $(REGFILES)
 	@echo
 
--include $(DEPFILES)
+-include $(DEPFILES) $(TSTDEPFILES) $(REGDEPFILES)
 
 clean:
-	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(REGFILES) pdclib.a pdclib.tgz scanf_testdata_*; do if [ -f $$file ]; then rm $$file; fi; done
+	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(TSTDEPFILES) $(REGFILES) $(REGDEPFILES) pdclib.a pdclib.tgz scanf_testdata_*; do if [ -f $$file ]; then rm $$file; fi; done
 
 srcdist:
 	@tar czf pdclib.tgz $(ALLFILES)
