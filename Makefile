@@ -78,8 +78,6 @@ regtestdrivers: $(REGFILES)
 #-include $(DEPFILES) $(TSTDEPFILES) $(REGDEPFILES)
 
 clean:
-	echo $(TSTFILES)
-	echo $(TSTDEPFILES)
 	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(TSTDEPFILES) $(REGFILES) $(REGDEPFILES) pdclib.a pdclib.tgz scanf_testdata_*; do if [ -f $$file ]; then rm $$file; fi; done
 
 srcdist:
