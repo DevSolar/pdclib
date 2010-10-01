@@ -2,11 +2,11 @@
     char readbuffer[2000];
     char refbuffer[2000];
     size_t readcounter;
-    TESTCASE( ( buffer = fopen( testfile, "r" ) ) != NULL );
-    readcounter = fread( readbuffer, 1, 2000, buffer );
-    TESTCASE( fclose( buffer ) == 0 );
-    TESTCASE( ( buffer = fopen( "testing/printf_reference.txt", "r" ) ) != NULL );
-    TESTCASE( fread( refbuffer, 1, 2000, buffer ) == readcounter );
-    TESTCASE( fclose( buffer ) == 0 );
+    TESTCASE( ( target = fopen( testfile, "r" ) ) != NULL );
+    readcounter = fread( readbuffer, 1, 2000, target );
+    TESTCASE( fclose( target ) == 0 );
+    TESTCASE( ( target = fopen( "testing/printf_reference.txt", "r" ) ) != NULL );
+    TESTCASE( fread( refbuffer, 1, 2000, target ) == readcounter );
+    TESTCASE( fclose( target ) == 0 );
     TESTCASE( memcmp( readbuffer, refbuffer, readcounter ) == 0 );
     }

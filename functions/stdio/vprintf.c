@@ -23,7 +23,7 @@ int vprintf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 #include <string.h>
 #include <_PDCLIB_test.h>
 
-static int testprintf( FILE * stream, size_t n, const char * format, ... )
+static int testprintf( FILE * stream, const char * format, ... )
 {
     int i;
     va_list arg;
@@ -37,10 +37,10 @@ static int testprintf( FILE * stream, size_t n, const char * format, ... )
 
 int main( void )
 {
-    FILE * buffer;
-    TESTCASE( ( buffer = freopen( testfile, "wb", stdout ) ) != NULL );
+    FILE * target;
+    TESTCASE( ( target = freopen( testfile, "wb", stdout ) ) != NULL );
 #include "printf_testcases.incl"
-    TESTCASE( fclose( buffer ) == 0 );
+    TESTCASE( fclose( target ) == 0 );
 #include "fprintf_reftest.incl"
     TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
