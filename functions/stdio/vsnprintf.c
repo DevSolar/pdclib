@@ -54,22 +54,22 @@ int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restric
 #include <stdint.h>
 #include <string.h>
 
-static int testprintf( char * s, size_t n, const char * format, ... )
+static int testprintf( char * s, const char * format, ... )
 {
     int i;
     va_list arg;
     va_start( arg, format );
-    i = vsnprintf( s, n, format, arg );
+    i = vsnprintf( s, 100, format, arg );
     va_end( arg );
     return i;
 }
 
-#define TESTCASE_SPRINTF( x ) if ( strcmp( buffer, x ) == 0 ) {} \
-                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, buffer, #x ); }
+#define TESTCASE_SPRINTF( x ) if ( strcmp( target, x ) == 0 ) {} \
+                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, target, #x ); }
 
 int main( void )
 {
-    char buffer[100];
+    char target[100];
 #include "printf_testcases.incl"
     return TEST_RESULTS;
 }

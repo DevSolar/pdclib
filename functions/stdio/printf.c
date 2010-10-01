@@ -28,16 +28,16 @@ int printf( const char * _PDCLIB_restrict format, ... )
 #include <string.h>
 #include <_PDCLIB_test.h>
 
-#define testprintf( stream, n, format, ... ) printf( format, __VA_ARGS__ )
+#define testprintf( stream, format, ... ) printf( format, __VA_ARGS__ )
 
 #define TESTCASE_SPRINTF( x )
 
 int main( void )
 {
-    FILE * buffer;
-    TESTCASE( ( buffer = freopen( testfile, "wb", stdout ) ) != NULL );
+    FILE * target;
+    TESTCASE( ( target = freopen( testfile, "wb", stdout ) ) != NULL );
 #include "printf_testcases.incl"
-    TESTCASE( fclose( buffer ) == 0 );
+    TESTCASE( fclose( target ) == 0 );
 #include "fprintf_reftest.incl"
     TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;

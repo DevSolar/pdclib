@@ -30,14 +30,14 @@ int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ..
 #include <string.h>
 #include <limits.h>
 
-#define testprintf( s, n, format, ... ) sprintf( s, format, __VA_ARGS__ )
+#define testprintf( s, format, ... ) sprintf( s, format, __VA_ARGS__ )
 
-#define TESTCASE_SPRINTF( x ) if ( strcmp( buffer, x ) == 0 ) {} \
-                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, buffer, #x ); }
+#define TESTCASE_SPRINTF( x ) if ( strcmp( target, x ) == 0 ) {} \
+                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, target, #x ); }
 
 int main( void )
 {
-    char buffer[100];
+    char target[100];
 #include "printf_testcases.incl"
     return TEST_RESULTS;
 }
