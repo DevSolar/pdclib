@@ -209,9 +209,11 @@
     TESTCASE_SPRINTF( INT_OCTDIG );
     TESTCASE( testprintf( target, "%#o", -1u ) == (int)strlen( INT_OCTDIG ) + 1 );
     TESTCASE_SPRINTF( "0" INT_OCTDIG );
+#if 0
     /* TODO: This test case is broken, doesn't test what it was intended to. */
     TESTCASE( testprintf( target, "%.0#o", 0 ) == 5 );
     TESTCASE_SPRINTF( "%.0#o" );
+#endif
     TESTCASE( testprintf( target, "%+d", INT_MIN ) == INT_DIG + 1 );
     TESTCASE_SPRINTF( "-" INT_MIN_DEZ_STR );
     TESTCASE( testprintf( target, "%+d", INT_MAX ) == INT_DIG + 1 );
@@ -349,7 +351,7 @@
     TESTCASE( testprintf( target, "%p", (void *)0xdeadbeef ) == 10 );
     TESTCASE_SPRINTF( "0xdeadbeef" );
     TESTCASE( testprintf( target, "%#6x", 1 ) == 6 );
-    TESTCASE_SPRINTF( "0x0001" );
+    TESTCASE_SPRINTF( "   0x1" );
 #ifndef TEST_CONVERSION_ONLY
     {
         int val1, val2;
