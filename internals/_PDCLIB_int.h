@@ -110,36 +110,41 @@
 /* -------------------------------------------------------------------------- */
 /* <stdint.h> exact-width types and their limits                              */
 /* -------------------------------------------------------------------------- */
+/* Note that, for the "standard" widths of 8, 16, 32 and 64 bit, the "LEAST"  */
+/* types are identical to the "exact-width" types, by definition.             */
 
-/* Setting 'int8_t', its limits, and its literal.                             */
+/* Setting 'int8_t', its limits, its literal, and conversion macros.          */
 #if     _PDCLIB_CHAR_BIT == 8
 typedef signed char        _PDCLIB_int8_t;
 typedef unsigned char      _PDCLIB_uint8_t;
 #define _PDCLIB_INT8_MAX   _PDCLIB_CHAR_MAX
 #define _PDCLIB_INT8_MIN   _PDCLIB_CHAR_MIN
 #define _PDCLIB_UINT8_MAX  _PDCLIB_UCHAR_MAX
+#define _PDCLIB_8_CONV     hh
 #else
 #error Unsupported width of char (not 8 bits).
 #endif
 
-/* Setting 'int16_t', its limits, and its literal                             */
+/* Setting 'int16_t', its limits, its literal, and conversion macros.         */
 #if     _PDCLIB_INT_BYTES  == 2
 typedef signed int         _PDCLIB_int16_t;
 typedef unsigned int       _PDCLIB_uint16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_INT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_INT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_UINT_MAX
+#define _PDCLIB_16_CONV
 #elif   _PDCLIB_SHRT_BYTES == 2
 typedef signed short       _PDCLIB_int16_t;
 typedef unsigned short     _PDCLIB_uint16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_SHRT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_SHRT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_USHRT_MAX
+#define _PDCLIB_16_CONV    h
 #else
 #error Neither 'short' nor 'int' are 16-bit.
 #endif
 
-/* Setting 'int32_t', its limits, and its literal                             */
+/* Setting 'int32_t', its limits, its literal, and conversion macros.         */
 #if     _PDCLIB_INT_BYTES  == 4
 typedef signed int         _PDCLIB_int32_t;
 typedef unsigned int       _PDCLIB_uint32_t;
@@ -148,6 +153,7 @@ typedef unsigned int       _PDCLIB_uint32_t;
 #define _PDCLIB_UINT32_MAX _PDCLIB_UINT_MAX
 #define _PDCLIB_INT32_LITERAL
 #define _PDCLIB_UINT32_LITERAL
+#define _PDCLIB_32_CONV
 #elif   _PDCLIB_LONG_BYTES == 4
 typedef signed long        _PDCLIB_int32_t;
 typedef unsigned long      _PDCLIB_uint32_t;
@@ -156,10 +162,12 @@ typedef unsigned long      _PDCLIB_uint32_t;
 #define _PDCLIB_UINT32_MAX _PDCLIB_LONG_MAX
 #define _PDCLIB_INT32_LITERAL  l
 #define _PDCLIB_UINT32_LITERAL ul
+#define _PDCLIB_32_CONV        l
 #else
 #error Neither 'int' nor 'long' are 32-bit.
 #endif
 
+/* Setting 'int64_t', its limits, its literal, and conversion macros.         */
 #if     _PDCLIB_LONG_BYTES == 8
 typedef signed long        _PDCLIB_int64_t;
 typedef unsigned long      _PDCLIB_uint64_t;
@@ -168,6 +176,7 @@ typedef unsigned long      _PDCLIB_uint64_t;
 #define _PDCLIB_UINT64_MAX  _PDCLIB_ULONG_MAX
 #define _PDCLIB_INT64_LITERAL  l
 #define _PDCLIB_UINT64_LITERAL ul
+#define _PDCLIB_64_CONV        l
 #elif _PDCLIB_LLONG_BYTES  == 8
 typedef signed long long   _PDCLIB_int64_t;
 typedef unsigned long long _PDCLIB_uint64_t;
@@ -176,6 +185,7 @@ typedef unsigned long long _PDCLIB_uint64_t;
 #define _PDCLIB_UINT64_MAX  _PDCLIB_ULLONG_MAX
 #define _PDCLIB_INT64_LITERAL  ll
 #define _PDCLIB_UINT64_LITERAL ull
+#define _PDCLIB_64_CONV        ll
 #else
 #error Neither 'long' nor 'long long' are 64-bit.
 #endif
