@@ -92,6 +92,8 @@ struct _PDCLIB_lldiv_t
 /* SHRT, INT, LONG, or LLONG (telling which values to use for the *_MIN and   */
 /* *_MAX limits); the lowercase define either short, int, long, or long long  */
 /* (telling the actual type to use).                                          */
+/* The third define is the length modifier used for the type in printf() and  */
+/* scanf() functions (used in <inttypes.h>).                                  */
 /* If you require a non-standard datatype to define the "usually fastest"     */
 /* types, PDCLib as-is doesn't support that. Please contact the author with   */
 /* details on your platform in that case, so support can be added.            */
@@ -99,15 +101,19 @@ struct _PDCLIB_lldiv_t
 
 #define _PDCLIB_FAST8 INT
 #define _PDCLIB_fast8 int
+#define _PDCLIB_FAST8_CONV
 
 #define _PDCLIB_FAST16 INT
 #define _PDCLIB_fast16 int
+#define _PDCLIB_FAST16_CONV
 
 #define _PDCLIB_FAST32 INT
 #define _PDCLIB_fast32 int
+#define _PDCLIB_FAST32_CONV
 
 #define _PDCLIB_FAST64 LONG
 #define _PDCLIB_fast64 long
+#define _PDCLIB_FAST64_CONV l
 
 /* -------------------------------------------------------------------------- */
 /* What follows are a couple of "special" typedefs and their limits. Again,   */
@@ -118,6 +124,7 @@ struct _PDCLIB_lldiv_t
 /* The result type of substracting two pointers */
 #define _PDCLIB_ptrdiff long
 #define _PDCLIB_PTRDIFF LONG
+#define _PDCLIB_PTR_CONV l
 
 /* An integer type that can be accessed as atomic entity (think asynchronous
    interrupts). The type itself is not defined in a freestanding environment,
@@ -142,6 +149,7 @@ struct _PDCLIB_lldiv_t
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
 #define _PDCLIB_intmax long long int
 #define _PDCLIB_INTMAX LLONG
+#define _PDCLIB_MAX_CONV ll
 /* You are also required to state the literal suffix for the intmax type      */
 #define _PDCLIB_INTMAX_LITERAL ll
 
