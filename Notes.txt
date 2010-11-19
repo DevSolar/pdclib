@@ -34,6 +34,9 @@ giving other valuable hints, thanks.
 Brian Damgaard, for a very friendly exchange over the fine details of the
 Quicksort algorithm and its implementation in PDCLib, thanks.
 
+Rink Springer, for very precise bug reports including patches, and a heads-up
+on the capabilities of PDCLib when I most needed it, thanks.
+
 Everyone involved in the first, "public" attempt at PDCLib, for bearing with me
 when I restarted from scratch, thanks.
 
