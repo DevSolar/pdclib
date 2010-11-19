@@ -46,11 +46,12 @@
 */
 #define DELIVER( x ) \
 do { \
+    int character = x; \
     if ( status->i < status->n ) { \
         if ( status->stream != NULL ) \
-            putc( x, status->stream ); \
+            putc( character, status->stream ); \
         else \
-            status->s[status->i] = x; \
+            status->s[status->i] = character; \
     } \
     ++(status->i); \
 } while ( 0 )
@@ -498,7 +499,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 ++(status->current);
             }
         }
-        if ( status->i >= status->n )
+        if ( status->i >= status->n && status->n > 0 )
         {
             status->s[status->n - 1] = '\0';
         }
