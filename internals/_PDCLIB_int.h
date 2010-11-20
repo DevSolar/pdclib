@@ -268,12 +268,20 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_FBIN    128u
 
 /* Internal flags, made to fit the same status field as the flags above. */
+/* -------------------------------------------------------------------------- */
+/* free() the buffer memory on closing (false for user-supplied buffer) */
 #define _PDCLIB_FREEBUFFER   512u
+/* stream has encountered error / EOF */
 #define _PDCLIB_ERRORFLAG   1024u
 #define _PDCLIB_EOFFLAG     2048u
+/* stream is wide-oriented */
 #define _PDCLIB_WIDESTREAM  4096u
+/* stream is byte-oriented */
 #define _PDCLIB_BYTESTREAM  8192u
+/* file associated with stream should be remove()d on closing (tmpfile()) */
 #define _PDCLIB_DELONCLOSE 16384u
+/* stream handle should not be free()d on close (stdin, stdout, stderr) */
+#define _PDCLIB_STATIC     32768u
 
 /* Position / status structure for getpos() / fsetpos(). */
 struct _PDCLIB_fpos_t

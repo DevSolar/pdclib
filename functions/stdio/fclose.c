@@ -49,8 +49,10 @@ int fclose( struct _PDCLIB_file_t * stream )
                 remove( stream->filename );
             }
             /* Free stream */
-            free( stream );
-
+            if ( ! stream->status & _PDCLIB_STATIC )
+            {
+                free( stream );
+            }
             return 0;
         }
         previous = current;
