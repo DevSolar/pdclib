@@ -12,14 +12,8 @@
 
 #include <_PDCLIB_glue.h>
 #include <stdlib.h>
+#include <string.h>
 
-/* Close any file currently associated with the given stream. Open the file
-   identified by the given filename with the given mode (equivalent to fopen()),
-   and associate it with the given stream. If filename is a NULL pointer,
-   attempt to change the mode of the given stream.
-   This implementation allows any mode changes.
-   (Primary use of this function is to redirect stdin, stdout, and stderr.)
-*/
 struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     unsigned int status = stream->status & ( _IONBF | _IOLBF | _IOFBF | _PDCLIB_FREEBUFFER | _PDCLIB_DELONCLOSE );
@@ -28,13 +22,36 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
     {
         _PDCLIB_flushbuffer( stream );
     }
+    if ( ( filename == NULL ) && ( stream->filename == NULL ) )
+    {
+        /* TODO: Special handling for mode changes on std-streams */
+        return NULL;
+    }
     _PDCLIB_close( stream->handle );
+    /* TODO: It is not nice to do this on a stream we just closed.
+       It does not matter with the current implementation of clearerr(),
+       but it might start to matter if someone replaced that implementation.
+    */
     clearerr( stream );
-    /* FIXME: Copy filename into the FILE structure. */
-    /* FIXME: filename cannot reside in "big block" memory */
+    /* The new filename might not fit the old buffer */
     if ( filename == NULL )
     {
+        /* Use previous filename */
         filename = stream->filename;
+    }
+    else if ( ( stream->filename != NULL ) && ( strlen( stream->filename ) >= strlen( filename ) ) )
+    {
+        /* Copy new filename into existing buffer */
+        strcpy( stream->filename, filename );
+    }
+    else
+    {
+        /* Allocate new buffer */
+        if ( ( stream->filename = (char *)malloc( strlen( filename ) ) ) == NULL )
+        {
+            return NULL;
+        }
+        strcpy( stream->filename, filename );
     }
     if ( ( mode == NULL ) || ( filename[0] == '\0' ) )
     {
