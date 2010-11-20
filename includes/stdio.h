@@ -162,7 +162,9 @@ FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restr
    identified by the given filename with the given mode (equivalent to fopen()),
    and associate it with the given stream. If filename is a NULL pointer,
    attempt to change the mode of the given stream.
-   This implementation allows the following mode changes: TODO
+   This implementation allows any mode changes on "real" files, and associating
+   of the standard streams with files. It does *not* support mode changes on
+   standard streams.
    (Primary use of this function is to redirect stdin, stdout, and stderr.)
 */
 FILE * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, FILE * _PDCLIB_restrict stream );
