@@ -13,7 +13,7 @@
 
 long int ftell( struct _PDCLIB_file_t * stream )
 {
-    /* TODO: A bit too fuzzy in the head now. stream->ungetidx should be in here
+    /* FIXME: A bit too fuzzy in the head now. stream->ungetidx should be in here
              somewhere.
     */
     if ( stream->pos.offset > ( LONG_MAX - stream->bufidx ) )

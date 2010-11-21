@@ -25,6 +25,7 @@ int fsetpos( struct _PDCLIB_file_t * stream, const struct _PDCLIB_fpos_t * pos )
         return EOF;
     }
     stream->pos.status = pos->status;
+    /* TODO: Add mbstate. */
     return 0;
 }
 

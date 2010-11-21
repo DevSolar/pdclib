@@ -30,6 +30,9 @@ int puts( const char * s )
             }
         }
     }
+    /* FIXME: Think-o. '\n' is lineend, conversion to platform-specific
+       tales place only for text streams.
+    */
     s = _PDCLIB_eol;
     while ( *s != '\0' )
     {
