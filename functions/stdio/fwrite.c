@@ -27,7 +27,6 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
     {
         for ( size_t size_i = 0; size_i < size; ++size_i )
         {
-            /* TODO: Should line-buffered streams be flushed on '\n' or system EOL? */
             if ( ( stream->buffer[ stream->bufidx++ ] = ((char*)ptr)[ nmemb_i * size + size_i ] ) == '\n' )
             {
                 /* Remember last newline, in case we have to do a partial line-buffered flush */

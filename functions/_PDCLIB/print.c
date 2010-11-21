@@ -42,7 +42,6 @@
    i - pointer to number of characters already delivered in this call
    n - pointer to maximum number of characters to be delivered in this call
    s - the buffer into which the character shall be delivered
-   TODO: ref. fputs() for a better way to buffer handling
 */
 #define DELIVER( x ) \
 do { \
