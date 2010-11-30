@@ -507,6 +507,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 }
 
 #ifdef TEST
+#define _PDCLIB_FILEID "_PDCLIB/print.c"
 #include <_PDCLIB_test.h>
 
 #include <limits.h>
@@ -537,9 +538,6 @@ static int testprintf( char * buffer, const char * format, ... )
 }
 
 #define TEST_CONVERSION_ONLY
-
-#define TESTCASE_SPRINTF( x ) if ( strcmp( target, x ) == 0 ) {} \
-                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, target, #x ); }
 
 int main( void )
 {

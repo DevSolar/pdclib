@@ -48,6 +48,7 @@ int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restric
 #endif
 
 #ifdef TEST
+#define _PDCLIB_FILEID "stdio/vsnprintf.c"
 #include <_PDCLIB_test.h>
 
 #include <limits.h>
@@ -63,9 +64,6 @@ static int testprintf( char * s, const char * format, ... )
     va_end( arg );
     return i;
 }
-
-#define TESTCASE_SPRINTF( x ) if ( strcmp( target, x ) == 0 ) {} \
-                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, target, #x ); }
 
 int main( void )
 {
