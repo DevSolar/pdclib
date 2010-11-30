@@ -26,6 +26,9 @@ static int TEST_RESULTS = 0;
 #define TESTCASE( x ) if ( x ) {} \
                       else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - %s\n", __LINE__, #x ); }
 
+#define TESTCASE_SPRINTF( x ) if ( strcmp( target, x ) == 0 ) {} \
+                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ " (" _PDCLIB_FILEID "), line %d - \"%s\" != \"%s\"\n", __LINE__, target, x ); }
+
 #ifndef REGTEST
 #define TESTCASE_NOREG( x ) TESTCASE( x )
 #else

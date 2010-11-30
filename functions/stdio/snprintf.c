@@ -24,15 +24,13 @@ int snprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict
 #endif
 
 #ifdef TEST
+#define _PDCLIB_FILEID "stdio/snprintf.c"
 #include <_PDCLIB_test.h>
 
 #include <string.h>
 #include <limits.h>
 
 #define testprintf( s, format, ... ) snprintf( s, 100, format, __VA_ARGS__ )
-
-#define TESTCASE_SPRINTF( x ) if ( strcmp( target, x ) == 0 ) {} \
-                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - \"%s\" != %s\n", __LINE__, target, #x ); }
 
 int main( void )
 {
