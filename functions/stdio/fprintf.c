@@ -39,7 +39,6 @@ int main( void )
     TESTCASE( ( target = fopen( "testing/testfile", "wb+" ) ) != NULL );
 #include "printf_testcases.incl"
     TESTCASE( fclose( target ) == 0 );
-#include "fprintf_reftest.incl"
     TESTCASE( remove( "testing/testfile" ) == 0 );
     return TEST_RESULTS;
 }
