@@ -21,6 +21,7 @@ int vsprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, v
 
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/vsprintf.c"
+#define SPRINTF_FUNCTION
 #include <_PDCLIB_test.h>
 
 #include <limits.h>

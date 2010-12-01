@@ -49,6 +49,7 @@ int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restric
 
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/vsnprintf.c"
+#define SPRINTF_FUNCTION
 #include <_PDCLIB_test.h>
 
 #include <limits.h>
