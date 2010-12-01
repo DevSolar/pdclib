@@ -24,18 +24,19 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
 #endif
 
 #ifdef TEST
+#define _PDCLIB_FILEID "stdio/fprintf.c"
+#define FPRINTF_FUNCTION 1
+
 #include <limits.h>
 #include <string.h>
 #include <_PDCLIB_test.h>
 
 #define testprintf( stream, format, ... ) fprintf( stream, format, __VA_ARGS__ )
 
-#define TESTCASE_SPRINTF( x )
-
 int main( void )
 {
     FILE * target;
-    TESTCASE( ( target = fopen( "testing/testfile", "wb" ) ) != NULL );
+    TESTCASE( ( target = fopen( "testing/testfile", "wb+" ) ) != NULL );
 #include "printf_testcases.incl"
     TESTCASE( fclose( target ) == 0 );
 #include "fprintf_reftest.incl"

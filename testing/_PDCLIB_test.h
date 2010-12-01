@@ -26,8 +26,28 @@ static int TEST_RESULTS = 0;
 #define TESTCASE( x ) if ( x ) {} \
                       else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - %s\n", __LINE__, #x ); }
 
-#define TESTCASE_SPRINTF( x ) if ( strcmp( target, x ) == 0 ) {} \
-                              else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ " (" _PDCLIB_FILEID "), line %d - \"%s\" != \"%s\"\n", __LINE__, target, x ); }
+#if defined( FPRINTF_FUNCTION )
+static char result_buffer[ 1000 ];
+#define RESULT_MISMATCH( act, exp ) \
+    rewind( act ), \
+    result_buffer[ fread( result_buffer, 1, strlen( exp ) + 1, act ) ] = '\0', \
+    rewind( act ), \
+    memcmp( result_buffer, exp, strlen( exp ) )
+#define RESULT_STRING( tgt ) result_buffer
+#elif defined( SPRINTF_FUNCTION )
+#define RESULT_MISMATCH( act, exp ) strcmp( act, exp ) != 0
+#define RESULT_STRING( tgt ) tgt
+#endif
+
+#define PRINTF_TEST( expected_rc, expected_string, format, ... ) { \
+        int actual_rc = testprintf( target, format, __VA_ARGS__ ); \
+        if ( ( actual_rc != expected_rc ) || \
+             ( RESULT_MISMATCH( target, expected_string ) ) ) \
+        { \
+            ++TEST_RESULTS; \
+            fprintf( stderr, "FAILED: " __FILE__ " (" _PDCLIB_FILEID "), line %d\n        expected %2d, \"%s\"\n        actual   %2d, \"%s\"\n", __LINE__, expected_rc, expected_string, actual_rc, RESULT_STRING( target ) ); \
+        } \
+    } while ( 0 )
 
 #ifndef REGTEST
 #define TESTCASE_NOREG( x ) TESTCASE( x )

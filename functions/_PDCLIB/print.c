@@ -508,6 +508,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 
 #ifdef TEST
 #define _PDCLIB_FILEID "_PDCLIB/print.c"
+#define SPRINTF_FUNCTION
 #include <_PDCLIB_test.h>
 
 #include <limits.h>
