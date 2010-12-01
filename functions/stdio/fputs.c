@@ -53,8 +53,7 @@ int main( void )
 {
     char const * const message = "SUCCESS testing fputs()";
     FILE * fh;
-    remove( testfile );
-    TESTCASE( ( fh = fopen( testfile, "w+" ) ) != NULL );
+    TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( fputs( message, fh ) >= 0 );
     rewind( fh );
     for ( size_t i = 0; i < 23; ++i )
@@ -62,7 +61,6 @@ int main( void )
         TESTCASE( fgetc( fh ) == message[i] );
     }
     TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 

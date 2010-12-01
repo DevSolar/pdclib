@@ -48,12 +48,10 @@ size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PD
 int main( void )
 {
     FILE * fh;
-    remove( testfile );
-    TESTCASE( ( fh = fopen( testfile, "w" ) ) != NULL );
+    TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( fwrite( "SUCCESS testing fwrite()\n", 1, 25, fh ) == 25 );
-    TESTCASE( fclose( fh ) == 0 );
     /* TODO: Add readback test. */
-    TESTCASE( remove( testfile ) == 0 );
+    TESTCASE( fclose( fh ) == 0 );
     return TEST_RESULTS;
 }
 
