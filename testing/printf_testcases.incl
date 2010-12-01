@@ -203,7 +203,7 @@
     PRINTF_TEST( INT_DIG + 1, "-" INT_MIN_DEZ_STR, "%-" INT_DIG_LESS1 "d", INT_MIN );
     PRINTF_TEST( INT_DIG, INT_MAX_DEZ_STR, "%-" INT_DIG_LESS1 "d", INT_MAX );
     PRINTF_TEST( INT_DIG + 1, "-" INT_MIN_DEZ_STR, "%-" sym2s(INT_DIG) "d", INT_MIN );
-    PRINTF_TEST( INT_DIG, INT_MAX_DEZ_STR, "%-" sym2s(INT_DIG) "d", INT_MIN );
+    PRINTF_TEST( INT_DIG, INT_MAX_DEZ_STR, "%-" sym2s(INT_DIG) "d", INT_MAX );
     PRINTF_TEST( INT_DIG + 1, "-" INT_MIN_DEZ_STR, "%-" INT_DIG_PLUS1 "d", INT_MIN );
     PRINTF_TEST( INT_DIG + 1, INT_MAX_DEZ_STR " ", "%-" INT_DIG_PLUS1 "d", INT_MAX );
     PRINTF_TEST( INT_DIG + 2, "-" INT_MIN_DEZ_STR " ", "%-" INT_DIG_PLUS2 "d", INT_MIN );
@@ -246,7 +246,7 @@
     PRINTF_TEST( INT_DIG + 1, "+" INT_MAX_DEZ_STR, "%+03.6d", INT_MAX );
 #ifndef TEST_CONVERSION_ONLY
     PRINTF_TEST( INT_DIG + 2, "- " INT_MAX_DEZ_STR, "- %d", INT_MAX );
-    PRINTF_TEST( INT_DIG * 2 + 6, "- " INT_MAX_DEZ_STR, " % -" INT_MIN_DEZ_STR, INT_MIN );
+    PRINTF_TEST( INT_DIG * 2 + 6, "- " INT_MAX_DEZ_STR " % -" INT_MIN_DEZ_STR, "- %d %% %d", INT_MAX, INT_MIN );
 #endif
     PRINTF_TEST( 1, "x", "%c", 'x' );
     PRINTF_TEST( 6, "abcdef", "%s", "abcdef" );
