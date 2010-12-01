@@ -34,21 +34,18 @@ int main( void )
 #ifndef REGTEST
     char buffer[ BUFSIZ + 1 ];
     FILE * fh;
-    remove( testfile );
     /* full buffered */
-    TESTCASE( ( fh = fopen( testfile, "w" ) ) != NULL );
+    TESTCASE( ( fh = tmpfile() ) != NULL );
     setbuf( fh, buffer );
     TESTCASE( fh->buffer == buffer );
     TESTCASE( fh->bufsize == BUFSIZ );
     TESTCASE( ( fh->status & ( _IOFBF | _IONBF | _IOLBF ) ) == _IOFBF );
     TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( remove( testfile ) == 0 );
     /* not buffered */
-    TESTCASE( ( fh = fopen( testfile, "w" ) ) != NULL );
+    TESTCASE( ( fh = tmpfile() ) != NULL );
     setbuf( fh, NULL );
     TESTCASE( ( fh->status & ( _IOFBF | _IONBF | _IOLBF ) ) == _IONBF );
     TESTCASE( fclose( fh ) == 0 );
-    TESTCASE( remove( testfile ) == 0 );
 #else
     puts( " NOTEST setbuf() test driver is PDCLib-specific." );
 #endif

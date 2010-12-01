@@ -48,8 +48,7 @@ int main( void )
     */
     char * buffer = (char*)malloc( 4 );
     FILE * fh;
-    remove( testfile );
-    TESTCASE( ( fh = fopen( testfile, "w+" ) ) != NULL );
+    TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IOLBF, 4 ) == 0 );
     TESTCASE( fputc( '1', fh ) == '1' );
     TESTCASE( fputc( '2', fh ) == '2' );
@@ -75,9 +74,8 @@ int main( void )
     TESTCASE_NOREG( fh->bufidx == 0 );
     /* Reading back first character after rewind for basic read check */
     TESTCASE( fgetc( fh ) == '1' );
-    TESTCASE( fclose( fh ) == 0 );
     /* TODO: t.b.c. */
-    remove( testfile );
+    TESTCASE( fclose( fh ) == 0 );
     return TEST_RESULTS;
 }
 

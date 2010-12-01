@@ -69,10 +69,9 @@ static int testprintf( FILE * stream, const char * format, ... )
 int main( void )
 {
     FILE * target;
-    TESTCASE( ( target = fopen( testfile, "wb+" ) ) != NULL );
+    TESTCASE( ( target = tmpfile() ) != NULL );
 #include "printf_testcases.incl"
     TESTCASE( fclose( target ) == 0 );
-    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 

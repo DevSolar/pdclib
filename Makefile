@@ -96,7 +96,6 @@ links:
 	@echo "Linking platform/$(PLATFORM)..."
 	@cd internals && ln -s ../platform/$(PLATFORM)/internals/_PDCLIB_config.h
 	@cd includes && ln -s ../platform/$(PLATFORM)/includes/float.h
-	@cd testing && ln -s ../platform/$(PLATFORM)/testing/printf_reference.txt
 	@cd functions/_PDCLIB && for file in $(PATCHFILES1); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
 	@cd functions/stdlib && for file in $(PATCHFILES2); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
 	@cd functions/stdio && for file in $(PATCHFILES3); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
@@ -105,7 +104,6 @@ unlink:
 	@echo "Unlinking platform files..."
 	@if [ -f internals/_PDCLIB_config.h ]; then rm internals/_PDCLIB_config.h; fi
 	@if [ -f includes/float.h ]; then rm includes/float.h; fi
-	@if [ -f testing/printf_reference.txt ]; then rm testing/printf_reference.txt; fi
 	@cd functions/_PDCLIB && for file in $(PATCHFILES1); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done
 	@cd functions/stdlib && for file in $(PATCHFILES2); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done
 	@cd functions/stdio && for file in $(PATCHFILES3); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done

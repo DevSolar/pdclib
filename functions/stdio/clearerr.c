@@ -23,8 +23,7 @@ void clearerr( struct _PDCLIB_file_t * stream )
 int main( void )
 {
     FILE * fh;
-    remove( "testing/testfile" );
-    TESTCASE( ( fh = fopen( "testing/testfile", "w+" ) ) != NULL );
+    TESTCASE( ( fh = tmpfile() ) != NULL );
     /* Flags should be clear */
     TESTCASE( ! ferror( fh ) );
     TESTCASE( ! feof( fh ) );
@@ -46,7 +45,6 @@ int main( void )
     TESTCASE( ! ferror( fh ) );
     TESTCASE( ! feof( fh ) );
     TESTCASE( fclose( fh ) == 0 );
-    remove( "testing/testfile" );
     return TEST_RESULTS;
 }
 
