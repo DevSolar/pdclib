@@ -23,7 +23,19 @@ struct _PDCLIB_file_t * tmpfile( void )
 
 int main()
 {
-    TESTCASE( NO_TESTDRIVER );
+    FILE * fh;
+    char filename[ L_tmpnam ];
+    FILE * fhtest;
+    TESTCASE( ( fh = tmpfile() ) != NULL );
+    TESTCASE( fputc( 'x', fh ) == 'x' );
+    /* Checking that file is actually there */
+    TESTCASE_NOREG( strcpy( filename, fh->filename ) == filename );
+    TESTCASE_NOREG( ( fhtest = fopen( filename, "r" ) ) != NULL );
+    TESTCASE_NOREG( fclose( fhtest ) == 0 );
+    /* Closing tmpfile */
+    TESTCASE( fclose( fh ) == 0 );
+    /* Checking that file was deleted */
+    TESTCASE_NOREG( fopen( filename, "r" ) == NULL );
     return TEST_RESULTS;
 }
 
