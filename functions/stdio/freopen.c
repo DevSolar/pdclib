@@ -81,7 +81,24 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    FILE * fin;
+    FILE * fout;
+    TESTCASE( ( fin = fopen( testfile1, "wb+" ) ) != NULL );
+    TESTCASE( fputc( 'x', fin ) == 'x' );
+    TESTCASE( fclose( fin ) == 0 );
+    TESTCASE( ( fin = freopen( testfile1, "rb", stdin ) ) != NULL );
+    TESTCASE( getchar() == 'x' );
+
+    TESTCASE( ( fout = freopen( testfile2, "wb+", stdout ) ) != NULL );
+    TESTCASE( putchar( 'x' ) == 'x' );
+    rewind( fout );
+    TESTCASE( fgetc( fout ) == 'x' );
+
+    TESTCASE( fclose( fin ) == 0 );
+    TESTCASE( fclose( fout ) == 0 );
+    remove( testfile1 );
+    remove( testfile2 );
+
     return TEST_RESULTS;
 }
 
