@@ -36,7 +36,7 @@ int fsetpos( struct _PDCLIB_file_t * stream, const struct _PDCLIB_fpos_t * pos )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* fsetpos() tested together with fsetpos(). */
     return TEST_RESULTS;
 }
 

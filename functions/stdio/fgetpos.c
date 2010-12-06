@@ -22,10 +22,22 @@ int fgetpos( struct _PDCLIB_file_t * _PDCLIB_restrict stream, struct _PDCLIB_fpo
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
+#include <string.h>
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    FILE * fh;
+    fpos_t pos1, pos2;
+    TESTCASE( ( fh = fopen( testfile, "wb+" ) ) != NULL );
+    TESTCASE( fgetpos( fh, &pos1 ) == 0 );
+    TESTCASE( fwrite( teststring, 1, strlen( teststring ), fh ) == strlen( teststring ) );
+    TESTCASE( fgetpos( fh, &pos2 ) == 0 );
+    TESTCASE( fsetpos( fh, &pos1 ) == 0 );
+    TESTCASE( ftell( fh ) == 0 );
+    TESTCASE( fsetpos( fh, &pos2 ) == 0 );
+    TESTCASE( (size_t)ftell( fh ) == strlen( teststring ) );
+    TESTCASE( fclose( fh ) == 0 );
+    remove( testfile );
     return TEST_RESULTS;
 }
 

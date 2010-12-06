@@ -27,7 +27,7 @@ void _PDCLIB_closeall( void )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* No testdriver */
     return TEST_RESULTS;
 }
 
