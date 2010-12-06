@@ -33,10 +33,53 @@ int fseek( struct _PDCLIB_file_t * stream, long offset, int whence )
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
+#include <string.h>
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    FILE * fh;
+    TESTCASE( ( fh = fopen( testfile, "wb+" ) ) != NULL );
+    TESTCASE( fwrite( teststring, 1, strlen( teststring ), fh ) == strlen( teststring ) );
+    /* General functionality */
+    TESTCASE( fseek( fh, -1, SEEK_END ) == 0  );
+    TESTCASE( (size_t)ftell( fh ) == strlen( teststring ) - 1 );
+    TESTCASE( fseek( fh, 0, SEEK_END ) == 0 );
+    TESTCASE( (size_t)ftell( fh ) == strlen( teststring ) );
+    TESTCASE( fseek( fh, 0, SEEK_SET ) == 0 );
+    TESTCASE( ftell( fh ) == 0 );
+    TESTCASE( fseek( fh, 5, SEEK_CUR ) == 0 );
+    TESTCASE( ftell( fh ) == 5 );
+    TESTCASE( fseek( fh, -3, SEEK_CUR ) == 0 );
+    TESTCASE( ftell( fh ) == 2 );
+    /* Checking behaviour around EOF */
+    TESTCASE( fseek( fh, 0, SEEK_END ) == 0 );
+    TESTCASE( ! feof( fh ) );
+    TESTCASE( fgetc( fh ) == EOF );
+    TESTCASE( feof( fh ) );
+    TESTCASE( fseek( fh, 0, SEEK_END ) == 0 );
+    TESTCASE( ! feof( fh ) );
+    /* Checking undo of ungetc() */
+    TESTCASE( fseek( fh, 0, SEEK_SET ) == 0 );
+    TESTCASE( fgetc( fh ) == teststring[0] );
+    TESTCASE( fgetc( fh ) == teststring[1] );
+    TESTCASE( fgetc( fh ) == teststring[2] );
+    TESTCASE( ftell( fh ) == 3 );
+    TESTCASE( ungetc( teststring[2], fh ) == teststring[2] );
+    TESTCASE( ftell( fh ) == 2 );
+    TESTCASE( fgetc( fh ) == teststring[2] );
+    TESTCASE( ftell( fh ) == 3 );
+    TESTCASE( ungetc( 'x', fh ) == 'x' );
+    TESTCASE( ftell( fh ) == 2 );
+    TESTCASE( fgetc( fh ) == 'x' );
+    TESTCASE( ungetc( 'x', fh ) == 'x' );
+    TESTCASE( ftell( fh ) == 2 );
+    TESTCASE( fseek( fh, 2, SEEK_SET ) == 0 );
+    TESTCASE( fgetc( fh ) == teststring[2] );
+    /* Checking error handling */
+    TESTCASE( fseek( fh, -5, SEEK_SET ) == -1 );
+    TESTCASE( fseek( fh, 0, SEEK_END ) == 0 );
+    TESTCASE( fclose( fh ) == 0 );
+    remove( testfile );
     return TEST_RESULTS;
 }
 
