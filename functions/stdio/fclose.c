@@ -87,8 +87,8 @@ int main( void )
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file2 ) == 0 );
     TESTCASE( _PDCLIB_filelist == stdin );
-    remove( testfile1 );
-    remove( testfile2 );
+    TESTCASE( remove( testfile1 ) == 0 );
+    TESTCASE( remove( testfile2 ) == 0 );
 #else
     puts( " NOTEST fclose() test driver is PDCLib-specific." );
 #endif

@@ -21,12 +21,9 @@ int vsprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, v
 
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/vsprintf.c"
-#define SPRINTF_FUNCTION
-#include <_PDCLIB_test.h>
+#define _PDCLIB_STRINGIO
 
-#include <limits.h>
-#include <stdint.h>
-#include <string.h>
+#include <_PDCLIB_test.h>
 
 static int testprintf( char * s, const char * format, ... )
 {
@@ -41,7 +38,7 @@ static int testprintf( char * s, const char * format, ... )
 int main( void )
 {
     char target[100];
-#include "printf_testcases.incl"
+#include "printf_testcases.h"
     return TEST_RESULTS;
 }
 

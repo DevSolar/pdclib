@@ -25,9 +25,8 @@ int printf( const char * _PDCLIB_restrict format, ... )
 
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/printf.c"
-#define FPRINTF_FUNCTION
-#include <limits.h>
-#include <string.h>
+#define _PDCLIB_FILEIO
+
 #include <_PDCLIB_test.h>
 
 #define testprintf( stream, format, ... ) printf( format, __VA_ARGS__ )
@@ -36,7 +35,7 @@ int main( void )
 {
     FILE * target;
     TESTCASE( ( target = freopen( testfile, "wb+", stdout ) ) != NULL );
-#include "printf_testcases.incl"
+#include "printf_testcases.h"
     TESTCASE( fclose( target ) == 0 );
     TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;

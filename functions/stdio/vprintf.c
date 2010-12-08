@@ -20,9 +20,8 @@ int vprintf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/vprintf.c"
-#define FPRINTF_FUNCTION
-#include <limits.h>
-#include <string.h>
+#define _PDCLIB_FILEIO
+
 #include <_PDCLIB_test.h>
 
 static int testprintf( FILE * stream, const char * format, ... )
@@ -39,7 +38,7 @@ int main( void )
 {
     FILE * target;
     TESTCASE( ( target = freopen( testfile, "wb+", stdout ) ) != NULL );
-#include "printf_testcases.incl"
+#include "printf_testcases.h"
     TESTCASE( fclose( target ) == 0 );
     TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;

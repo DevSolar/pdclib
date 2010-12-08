@@ -25,18 +25,16 @@ int snprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict
 
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/snprintf.c"
-#define SPRINTF_FUNCTION
-#include <_PDCLIB_test.h>
+#define _PDCLIB_STRINGIO
 
-#include <string.h>
-#include <limits.h>
+#include <_PDCLIB_test.h>
 
 #define testprintf( s, format, ... ) snprintf( s, 100, format, __VA_ARGS__ )
 
 int main( void )
 {
     char target[100];
-#include "printf_testcases.incl"
+#include "printf_testcases.h"
     return TEST_RESULTS;
 }
 

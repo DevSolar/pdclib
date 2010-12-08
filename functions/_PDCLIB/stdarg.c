@@ -27,6 +27,11 @@ enum tag_t
     TAG_FUNCPTR
 };
 
+static int dummy( void )
+{
+    return INT_MAX;
+}
+
 static int test( enum tag_t s, ... )
 {
     enum tag_t tag = s;
@@ -80,7 +85,9 @@ static int test( enum tag_t s, ... )
             }
             case TAG_FUNCPTR:
             {
-                TESTCASE( (va_arg( ap, intfunc_t ))() == INT_MAX );
+                intfunc_t function;
+                TESTCASE( ( function = va_arg( ap, intfunc_t ) ) == dummy );
+                TESTCASE( function() == INT_MAX );
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
@@ -91,11 +98,6 @@ static int test( enum tag_t s, ... )
             }
         }
     }
-}
-
-static int dummy( void )
-{
-    return INT_MAX;
 }
 
 int main( void )

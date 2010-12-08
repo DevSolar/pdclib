@@ -94,7 +94,7 @@ int main( void )
     TESTCASE_NOREG( fopen( testfile, "wr" ) == NULL ); /* Undefined mode */
     TESTCASE( ( fh = fopen( testfile, "w" ) ) != NULL );
     TESTCASE( fclose( fh ) == 0 );
-    remove( testfile );
+    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 

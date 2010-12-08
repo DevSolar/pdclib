@@ -63,7 +63,8 @@ int main( void )
     TESTCASE( feof( fh ) );
     TESTCASE( fseek( fh, 0, SEEK_END ) == 0 );
     TESTCASE( gets( buffer ) == NULL );
-    // remove( testfile );
+    TESTCASE( fclose( fh ) == 0 );
+    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 

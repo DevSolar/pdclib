@@ -24,15 +24,17 @@ int sscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict forma
 #endif
 
 #ifdef TEST
+#define _PDCLIB_FILEID "stdio/sscanf.c"
+#define _PDCLIB_STRINGIO
+
 #include <_PDCLIB_test.h>
 
-#include "scan_test.h"
+#define testscanf( s, format, ... ) sscanf( s, format, __VA_ARGS__ )
 
 int main()
 {
-#define SCANFUNC( source, format, ... ) sscanf( source, format, __VA_ARGS__ )
-#include "sscan_sources.incl"
-#include "scanf_testcases.incl"
+    char source[100];
+#include "scanf_testcases.h"
     return TEST_RESULTS;
 }
 
