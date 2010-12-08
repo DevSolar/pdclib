@@ -94,8 +94,10 @@ struct _PDCLIB_file_t * tmpfile( void )
 int main()
 {
     FILE * fh;
+#ifndef REGTEST
     char filename[ L_tmpnam ];
     FILE * fhtest;
+#endif
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( fputc( 'x', fh ) == 'x' );
     /* Checking that file is actually there */

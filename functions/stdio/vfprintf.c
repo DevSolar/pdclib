@@ -50,10 +50,8 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
 
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/vfprintf.c"
-#define FPRINTF_FUNCTION
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
+#define _PDCLIB_FILEIO
+
 #include <_PDCLIB_test.h>
 
 static int testprintf( FILE * stream, const char * format, ... )
@@ -70,7 +68,7 @@ int main( void )
 {
     FILE * target;
     TESTCASE( ( target = tmpfile() ) != NULL );
-#include "printf_testcases.incl"
+#include "printf_testcases.h"
     TESTCASE( fclose( target ) == 0 );
     return TEST_RESULTS;
 }

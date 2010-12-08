@@ -86,11 +86,12 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
 #endif
 
 #ifdef TEST
+#define _PDCLIB_FILEID "stdio/vsscanf.c"
+#define _PDCLIB_STRINGIO
+
 #include <_PDCLIB_test.h>
 
-#include "scan_test.h"
-
-static int SCANFUNC( char const * stream, char const * format, ... )
+static int testscanf( char const * stream, char const * format, ... )
 {
     va_list ap;
     va_start( ap, format );
@@ -101,8 +102,8 @@ static int SCANFUNC( char const * stream, char const * format, ... )
 
 int main( void )
 {
-#include "sscan_sources.incl"
-#include "scanf_testcases.incl"
+    char source[100];
+#include "scanf_testcases.h"
     return TEST_RESULTS;
 }
 

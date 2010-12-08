@@ -44,7 +44,7 @@ int main( void )
     TESTCASE( fread( buffer, 1, 7, fh ) == 7 );
     TESTCASE( memcmp( buffer, "Test: ", 6 ) == 0 );
     TESTCASE( fclose( fh ) == 0 );
-    remove( testfile );
+    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 

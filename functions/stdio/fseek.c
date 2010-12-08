@@ -38,7 +38,7 @@ int fseek( struct _PDCLIB_file_t * stream, long offset, int whence )
 int main( void )
 {
     FILE * fh;
-    TESTCASE( ( fh = fopen( testfile, "wb+" ) ) != NULL );
+    TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( fwrite( teststring, 1, strlen( teststring ), fh ) == strlen( teststring ) );
     /* General functionality */
     TESTCASE( fseek( fh, -1, SEEK_END ) == 0  );
@@ -79,7 +79,6 @@ int main( void )
     TESTCASE( fseek( fh, -5, SEEK_SET ) == -1 );
     TESTCASE( fseek( fh, 0, SEEK_END ) == 0 );
     TESTCASE( fclose( fh ) == 0 );
-    remove( testfile );
     return TEST_RESULTS;
 }
 

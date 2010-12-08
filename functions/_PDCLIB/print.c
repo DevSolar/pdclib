@@ -508,11 +508,9 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 
 #ifdef TEST
 #define _PDCLIB_FILEID "_PDCLIB/print.c"
-#define SPRINTF_FUNCTION
-#include <_PDCLIB_test.h>
+#define _PDCLIB_STRINGIO
 
-#include <limits.h>
-#include <string.h>
+#include <_PDCLIB_test.h>
 
 static int testprintf( char * buffer, const char * format, ... )
 {
@@ -543,7 +541,7 @@ static int testprintf( char * buffer, const char * format, ... )
 int main( void )
 {
     char target[100];
-#include "printf_testcases.incl"
+#include "printf_testcases.h"
     return TEST_RESULTS;
 }
 

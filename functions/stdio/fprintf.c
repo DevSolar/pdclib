@@ -25,10 +25,8 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
 
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/fprintf.c"
-#define FPRINTF_FUNCTION 1
+#define _PDCLIB_FILEIO
 
-#include <limits.h>
-#include <string.h>
 #include <_PDCLIB_test.h>
 
 #define testprintf( stream, format, ... ) fprintf( stream, format, __VA_ARGS__ )
@@ -37,9 +35,10 @@ int main( void )
 {
     FILE * target;
     TESTCASE( ( target = tmpfile() ) != NULL );
-#include "printf_testcases.incl"
+#include "printf_testcases.h"
     TESTCASE( fclose( target ) == 0 );
     return TEST_RESULTS;
 }
 
 #endif
+

@@ -28,6 +28,7 @@ int main( void )
     TESTCASE( ! ferror( fh ) );
     TESTCASE( ! feof( fh ) );
     /* Reading from input stream - should provoke error */
+    /* FIXME: Apparently glibc disagrees on this assumption. How to provoke error on glibc? */
     TESTCASE( fgetc( fh ) == EOF );
     TESTCASE( ferror( fh ) );
     TESTCASE( ! feof( fh ) );

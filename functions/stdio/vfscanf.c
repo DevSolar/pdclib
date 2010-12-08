@@ -88,11 +88,12 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
 #endif
 
 #ifdef TEST
+#define _PDCLIB_FILEID "stdio/vfscanf.c"
+#define _PDCLIB_FILEIO
+
 #include <_PDCLIB_test.h>
 
-#include "scan_test.h"
-
-static int SCANFUNC( FILE * stream, char const * format, ... )
+static int testscanf( FILE * stream, char const * format, ... )
 {
     va_list ap;
     va_start( ap, format );
@@ -103,8 +104,10 @@ static int SCANFUNC( FILE * stream, char const * format, ... )
 
 int main( void )
 {
-#include "fscan_sources.incl"
-#include "scanf_testcases.incl"
+    FILE * source;
+    TESTCASE( ( source = tmpfile() ) != NULL );
+#include "scanf_testcases.h"
+    TESTCASE( fclose( source ) == 0 );
     return TEST_RESULTS;
 }
 

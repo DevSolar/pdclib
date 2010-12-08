@@ -73,8 +73,8 @@ int main( void )
     /* NOREG as glibc overwrites existing destination file. */
     TESTCASE_NOREG( rename( testfile1, testfile2 ) == -1 );
     /* remove both files */
-    remove( testfile1 );
-    remove( testfile2 );
+    TESTCASE( remove( testfile1 ) == 0 );
+    TESTCASE( remove( testfile2 ) == 0 );
     /* check that they're gone */
     TESTCASE( fopen( testfile1, "r" ) == NULL );
     TESTCASE( fopen( testfile2, "r" ) == NULL );

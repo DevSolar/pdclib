@@ -96,8 +96,8 @@ int main( void )
 
     TESTCASE( fclose( fin ) == 0 );
     TESTCASE( fclose( fout ) == 0 );
-    remove( testfile1 );
-    remove( testfile2 );
+    TESTCASE( remove( testfile1 ) == 0 );
+    TESTCASE( remove( testfile2 ) == 0 );
 
     return TEST_RESULTS;
 }

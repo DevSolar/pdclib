@@ -82,7 +82,7 @@ int main( void )
     TESTCASE( fgets( buffer, 2, fh ) == NULL );
     TESTCASE( feof( fh ) );
     TESTCASE( fclose( fh ) == 0 );
-    remove( testfile );
+    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 

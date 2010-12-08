@@ -24,15 +24,19 @@ int fscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format
 #endif
 
 #ifdef TEST
+#define _PDCLIB_FILEID "stdio/fscanf.c"
+#define _PDCLIB_FILEIO
+
 #include <_PDCLIB_test.h>
 
-#include "scan_test.h"
+#define testscanf( stream, format, ... ) fscanf( stream, format, __VA_ARGS__ )
 
 int main( void )
 {
-#define SCANFUNC( source, format, ... ) fscanf( source, format, __VA_ARGS__ )
-#include "fscan_sources.incl"
-#include "scanf_testcases.incl"
+    FILE * source;
+    TESTCASE( ( source = tmpfile() ) != NULL );
+#include "scanf_testcases.h"
+    TESTCASE( fclose( source ) == 0 );
     return TEST_RESULTS;
 }
 
