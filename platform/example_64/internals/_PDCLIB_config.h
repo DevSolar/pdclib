@@ -278,39 +278,3 @@ typedef int _PDCLIB_fd_t;
    this capability dependent on implementation-defined behaviour (not good).
 */
 #define _PDCLIB_UNGETCBUFSIZE 1
-
-/* Signals ------------------------------------------------------------------ */
-
-/* A word on signals, to the people using PDCLib in their OS projects.
-
-   The way they are defined by the C standard severely limits their usefulness,
-   to the point where a library implementation need not interface with the OS'
-   signals at all (which is what the PDCLib example implementation does).
-   (Other issues include, for example, that signal handlers are not re-entrant.)
-
-   Thus, it is strongly discouraged to try bolting on a signal handling infra-
-   structure onto <signal.h>. Since C's signal handling is so limited to begin
-   with, and code using it is pretty much non-portable anyway, it would be
-   smarter to keep <signal.h> in the barely functional state it is in, and
-   instead create a better, OS-specific API.
-
-   That being said, the below signals require to be defined to a positive int
-   value. I took what my Linux box defined them to; if you have to change them,
-   and what value to change them *to*, depends heavily on your environment and
-   what you are expecting <signal.h> to accomplish (see above).
-*/
-#define _PDCLIB_SIGABRT 6
-#define _PDCLIB_SIGFPE  8
-#define _PDCLIB_SIGILL  4
-#define _PDCLIB_SIGINT  2
-#define _PDCLIB_SIGSEGV 11
-#define _PDCLIB_SIGTERM 15
-
-/* The following should be defined to pointer values that could NEVER point to
-   a valid function. (They are used as special arguments to signal().) Again, I
-   took the values of my Linux box, which should be as good as any other value.
-*/
-#define _PDCLIB_SIG_DFL (void (*)( int ))0
-#define _PDCLIB_SIG_ERR (void (*)( int ))-1
-#define _PDCLIB_SIG_IGN (void (*)( int ))1
-
