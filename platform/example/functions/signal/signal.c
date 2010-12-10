@@ -12,18 +12,12 @@
 
 #include <stdlib.h>
 
-static void default_handler( int sig )
-{
-    /* TODO: Implement error message */
-    exit( EXIT_FAILURE );
-}
-
-void (*_PDCLIB_sigabrt)( int ) = default_handler;
-void (*_PDCLIB_sigfpe)( int )  = default_handler;
-void (*_PDCLIB_sigill)( int )  = default_handler;
-void (*_PDCLIB_sigint)( int )  = default_handler;
-void (*_PDCLIB_sigsegv)( int ) = default_handler;
-void (*_PDCLIB_sigterm)( int ) = default_handler;
+void (*_PDCLIB_sigabrt)( int ) = SIG_DFL;
+void (*_PDCLIB_sigfpe)( int )  = SIG_DFL;
+void (*_PDCLIB_sigill)( int )  = SIG_DFL;
+void (*_PDCLIB_sigint)( int )  = SIG_DFL;
+void (*_PDCLIB_sigsegv)( int ) = SIG_DFL;
+void (*_PDCLIB_sigterm)( int ) = SIG_DFL;
 
 void (*signal( int sig, void (*func)( int ) ) )( int )
 {
@@ -55,8 +49,11 @@ void (*signal( int sig, void (*func)( int ) ) )( int )
             _PDCLIB_sigterm = func;
             break;
         default:
-            /* TODO: Implement. */
-            break;
+            /* The standard calls for an unspecified "positive value". You
+               will probably want to define a specific value for this.
+            */
+            _PDCLIB_errno = 1;
+            return SIG_ERR;
     }
     return oldhandler;
 }
