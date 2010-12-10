@@ -22,6 +22,10 @@ void (*_PDCLIB_sigterm)( int ) = SIG_DFL;
 void (*signal( int sig, void (*func)( int ) ) )( int )
 {
     void (*oldhandler)( int );
+    if ( sig <= 0 || func == SIG_ERR )
+    {
+        return SIG_ERR;
+    }
     switch ( sig )
     {
         case SIGABRT:
@@ -65,7 +69,7 @@ void (*signal( int sig, void (*func)( int ) ) )( int )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    /* Testing covered by raise.c */
     return TEST_RESULTS;
 }
 #endif
