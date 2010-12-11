@@ -29,16 +29,6 @@ REGDEPFILES := $(patsubst %,%.d,$(REGFILES))
 # All files belonging to the source distribution
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
-# TODO: This must be possible without four discrete steps.
-# All files in platform/$(PLATFORM)/functions/_PDCLIB (for development only)
-PATCHFILES1 := $(shell ls platform/$(PLATFORM)/functions/_PDCLIB/*.c)
-# All files in platform/$(PLATFORM)/functions/stdlib (for development only)
-PATCHFILES2 := $(shell ls platform/$(PLATFORM)/functions/stdlib/*.c)
-# All files in platform/$(PLATFORM)/functions/stdio (for development only)
-PATCHFILES3 := $(shell ls platform/$(PLATFORM)/functions/stdio/*.c)
-# All files in platform/$(PLATFORM)/functions/signal (for development only)
-PATCHFILES4 := $(shell ls platform/$(PLATFORM)/functions/signal/*.c)
-
 WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -fno-builtin 
 CFLAGS := -g -std=c99 -I./internals -I./testing $(WARNINGS) $(USERFLAGS)
 
@@ -98,20 +88,11 @@ find:
 
 links:
 	@echo "Linking platform/$(PLATFORM)..."
-	@cd internals && ln -s ../platform/$(PLATFORM)/internals/_PDCLIB_config.h
-	@cd includes && ln -s ../platform/$(PLATFORM)/includes/float.h && ln -s ../platform/$(PLATFORM)/includes/signal.h
-	@cd functions/_PDCLIB && for file in $(PATCHFILES1); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
-	@cd functions/stdlib && for file in $(PATCHFILES2); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
-	@cd functions/stdio && for file in $(PATCHFILES3); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
-	@cd functions/signal && for file in $(PATCHFILES4); do basfile=`basename $$file`; if [ ! -f $$basfile ]; then ln -s `ls ../../$$file` .; fi; done
+	@for file in $$(find platform/$(PLATFORM) -mindepth 2 -type f ! -path *.svn* -printf "%P\n"); do ln -s $$(dirname $$file | sed "s@[^/]*@..@g")/platform/$(PLATFORM)/$$file $$file; done
 
 unlink:
 	@echo "Unlinking platform files..."
-	@if [ -f internals/_PDCLIB_config.h ]; then rm internals/_PDCLIB_config.h; fi
-	@if [ -f includes/float.h ]; then rm includes/float.h; fi
-	@cd functions/_PDCLIB && for file in $(PATCHFILES1); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done
-	@cd functions/stdlib && for file in $(PATCHFILES2); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done
-	@cd functions/stdio && for file in $(PATCHFILES3); do basfile=`basename $$file`; if [ -f $$basfile ]; then rm $$basfile; fi; done
+	@for dir in $(PROJDIRS); do find $$dir -type l -exec rm {} +; done
 
 help:
 	@echo "Available make targets:"
