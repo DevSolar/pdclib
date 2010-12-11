@@ -25,7 +25,6 @@ long int strtol( const char * s, char ** endptr, int base )
     }
     else
     {
-        /* FIXME: This breaks on some machines that round negatives wrongly */
         rc = (long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LONG_MIN, (uintmax_t)( LONG_MIN / -base ), (int)( -( LONG_MIN % base ) ), &sign );
     }
     if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;

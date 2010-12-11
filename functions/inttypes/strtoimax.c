@@ -25,7 +25,6 @@ intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict
     }
     else
     {
-        /* FIXME: This breaks on some machines that round negatives wrongly */
         rc = (intmax_t)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)INTMAX_MIN, (uintmax_t)( INTMAX_MIN / -base ), (int)( -( INTMAX_MIN % base ) ), &sign );
     }
     if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) nptr;
