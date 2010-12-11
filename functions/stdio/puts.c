@@ -30,26 +30,16 @@ int puts( const char * s )
             }
         }
     }
-    /* FIXME: Think-o. '\n' is lineend, conversion to platform-specific
-       tales place only for text streams.
-    */
-    s = _PDCLIB_eol;
-    while ( *s != '\0' )
-    {
-        stdout->buffer[ stdout->bufidx++ ] = *s++;
-        if ( stdout->bufidx == stdout->bufsize )
-        {
-            if ( _PDCLIB_flushbuffer( stdout ) == EOF )
-            {
-                return EOF;
-            }
-        }
-    }
-    if ( stdout->status & ( _IOLBF | _IONBF ) )
+    stdout->buffer[ stdout->bufidx++ ] = '\n';
+    if ( ( stdout->bufidx == stdout->bufsize ) ||
+         ( stdout->status & ( _IOLBF | _IONBF ) ) )
     {
         return _PDCLIB_flushbuffer( stdout );
     }
-    return 0;
+    else
+    {
+        return 0;
+    }
 }
 
 #endif
