@@ -31,6 +31,7 @@ int _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream )
         {
             /* TODO: Text stream conversion here */
         }
+        stream->pos.offset += rc;
         stream->bufend = rc;
         stream->bufidx = 0;
         return 0;

@@ -13,8 +13,10 @@
 
 long int ftell( struct _PDCLIB_file_t * stream )
 {
-    /* FIXME: A bit too fuzzy in the head now. stream->ungetidx should be in here
-             somewhere.
+    /* If offset is too large for return type, report error instead of wrong
+       offset value.
+       FIXME: A bit too fuzzy in the head right now; stream->ungetidx should be
+       in here somewhere.
     */
     if ( stream->pos.offset > ( LONG_MAX - stream->bufidx ) )
     {
@@ -22,11 +24,22 @@ long int ftell( struct _PDCLIB_file_t * stream )
         _PDCLIB_errno = _PDCLIB_EINVAL;
         return -1;
     }
-    /* Position of start-of-buffer, plus:
-       - buffered, unwritten content (for output streams), or
-       - already-parsed content from buffer (for input streams)
+    /* ftell() must take into account:
+       - the actual *physical* offset of the file, i.e. the offset as recognized
+         by the operating system (and stored in stream->pos.offset); and
+       - any buffers held by PDCLib, which
+         - in case of unwritten buffers, count in *addition* to the offset; or
+         - in case of unprocessed pre-read buffers, count in *substraction* to
+           the offset. (Remember to count ungetidx into this number.)
+       Conveniently, the calculation ( ( bufend - bufidx ) + ungetidx ) results
+       in just the right number in both cases:
+         - in case of unwritten buffers, ( ( 0 - unwritten ) + 0 )
+           i.e. unwritten bytes as negative number
+         - in case of unprocessed pre-read, ( ( preread - processed ) + unget )
+           i.e. unprocessed bytes as positive number.
+       That is how the somewhat obscure return-value calculation works.
     */
-    return (long int)( stream->pos.offset + stream->bufidx - stream->ungetidx );
+    return (long int)( stream->pos.offset - ( ( stream->bufend - stream->bufidx ) + stream->ungetidx ) );
 }
 
 #endif
