@@ -13,17 +13,6 @@
 
 long int ftell( struct _PDCLIB_file_t * stream )
 {
-    /* If offset is too large for return type, report error instead of wrong
-       offset value.
-       FIXME: A bit too fuzzy in the head right now; stream->ungetidx should be
-       in here somewhere.
-    */
-    if ( stream->pos.offset > ( LONG_MAX - stream->bufidx ) )
-    {
-        /* integer overflow */
-        _PDCLIB_errno = _PDCLIB_EINVAL;
-        return -1;
-    }
     /* ftell() must take into account:
        - the actual *physical* offset of the file, i.e. the offset as recognized
          by the operating system (and stored in stream->pos.offset); and
@@ -39,7 +28,18 @@ long int ftell( struct _PDCLIB_file_t * stream )
            i.e. unprocessed bytes as positive number.
        That is how the somewhat obscure return-value calculation works.
     */
-    return (long int)( stream->pos.offset - ( ( stream->bufend - stream->bufidx ) + stream->ungetidx ) );
+    /* If offset is too large for return type, report error instead of wrong
+       offset value. Buffers may not be larger than INT_MAX so the casts are
+       safe.
+    */
+    /* FIXME: This calculation *underflows* when offset smaller than pre-read */
+    if ( ( stream->pos.offset - ( (int)stream->bufend + (int)stream->ungetidx ) ) > ( LONG_MAX - stream->bufidx ) )
+    {
+        /* integer overflow */
+        _PDCLIB_errno = _PDCLIB_ERANGE;
+        return -1;
+    }
+    return (long int)( stream->pos.offset - ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx ) );
 }
 
 #endif
