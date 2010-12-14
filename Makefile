@@ -1,7 +1,7 @@
 # $Id$
 
 # This is where you chose which platform to compile for (see 'make links' / './platform')
-PLATFORM := example
+PLATFORM := example_cygwin
 
 # This is a list of all non-source files that are part of the distribution.
 AUXFILES := Makefile Readme.txt

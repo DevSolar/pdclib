@@ -7,9 +7,10 @@
 */
 
 #include <stdio.h>
-#include <_PDCLIB_glue.h>
 
 #ifndef REGTEST
+
+#include <_PDCLIB_glue.h>
 
 #include <stdbool.h>
 #include <string.h>
