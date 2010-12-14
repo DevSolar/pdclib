@@ -28,12 +28,11 @@ long int ftell( struct _PDCLIB_file_t * stream )
            i.e. unprocessed bytes as positive number.
        That is how the somewhat obscure return-value calculation works.
     */
-    /* If offset is too large for return type, report error instead of wrong
-       offset value. Buffers may not be larger than INT_MAX so the casts are
-       safe.
+    /*  If offset is too large for return type, report error instead of wrong
+        offset value.
     */
-    /* FIXME: This calculation *underflows* when offset smaller than pre-read */
-    if ( ( stream->pos.offset - ( (int)stream->bufend + (int)stream->ungetidx ) ) > ( LONG_MAX - stream->bufidx ) )
+    /* TODO: Check what happens when ungetc() is called on a stream at offset 0 */
+    if ( ( stream->pos.offset - stream->bufend ) > ( LONG_MAX - ( stream->bufidx - stream->ungetidx ) ) )
     {
         /* integer overflow */
         _PDCLIB_errno = _PDCLIB_ERANGE;
