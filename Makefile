@@ -69,7 +69,7 @@ regtests: regtestdrivers
 regtestdrivers: $(REGFILES)
 	@echo
 
-#-include $(DEPFILES) $(TSTDEPFILES) $(REGDEPFILES)
+-include $(DEPFILES) $(TSTDEPFILES) $(REGDEPFILES)
 
 clean:
 	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(TSTDEPFILES) $(REGFILES) $(REGDEPFILES) pdclib.a pdclib.tgz scanf_testdata_*; do if [ -f $$file ]; then rm $$file; fi; done
