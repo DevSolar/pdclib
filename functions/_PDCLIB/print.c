@@ -43,7 +43,7 @@
    n - pointer to maximum number of characters to be delivered in this call
    s - the buffer into which the character shall be delivered
 */
-#define DELIVER( x ) \
+#define PUT( x ) \
 do { \
     int character = x; \
     if ( status->i < status->n ) { \
@@ -104,7 +104,7 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
         {
             for ( size_t i = 0; i < status->width - characters; ++i )
             {
-                DELIVER( ' ' );
+                PUT( ' ' );
                 ++(status->current);
             }
         }
@@ -113,7 +113,7 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
     preidx = 0;
     while ( preface[ preidx ] != '\0' )
     {
-        DELIVER( preface[ preidx++ ] );
+        PUT( preface[ preidx++ ] );
         ++(status->current);
     }
     if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
@@ -123,14 +123,14 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
         */
         while ( status->current < status->width )
         {
-            DELIVER( '0' );
+            PUT( '0' );
             ++(status->current);
         }
     }
     /* Do the precision padding if necessary. */
     for ( size_t i = 0; i < prec_pads; ++i )
     {
-        DELIVER( '0' );
+        PUT( '0' );
     }
     }
 }
@@ -175,12 +175,12 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
     if ( status->flags & E_lower )
     {
         /* Lowercase letters. Same array used for strto...(). */
-        DELIVER( _PDCLIB_digits[ digit ] );
+        PUT( _PDCLIB_digits[ digit ] );
     }
     else
     {
         /* Uppercase letters. Array only used here, only 0-F. */
-        DELIVER( _PDCLIB_Xdigits[ digit ] );
+        PUT( _PDCLIB_Xdigits[ digit ] );
     }
     }
 }
@@ -192,7 +192,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
     if ( *(++spec) == '%' )
     {
         /* %% -> print single '%' */
-        DELIVER( *spec );
+        PUT( *spec );
         return ++spec;
     }
     /* Initializing status structure */
@@ -381,7 +381,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             break;
         case 'c':
             /* TODO: Flags, wide chars. */
-            DELIVER( va_arg( status->arg, int ) );
+            PUT( va_arg( status->arg, int ) );
             return ++spec;
         case 's':
             /* TODO: Flags, wide chars. */
@@ -389,7 +389,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 char * s = va_arg( status->arg, char * );
                 while ( *s != '\0' )
                 {
-                    DELIVER( *(s++) );
+                    PUT( *(s++) );
                 }
                 return ++spec;
             }
@@ -456,11 +456,11 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             }
             if ( status->flags & E_lower )
             {
-                DELIVER( _PDCLIB_digits[ digit ] );
+                PUT( _PDCLIB_digits[ digit ] );
             }
             else
             {
-                DELIVER( _PDCLIB_Xdigits[ digit ] );
+                PUT( _PDCLIB_Xdigits[ digit ] );
             }
         }
         else
@@ -494,7 +494,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         {
             while ( status->current < status->width )
             {
-                DELIVER( ' ' );
+                PUT( ' ' );
                 ++(status->current);
             }
         }

@@ -32,18 +32,6 @@
 #define E_unsigned   1<<16
 
 
-/* Helper macro for assigning a readily converted integer value to the correct
-   parameter type, used in a switch on status->flags (see E_* flags above).
-   case_cond: combination of the E_* flags above, used for the switch-case
-   type:      integer type, used to get the correct type from the parameter
-              stack as well as for cast target.
-*/
-#define ASSIGN_VALUE_TO( case_cond, type ) \
-    case case_cond: \
-        *( va_arg( status->arg, type * ) ) = (type)( value * sign ); \
-        break
-
-
 /* Helper function to get a character from the string or stream, whatever is
    used for input. When reading from a string, returns EOF on end-of-string
    so that handling of the return value can be uniform for both streams and
@@ -535,22 +523,58 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                                    E_intmax | E_size | E_ptrdiff |
                                    E_unsigned ) )
         {
-            ASSIGN_VALUE_TO( E_char, char );
-            ASSIGN_VALUE_TO( E_char | E_unsigned, unsigned char );
-            ASSIGN_VALUE_TO( E_short, short );
-            ASSIGN_VALUE_TO( E_short | E_unsigned, unsigned short );
-            ASSIGN_VALUE_TO( 0, int );
-            ASSIGN_VALUE_TO( E_unsigned, unsigned int );
-            ASSIGN_VALUE_TO( E_long, long );
-            ASSIGN_VALUE_TO( E_long | E_unsigned, unsigned long );
-            ASSIGN_VALUE_TO( E_llong, long long );
-            ASSIGN_VALUE_TO( E_llong | E_unsigned, unsigned long long );
-            ASSIGN_VALUE_TO( E_intmax, intmax_t );
-            ASSIGN_VALUE_TO( E_intmax | E_unsigned, uintmax_t );
-            ASSIGN_VALUE_TO( E_size, size_t );
-            /* ASSIGN_VALUE_TO( E_size | E_unsigned, unsigned size_t ); */
-            ASSIGN_VALUE_TO( E_ptrdiff, ptrdiff_t );
-            /* ASSIGN_VALUE_TO( E_ptrdiff | E_unsigned, unsigned ptrdiff_t ); */
+            case E_char:
+                *( va_arg( status->arg,               char * ) ) =               (char)( value * sign );
+                break;
+            case E_char | E_unsigned:
+                *( va_arg( status->arg,      unsigned char * ) ) =      (unsigned char)( value * sign );
+                break;
+
+            case E_short:
+                *( va_arg( status->arg,              short * ) ) =              (short)( value * sign );
+                break;
+            case E_short | E_unsigned:
+                *( va_arg( status->arg,     unsigned short * ) ) =     (unsigned short)( value * sign );
+                break;
+
+            case 0:
+                *( va_arg( status->arg,                int * ) ) =                (int)( value * sign );
+                break;
+            case E_unsigned:
+                *( va_arg( status->arg,       unsigned int * ) ) =       (unsigned int)( value * sign );
+                break;
+
+            case E_long:
+                *( va_arg( status->arg,               long * ) ) =               (long)( value * sign );
+                break;
+            case E_long | E_unsigned:
+                *( va_arg( status->arg,      unsigned long * ) ) =      (unsigned long)( value * sign );
+                break;
+
+            case E_llong:
+                *( va_arg( status->arg,          long long * ) ) =          (long long)( value * sign );
+                break;
+            case E_llong | E_unsigned:
+                *( va_arg( status->arg, unsigned long long * ) ) = (unsigned long long)( value * sign );
+                break;
+
+            case E_intmax:
+                *( va_arg( status->arg,           intmax_t * ) ) =           (intmax_t)( value * sign );
+                break;
+            case E_intmax | E_unsigned:
+                *( va_arg( status->arg,          uintmax_t * ) ) =          (uintmax_t)( value * sign );
+                break;
+
+            case E_size:
+                /* E_size always implies unsigned */
+                *( va_arg( status->arg,             size_t * ) ) =             (size_t)( value * sign );
+                break;
+
+            case E_ptrdiff:
+                /* E_ptrdiff always implies signed */
+                *( va_arg( status->arg,          ptrdiff_t * ) ) =          (ptrdiff_t)( value * sign );
+                break;
+
             default:
                 puts( "UNSUPPORTED SCANF FLAG COMBINATION" );
                 return NULL; /* behaviour unspecified */
