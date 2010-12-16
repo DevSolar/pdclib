@@ -88,7 +88,7 @@ int main( void )
     /* platform to test this on?                                           */
     errno = 0;
 #if INTMAX_MAX >> 62 == 1
-    /* testing "even" overflow, i.e. base is power of two */
+    /* testing "odd" overflow, i.e. base is not a power of two */
     TESTCASE( strtoimax( "9223372036854775807", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == 0 );
     TESTCASE( strtoimax( "9223372036854775808", NULL, 0 ) == INTMAX_MAX );
@@ -100,9 +100,21 @@ int main( void )
     TESTCASE( errno == 0 );
     TESTCASE( strtoimax( "-9223372036854775809", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == ERANGE );
-    /* TODO: test "odd" overflow, i.e. base is not power of two */
-#elif LLONG_MAX >> 126 == 1
     /* testing "even" overflow, i.e. base is power of two */
+    errno = 0;
+    TESTCASE( strtoimax( "0x7fffffffffffffff", NULL, 0 ) == INTMAX_MAX );
+    TESTCASE( errno == 0 );
+    TESTCASE( strtoimax( "0x8000000000000000", NULL, 0 ) == INTMAX_MAX );
+    TESTCASE( errno == ERANGE );
+    errno = 0;
+    TESTCASE( strtoimax( "-0x7fffffffffffffff", NULL, 0 ) == (INTMAX_MIN + 1) );
+    TESTCASE( errno == 0 );
+    TESTCASE( strtoimax( "-0x8000000000000000", NULL, 0 ) == INTMAX_MIN );
+    TESTCASE( errno == 0 );
+    TESTCASE( strtoimax( "-0x8000000000000001", NULL, 0 ) == INTMAX_MIN );
+    TESTCASE( errno == ERANGE );
+#elif LLONG_MAX >> 126 == 1
+    /* testing "odd" overflow, i.e. base is not a power of two */
     TESTCASE( strtoimax( "170141183460469231731687303715884105728", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == 0 );
     TESTCASE( strtoimax( "170141183460469231731687303715884105729", NULL, 0 ) == INTMAX_MAX );
@@ -114,7 +126,19 @@ int main( void )
     TESTCASE( errno == 0 );
     TESTCASE( strtoimax( "-170141183460469231731687303715884105730", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == ERANGE );
-    /* TODO: test "odd" overflow, i.e. base is not power of two */
+    /* testing "even" overflow, i.e. base is power of two */
+    errno = 0;
+    TESTCASE( strtoimax( "0x7fffffffffffffffffffffffffffffff", NULL, 0 ) == INTMAX_MAX );
+    TESTCASE( errno == 0 );
+    TESTCASE( strtoimax( "0x80000000000000000000000000000000", NULL, 0 ) == INTMAX_MAX );
+    TESTCASE( errno == ERANGE );
+    errno = 0;
+    TESTCASE( strtoimax( "-0x7fffffffffffffffffffffffffffffff", NULL, 0 ) == (INTMAX_MIN + 1) );
+    TESTCASE( errno == 0 );
+    TESTCASE( strtoimax( "-0x80000000000000000000000000000000", NULL, 0 ) == INTMAX_MIN );
+    TESTCASE( errno == 0 );
+    TESTCASE( strtoimax( "-0x80000000000000000000000000000001", NULL, 0 ) == INTMAX_MIN );
+    TESTCASE( errno == ERANGE );
 #else
 #error Unsupported width of 'intmax_t' (neither 64 nor 128 bit).
 #endif
