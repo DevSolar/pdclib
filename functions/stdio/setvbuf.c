@@ -21,7 +21,6 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                we don't want to e.g. flush the stream for every character of a
                stream being printed.
             */
-            /* TODO: Check this */
             break;
         case _IOFBF:
         case _IOLBF:

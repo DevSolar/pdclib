@@ -51,8 +51,8 @@ int raise( int sig )
             message = "Termination request (SIGTERM)";
             break;
         default:
-            /* TODO: Implement. */
-            break;
+            fprintf( stderr, "Unknown signal #%d\n", sig );
+            _Exit( EXIT_FAILURE );
     }
     if ( sighandler == SIG_DFL )
     {
