@@ -78,20 +78,30 @@ int main( void )
     errno = 0;
 /* uintmax_t -> long long -> 64 bit */
 #if UINTMAX_MAX >> 63 == 1
-    /* testing "even" overflow, i.e. base is power of two */
+    /* testing "odd" overflow, i.e. base is not power of two */
     TESTCASE( strtoumax( "18446744073709551615", NULL, 0 ) == UINTMAX_MAX );
     TESTCASE( errno == 0 );
     TESTCASE( strtoumax( "18446744073709551616", NULL, 0 ) == UINTMAX_MAX );
     TESTCASE( errno == ERANGE );
-    /* TODO: test "odd" overflow, i.e. base is not power of two */
+    /* testing "even" overflow, i.e. base is power of two */
+    errno = 0;
+    TESTCASE( strtoumax( "0xFFFFFFFFFFFFFFFF", NULL, 0 ) == UINTMAX_MAX );
+    TESTCASE( errno == 0 );
+    TESTCASE( strtoumax( "0x10000000000000000", NULL, 0 ) == UINTMAX_MAX );
+    TESTCASE( errno == ERANGE );
 /* uintmax_t -> long long -> 128 bit */
 #elif UINTMAX_MAX >> 127 == 1
-    /* testing "even" overflow, i.e. base is power of two */
+    /* testing "odd" overflow, i.e. base is not power of two */
     TESTCASE( strtoumax( "340282366920938463463374607431768211455", NULL, 0 ) == UINTMAX_MAX );
     TESTCASE( errno == 0 );
     TESTCASE( strtoumax( "340282366920938463463374607431768211456", NULL, 0 ) == UINTMAX_MAX );
     TESTCASE( errno == ERANGE );
-    /* TODO: test "odd" overflow, i.e. base is not power of two */
+    /* testing "even" everflow, i.e. base is power of two */
+    errno = 0;
+    TESTCASE( strtoumax( "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", NULL, 0 ) == UINTMAX_MAX );
+    TESTCASE( errno == 0 );
+    TESTCASE( strtoumax( "0x100000000000000000000000000000000", NULL, 0 ) == UINTMAX_MAX );
+    TESTCASE( errno == ERANGE );
 #else
 #error Unsupported width of 'uintmax_t' (neither 64 nor 128 bit).
 #endif

@@ -54,7 +54,6 @@ pdclib.a: $(OBJFILES)
 	@echo
 
 test: functions/$(FILE)
-	echo $(TSTDEPFILES)
 	functions/$(FILE)
 
 tests: testdrivers

@@ -62,6 +62,13 @@ int main( void )
     FILE * fh;
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IOLBF, 4 ) == 0 );
+    /* Testing ungetc() at offset 0 */
+    rewind( fh );
+    TESTCASE( ungetc( 'x', fh ) == 'x' );
+    TESTCASE( ftell( fh ) == -1l );
+    rewind( fh );
+    TESTCASE( ftell( fh ) == 0l );
+    /* Commence "normal" tests */
     TESTCASE( fputc( '1', fh ) == '1' );
     TESTCASE( fputc( '2', fh ) == '2' );
     TESTCASE( fputc( '3', fh ) == '3' );

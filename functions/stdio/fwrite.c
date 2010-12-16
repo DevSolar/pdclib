@@ -87,11 +87,7 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
 
 int main( void )
 {
-    FILE * fh;
-    TESTCASE( ( fh = tmpfile() ) != NULL );
-    TESTCASE( fwrite( "SUCCESS testing fwrite()\n", 1, 25, fh ) == 25 );
-    /* TODO: Add readback test. */
-    TESTCASE( fclose( fh ) == 0 );
+    /* Testing covered by fread(). */
     return TEST_RESULTS;
 }
 
