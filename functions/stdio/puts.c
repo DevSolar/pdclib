@@ -49,7 +49,18 @@ int puts( const char * s )
 
 int main( void )
 {
-    TESTCASE( puts( "SUCCESS testing puts()" ) >= 0 );
+    FILE * fh;
+    char const * message = "SUCCESS testing puts()";
+    char buffer[23];
+    buffer[22] = 'x';
+    TESTCASE( ( fh = freopen( testfile, "wb+", stdout ) ) != NULL );
+    TESTCASE( puts( message ) >= 0 );
+    rewind( fh );
+    TESTCASE( fread( buffer, 1, 22, fh ) == 22 );
+    TESTCASE( memcmp( buffer, message, 22 ) == 0 );
+    TESTCASE( buffer[22] == 'x' );
+    TESTCASE( fclose( fh ) == 0 );
+    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 

@@ -40,7 +40,17 @@ int system( const char * string )
 
 int main( void )
 {
+    FILE * fh;
+    char buffer[25];
+    buffer[24] = 'x';
+    TESTCASE( ( fh = freopen( testfile, "wb+", stdout ) ) != NULL );
     TESTCASE( system( SHELLCOMMAND ) );
+    rewind( fh );
+    TESTCASE( fread( buffer, 1, 24, fh ) == 24 );
+    TESTCASE( memcmp( buffer, "SUCCESS testing system()", 24 ) == 0 );
+    TESTCASE( buffer[24] == 'x' );
+    TESTCASE( fclose( fh ) == 0 );
+    TESTCASE( remove( testfile ) == 0 );
     return TEST_RESULTS;
 }
 
