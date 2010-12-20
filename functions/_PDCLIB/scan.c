@@ -519,67 +519,70 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             return NULL;
         }
         /* convert value to target type and assign to parameter */
-        switch ( status->flags & ( E_char | E_short | E_long | E_llong |
-                                   E_intmax | E_size | E_ptrdiff |
-                                   E_unsigned ) )
+        if ( ! ( status->flags & E_suppressed ) )
         {
-            case E_char:
-                *( va_arg( status->arg,               char * ) ) =               (char)( value * sign );
-                break;
-            case E_char | E_unsigned:
-                *( va_arg( status->arg,      unsigned char * ) ) =      (unsigned char)( value * sign );
-                break;
+            switch ( status->flags & ( E_char | E_short | E_long | E_llong |
+                                       E_intmax | E_size | E_ptrdiff |
+                                       E_unsigned ) )
+            {
+                case E_char:
+                    *( va_arg( status->arg,               char * ) ) =               (char)( value * sign );
+                    break;
+                case E_char | E_unsigned:
+                    *( va_arg( status->arg,      unsigned char * ) ) =      (unsigned char)( value * sign );
+                    break;
 
-            case E_short:
-                *( va_arg( status->arg,              short * ) ) =              (short)( value * sign );
-                break;
-            case E_short | E_unsigned:
-                *( va_arg( status->arg,     unsigned short * ) ) =     (unsigned short)( value * sign );
-                break;
+                case E_short:
+                    *( va_arg( status->arg,              short * ) ) =              (short)( value * sign );
+                    break;
+                case E_short | E_unsigned:
+                    *( va_arg( status->arg,     unsigned short * ) ) =     (unsigned short)( value * sign );
+                    break;
 
-            case 0:
-                *( va_arg( status->arg,                int * ) ) =                (int)( value * sign );
-                break;
-            case E_unsigned:
-                *( va_arg( status->arg,       unsigned int * ) ) =       (unsigned int)( value * sign );
-                break;
+                case 0:
+                    *( va_arg( status->arg,                int * ) ) =                (int)( value * sign );
+                    break;
+                case E_unsigned:
+                    *( va_arg( status->arg,       unsigned int * ) ) =       (unsigned int)( value * sign );
+                    break;
 
-            case E_long:
-                *( va_arg( status->arg,               long * ) ) =               (long)( value * sign );
-                break;
-            case E_long | E_unsigned:
-                *( va_arg( status->arg,      unsigned long * ) ) =      (unsigned long)( value * sign );
-                break;
+                case E_long:
+                    *( va_arg( status->arg,               long * ) ) =               (long)( value * sign );
+                    break;
+                case E_long | E_unsigned:
+                    *( va_arg( status->arg,      unsigned long * ) ) =      (unsigned long)( value * sign );
+                    break;
 
-            case E_llong:
-                *( va_arg( status->arg,          long long * ) ) =          (long long)( value * sign );
-                break;
-            case E_llong | E_unsigned:
-                *( va_arg( status->arg, unsigned long long * ) ) = (unsigned long long)( value * sign );
-                break;
+                case E_llong:
+                    *( va_arg( status->arg,          long long * ) ) =          (long long)( value * sign );
+                    break;
+                case E_llong | E_unsigned:
+                    *( va_arg( status->arg, unsigned long long * ) ) = (unsigned long long)( value * sign );
+                    break;
 
-            case E_intmax:
-                *( va_arg( status->arg,           intmax_t * ) ) =           (intmax_t)( value * sign );
-                break;
-            case E_intmax | E_unsigned:
-                *( va_arg( status->arg,          uintmax_t * ) ) =          (uintmax_t)( value * sign );
-                break;
+                case E_intmax:
+                    *( va_arg( status->arg,           intmax_t * ) ) =           (intmax_t)( value * sign );
+                    break;
+                case E_intmax | E_unsigned:
+                    *( va_arg( status->arg,          uintmax_t * ) ) =          (uintmax_t)( value * sign );
+                    break;
 
-            case E_size:
-                /* E_size always implies unsigned */
-                *( va_arg( status->arg,             size_t * ) ) =             (size_t)( value * sign );
-                break;
+                case E_size:
+                    /* E_size always implies unsigned */
+                    *( va_arg( status->arg,             size_t * ) ) =             (size_t)( value * sign );
+                    break;
 
-            case E_ptrdiff:
-                /* E_ptrdiff always implies signed */
-                *( va_arg( status->arg,          ptrdiff_t * ) ) =          (ptrdiff_t)( value * sign );
-                break;
+                case E_ptrdiff:
+                    /* E_ptrdiff always implies signed */
+                    *( va_arg( status->arg,          ptrdiff_t * ) ) =          (ptrdiff_t)( value * sign );
+                    break;
 
-            default:
-                puts( "UNSUPPORTED SCANF FLAG COMBINATION" );
-                return NULL; /* behaviour unspecified */
+                default:
+                    puts( "UNSUPPORTED SCANF FLAG COMBINATION" );
+                    return NULL; /* behaviour unspecified */
+            }
+            ++(status->n);
         }
-        ++(status->n);
         return ++spec;
     }
     /* TODO: Floats. */
