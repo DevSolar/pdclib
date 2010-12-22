@@ -183,11 +183,35 @@ a backport of bugfixes in the current development code.
 - #9  stdint.h dysfunctional                (fixed)
 - #10 NULL redefinition warnings            (fixed)
 
-v0.5 - unreleased
+v0.5 - 2010-12-22
 Implementations for <inttypes.h>, <errno.h>, most parts of <stdio.h>,
 and strerror() from <string.h>.
 Still no locale / wide-char support. Enabled all GCC compiler warnings I
 could find, and fixed everything that threw a warning. (You see this,
 maintainers of Open Source software? No warnings whatsoever. Stop telling
 me it cannot be done.) Fixed all known bugs in the v0.4 release.
+
+
+A WORD ON THE v0.5 RELEASE
+==========================
+
+The v0.5 release is not well-tested. There are several things in it done
+in a way that I would never label "release quality". Some things are not
+even in the *structure* I would like them to be. An example for this is
+the current handling of errno values: It needlessly introduces dependency
+on PDCLib (because I use non-standard values), and the values are placed
+in the wrong header (_PDCLIB_int.h instead of _PDCLIB_glue.h where they
+would be more appropriate).
+
+But at some point during the development toward the v0.5 release, I found
+that my current PDCLib work schedule simply does not allow me to wait
+until every piece of <stdio.h> is as I would like it to be. It would
+probably take another year or two, and my patience is UP.
+
+I want this released, and I want to think about something else but
+<stdio.h> for some time.
+
+So, expect significant change to how stdio is done in upcoming releases.
+Everything *WILL* be stable by the time v1.0 comes around, but until then
+you will have to accept that I can only deliver "hobby quality" for now.
 
