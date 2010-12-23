@@ -83,11 +83,11 @@ int isxdigit( int c );
 /* Converts an uppercase letter to a corresponding lowercase letter. Input that
    is not an uppercase letter remains unchanged.
 */
-int tolower( c );
+int tolower( int c );
 
 /* Converts a lowercase letter to a corresponding uppercase letter. Input that
    is not a lowercase letter remains unchanged.
 */
-int toupper( c );
+int toupper( int c );
 
 #endif
