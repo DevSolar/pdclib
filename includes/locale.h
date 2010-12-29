@@ -9,6 +9,16 @@
 #ifndef _PDCLIB_LOCALE_H
 #define _PDCLIB_LOCALE_H _PDCLIB_LOCALE_H
 
+#ifndef _PDCLIB_INT_H
+#define _PDCLIB_INT_H _PDCLIB_INT_H
+#include <_PDCLIB_int.h>
+#endif
+
+#ifndef _PDCLIB_NULL_DEFINED
+#define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED
+#define NULL _PDCLIB_NULL
+#endif
+
 /* The structure returned by localeconv().
 
    The values for *_sep_by_space:
@@ -27,6 +37,7 @@
 */
 struct lconv
 {
+    struct _PDCLIB_ctype_t * ctype;  /* internal <ctype.h> information        */
     char * decimal_point;      /* decimal point character                     */
     char * thousands_sep;      /* character for seperating groups of digits   */
     char * grouping;           /* string indicating the size of digit groups  */
@@ -51,12 +62,10 @@ struct lconv
     char int_n_sep_by_space;   /* Same as above, for international format     */
     char int_p_sign_posn;      /* Same as above, for international format     */
     char int_n_sign_posn;      /* Same as above, for international format     */
-}
+};
 
-#ifndef _PDCLIB_NULL_DEFINED
-#define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED
-#define NULL _PDCLIB_NULL
-#endif
+/* This is strictly internal, and visible here for technical reasons only. */
+extern struct lconv _PDCLIB_lconv;
 
 /* LC_ALL
    - entire locale

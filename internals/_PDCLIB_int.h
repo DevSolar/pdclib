@@ -450,10 +450,3 @@ struct _PDCLIB_ctype_t
     unsigned char collation;
 };
 
-struct _PDCLIB_locale_t
-{
-    struct _PDCLIB_ctype_t * ctype;
-};
-
-struct _PDCLIB_locale_t _PDCLIB_locale_info;
-

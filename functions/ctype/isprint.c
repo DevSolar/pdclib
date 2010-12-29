@@ -10,9 +10,11 @@
 
 #ifndef REGTEST
 
+#include <locale.h>
+
 int isprint( int c )
 {
-    return ( _PDCLIB_locale_info.ctype[c].flags & _PDCLIB_CTYPE_GRAPH ) || ( c == ' ' );
+    return ( _PDCLIB_lconv.ctype[c].flags & _PDCLIB_CTYPE_GRAPH ) || ( c == ' ' );
 }
 
 #endif
