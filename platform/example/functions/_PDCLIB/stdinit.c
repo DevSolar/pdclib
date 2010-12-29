@@ -12,6 +12,8 @@
 */
 
 #include <stdio.h>
+#include <locale.h>
+#include <limits.h>
 
 #ifndef REGTEST
 
@@ -42,7 +44,7 @@ struct _PDCLIB_file_t * _PDCLIB_filelist = &_PDCLIB_sin;
    1 kByte (+ 4 byte) of <ctype.h> data.
    Each line: flags, lowercase, uppercase, collation.
 */
-static struct _PDCLIB_ctype_t ctype_info[] = {
+static struct _PDCLIB_ctype_t _ctype[] = {
     { /* EOF */    0,    0,    0,    0 },
     { /* NUL */ _PDCLIB_CTYPE_CNTRL,                                             0x00, 0x00, 0x00 },
     { /* SOH */ _PDCLIB_CTYPE_CNTRL,                                             0x01, 0x01, 0x01 },
@@ -302,7 +304,33 @@ static struct _PDCLIB_ctype_t ctype_info[] = {
     { 0x00, 0xFF, 0xFF, 0xFF }
 };
 
-struct _PDCLIB_locale_t _PDCLIB_locale_info = { ctype_info + 1 };
+struct lconv _PDCLIB_lconv = { 
+    /* _PDCLIB_ctype      */ _ctype + 1,
+    /* decimal_point      */ (char *)".",
+    /* thousands_sep      */ (char *)"",
+    /* grouping           */ (char *)"",
+    /* mon_decimal_point  */ (char *)"",
+    /* mon_thousands_sep  */ (char *)"",
+    /* mon_grouping       */ (char *)"",
+    /* positive_sign      */ (char *)"",
+    /* negative_sign      */ (char *)"",
+    /* currency_symbol    */ (char *)"",
+    /* int_curr_symbol    */ (char *)"",
+    /* frac_digits        */ CHAR_MAX,
+    /* p_cs_precedes      */ CHAR_MAX,
+    /* n_cs_precedes      */ CHAR_MAX,
+    /* p_sep_by_space     */ CHAR_MAX,
+    /* n_sep_by_space     */ CHAR_MAX,
+    /* p_sign_posn        */ CHAR_MAX,
+    /* n_sign_posn        */ CHAR_MAX,
+    /* int_frac_digits    */ CHAR_MAX,
+    /* int_p_cs_precedes  */ CHAR_MAX,
+    /* int_n_cs_precedes  */ CHAR_MAX,
+    /* int_p_sep_by_space */ CHAR_MAX,
+    /* int_n_sep_by_space */ CHAR_MAX,
+    /* int_p_sign_posn    */ CHAR_MAX,
+    /* int_n_sign_posn    */ CHAR_MAX,
+};
 
 #endif
 

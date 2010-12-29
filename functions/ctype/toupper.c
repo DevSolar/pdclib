@@ -10,9 +10,11 @@
 
 #ifndef REGTEST
 
+#include <locale.h>
+
 int toupper( int c )
 {
-    return _PDCLIB_locale_info.ctype[c].upper;
+    return _PDCLIB_lconv.ctype[c].upper;
 }
 
 #endif
