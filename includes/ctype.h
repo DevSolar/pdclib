@@ -9,6 +9,11 @@
 #ifndef _PDCLIB_CTYPE_H
 #define _PDCLIB_CTYPE_H _PDCLIB_CTYPE_H
 
+#ifndef _PDCLIB_INT_H
+#define _PDCLIB_INT_H _PDCLIB_INT_H
+#include <_PDCLIB_int.h>
+#endif
+
 /* Character classification functions */
 
 /* Note that there is a difference between "whitespace" (any printing, non-
@@ -29,15 +34,15 @@ int isalnum( int c );
 */
 int isalpha( int c );
 
-/* Returns true if the character is a whitespace. In the "C" locale, only ' '
-   and '\t' are considered whitespace.
+/* Returns true if the character isspace() and used for seperating words within
+   a line of text. In the "C" locale, only ' ' and '\t' are considered blanks.
 */
 int isblank( int c );
 
 /* Returns true if the character is a control character. */
 int iscntrl( int c );
 
-/* Returns true if the character is a decimal digit. */
+/* Returns true if the character is a decimal digit. Locale-independent. */
 int isdigit( int c );
 
 /* Returns true for every printing character except space (' '). */
@@ -75,7 +80,7 @@ int isspace( int c );
 */
 int isupper( int c );
 
-/* Returns true for any hexadecimal-digit character. */
+/* Returns true for any hexadecimal-digit character. Locale-independent. */
 int isxdigit( int c );
 
 /* Character case mapping functions */

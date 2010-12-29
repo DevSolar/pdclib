@@ -12,11 +12,7 @@
 
 int tolower( int c )
 {
-    if ( ( c >= 'A' ) && ( c <= 'Z' ) )
-    {
-        c += ( 'a' - 'A' );
-    }
-    return c;
+    return _PDCLIB_locale_info.ctype[c].lower;
 }
 
 #endif
