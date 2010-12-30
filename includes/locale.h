@@ -38,6 +38,7 @@
 struct lconv
 {
     struct _PDCLIB_ctype_t * ctype;  /* internal <ctype.h> information        */
+    char * _PDCLIB_errno_texts[_PDCLIB_ERRNO_MAX]; /* strerror() / perror()   */
     char * decimal_point;      /* decimal point character                     */
     char * thousands_sep;      /* character for seperating groups of digits   */
     char * grouping;           /* string indicating the size of digit groups  */

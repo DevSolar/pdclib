@@ -58,7 +58,10 @@ int fclose( struct _PDCLIB_file_t * stream )
         previous = current;
         current = current->next;
     }
-    _PDCLIB_errno = _PDCLIB_EIO;
+    /* See the comments on implementation-defined errno values in
+       <_PDCLIB_config.h>.
+    */
+    _PDCLIB_errno = _PDCLIB_ERROR;
     return -1;
 }
 

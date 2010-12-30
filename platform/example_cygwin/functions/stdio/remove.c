@@ -24,9 +24,8 @@ int remove( const char * pathname )
     {
         switch ( errno )
         {
-            /* These are the values possible on a Linux machine. Adapt the
-               values and their mapping to PDCLib errno values at will. (This
-               is an example implementation, so we keep it very simple.)
+            /* See the comments on implementation-defined errno values in
+               <_PDCLIB_config.h>.
             */
             case EACCES:
             case EFAULT:
@@ -39,10 +38,11 @@ int remove( const char * pathname )
             case ENOTDIR:
             case EPERM:
             case EROFS:
-                _PDCLIB_errno = _PDCLIB_EIO;
+                _PDCLIB_errno = _PDCLIB_ERROR;
                 break;
             default:
-                _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+                /* This should be something like EUNKNOWN. */
+                _PDCLIB_errno = _PDCLIB_ERROR;
                 break;
         }
     }

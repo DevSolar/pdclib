@@ -32,6 +32,14 @@
 /* to nothing. (This is to avoid warnings with the exit functions under GCC.) */
 #define _PDCLIB_NORETURN __attribute__(( noreturn ))
 
+/* The maximum value that errno can be set to. This is used to set the size   */
+/* of the array in struct lconv (<locale.h>) holding error messages for the   */
+/* strerror() and perror() functions. (If you change this value because you   */
+/* are using additional errno values, you *HAVE* to provide appropriate error */
+/* messages for *ALL* locales.)                                               */
+/* Default is 2 (0, ERANGE, EDOM).                                            */
+#define _PDCLIB_ERRNO_MAX 3
+
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -285,3 +293,61 @@ typedef int _PDCLIB_fd_t;
    this capability dependent on implementation-defined behaviour (not good).
 */
 #define _PDCLIB_UNGETCBUFSIZE 1
+
+/* errno -------------------------------------------------------------------- */
+
+/* These are the values that _PDCLIB_errno can be set to by the library.
+
+   By keeping PDCLib's errno in the _PDCLIB_* namespace, the library is capable
+   to "translate" between errno values used by the hosting operating system and
+   those used and passed out by the library.
+
+   Example: In the example platform, the remove() function uses the unlink()
+   system call as backend. Linux sets its errno to EISDIR if you try to unlink()
+   a directory, but POSIX demands EPERM. Within the remove() function, you can
+   catch the 'errno == EISDIR', and set '_PDCLIB_errno = _PDCLIB_EPERM'. Anyone
+   using PDCLib's <errno.h> will "see" EPERM instead of EISDIR (the _PDCLIB_*
+   prefix removed by <errno.h> mechanics).
+
+   If you do not want that kind of translation, you might want to "match" the
+   values used by PDCLib with those used by the host OS, as to avoid confusion.
+
+   The standard only defines three distinct errno values: ERANGE, EDOM, and
+   EILSEQ. The standard leaves it up to "the implementation" whether there are
+   any more beyond those three. There is some controversy as to whether errno is
+   such a good idea at all, so you might want to come up with a different error
+   reporting facility for your platform. Since errno values beyond the three
+   defined by the standard are not portable anyway (unless you look at POSIX),
+   having your own error reporting facility would not hurt anybody either.
+*/
+#define _PDCLIB_ERANGE 1
+#define _PDCLIB_EDOM   2
+#define _PDCLIB_EILSEQ 3
+
+/* The following is not strictly "configuration", but there is no better place
+   to explain it than here.
+
+   PDCLib strives to be as generic as possible, so by default it does NOT define
+   any values beyond the three standard ones above, even where it would have
+   been prudent and convenient to do so. Any errno "caught" from the host OS,
+   and some internal error conditions as well, are all lumped together into the
+   value of '_PDCLIB_ERROR'.
+
+   '_PDCLIB_ERROR' is STRICLY meant as a PLACEHOLDER only.
+
+   You should NEVER ship an adaption of PDCLib still using that particular
+   value. You should NEVER write code that *tests* for that value. Indeed it is
+   not even conforming, since errno values should be defined as beginning with
+   an uppercase 'E', and there is no mechanics in <errno.h> to unmask that
+   particular value (for exactly that reason).
+
+   The idea is that you scan the source of PDCLib for occurrences of this macro
+   and replace _PDCLIB_ERROR with whatever additional errno value you came up
+   with for your platform.
+
+   If you cannot find it within you to do that, tell your clients to check for
+   an errno value larger than zero. That, at least, would be standard compliant
+   (and fully portable).
+*/
+#define _PDCLIB_ERROR  4
+
