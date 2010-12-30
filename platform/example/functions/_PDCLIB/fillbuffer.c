@@ -52,7 +52,7 @@ int _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream )
                 _PDCLIB_errno = _PDCLIB_ERROR;
                 break;
             default:
-                /* This should probably be something like EUNKNOWN. */
+                /* This should be something like EUNKNOWN. */
                 _PDCLIB_errno = _PDCLIB_ERROR;
                 break;
         }

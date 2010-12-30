@@ -53,7 +53,7 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
             _PDCLIB_errno = _PDCLIB_ERROR;
             break;
         default:
-            /* This should probably be something like EUNKNOWN. */
+            /* This should be something like EUNKNOWN. */
             _PDCLIB_errno = _PDCLIB_ERROR;
             break;
     }
