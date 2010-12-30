@@ -407,25 +407,17 @@ void _PDCLIB_closeall( void );
 /* errno                                                                      */
 /* -------------------------------------------------------------------------- */
 
+/* If PDCLib would call its error number "errno" directly, there would be no way
+   to catch its value from underlying system calls that also use it (i.e., POSIX
+   operating systems). That is why we use an internal name, providing a means to
+   access it through <errno.h>.
+*/
 extern int _PDCLIB_errno;
+
+/* A mechanism for delayed evaluation. (Not sure if this is really necessary, so
+   no detailed documentation on the "why".)
+*/
 int * _PDCLIB_errno_func( void );
-
-/* ERANGE and EDOM are specified by the standard. */
-#define _PDCLIB_ERANGE 1
-#define _PDCLIB_EDOM 2
-/* Used in the example implementation for any kind of I/O error. */
-#define _PDCLIB_EIO 3
-/* Used in the example implementation for "unknown error". */
-#define _PDCLIB_EUNKNOWN 4
-/* Used in the example implementation for "invalid parameter value". */
-#define _PDCLIB_EINVAL 5
-/* Used in the example implementation for "I/O retries exceeded". */
-#define _PDCLIB_ERETRY 6
-/* One larger than the largest used errno */
-#define _PDCLIB_EMAX 7
-
-/* TODO: Doing this via a static array is not the way to do it. */
-char const * _PDCLIB_errno_texts[ _PDCLIB_EMAX ];
 
 /* -------------------------------------------------------------------------- */
 /* <ctype.h> lookup tables                                                    */

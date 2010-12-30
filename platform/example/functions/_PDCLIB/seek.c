@@ -27,7 +27,10 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
             /* EMPTY - OK */
             break;
         default:
-            _PDCLIB_errno = _PDCLIB_EINVAL;
+            /* See comments on implementation-defined errno values in
+               <_PDCLIB_config.h>.
+            */
+            _PDCLIB_errno = _PDCLIB_ERROR;
             return EOF;
             break;
     }
@@ -44,10 +47,14 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
     {
         case EBADF:
         case EFAULT:
-            _PDCLIB_errno = _PDCLIB_EIO;
+            /* See comments on implementation-defined errno values in
+               <_PDCLIB_config.h>.
+            */
+            _PDCLIB_errno = _PDCLIB_ERROR;
             break;
         default:
-            _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+            /* This should probably be something like EUNKNOWN. */
+            _PDCLIB_errno = _PDCLIB_ERROR;
             break;
     }
     return EOF;

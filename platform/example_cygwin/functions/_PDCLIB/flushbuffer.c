@@ -50,6 +50,10 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
             /* Write error */
             switch ( errno )
             {
+                /* See <_PDCLIB_config.h>. There should be differenciated errno
+                   handling here, possibly even a 1:1 mapping; but that is up
+                   to the individual platform.
+                */
                 case EBADF:
                 case EFAULT:
                 case EFBIG:
@@ -58,10 +62,11 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
                 case EIO:
                 case ENOSPC:
                 case EPIPE:
-                    _PDCLIB_errno = _PDCLIB_EIO;
+                    _PDCLIB_errno = _PDCLIB_ERROR;
                     break;
                 default:
-                    _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+                    /* This should be something like EUNKNOWN. */
+                    _PDCLIB_errno = _PDCLIB_ERROR;
                     break;
             }
             stream->status |= _PDCLIB_ERRORFLAG;
@@ -79,7 +84,10 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
             return 0;
         }
     }
-    _PDCLIB_errno = _PDCLIB_ERETRY;
+    /* Number of retries exceeded. You probably want a different errno value
+       here.
+    */
+    _PDCLIB_errno = _PDCLIB_ERROR;
     stream->status |= _PDCLIB_ERRORFLAG;
     /* Move unwritten remains to begin of buffer. */
     stream->bufidx -= written;

@@ -306,6 +306,12 @@ static struct _PDCLIB_ctype_t _ctype[] = {
 
 struct lconv _PDCLIB_lconv = { 
     /* _PDCLIB_ctype      */ _ctype + 1,
+    /* _PDCLIB_errno_texts */
+    {
+        /* no error */ (char *)"",
+        /* ERANGE   */ (char *)"ERANGE (Range error)",
+        /* EDOM     */ (char *)"EDOM (Domain error)"
+    },
     /* decimal_point      */ (char *)".",
     /* thousands_sep      */ (char *)"",
     /* grouping           */ (char *)"",

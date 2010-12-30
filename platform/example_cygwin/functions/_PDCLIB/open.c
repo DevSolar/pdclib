@@ -66,6 +66,9 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
     {
         switch ( errno )
         {
+            /* See the comments on implementation-defined errno values in
+               <_PDCLIB_config.h>.
+            */
             case EACCES:
             case EFAULT:
             case EINTR:
@@ -82,9 +85,12 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
             case EOVERFLOW:
             case EROFS:
             case ETXTBSY:
-                _PDCLIB_errno = _PDCLIB_EIO;
+                _PDCLIB_errno = _PDCLIB_ERROR;
+                break;
             default:
-                _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+                /* This should be something like EUNKNOWN. */
+                _PDCLIB_errno = _PDCLIB_ERROR;
+                break;
         }
     }
     return rc;

@@ -40,15 +40,19 @@ int _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream )
         /* Reading error */
         switch ( errno )
         {
+            /* See comments on implementation-defined errno values in
+               <_PDCLIB_config.h>.
+            */
             case EBADF:
             case EFAULT:
             case EINTR:
             case EINVAL:
             case EIO:
-                _PDCLIB_errno = _PDCLIB_EIO;
+                _PDCLIB_errno = _PDCLIB_ERROR;
                 break;
             default:
-                _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+                /* This should probably be something like EUNKNOWN. */
+                _PDCLIB_errno = _PDCLIB_ERROR;
                 break;
         }
         stream->status |= _PDCLIB_ERRORFLAG;

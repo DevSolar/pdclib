@@ -29,6 +29,9 @@ int _PDCLIB_rename( const char * old, const char * new )
         {
             switch ( errno )
             {
+                /* See the comments on implementation-defined errno values in
+                   <_PDCLIB_config.h>.
+                */
                 case EACCES:
                 case EFAULT:
                 case EIO:
@@ -40,10 +43,11 @@ int _PDCLIB_rename( const char * old, const char * new )
                 case ENOTDIR:
                 case EPERM:
                 case EROFS:
-                    _PDCLIB_errno = _PDCLIB_EIO;
+                    _PDCLIB_errno = _PDCLIB_ERROR;
                     break;
                 default:
-                    _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+                    /* This should be something like EUNKNOWN. */
+                    _PDCLIB_errno = _PDCLIB_ERROR;
                     break;
             }
             return -1;
@@ -57,6 +61,9 @@ int _PDCLIB_rename( const char * old, const char * new )
     {
         switch ( errno )
         {
+            /* See the comments on implementation-defined errno values in
+               <_PDCLIB_config.h>.
+            */
             case EACCES:
             case EEXIST:
             case EFAULT:
@@ -71,10 +78,11 @@ int _PDCLIB_rename( const char * old, const char * new )
             case EPERM:
             case EROFS:
             case EXDEV:
-                _PDCLIB_errno = _PDCLIB_EIO;
+                _PDCLIB_errno = _PDCLIB_ERROR;
                 break;
             default:
-                _PDCLIB_errno = _PDCLIB_EUNKNOWN;
+                /* This should be something like EUNKNOWN. */
+                _PDCLIB_errno = _PDCLIB_ERROR;
                 break;
         }
         return EOF;

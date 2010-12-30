@@ -11,6 +11,7 @@
 #ifndef REGTEST
 
 #include <errno.h>
+#include <locale.h>
 
 /* TODO: Doing this via a static array is not the way to do it. */
 void perror( const char * s )
@@ -19,7 +20,14 @@ void perror( const char * s )
     {
         fprintf( stderr, "%s: ", s );
     }
-    fprintf( stderr, "%s\n", _PDCLIB_errno_texts[ errno ] );
+    if ( errno >= _PDCLIB_ERRNO_MAX )
+    {
+        fprintf( stderr, "Unknown error\n" );
+    }
+    else
+    {
+        fprintf( stderr, "%s\n", _PDCLIB_lconv._PDCLIB_errno_texts[errno] );
+    }
     return;
 }
 
