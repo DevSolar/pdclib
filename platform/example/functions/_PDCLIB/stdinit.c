@@ -310,7 +310,8 @@ struct lconv _PDCLIB_lconv = {
     {
         /* no error */ (char *)"",
         /* ERANGE   */ (char *)"ERANGE (Range error)",
-        /* EDOM     */ (char *)"EDOM (Domain error)"
+        /* EDOM     */ (char *)"EDOM (Domain error)",
+        /* EILSEQ   */ (char *)"EILSEQ (Illegal sequence)"
     },
     /* decimal_point      */ (char *)".",
     /* thousands_sep      */ (char *)"",
