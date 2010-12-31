@@ -37,8 +37,8 @@
 /* strerror() and perror() functions. (If you change this value because you   */
 /* are using additional errno values, you *HAVE* to provide appropriate error */
 /* messages for *ALL* locales.)                                               */
-/* Default is 2 (0, ERANGE, EDOM).                                            */
-#define _PDCLIB_ERRNO_MAX 3
+/* Default is 4 (0, ERANGE, EDOM, EILSEQ).                                    */
+#define _PDCLIB_ERRNO_MAX 4
 
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
@@ -340,6 +340,9 @@ typedef int _PDCLIB_fd_t;
    not even conforming, since errno values should be defined as beginning with
    an uppercase 'E', and there is no mechanics in <errno.h> to unmask that
    particular value (for exactly that reason).
+
+   There also is no error message available for this value through either the
+   strerror() or perror() functions. It is being reported as "unknown" error.
 
    The idea is that you scan the source of PDCLib for occurrences of this macro
    and replace _PDCLIB_ERROR with whatever additional errno value you came up
