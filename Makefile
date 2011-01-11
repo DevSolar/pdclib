@@ -29,7 +29,7 @@ REGDEPFILES := $(patsubst %,%.d,$(REGFILES))
 # All files belonging to the source distribution
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
-WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -fno-builtin 
+WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -fno-builtin 
 CFLAGS := -g -std=c99 -I./internals -I./testing $(WARNINGS) $(USERFLAGS)
 
 .PHONY: all clean srcdist bindist test tests testdrivers regtests regtestdrivers todos fixmes find links unlink help
