@@ -39,7 +39,7 @@
 */
 static int GET( struct _PDCLIB_status_t * status )
 {
-    int rc;
+    int rc = EOF;
     if ( status->stream != NULL )
     {
         rc = getc( status->stream );
