@@ -22,6 +22,10 @@ extern struct _PDCLIB_headnode_t _PDCLIB_memlist;
 
 void free( void * ptr )
 {
+    if ( ptr == NULL )
+    {
+        return;
+    }
     ptr = (void *)( (char *)ptr - sizeof( struct _PDCLIB_memnode_t ) );
     ( (struct _PDCLIB_memnode_t *)ptr )->next = NULL;
     if ( _PDCLIB_memlist.last != NULL )
@@ -39,10 +43,12 @@ void free( void * ptr )
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
+#include <stdbool.h>
 
 int main( void )
 {
-    /* tests covered in malloc test driver */
+    free( NULL );
+    TESTCASE( true );
     return TEST_RESULTS;
 }
 
