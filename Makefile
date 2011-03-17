@@ -9,9 +9,9 @@ AUXFILES := Makefile Readme.txt
 # Directories belonging to the project
 PROJDIRS := functions includes internals
 # All source files of the project
-SRCFILES := $(shell find $(PROJDIRS) -type f -name "*.c")
+SRCFILES := $(shell find -L $(PROJDIRS) -type f -name "*.c")
 # All header files of the project
-HDRFILES := $(shell find $(PROJDIRS) -type f -name "*.h")
+HDRFILES := $(shell find -L $(PROJDIRS) -type f -name "*.h")
 # All .c files in functions/_PDCLIB that do not have a regression test driver
 INTFILES := _Exit atomax digits open print scan remove rename seed stdinit strtox_main strtox_prelim filemode eol errno seek prepread prepwrite allocpages tmpfilename closeall
 # All object files in the library
