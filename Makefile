@@ -9,9 +9,9 @@ AUXFILES := Makefile Readme.txt
 # Directories belonging to the project
 PROJDIRS := functions includes internals
 # All source files of the project
-SRCFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.c")
+SRCFILES := $(shell find $(PROJDIRS) -type f -name "*.c")
 # All header files of the project
-HDRFILES := $(shell find $(PROJDIRS) -mindepth 1 -maxdepth 3 -name "*.h")
+HDRFILES := $(shell find $(PROJDIRS) -type f -name "*.h")
 # All .c files in functions/_PDCLIB that do not have a regression test driver
 INTFILES := _Exit atomax digits open print scan remove rename seed stdinit strtox_main strtox_prelim filemode eol errno seek prepread prepwrite allocpages tmpfilename closeall
 # All object files in the library
@@ -29,8 +29,8 @@ REGDEPFILES := $(patsubst %,%.d,$(REGFILES))
 # All files belonging to the source distribution
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
-WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -fno-builtin 
-CFLAGS := -g -std=c99 -I./internals -I./testing $(WARNINGS) $(USERFLAGS)
+WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes 
+CFLAGS := -fno-builtin -g -std=c99 -I./internals -I./testing $(WARNINGS) $(USERFLAGS)
 
 .PHONY: all clean srcdist bindist test tests testdrivers regtests regtestdrivers todos fixmes find links unlink help
 
@@ -71,7 +71,7 @@ regtestdrivers: $(REGFILES)
 -include $(DEPFILES) $(TSTDEPFILES) $(REGDEPFILES)
 
 clean:
-	@for file in $(OBJFILES) $(DEPFILES) $(TSTFILES) $(TSTDEPFILES) $(REGFILES) $(REGDEPFILES) pdclib.a pdclib.tgz scanf_testdata_*; do if [ -f $$file ]; then rm $$file; fi; done
+	-@$(RM) $(wildcard $(OBJFILES) $(DEPFILES) $(TSTFILES) $(TSTDEPFILES) $(REGFILES) $(REGDEPFILES) pdclib.a pdclib.tgz scanf_testdata_*)
 
 srcdist:
 	@tar czf pdclib.tgz $(ALLFILES)
