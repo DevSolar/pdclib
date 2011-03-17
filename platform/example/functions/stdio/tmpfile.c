@@ -91,7 +91,7 @@ struct _PDCLIB_file_t * tmpfile( void )
 #include <_PDCLIB_test.h>
 #include <string.h>
 
-int main()
+int main( void )
 {
     FILE * fh;
 #ifndef REGTEST

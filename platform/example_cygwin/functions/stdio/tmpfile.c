@@ -21,7 +21,7 @@ struct _PDCLIB_file_t * tmpfile( void )
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
-int main()
+int main( void )
 {
     FILE * fh;
     char filename[ L_tmpnam ];
