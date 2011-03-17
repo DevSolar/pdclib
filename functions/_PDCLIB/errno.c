@@ -25,7 +25,7 @@ int * _PDCLIB_errno_func()
 
 #include <errno.h>
 
-int main()
+int main( void )
 {
     errno = 0;
     TESTCASE( errno == 0 );

@@ -31,7 +31,7 @@ int sscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict forma
 
 #define testscanf( s, format, ... ) sscanf( s, format, __VA_ARGS__ )
 
-int main()
+int main( void )
 {
     char source[100];
 #include "scanf_testcases.h"
