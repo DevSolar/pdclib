@@ -68,22 +68,22 @@ struct lconv
 /* This is strictly internal, and visible here for technical reasons only. */
 extern struct lconv _PDCLIB_lconv;
 
-/* LC_ALL
-   - entire locale
-   LC_COLLATE
-   - strcoll(), strxfrm()
-   LC_CTYPE
-   - <ctype.h>
-   LC_MONETARY
-   - monetary formatting as returned by localeconv
-   LC_NUMERIC
-   - decimal-point character for printf() / scanf() functions, string
-     conversions, and nonmonetary formattign as returned by localeconv
-   LC_TIME
-   - strftime(), wcsftime()
-
-   First arguments to setlocale().
+/* First arguments to setlocale().
+   TODO: Beware, values might change before v0.6 is released.
 */
+/* Entire locale */
+#define LC_ALL      0
+/* Collation (strcoll(), strxfrm()) */
+#define LC_COLLATE  1
+/* Character types (<ctype.h>) */
+#define LC_CTYPE    2
+/* Monetary formatting (as returned by localeconv) */
+#define LC_MONETARY 3
+/* Decimal-point character (for printf() / scanf() functions), string
+   conversions, nonmonetary formatting as returned by localeconv              */
+#define LC_NUMERIC  4
+/* Time formats (strftime(), wcsftime()) */
+#define LC_TIME     5
 
 /* The category parameter can be any of the LC_* macros to specify if the call
    to setlocale() shall affect the entire locale or only a portion thereof.
