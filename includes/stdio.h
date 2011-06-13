@@ -654,13 +654,13 @@ int fputc( int c, FILE * stream );
 */
 int fputs( const char * _PDCLIB_restrict s, FILE * _PDCLIB_restrict stream );
 
-/* Equivalent to fgetc( stream ), but may be implemented as a macro that
+/* Equivalent to fgetc( stream ), but may be overloaded by a macro that
    evaluates its parameter more than once.
 */
-#define getc( stream ) fgetc( stream )
+int getc( FILE * stream );
 
-/* Equivalent to fgetc( stdin ), but may be implemented as a macro. */
-#define getchar() fgetc( stdin )
+/* Equivalent to fgetc( stdin ). */
+int getchar( void );
 
 /* Read characters from given stream into the array s, stopping at \n or EOF.
    The string read is terminated with \0. Returns s if successful. If EOF is
@@ -670,15 +670,15 @@ int fputs( const char * _PDCLIB_restrict s, FILE * _PDCLIB_restrict stream );
 */
 char * gets( char * s );
 
-/* Equivalent to fputc( c, stream ), but may be implemented as a macro that
+/* Equivalent to fputc( c, stream ), but may be overloaded by a macro that
    evaluates its parameter more than once.
 */
-#define putc( c, stream ) fputc( c, stream )
+int putc( int c, FILE * stream );
 
-/* Equivalent to fputc( c, stdout ), but may be implemented as a macro that
+/* Equivalent to fputc( c, stdout ), but may be overloaded by a macro that
    evaluates its parameter more than once.
 */
-#define putchar( c ) putc( c, stdout )
+int putchar( int c );
 
 /* Write the string s (not including the terminating \0) to stdout, and append
    a newline to the output. Returns a value >= 0 when successful, EOF if a
