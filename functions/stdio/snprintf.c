@@ -35,6 +35,8 @@ int main( void )
 {
     char target[100];
 #include "printf_testcases.h"
+    TESTCASE( snprintf( NULL, 0, "foo" ) == 3 );
+    TESTCASE( snprintf( NULL, 0, "%d", 100 ) == 3 );
     return TEST_RESULTS;
 }
 
