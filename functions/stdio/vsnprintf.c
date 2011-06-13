@@ -32,7 +32,12 @@ int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restric
         if ( ( *format != '%' ) || ( ( rc = _PDCLIB_print( format, &status ) ) == format ) )
         {
             /* No conversion specifier, print verbatim */
-            s[ status.i++ ] = *(format++);
+            if ( status.i < n )
+            {
+                s[ status.i ] = *format;
+            }
+            status.i++;
+            format++;
         }
         else
         {
@@ -40,7 +45,10 @@ int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restric
             format = rc;
         }
     }
-    s[ status.i ] = '\0';
+    if ( status.i  < n )
+    {
+        s[ status.i ] = '\0';
+    }
     va_end( status.arg );
     return status.i;
 }
