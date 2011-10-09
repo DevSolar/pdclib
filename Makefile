@@ -77,10 +77,10 @@ srcdist:
 	@tar czf pdclib.tgz $(ALLFILES)
 
 todos:
-	-@for file in $(ALLFILES); do grep -H TODO $$file; done; true
+	-@for file in $(ALLFILES:Makefile=); do grep -H TODO $$file; done; true
 
 fixmes:
-	-@for file in $(ALLFILES); do grep -H FIXME $$file; done; true
+	-@for file in $(ALLFILES:Makefile=); do grep -H FIXME $$file; done; true
 
 find:
 	@find functions/ includes/ internals/ platform/ -name "*\.[ch]" -type f | xargs grep $$FIND
