@@ -8,11 +8,8 @@
 
 #ifndef _PDCLIB_STRING_H
 #define _PDCLIB_STRING_H _PDCLIB_STRING_H
-
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
+_PDCLIB_BEGIN_EXTERN_C
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
@@ -187,4 +184,9 @@ char * strerror( int errnum );
 */
 size_t strlen( const char * s );
 
+#ifdef _PDCLIB_POSIX_EX
+char * strdup( const char* src );
+#endif
+
+_PDCLIB_END_EXTERN_C
 #endif

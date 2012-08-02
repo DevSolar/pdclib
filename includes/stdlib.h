@@ -8,11 +8,8 @@
 
 #ifndef _PDCLIB_STDLIB_H
 #define _PDCLIB_STDLIB_H _PDCLIB_STDLIB_H
-
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
+_PDCLIB_BEGIN_EXTERN_C
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
@@ -141,7 +138,7 @@ void * realloc( void * ptr, size_t size );
    temporary files before exiting with EXIT_FAILURE.
    abort() does not return.
 */
-void abort( void );
+_PDCLIB_noreturn void abort( void );
 
 /* Register a function that will be called on exit(), or when main() returns.
    At least 32 functions can be registered this way, and will be called in
@@ -156,7 +153,7 @@ int atexit( void (*func)( void ) );
    and EXIT_FAILURE above.)
    exit() does not return.
 */
-void exit( int status );
+_PDCLIB_noreturn void exit( int status );
 
 /* Normal process termination. Functions registered by atexit() (see above) are
    NOT CALLED. This implementation DOES flush streams, close files and removes
@@ -164,7 +161,7 @@ void exit( int status );
    comment for EXIT_SUCCESS and EXIT_FAILURE above.)
    _Exit() does not return.
 */
-void _Exit( int status );
+_PDCLIB_noreturn void _Exit( int status );
 
 /* Search an environment-provided key-value map for the given key name, and
    return a pointer to the associated value string (or NULL if key name cannot
@@ -244,4 +241,5 @@ size_t mbstowcs( wchar_t * _PDCLIB_restrict pwcs, const char * _PDCLIB_restrict 
 size_t wcstombs( char * _PDCLIB_restrict s, const wchar_t * _PDCLIB_restrict pwcs, size_t n );
 */
 
+_PDCLIB_END_EXTERN_C
 #endif

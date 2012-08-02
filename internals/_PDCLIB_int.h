@@ -1,4 +1,5 @@
-/* $Id$ */
+#ifndef _PDCLIB_INT_H
+#define _PDCLIB_INT_H
 
 /* PDCLib internal integer logic <_PDCLIB_int.h>
 
@@ -11,15 +12,8 @@
 /* would be considered a bug / missing feature: notify the author(s).         */
 /* -------------------------------------------------------------------------- */
 
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
 #include <_PDCLIB_config.h>
-#endif
-
-#ifndef _PDCLIB_AUX_H
-#define _PDCLIB_AUX_H _PDCLIB_AUX_H
 #include <_PDCLIB_aux.h>
-#endif
 
 /* null pointer constant */
 #define _PDCLIB_NULL 0
@@ -255,6 +249,36 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_UINTMAX_C( value ) _PDCLIB_concat( value, _PDCLIB_concat( u, _PDCLIB_INTMAX_LITERAL ) )
 
 /* -------------------------------------------------------------------------- */
+/* Various <time.h> internals                                                 */
+/* -------------------------------------------------------------------------- */
+
+typedef _PDCLIB_time            _PDCLIB_time_t;
+typedef _PDCLIB_clock           _PDCLIB_clock_t;
+
+#if !defined(_PDCLIB_DEFINE_STRUCT_TIMESPEC)
+#define _PDCLIB_DEFINE_STRUCT_TIMESPEC()    \
+    struct timespec {                       \
+        time_t tv_sec;                      \
+        long tv_nsec;                       \
+    };
+#endif
+
+#if !defined(_PDCLIB_DEFINE_STRUCT_TM)
+#define _PDCLIB_DEFINE_STRUCT_TM()          \
+    struct tm {                             \
+        int tm_sec;                         \
+        int tm_min;                         \
+        int tm_hour;                        \
+        int tm_mday;                        \
+        int tm_mon;                         \
+        int tm_year;                        \
+        int tm_wday;                        \
+        int tm_yday;                        \
+        int tm_isdst;                       \
+    };
+#endif
+    
+/* -------------------------------------------------------------------------- */
 /* Various <stdio.h> internals                                                */
 /* -------------------------------------------------------------------------- */
 
@@ -442,3 +466,4 @@ struct _PDCLIB_ctype_t
     unsigned char collation;
 };
 
+#endif

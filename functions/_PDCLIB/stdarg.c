@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <float.h>
+#ifdef TEST
 
 #include <_PDCLIB_test.h>
 
@@ -111,3 +112,4 @@ int main( void )
     test( TAG_INTPTR, &x, TAG_LDBLPTR, &d, TAG_FUNCPTR, dummy, TAG_END );
     return TEST_RESULTS;
 }
+#endif

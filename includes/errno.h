@@ -8,16 +8,14 @@
 
 #ifndef _PDCLIB_ERRNO_H
 #define _PDCLIB_ERRNO_H _PDCLIB_ERRNO_H
-
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
+_PDCLIB_BEGIN_EXTERN_C
 
 #define errno (*_PDCLIB_errno_func())
 
 #define ERANGE _PDCLIB_ERANGE
 #define EDOM _PDCLIB_EDOM
 
+_PDCLIB_END_EXTERN_C
 #endif
 

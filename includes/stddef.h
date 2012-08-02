@@ -8,16 +8,9 @@
 
 #ifndef _PDCLIB_STDDEF_H
 #define _PDCLIB_STDDEF_H _PDCLIB_STDDEF_H
-
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
 #include <_PDCLIB_config.h>
-#endif
-
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
+_PDCLIB_BEGIN_EXTERN_C
 
 typedef _PDCLIB_ptrdiff_t ptrdiff_t;
 
@@ -26,7 +19,9 @@ typedef _PDCLIB_ptrdiff_t ptrdiff_t;
 typedef _PDCLIB_size_t size_t;
 #endif
 
+#ifndef __cplusplus
 typedef _PDCLIB_wchar_t   wchar_t;
+#endif
 
 #ifndef _PDCLIB_NULL_DEFINED
 #define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED
@@ -35,5 +30,6 @@ typedef _PDCLIB_wchar_t   wchar_t;
 
 #define offsetof( type, member ) _PDCLIB_offsetof( type, member )
 
+_PDCLIB_END_EXTERN_C
 #endif
 

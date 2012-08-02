@@ -8,8 +8,8 @@
 
 #ifndef _PDCLIB_INTTYPES_H
 #define _PDCLIB_INTTYPES_H _PDCLIB_INTTYPES_H
-
 #include <stdint.h>
+_PDCLIB_BEGIN_EXTERN_C
 
 typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 
@@ -248,5 +248,6 @@ uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restri
 
 /* TODO: wcstoimax(), wcstoumax() */
 
+_PDCLIB_END_EXTERN_C
 #endif
 

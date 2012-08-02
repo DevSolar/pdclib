@@ -8,11 +8,8 @@
 
 #ifndef _PDCLIB_LOCALE_H
 #define _PDCLIB_LOCALE_H _PDCLIB_LOCALE_H
-
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
+_PDCLIB_BEGIN_EXTERN_C
 
 #ifndef _PDCLIB_NULL_DEFINED
 #define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED
@@ -100,5 +97,6 @@ char * setlocale( int category, const char * locale );
 */
 struct lconv * localeconv( void );
 
+_PDCLIB_END_EXTERN_C
 #endif
 

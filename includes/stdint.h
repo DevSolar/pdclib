@@ -8,11 +8,7 @@
 
 #ifndef _PDCLIB_STDINT_H
 #define _PDCLIB_STDINT_H _PDCLIB_STDINT_H
-
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
 
 /* 7.18.1.1 Exact-width integer types. */
 

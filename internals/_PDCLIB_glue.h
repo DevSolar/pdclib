@@ -1,3 +1,5 @@
+#ifndef _PDCLIB_GLUE_H
+#define _PDCLIB_GLUE_H
 /* $Id$ */
 
 /* OS glue functions declaration <_PDCLIB_glue.h>
@@ -6,10 +8,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
+_PDCLIB_BEGIN_EXTERN_C
 
 /* -------------------------------------------------------------------------- */
 /* OS "glue", part 2                                                          */
@@ -73,5 +73,7 @@ int _PDCLIB_remove( const char * filename );
    must still be accessible by old name. Any handling of open files etc. is
    done by standard rename() already.
 */
-int _PDCLIB_rename( const char * old, const char * new );
+int _PDCLIB_rename( const char * old, const char * newn);
 
+_PDCLIB_END_EXTERN_C
+#endif

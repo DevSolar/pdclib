@@ -8,11 +8,8 @@
 
 #ifndef _PDCLIB_CTYPE_H
 #define _PDCLIB_CTYPE_H _PDCLIB_CTYPE_H
-
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
+_PDCLIB_BEGIN_EXTERN_C
 
 /* Character classification functions */
 
@@ -95,4 +92,5 @@ int tolower( int c );
 */
 int toupper( int c );
 
+_PDCLIB_END_EXTERN_C
 #endif

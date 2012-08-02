@@ -8,11 +8,9 @@
 
 #ifndef _PDCLIB_STDARG_H
 #define _PDCLIB_STDARG_H _PDCLIB_STDARG_H
-
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
+#include <_PDCLIB_aux.h>
 #include <_PDCLIB_config.h>
-#endif
+_PDCLIB_BEGIN_EXTERN_C
 
 typedef _PDCLIB_va_list va_list;
 
@@ -21,5 +19,6 @@ typedef _PDCLIB_va_list va_list;
 #define va_end( ap )          _PDCLIB_va_end( ap )
 #define va_start( ap, parmN ) _PDCLIB_va_start( ap, parmN )
 
+_PDCLIB_END_EXTERN_C
 #endif
 

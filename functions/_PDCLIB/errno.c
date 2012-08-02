@@ -6,7 +6,6 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
 
 #ifndef REGTEST

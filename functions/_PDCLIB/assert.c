@@ -12,26 +12,21 @@
 
 #ifndef REGTEST
 
-#ifndef _PDCLIB_AUX_H
-#define _PDCLIB_AUX_H _PDCLIB_AUX_H
 #include <_PDCLIB_aux.h>
-#endif
 
-#if _PDCLIB_C_VERSION == 99
-void _PDCLIB_assert( char const * const message1, char const * const function, char const * const message2 )
+void _PDCLIB_assert99( char const * const message1, char const * const function, char const * const message2 )
 {
     fputs( message1, stderr );
     fputs( function, stderr );
     fputs( message2, stderr );
     abort();
 }
-#else
-void _PDCLIB_assert( char const * const message )
+
+void _PDCLIB_assert89( char const * const message )
 {
     fputs( message, stderr );
     abort();
 }
-#endif
 
 #endif
 

@@ -1,59 +1,43 @@
-$Id$
-
 PDCLib - Public Domain C Library
 ================================
 
 License
 -------
 
-Permission is granted to use, modify, and / or redistribute at will.
+Written in 2003-2012 by Martin "Solar" Baute,
+           2012-     by Erin Shepherd
 
-This includes removing authorship notices, re-use of code parts in
-other software (with or without giving credit), and / or creating a
-commercial product based on it.
+To the extent possible under law, the author(s) have dedicated all copyright 
+and related and neighboring rights to this software to the public domain 
+worldwide. This software is distributed without any warranty.
 
-This permission is not revocable by the author.
+You should have received a copy of the CC0 Public Domain Dedication along with 
+this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-This software is provided as-is. Use it at your own risk. There is
-no warranty whatsoever, neither expressed nor implied, and by using
-this software you accept that the author(s) shall not be held liable
-for any loss of data, loss of service, or other damages, be they
-incidental or consequential. Your only option other than accepting
-this is not to use the software at all.
-
-A case for Public Domain
-------------------------
-
-There was a time when you could just post a piece of code to usenet
-and say, "I give it away for free; perhaps it's useful for you."
-
-Then came the lawyers.
-
-There are building blocks in software engineering that are so basic
-that everyone should have free access to them without having to
-employ a complete legal department for advice. They should be FREE.
-Available for free, free of licensing implications, free of attached
-propaganda, free of everything but their useful self.
-
-Today, even the term "free" has to be defined by several paragraphs
-of legal blah-blah.
-
-Sick and tired of it, the author brought you this piece of software
-under a "license" that should not be neccessary in the first place:
-"Free" should have been enough.
-
-Unfortunately, German law does not even *allow* to declare a work to
-be "in the Public Domain", so the "free for all" license I intended
-had to be made expressively.
+NOTE: Some configuration options may include components under non-public domain
+      conditions. In particular, selecting ptmalloc3 as the malloc 
+      implementation will cause the incorporation of elements under the BSD 
+      license.
 
 What is it
 ----------
 
-This is a C Standard Library. Nothing more, nothing less. No POSIX
-or other extensions, just what's defined in ISO/IEC 9899.
+This is a C Standard Library - what's defined in ISO/IEC 9899 "Information 
+technology — Programming languages — C" or extensions to the above defined in
+ISO/IEC 14882 "Information technology — Programming languages — C++". A few 
+extensions may optionally be provided.
 
-(Well, this is what it will be when the 1.0 release comes out. See
-the "Development Status" section to see what's implemented so far.)
+Terms for extensions
+--------------------
+Extensions are permitted where their inclusion is reasonable, they are widely
+used, in  keeping with the spirit of the standard, and do not convey 
+additional requirements upon the target system, and do not needlessly duplicate
+functionality already contained within the standard.
+
+As an example: strdup is in, because (a) it can be implemented entirely in 
+terms of existing standard C functions and (b) is very widely used. Something
+like open, write or close would not be considered, because it implies POSIXy 
+assumptions.
 
 Internals
 ---------
@@ -73,17 +57,12 @@ PDCLib consists of several parts:
    headers;
 4) the central, platform-specific file _PDCLIB_config.h;
 5) platform-specific implementation files;
-6) platform-specific, optimized "overlay" implementations (optional).
 
 The standard headers (in ./includes/) only contain what they are
 defined to contain. Where additional logic or macro magic is
 necessary, that is deferred to the internal files. This has been done
 so that the headers are actually educational as to what they provide
 (as opposed to how the library does it).
-
-Note that there *might* be some feature to remove this additional
-level of indirection for a production release, to ease the workload
-put on the preprocessor.
 
 There is a seperate implementation file (in ./function/{header}/) for
 every function defined by the standard, named {function}.c. Not only
@@ -110,42 +89,15 @@ of your platform directory over the source directory structure
 of PDCLib (or link them into the appropriate places). That should be
 all that is actually required to make PDCLib work for your platform.
 
-Of course, your platform might provide more efficient replacements
-for the generic implementations offered by PDCLib. The math functions
-are an especially "juicy" target for optimization - while PDCLib does
-provide generic implementations for each of them, there are usually
-FPU opcodes that do the same job, only orders of magnitude faster. For
-this, you might want to create an "optimization overlay" for PDCLib.
+Future directions
+-----------------
+Obviously, full C89, C99 and C11 conformance; and full support for the 
+applicable portions of C++98, C++03 and C++11.
 
-Optimization Overlay
---------------------
-
-The basic idea of PDCLib is to provide a generic implementation that
-is useable even on platforms I have never heard of - for example, the
-OS and/or compiler *you* just wrote and now need a C library for. That
-is actually what PDCLib was written for: To provide a C library for
-compiler and OS builders that do not want the usual baggage of POSIX
-and GNU extensions, licensing considerations etc. etc.
-
-Thus, PDCLib provides generic implementations. They do work, and do
-so correctly, but they are not very efficient when compared to hand-
-crafted assembler or compiler build-ins. So I wanted to provide a
-means to modify PDCLib to run more efficiently on a given platform,
-without cluttering the main branch with tons of #ifdef statements and
-"featureset #defines" that grow stale quickly.
-
-The solution is the "optimization overlay". Every function has its
-own implementation file, which makes it possible to replace them
-piecemeal by copying a platform-specific overlay over the main PDCLib
-branch to create a PDCLib adapted / optimized for the platform in
-question. That overlay could be part of the PDCLib source tree (for
-established platforms where maintainers won't bother with PDCLib), or
-part of that platform's source tree (for under-development platforms
-PDCLib maintainers won't bother with).
-
-So, to use PDCLib on your given platform, you unpack PDCLib (as you
-obviously have done already since you are reading this), and copy
-the overlay for your platform over the PDCLib source tree structure.
+Support for "optimization overlays." These would allow efficient 
+implementations of certain functions on individual platforms, for example 
+memcpy, strcpy and memset. This requires further work to only compile in one
+version of a given function.
 
 Development Status
 ------------------
@@ -191,27 +143,20 @@ could find, and fixed everything that threw a warning. (You see this,
 maintainers of Open Source software? No warnings whatsoever. Stop telling
 me it cannot be done.) Fixed all known bugs in the v0.4 release.
 
+Near Future
+-----------
+Current development directions are:
 
-A WORD ON THE v0.5 RELEASE
-==========================
+Implement portions of the C11 standard that have a direct impact on the way 
+that PDCLib itself is built. For example, in order to support multithreading,
+PDCLib needs a threading abstraction; therefore, C11's thread library is being
+implemented to provide the backing for this (as there is no purpose in 
+implementing two abstractions)
 
-The v0.5 release is not well-tested. There are several things in it done
-in a way that I would never label "release quality". Some things are not
-even in the *structure* I would like them to be. An example for this is
-the current handling of errno values: It needlessly introduces dependency
-on PDCLib (because I use non-standard values), and the values are placed
-in the wrong header (_PDCLIB_int.h instead of _PDCLIB_glue.h where they
-would be more appropriate).
+Cleanup portions of <stdio.h>, particularly the backend. _PDCLIB_fillbuffer and
+_PDCLIB_flushbuffer in particular do not feel 'well' factored and need to know
+too much about FILE's internals. 
 
-But at some point during the development toward the v0.5 release, I found
-that my current PDCLib work schedule simply does not allow me to wait
-until every piece of <stdio.h> is as I would like it to be. It would
-probably take another year or two, and my patience is UP.
-
-I want this released, and I want to think about something else but
-<stdio.h> for some time.
-
-So, expect significant change to how stdio is done in upcoming releases.
-Everything *WILL* be stable by the time v1.0 comes around, but until then
-you will have to accept that I can only deliver "hobby quality" for now.
-
+Modularize the library somewhat. This can already be seen with components under 
+"opt/". This structure is preliminary; it will likely change as the process 
+continues.
