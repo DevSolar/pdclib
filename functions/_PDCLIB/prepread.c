@@ -7,6 +7,7 @@
 */
 
 #include <stdio.h>
+#include <errno.h>
 
 #include <_PDCLIB_glue.h>
 
@@ -20,7 +21,7 @@ int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
            See comments on implementation-defined errno values in
            <_PDCLIB_config.h>.
         */
-        _PDCLIB_errno = _PDCLIB_ERROR;
+        errno = EINVAL;
         stream->status |= _PDCLIB_ERRORFLAG;
         return EOF;
     }

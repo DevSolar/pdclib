@@ -9,6 +9,8 @@
 */
 
 #include <_PDCLIB_int.h>
+#include <stdbool.h>
+#include <stddef.h>
 _PDCLIB_BEGIN_EXTERN_C
 
 /* -------------------------------------------------------------------------- */
@@ -25,13 +27,25 @@ _PDCLIB_BEGIN_EXTERN_C
 */
 void _PDCLIB_Exit( int status ) _PDCLIB_NORETURN;
 
-/* A system call that adds n pages of memory to the process heap (if n is
-   positive), or releases n pages from the process heap (if n is negative).
-   Return a (void *) pointing to the *former* end-of-heap if successful, NULL
-   otherwise.
+/* A system call which allocates n pages of memory and returns a pointer to 
+   them. On failure, returns NULL
 */
-void * _PDCLIB_allocpages( int n );
+void * _PDCLIB_allocpages( size_t n );
 
+/* A system call which frees the n pages of memory pointed to by p */
+void _PDCLIB_freepages( void * p, size_t n );
+
+#ifdef _PDCLIB_HAVE_REALLOCPAGES
+/* A system call which attempts to reallocate the group of \p on pages starting
+   at \p p, resizing the chunk to be \p nn pages long. If \p mayMove is true, 
+   then then the group of pages may move; otherwise, if the group cannot be 
+   resized in its current position, failure must be reported.
+
+   On failure, returns NULL; on success, returns the address of the group of 
+   pages (if mayMove == false, then this must be equal to \p p)
+*/
+void * _PDCLIB_reallocpages( void* p, size_t on, size_t nn, bool mayMove);
+#endif
 
 /* stdio.h */
 

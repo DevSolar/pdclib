@@ -63,7 +63,24 @@
 	#define _PDCLIB_noreturn _Noreturn
 #endif
 
+#ifdef _WIN32
+   #define _PDCLIB_EXPORT __declspec(dllexport)
+   #define _PDCLIB_IMPORT __declspec(dllimport)
+#endif
+
 #ifdef __GNUC__
+	#ifndef _PDCLIB_EXPORT
+   		#define _PDCLIB_EXPORT __attribute__((__visibility__("protected")))
+   	#endif
+
+   	#ifndef _PDCLIB_IMPORT
+		#define _PDCLIB_IMPORT
+   	#endif
+
+   	#ifndef _PDCLIB_HIDDEN
+   		#define _PDCLIB_HIDDEN __attribute__((__visibility__("hidden")))
+   	#endif
+
 	#ifndef _PDCLIB_restrict
 		#define _PDCLIB_restrict __restrict
 	#endif
@@ -75,6 +92,26 @@
 	#ifndef _PDCLIB_noreturn
 		#define _PDCLIB_noreturn __attribute__((noreturn))
 	#endif
+#endif
+
+#ifndef _PDCLIB_EXPORT
+   	#define _PDCLIB_EXPORT
+#endif
+#ifndef _PDCLIB_IMPORT
+   	#define _PDCLIB_IMPORT
+#endif
+#ifndef _PDCLIB_HIDDEN
+   	#define _PDCLIB_HIDDEN
+#endif
+
+#if defined(_PDCLIB_SHARED) 
+   	#if defined(_PDCLIB_BUILD)
+   		#define _PDCLIB_API _PDCLIB_EXPORT
+   	#else
+   		#define _PDCLIB_API _PDCLIB_IMPORT
+   	#endif
+#else
+   	#define _PDCLIB_API _PDCLIB_HIDDEN
 #endif
 
 #ifndef _PDCLIB_restrict

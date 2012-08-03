@@ -7,6 +7,7 @@
 */
 
 #include <stdio.h>
+#include <errno.h>
 
 int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream )
 {
@@ -18,7 +19,7 @@ int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream )
            See the comments on implementation-defined errno values in
            <_PDCLIB_config.h>.
         */
-        _PDCLIB_errno = _PDCLIB_ERROR;
+        errno = EINVAL;
         stream->status |= _PDCLIB_ERRORFLAG;
         return EOF;
     }

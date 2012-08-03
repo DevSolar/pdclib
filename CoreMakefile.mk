@@ -10,16 +10,19 @@ endif
 ifeq ($(PDCLIB_MALLOC),solar)
     pdclib_SOURCEDIRS += opt/malloc-solar
 else
-ifeq ($(PDCLIB_MALLOC),ptmalloc3)
-    pdclib_SOURCEDIRS += opt/ptmalloc3
+ifeq ($(PDCLIB_MALLOC),dlmalloc)
+    pdclib_SOURCEDIRS += opt/dlmalloc
 else
     $(error Bad malloc specified. Supported: solar, ptmalloc3)
 endif
 endif
 
-# No: -Wcast-align; spurious for uses of char* to do pointer arithmetic
-# No: -Winline; generates spirous errors on -Os builds
-WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wno-long-long -Wuninitialized -Wstrict-prototypes
+# No: -Wcast-align;      spurious for uses of char* to do pointer arithmetic
+# No: -Winline;          generates spirous errors on -Os builds
+# No: -Wredundant-decls; redefinition of functions is legal and sometimes required
+#         (especially applicable to PDCLib sources)
+# -Wno-unused-parameter; unused parameters are common in some interfaces
+WARNINGS := -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wno-unused-parameter
 
 pdclib_COMFLAGS += -ffreestanding $(WARNINGS)
 pdclib_CFLAGS   += -std=c11
@@ -32,4 +35,8 @@ pdclib_INCLUDE_DIRS	+= $(pdclib_SOURCE_DIR)/includes $(pdclib_SOURCE_DIR)/intern
 ifdef PDCLIB_OPT_NOTHREAD
 	pdclib_SOURCEDIRS   += opt/nothread
 	pdclib_INCLUDE_DIRS += $(pdclib_SOURCE_DIR)/opt/nothread
+endif
+
+ifdef PDCLIB_OPT_NOTIME
+	pdclib_SOURCEDIRS += opt/notime
 endif

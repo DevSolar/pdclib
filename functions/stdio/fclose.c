@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
@@ -58,10 +59,8 @@ int fclose( struct _PDCLIB_file_t * stream )
         previous = current;
         current = current->next;
     }
-    /* See the comments on implementation-defined errno values in
-       <_PDCLIB_config.h>.
-    */
-    _PDCLIB_errno = _PDCLIB_ERROR;
+
+    errno = EINVAL;
     return -1;
 }
 
