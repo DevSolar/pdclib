@@ -8,11 +8,7 @@
 
 #ifndef _PDCLIB_FLOAT_H
 #define _PDCLIB_FLOAT_H _PDCLIB_FLOAT_H
-
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
 #include <_PDCLIB_config.h>
-#endif
 
 #define FLT_ROUNDS      _PDCLIB_FLT_ROUNDS
 #define FLT_EVAL_METHOD _PDCLIB_FLT_EVAL_METHOD
