@@ -24,6 +24,7 @@ static void init_malloc_global_mutex(void)
 #define MREMAP(a, osz, nsz, mv) _PDCLIB_reallocpages((a), (osz)/_PDCLIB_MALLOC_PAGESIZE, (nsz)/_PDCLIB_MALLOC_PAGESIZE, (mv))
 
 #undef WIN32
+#undef _WIN32
 #define DLMALLOC_EXPORT  _PDCLIB_API
 #define MALLOC_ALIGNMENT _PDCLIB_MALLOC_ALIGN
 #define MSPACES 0

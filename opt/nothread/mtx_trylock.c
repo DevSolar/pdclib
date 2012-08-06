@@ -9,3 +9,13 @@ int mtx_trylock(mtx_t *mtx)
 		return thrd_success;
 	}
 }
+
+#ifdef TEST
+#include <_PDCLIB_test.h>
+
+int main( void )
+{
+    return TEST_RESULTS;
+}
+
+#endif

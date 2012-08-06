@@ -516,6 +516,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
   improvement at the expense of carrying around more memory.
 */
 
+#ifndef REGTEST
 #include "dlmalloc.h"
 
 /* Version identifier to allow people to support multiple versions */
@@ -6251,3 +6252,15 @@ History:
          structure of old version,  but most details differ.)
 
 */
+#endif
+
+#ifdef TEST
+#include <_PDCLIB_test.h>
+
+/* TODO: TEST ME */
+int main( void )
+{
+    return TEST_RESULTS;
+}
+
+#endif

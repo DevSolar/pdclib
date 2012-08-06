@@ -4,3 +4,14 @@ void tss_delete(tss_t key)
 {
 	key.self->self = NULL;
 }
+
+#ifdef TEST
+#include <_PDCLIB_test.h>
+
+/* Tested in tss_get.c */
+int main( void )
+{
+    return TEST_RESULTS;
+}
+
+#endif
