@@ -184,8 +184,9 @@ char * strerror( int errnum );
 */
 size_t strlen( const char * s );
 
-#ifdef _PDCLIB_POSIX_EX
+#if _PDCLIB_POSIX_MIN(2008098L) || _PDCLIB_XOPEN_MIN(0)
 char * strdup( const char* src );
+char * strndup( const char* src, size_t n );
 #endif
 
 _PDCLIB_END_EXTERN_C

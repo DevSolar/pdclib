@@ -37,9 +37,10 @@
 #endif
 
 #if !defined(__cplusplus) || defined(_PDCLIB_CXX_VERSION)
-	/* Pass - conditional simplification case */
+   #define _PDCLIB_CXX_VERSION 0
 #elif __cplusplus == 201103L
 	#define _PDCLIB_CXX_VERSION 2011
+    /* TODO: Do we want this? */
 	#if _PDCLIB_C_VERSION < 2011
 		#undef _PDCLIB_C_VERSION
    		#define _PDCLIB_C_VERSION 2011
@@ -58,7 +59,8 @@
 #endif
 
 #if _PDCLIB_CXX_VERSION >= 2011
-   	#define _PDCLIB_noreturn [[noreturn]]
+  // Hold off on C++ attribute syntax for now
+  // #define _PDCLIB_noreturn [[noreturn]]
 #elif _PDCLIB_C_VERSION >= 2011
 	#define _PDCLIB_noreturn _Noreturn
 #endif
@@ -90,7 +92,8 @@
 	#endif
 
 	#ifndef _PDCLIB_noreturn
-		#define _PDCLIB_noreturn __attribute__((noreturn))
+    /* If you don't use __noreturn__, then stdnoreturn.h will break things! */
+		#define _PDCLIB_noreturn __attribute__((__noreturn__))
 	#endif
 #endif
 
@@ -111,7 +114,7 @@
    		#define _PDCLIB_API _PDCLIB_IMPORT
    	#endif
 #else
-   	#define _PDCLIB_API _PDCLIB_HIDDEN
+   	#define _PDCLIB_API
 #endif
 
 #ifndef _PDCLIB_restrict
@@ -160,11 +163,74 @@
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )
 
-#ifndef __PDCLIB_PURE
-    #define __PDCLIB_PURE 0
+/* Feature test macros
+ *
+ * All of the feature test macros come in the following forms
+ *   _PDCLIB_*_MIN(min):            Available in versions > min
+ *   _PDCLIB_*_MINMAX(min, max):    Available in versions > min < max
+ *   _PDCLIB_*_MAX(max):            Availabel in versions < max
+ *
+ * The defined tests are:
+ *   C:     C standard versions 
+ *              1990, 1995, 1999, 2011
+ *   CXX:   C++ standard versions 
+ *              1997, 2011
+ *   POSIX: POSIX extension versions.
+ *              1 (POSIX.2), 2 (POSIX.2), 199309L (POSIX.1b), 
+ *              199506L (POSIX.1c), 200112L (2001), 200809L (2008)
+ *   XOPEN: X/Open System Interface (XSI)/Single Unix Specification
+ *              0 (XPG4), 500 (SUSv2/UNIX98), 600 (SUSv3/UNIX03), 700 (SUSv4)
+ *
+ * PDCLib does not attempt or claim POSIX comformance, but makes available these
+ * extensions as
+ *   (a) useful, and
+ *   (b) 
+ */
+#define _PDCLIB_C_MIN(min)         _PDCLIB_C_MINMAX(min, 3000)
+#define _PDCLIB_CXX_MIN(min)     _PDCLIB_CXX_MINMAX(min, 3000)
+#define _PDCLIB_XOPEN_MIN(min) _PDCLIB_XOPEN_MINMAX(min, 30000000)
+#define _PDCLIB_POSIX_MIN(min) _PDCLIB_POSIX_MINMAX(min, 30000000)
+#define _PDCLIB_C_MAX(max)         _PDCLIB_C_MINMAX(0, max)
+#define _PDCLIB_CXX_MAX(max)     _PDCLIB_CXX_MINMAX(0, max)
+#define _PDCLIB_XOPEN_MAX(max) _PDCLIB_XOPEN_MINMAX(0, max)
+#define _PDCLIB_POSIX_MAX(max) _PDCLIB_POSIX_MINMAX(0, max)
+#if defined(_PDCLIB_ALL) || defined(_PDCLIB_BUILD)
+    #define _PDCLIB_C_MINMAX(min, max) 1
+    #define _PDCLIB_CXX_MINMAX(min, max) 1
+    #define _PDCLIB_POSIX_MINMAX(min, max) 1
+    #define _PDCLIB_XOPEN_MINMAX(min, max) 1
+#else
+    #define _PDCLIB_C_MINMAX(min, max) \
+        (_PDCLIB_C_VERSION >= (min) && _PDCLIB_C_VERSION <= (max))
+    #define _PDCLIB_CXX_MINMAX(min, max) \
+        (_PDCLIB_CXX_VERSION >= (min) && _PDCLIB_CXX_VERSION <= (max))
+    #define _PDCLIB_XOPEN_MINMAX(min, max) \
+        (defined(_XOPEN_SOURCE) \
+            && _XOPEN_SOURCE >= (min) && _XOPEN_SOURCE <= (max))
+    #define _PDCLIB_POSIX_MINMAX(min, max) \
+        (defined(_POSIX_C_SOURCE) \
+            && _POSIX_C_SOURCE >= (min) && _POSIX_C_SOURCE <= (max))
+
+    #if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE-1 == -1)
+        /* If _XOPEN_SOURCE is defined as empty, redefine here as zero */
+        #undef _XOPEN_SOURCE
+        #define _XOPEN_SOURCE 0
+    #endif
+
+    #if _PDCLIB_XOPEN_MIN(700) && !_PDCLIB_POSIX_MIN(200809L)
+        #undef _POSIX_C_SOURCE
+        #define _POSIX_C_SOURCE 2008098L    
+    #elif _PDCLIB_XOPEN_MIN(600) && !_PDCLIB_POSIX_MIN(200112L)
+        #undef _POSIX_C_SOURCE
+        #define _POSIX_C_SOURCE 200112L
+    #elif _PDCLIB_XOPEN_MIN(0) && !_PDCLIB_POSIX_MIN(2)
+        #undef _POSIX_C_SOURCE
+        #define _POSIX_C_SOURCE 2
+    #endif
+
+    #if defined(_POSIX_SOURCE) && !defined(_POSIX_C_SOURCE)
+        #define _POSIX_C_SOURCE 1
+    #endif
 #endif
 
-#ifndef _PDCLIB_POSIX_EX
-    #define _PDCLIB_POSIX_EX (!__PDCLIB_PURE)
-#endif
 #endif

@@ -9,7 +9,6 @@
 
 #ifndef REGTEST
 
-#pragma weak strdup
 char *strdup(const char *s)
 {
     char* ns = NULL;

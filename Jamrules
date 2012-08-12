@@ -1,0 +1,168 @@
+PDCLIB ?= pdclib ;
+
+ECHO "PDCLIB_TOP: " $(PDCLIB_TOP) ;
+
+if ! $(PDCLIB_HAVE_PLATFORM) && ! $(PDCLIB_PLATFORM) {
+    if $(NT) {
+        PDCLIB_PLATFORM = "win32" ;
+    } else if $(UNIX) {
+        PDCLIB_PLATFORM = "posix" ;
+    } else {
+        ECHO "PDCLIB_PLATFORM not set and platform not automatically detected" ;
+        ECHO "Set PDCLIB_PLATFORM to the platform to be built for" ;
+        EXIT ;
+    }
+    PDCLIB_HAVE_PLATFORM = 1 ;
+}
+
+#if $(CC) = "gcc" {
+# TODO: Better toolchain handling
+
+    # No -Wcast-align      : spurious warnings when using char* to do pointer 
+    #                        arithmetic
+    # No -Winline          : when compiling with e.g. -Os causes spurious 
+    #                        warnings that call is unlikely/code size would grow
+    # No -Wredundant-decls : some functions must be multiply defined
+    PDCLIB_WARNINGS ?= 
+      -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow 
+      -Wpointer-arith -Wwrite-strings -Wmissing-declarations -Wno-long-long 
+      -Wuninitialized 
+      ;
+    PDCLIB_CCWARNINGS ?= 
+      -Wnested-externs -Wstrict-prototypes -Wmissing-prototypes ;
+    PDCLIB_CCFLAGS  = 
+      -ffreestanding 
+      -nostdinc 
+      -std=c11 
+      -g 
+      -D_PDCLIB_BUILD
+      $(PDCLIB_WARNINGS) ;
+    PDCLIB_C++FLAGS =
+      -ffreestanding
+      -nostdinc
+      -std=c++11
+      -g
+      -D_PDCLIB_BUILD
+      $(PDCLIB_WARNINGS) ;
+
+    actions Link bind NEEDLIBS
+    {
+        $(LINK) $(LINKFLAGS) -o $(<) $(UNDEFS) $(>) -Wl,--start-group $(NEEDLIBS) $(LINKLIBS) -Wl,--end-group
+    }
+#}
+
+if $(PDCLIB_PLATFORM) {
+    include [ FDirName $(PDCLIB_TOP) platform $(PDCLIB_PLATFORM) Config.jam ] ;
+}
+
+rule PDCLibHeaders {
+    SubDirHdrs $(PDCLIB_TOP) includes ;
+    SubDirHdrs $(PDCLIB_TOP) internals ;
+    SubDirHdrs $(PDCLIB_TOP) testing ;
+    for opt in $(PDCLIB_OPTIONS) {
+        SubDirHdrs $(PDCLIB_TOP) opt $(opt) ;
+    }
+    PDCLibTargetHeaders ;
+}
+
+rule PDCLibConfig {
+    SubDirCcFlags $(PDCLIB_CCFLAGS) ;
+    SubDirC++Flags $(PDCLIB_C++FLAGS) ;
+    PDCLibHeaders ;
+    PDCLibTargetConfig ;
+}
+
+# MinGW needs appropriate prodding to cretae executables
+if $(TOOLSET) = MINGW {
+    PDCLIB_TEST_LINKFLAGS    += -mconsole ;
+    PDCLIB_REGTEST_LINKFLAGS += -mconsole ;
+}
+
+# Tests
+ALWAYS regtest test ;
+
+rule Test {
+    DEPENDS $(<) : $(>) ;
+    ALWAYS $(<) ;
+    DEPENDS test : $(<) ;
+}
+
+rule RegTest {
+    DEPENDS $(<) : $(>) ;
+    ALWAYS $(<) ;
+    DEPENDS regtest : $(<) ;
+}
+
+actions Test {
+    $(>)
+}
+
+actions RegTest {
+    $(>)
+}
+
+# list all files in a directory, except ., ..
+# [ ListDir base : dirname ]
+rule ListDir {
+  # start with empty list
+  local _result =  ;
+
+  # for each file in the directory
+  local _dirlist = [ GLOB [ FDirName $(1) $(2) ] : * ] ;
+  for _subdir in $(_dirlist) {
+
+    # if it is not . or ..
+    switch $(_subdir) {
+    case *\\. :  _dummy = "" ; # is there some no-op statement?
+    case *\\.. : _dummy = "" ; # is there some no-op statement?
+    case * :
+      # add it to the list
+      _result += $(_subdir:D=$(2)) ;
+    }
+  }
+
+  # return resulting list
+  return $(_result) ;
+}
+
+# same as glob, but recurses into subdirs
+rule RecursiveGlob {
+  # initially use the files in the current directory
+  local _dir  = $(2) ;
+  local _path = [ FDirName $(1) $(2) ] ;
+  local _result = [ GLOB $(_path) : $(3) ] ;
+  _result = $(_result:D=$(_dir)) ;
+
+  # list all subdirectories (and files, but it doesn't hurt)
+  local _subdirlist = [ ListDir $(1) : $(2) ] ;
+
+  # for each subdir/file
+  for _subdir in $(_subdirlist) {
+    # recurse into it
+    _result += [ RecursiveGlob $(1) : $(_subdir) : $(3) ] ;
+  }
+
+  # return the resulting list
+  return $(_result) ;
+}
+
+# Fix to work on targets in subdirs
+rule MakeLocate
+{
+    # Note we grist the directory name with 'dir',
+    # so that directory path components and other
+    # targets don't conflict.
+
+    if $(>)
+    {
+        local _rev = [ FReverse $(>) ] ;
+        if $(_rev[1]) = "." {
+          _rev = $(_rev[2-]) ;
+        } 
+        local _dir = [ FDirName [ FReverse $(_rev) ] $(<[0]:D) ] ;
+
+        LOCATE on $(<) = [ FDirName $(>) ] ;
+        Depends $(<) : $(_dir:G=dir) ;
+        MkDir $(_dir:G=dir) ;
+    }
+}

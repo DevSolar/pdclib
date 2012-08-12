@@ -1,0 +1,43 @@
+SubDir PDCLIB_TOP ;
+PDCLibConfig ;
+
+PDCLIB_SOURCES = [ RecursiveGlob $(PDCLIB_TOP) : [ FDirName functions ] : *.c ] ;
+
+if $(PDCLIB_PLATFORM) {
+    PDCLIB_PLATFORM_SOURCE_DIR = 
+        [ FDirName platform $(PDCLIB_PLATFORM) functions ] ;
+    PDCLIB_SOURCES += [ RecursiveGlob $(PDCLIB_TOP) : $(PDCLIB_PLATFORM_SOURCE_DIR) : *.c ] ;
+}
+
+for opt in $(PDCLIB_OPTIONS) {
+    optdir = [ FDirName opt $(opt) ] ;
+    PDCLIB_SOURCES += [ RecursiveGlob $(PDCLIB_TOP) : $(optdir) : *.c ] ;   
+}
+
+Library $(PDCLIB) : $(PDCLIB_SOURCES) ;
+
+if ! $(PDCLIB_NO_TEST) {
+    for file in $(PDCLIB_SOURCES) {
+        testfile    = $(file:S=_t) ;
+        regtestfile = $(file:S=_r) ;
+        test        = $(file:S=-test) ;
+        regtest     = $(file:S=-regtest) ;
+
+        Object $(testfile).o    : $(file) ;
+        Object $(regtestfile).o : $(file) ;
+        MainFromObjects $(testfile)    : $(testfile).o ;
+        MainFromObjects $(regtestfile) : $(regtestfile).o ;
+        CCFLAGS on $(testfile).o += -DTEST $(PDCLIB_TEST_CCFLAGS) ;
+        CCFLAGS on $(regtestfile).o += -DTEST -DREGTEST 
+                                       $(PDCLIB_REGTEST_CCFLAGS) ;
+
+        LINKFLAGS on $(testfile)$(SUFEXE) += $(PDCLIB_TEST_LINKFLAGS) ;
+        LINKFLAGS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKFLAGS) ;
+        LINKLIBS on $(testfile)$(SUFEXE) += $(PDCLIB_TEST_LINKLIBS) ;
+        LINKLIBS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKLIBS) ;
+        LinkLibraries $(testfile) : $(PDCLIB) ;
+
+        Test    $(test)    : $(testfile) ;
+        RegTest $(regtest) : $(regtestfile) ;
+    }
+}

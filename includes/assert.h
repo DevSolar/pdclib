@@ -12,6 +12,7 @@
 #include <_PDCLIB_config.h>
 _PDCLIB_BEGIN_EXTERN_C
 
+/* Functions _NOT_ tagged noreturn as this hampers debugging */
 void _PDCLIB_assert99( char const * const, char const * const, char const * const );
 void _PDCLIB_assert89( char const * const );
 
@@ -20,23 +21,24 @@ void _PDCLIB_assert89( char const * const );
 
 #ifdef NDEBUG
 #define assert( ignore ) ( (void) 0 )
-#elif _PDCLIB_C_VERSION >= 99
+#elif _PDCLIB_C_MIN(99)
 #define assert(expression) \
-    do { if(!(expression)) \
-        _PDCLIB_assert99("Assertion failed: " #expression \
+    do { if(!(expression)) { \
+        _PDCLIB_assert99("Assertion failed: " _PDCLIB_symbol2string(expression)\
                          ", function ", __func__, \
                          ", file " __FILE__ \
                          ", line " _PDCLIB_symbol2string( __LINE__ ) \
                          "." _PDCLIB_endl ); \
+      } \
     } while(0)
 #else
 #define assert(expression) \
-    do { \
-        if(!(expression)) \
-            _PDCLIB_assert89( "Assertion failed: " #expression \
-                          ", file " __FILE__ \
-                          ", line " _PDCLIB_symbol2string( __LINE__ ) \
-                          "." _PDCLIB_endl ); \
+    do { if(!(expression)) { \
+        _PDCLIB_assert89("Assertion failed: " _PDCLIB_symbol2string(expression)\
+                         ", file " __FILE__ \
+                         ", line " _PDCLIB_symbol2string( __LINE__ ) \
+                         "." _PDCLIB_endl ); \
+      } \
     } while(0)
 #endif
 
