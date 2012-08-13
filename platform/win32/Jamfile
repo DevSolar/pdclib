@@ -1,0 +1,6 @@
+SubDir PDCLIB_TOP platform win32 ;
+PDCLibConfig ;
+
+Object $(CRT0) : $(CRT0:S=.c) ;
+
+DEPENDS all : $(CRT0) ;

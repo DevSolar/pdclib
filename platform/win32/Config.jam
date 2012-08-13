@@ -1,0 +1,12 @@
+rule PDCLibTargetConfig { }
+rule PDCLibTargetHeaders {
+    SubDirHdrs $(PDCLIB_TOP) platform win32 includes ;
+    SubDirHdrs $(PDCLIB_TOP) platform win32 internals ;
+}
+
+PDCLIB_TEST_LINKFLAGS += -nostdlib ;
+PDCLIB_TEST_LINKLIBS += -lgcc -lkernel32 -lshell32 ;
+
+PDCLIB_OPTIONS = nothread notime dlmalloc ;
+
+CRT0 = [ FDirName platform win32 crt0$(SUFOBJ) ] ;
