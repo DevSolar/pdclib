@@ -1,3 +1,4 @@
+#ifndef REGTEST
 #include <threads.h>
 
 int mtx_unlock(mtx_t *mtx)
@@ -7,6 +8,7 @@ int mtx_unlock(mtx_t *mtx)
 		return thrd_success;
 	} else return thrd_error;
 }
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

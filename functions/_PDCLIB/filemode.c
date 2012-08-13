@@ -8,6 +8,7 @@
 
 #include <stddef.h>
 
+#ifndef REGTEST
 /* Helper function that parses the C-style mode string passed to fopen() into
    the PDCLib flags FREAD, FWRITE, FAPPEND, FRW (read-write) and FBIN (binary
    mode).
@@ -53,12 +54,14 @@ unsigned int _PDCLIB_filemode( char const * const mode )
     /* Longer than three chars - invalid. */
     return 0;
 }
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
 int main( void )
 {
+#ifndef REGTEST
     TESTCASE( _PDCLIB_filemode( "r" ) == _PDCLIB_FREAD );
     TESTCASE( _PDCLIB_filemode( "w" ) == _PDCLIB_FWRITE );
     TESTCASE( _PDCLIB_filemode( "a" ) == ( _PDCLIB_FAPPEND | _PDCLIB_FWRITE ) );
@@ -78,6 +81,7 @@ int main( void )
     TESTCASE( _PDCLIB_filemode( "r++" ) == 0 );
     TESTCASE( _PDCLIB_filemode( "wbb" ) == 0 );
     TESTCASE( _PDCLIB_filemode( "a+bx" ) == 0 );
+#endif
     return TEST_RESULTS;
 }
 

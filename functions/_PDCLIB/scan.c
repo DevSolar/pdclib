@@ -16,6 +16,8 @@
 #include <stddef.h>
 #include <limits.h>
 
+#ifndef REGTEST
+
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
 */
@@ -588,7 +590,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     /* TODO: Floats. */
     return NULL;
 }
-
+#endif
 
 #ifdef TEST
 #define _PDCLIB_FILEID "_PDCLIB/scan.c"
@@ -596,6 +598,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 
 #include <_PDCLIB_test.h>
 
+#ifndef REGTEST
 static int testscanf( char const * s, char const * format, ... )
 {
     struct _PDCLIB_status_t status;
@@ -612,13 +615,16 @@ static int testscanf( char const * s, char const * format, ... )
     va_end( status.arg );
     return status.n;
 }
+#endif
 
 #define TEST_CONVERSION_ONLY
 
 int main( void )
 {
+#ifndef REGTEST
     char source[100];
 #include "scanf_testcases.h"
+#endif
     return TEST_RESULTS;
 }
 

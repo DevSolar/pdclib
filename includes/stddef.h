@@ -20,7 +20,10 @@ typedef _PDCLIB_size_t size_t;
 #endif
 
 #ifndef __cplusplus
+#ifndef _PDCLIB_WCHAR_T_DEFINED
+#define _PDCLIB_WCHAR_T_DEFINED _PDCLIB_WCHAR_T_DEFINED
 typedef _PDCLIB_wchar_t   wchar_t;
+#endif
 #endif
 
 #ifndef _PDCLIB_NULL_DEFINED

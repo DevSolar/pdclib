@@ -20,7 +20,7 @@ extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 struct _PDCLIB_file_t * tmpfile( void )
 {
     errno = ENOTSUP;
-    return 1;
+    return NULL;
 }
 
 #endif

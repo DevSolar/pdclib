@@ -1,4 +1,8 @@
 SubDir PDCLIB_TOP ;
+if $(PDCLIB_PLATFORM) {
+    SubInclude PDCLIB_TOP platform $(PDCLIB_PLATFORM) ;
+    SubDir PDCLIB_TOP ;
+}
 PDCLibConfig ;
 
 PDCLIB_SOURCES = [ RecursiveGlob $(PDCLIB_TOP) : [ FDirName functions ] : *.c ] ;
@@ -25,11 +29,12 @@ if ! $(PDCLIB_NO_TEST) {
 
         Object $(testfile).o    : $(file) ;
         Object $(regtestfile).o : $(file) ;
-        MainFromObjects $(testfile)    : $(testfile).o ;
+        MainFromObjects $(testfile)    : $(testfile).o $(CRT0) ;
         MainFromObjects $(regtestfile) : $(regtestfile).o ;
         CCFLAGS on $(testfile).o += -DTEST $(PDCLIB_TEST_CCFLAGS) ;
         CCFLAGS on $(regtestfile).o += -DTEST -DREGTEST 
                                        $(PDCLIB_REGTEST_CCFLAGS) ;
+        CCHDRS on $(regtestfile).o = [ FIncludes [ FDirName testing ] ] ;
 
         LINKFLAGS on $(testfile)$(SUFEXE) += $(PDCLIB_TEST_LINKFLAGS) ;
         LINKFLAGS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKFLAGS) ;
