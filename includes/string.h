@@ -41,7 +41,7 @@ void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, siz
    area pointed to by s1. The two areas may overlap.
    Returns the value of s1.
 */
-void * memmove( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, size_t n );
+void * memmove( void * s1, const void * , size_t n );
 
 /* Copy the character array s2 (including terminating '\0' byte) into the
    character array s1.
