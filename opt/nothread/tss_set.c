@@ -1,4 +1,3 @@
-#ifndef REGTEST
 #include <threads.h>
 
 int tss_set(tss_t key, void *val)
@@ -6,7 +5,6 @@ int tss_set(tss_t key, void *val)
 	key.self->value = val;
 	return thrd_success;
 }
-#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

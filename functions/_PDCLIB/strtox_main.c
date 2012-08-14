@@ -6,13 +6,12 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <_PDCLIB_int.h>
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
 #include <stdint.h>
 
-#ifndef REGTEST
-#include <_PDCLIB_int.h>
 _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintmax_t error, uintmax_t limval, int limdigit, char * sign )
 {
     _PDCLIB_uintmax_t rc = 0;
@@ -44,7 +43,6 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
     }
     return rc;
 }
-#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
@@ -52,7 +50,6 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
 
 int main( void )
 {
-#ifndef REGTEST
     const char * p;
     char test[] = "123_";
     char fail[] = "xxx";
@@ -80,7 +77,6 @@ int main( void )
     sign = '-';
     TESTCASE( _PDCLIB_strtox_main( &p, 10u, (uintmax_t)999, (uintmax_t)99, 8, &sign ) == 0 );
     TESTCASE( p == NULL );
-#endif
     return TEST_RESULTS;
 }
 

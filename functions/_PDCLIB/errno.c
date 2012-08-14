@@ -6,8 +6,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef REGTEST
 #include <_PDCLIB_int.h>
+
+#ifndef REGTEST
 
 int _PDCLIB_errno = 0;
 

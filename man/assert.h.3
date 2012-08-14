@@ -1,0 +1,39 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt ASSERT.H 3
+.Os
+.\"
+.Sh NAME
+.Nm assert.h
+.Nd verify program assertion
+.\"
+.Sh SYNOPSIS
+.In assert.h
+.\"
+.Sh DESCRIPTION
+The header
+.In assert.h
+shall define one macro:
+.Dv assert(<scalar expression>) .
+.Pp
+If
+.Dv NDEBUG
+was undefined at the most recent inclusion of this header, then it shall be
+defined as a macro which will evaluate the scalar expression and, if it is
+false, abort the program with a descriptive error message as defined in
+.Xr assert 3 .
+.\"
+.Pp
+If
+.Dv NDEBUG
+was defined at the most recent inclusion of this header, then it shall be
+defined as a macro which evaluates as a void expression and
+.Sy does not
+evaluate its parameter.
+.\"
+.Sh STANDARDS
+Conforming to
+.St -isoC-90 ,
+.St -isoC-99 .

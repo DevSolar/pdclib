@@ -1,4 +1,3 @@
-#ifndef REGTEST
 #include <threads.h>
 
 int tss_create(tss_t *key, tss_dtor_t dtor)
@@ -7,7 +6,6 @@ int tss_create(tss_t *key, tss_dtor_t dtor)
 	key->value = NULL;
 	return thrd_success;
 }
-#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

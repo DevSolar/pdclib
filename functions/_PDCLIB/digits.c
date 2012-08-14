@@ -6,9 +6,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef REGTEST
 #include <_PDCLIB_int.h>
-#endif
 
 char _PDCLIB_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -22,10 +20,8 @@ char _PDCLIB_Xdigits[] = "0123456789ABCDEF";
 
 int main( void )
 {
-#ifndef REGTEST
     TESTCASE( strcmp( _PDCLIB_digits, "0123456789abcdefghijklmnopqrstuvwxyz" ) == 0 );
     TESTCASE( strcmp( _PDCLIB_Xdigits, "0123456789ABCDEF" ) == 0 );
-#endif
     return TEST_RESULTS;
 }
 

@@ -1,11 +1,9 @@
-#ifndef REGTEST
 #include <threads.h>
 
 void thrd_yield(void)
 {
 	/* does nothing */
 }
-#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
