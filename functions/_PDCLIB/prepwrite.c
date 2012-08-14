@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+#ifndef REGTEST
 int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream )
 {
     if ( ( stream->bufidx < stream->bufend ) || ( stream->ungetidx > 0 ) ||
@@ -26,6 +27,7 @@ int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream )
     stream->status |= _PDCLIB_FWRITE | _PDCLIB_BYTESTREAM;
     return 0;
 }
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>

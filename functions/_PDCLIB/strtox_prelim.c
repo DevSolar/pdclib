@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <stddef.h>
 #include <string.h>
-
+#ifndef REGTEST
 const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
 {
     /* skipping leading whitespace */
@@ -50,12 +50,14 @@ const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
     }
     return ( ( *base >= 2 ) && ( *base <= 36 ) ) ? p : NULL;
 }
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
 
 int main( void )
 {
+#ifndef REGTEST
     int base = 0;
     char sign = '\0';
     char test1[] = "  123";
@@ -83,6 +85,7 @@ int main( void )
     TESTCASE( _PDCLIB_strtox_prelim( test3, &sign, &base ) == NULL );
     base = 37;
     TESTCASE( _PDCLIB_strtox_prelim( test3, &sign, &base ) == NULL );
+#endif
     return TEST_RESULTS;
 }
 

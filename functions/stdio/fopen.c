@@ -12,64 +12,26 @@
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
 #include <string.h>
+#include <errno.h>
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
-struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
+FILE * fopen( const char * _PDCLIB_restrict filename, 
+              const char * _PDCLIB_restrict mode )
 {
-    struct _PDCLIB_file_t * rc;
-    size_t filename_len;
-    if ( mode == NULL || filename == NULL || filename[0] == '\0' )
-    {
-        /* Mode or filename invalid */
+    int imode = _PDCLIB_filemode( mode );
+    _PDCLIB_fd_t fd = _PDCLIB_open( filename, imode );
+    if(fd == _PDCLIB_NOHANDLE) {
         return NULL;
     }
-    /* To reduce the number of malloc calls, all data fields are concatenated:
-       * the FILE structure itself,
-       * ungetc buffer,
-       * filename buffer,
-       * data buffer.
-       Data buffer comes last because it might change in size ( setvbuf() ).
-    */
-    filename_len = strlen( filename ) + 1;
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + filename_len + BUFSIZ ) ) == NULL )
-    {
-        /* no memory */
-        return NULL;
+
+    FILE * f = _PDCLIB_fdopen( fd, imode, filename );
+    if(!f) {
+        int saveErrno = errno;
+        _PDCLIB_close( fd );
+        errno = saveErrno;
     }
-    if ( ( rc->status = _PDCLIB_filemode( mode ) ) == 0 ) 
-    {
-        /* invalid mode */
-        free( rc );
-        return NULL;
-    }
-    rc->handle = _PDCLIB_open( filename, rc->status );
-    if ( rc->handle == _PDCLIB_NOHANDLE )
-    {
-        /* OS open() failed */
-        free( rc );
-        return NULL;
-    }
-    /* Setting pointers into the memory block allocated above */
-    rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
-    rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
-    rc->buffer   = rc->filename + filename_len;
-    /* Copying filename to FILE structure */
-    strcpy( rc->filename, filename );
-    /* Initializing the rest of the structure */
-    rc->bufsize = BUFSIZ;
-    rc->bufidx = 0;
-    rc->ungetidx = 0;
-    /* Setting buffer to _IOLBF because "when opened, a stream is fully
-       buffered if and only if it can be determined not to refer to an
-       interactive device."
-    */
-    rc->status |= _IOLBF;
-    /* TODO: Setting mbstate */
-    /* Adding to list of open files */
-    rc->next = _PDCLIB_filelist;
-    _PDCLIB_filelist = rc;
-    return rc;
+    return f;
 }
 
 #endif

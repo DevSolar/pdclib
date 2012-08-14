@@ -31,6 +31,8 @@ char *strndup( const char * s, size_t len )
 
 int main( void )
 {
+#ifndef REGTEST
+    /* Missing on Windows. Maybe use conditionals? */
     const char *teststr  = "Hello, world";
     const char *teststr2 = "\xFE\x8C\n";
     char *testres, *testres2;
@@ -49,7 +51,8 @@ int main( void )
     TESTCASE(strcmp(testres2, teststr2) == 0);
     free(testres);
     free(testres2);
-    
+#endif
+
     return TEST_RESULTS;
 }
 

@@ -36,10 +36,28 @@ typedef struct _PDCLIB_file_t FILE;
 #define L_tmpnam _PDCLIB_L_tmpnam
 #define TMP_MAX _PDCLIB_TMP_MAX
 
-/* See fseek(), third argument */
-#define SEEK_CUR _PDCLIB_SEEK_CUR
-#define SEEK_END _PDCLIB_SEEK_END
-#define SEEK_SET _PDCLIB_SEEK_SET
+/* See fseek(), third argument 
+ *
+ * Some system headers (e.g. windows) also define the SEEK_* values. Check for
+ * this and validate that they're the same value
+ */
+#if !defined(SEEK_CUR)
+    #define SEEK_CUR _PDCLIB_SEEK_CUR
+#elif SEEK_CUR != _PDCLIB_SEEK_CUR
+    #error SEEK_CUR != _PDCLIB_SEEK_CUR
+#endif
+
+#if !defined(SEEK_END)
+    #define SEEK_END _PDCLIB_SEEK_END
+#elif SEEK_END != _PDCLIB_SEEK_END
+    #error SEEK_END != _PDCLIB_SEEK_END
+#endif
+
+#if !defined(SEEK_SET)
+    #define SEEK_SET _PDCLIB_SEEK_SET
+#elif SEEK_SET != _PDCLIB_SEEK_SET
+    #error SEEK_SET != _PDCLIB_SEEK_SET
+#endif
 
 extern FILE * stdin;
 extern FILE * stdout;
@@ -154,6 +172,11 @@ int fflush( FILE * stream );
    Returns a pointer to the stream handle if successfull, NULL otherwise.
 */
 FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode );
+
+/* Creates a stream connected to the file descriptor \p fd with mode \p mode.
+   Mode must match the mode with which the file descriptor was opened.
+*/
+FILE * _PDCLIB_fdopen( _PDCLIB_fd_t fd, int mode, const char* filename );
 
 /* Close any file currently associated with the given stream. Open the file
    identified by the given filename with the given mode (equivalent to fopen()),

@@ -32,14 +32,14 @@ if ! $(PDCLIB_HAVE_PLATFORM) && ! $(PDCLIB_PLATFORM) {
       -Wnested-externs -Wstrict-prototypes -Wmissing-prototypes ;
     PDCLIB_CCFLAGS  = 
       -ffreestanding 
-      -nostdinc 
+      #-nostdinc 
       -std=c11 
       -g 
       -D_PDCLIB_BUILD
       $(PDCLIB_WARNINGS) ;
     PDCLIB_C++FLAGS =
       -ffreestanding
-      -nostdinc
+      #-nostdinc
       -std=c++11
       -g
       -D_PDCLIB_BUILD
