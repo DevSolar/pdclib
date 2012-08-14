@@ -1,5 +1,3 @@
-/* $Id: style.css,v 1.25 2011/08/26 09:03:17 kristaps Exp $ */
-
 /*
  * This is an example style-sheet provided for mandoc(1) and the -Thtml
  * or -Txhtml output mode.
@@ -9,7 +7,9 @@
  * See mdoc(7) and man(7) for macro explanations.
  */
 
-html        { max-width: 880px; margin-left: 1em; }
+/* modified for pdclib: no max width; our wrapper handles that */;
+
+html        { margin-left: 1em; }
 body        { font-size: smaller; font-family: Helvetica,Arial,sans-serif; }
 h1      { margin-bottom: 1ex; font-size: 110%; margin-left: -4ex; } /* Section header (Sh, SH). */
 h2      { margin-bottom: 1ex; font-size: 105%; margin-left: -2ex; } /* Sub-section header (Ss, SS). */
