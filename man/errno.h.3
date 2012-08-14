@@ -1,0 +1,114 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt ERRNO.H 3
+.Os
+.\"
+.Sh NAME
+.Nm errno.h
+.Nd error results
+.\"
+.Sh SYNOPSIS
+.In errno.h
+.\"
+.Sh DESCRIPTION
+The header defines the value
+.Dv errno
+to be an lvalue of thread-local storage duration.
+.\"
+.Pp
+From the ISO C standard, the following error code constants are defined:
+.Bl -tag -compact
+.It ERANGE
+indicating a value is out of range
+.It EDOM
+indicating that a value is outside the domain of the current function
+.It EILSEQ
+indicating an invalid character sequence
+.El
+.\"
+.Pp
+From the ISO C++ 2011 standard, the following error code constants are defined:
+.Bl -tag -compact
+.It E2BIG
+.It ECONNRESET
+.It EISCONN
+.It ENOENT
+.It ENOTRECOVERABLE
+.It EROFS
+.It EACCES
+.It EDEADLK
+.It EISDIR
+.It ENOEXEC
+.It ENOTSOCK
+.It ESPIPE
+.It EADDRINUSE
+.It EDESTADDRREQ
+.It ELOOP
+.It ENOLCK
+.It ENOTSUP
+.It ESRCH
+.It EADDRNOTAVAIL
+.It EMFILE
+.It ENOLINK
+.It ENOTTY
+.It ETIME
+.It EAFNOSUPPORT
+.It EEXIST
+.It EMLINK
+.It ENOMEM
+.It ENXIO
+.It ETIMEDOUT
+.It EAGAIN
+.It EFAULT
+.It EMSGSIZE
+.It ENOMSG
+.It EOPNOTSUPP
+.It ETXTBSY
+.It EALREADY
+.It EFBIG
+.It ENAMETOOLONG
+.It ENOPROTOOPT
+.It EOVERFLOW
+.It EWOULDBLOCK
+(which may have the same value as 
+.Ev EAGAIN )
+.It EBADF
+.It EHOSTUNREACH
+.It ENETDOWN
+.It ENOSPC
+.It EOWNERDEAD
+.It EXDEV
+.It EBADMSG
+.It EIDRM
+.It ENETRESET
+.It ENOSR
+.It EPERM
+.It EBUSY
+.It ENETUNREACH
+.It ENOSTR
+.It EPIPE
+.It ECANCELED
+.It EINPROGRESS
+.It ENFILE
+.It ENOSYS
+.It EPROTO
+.It ECHILD
+.It EINTR
+.It ENOBUFS
+.It ENOTCONN
+.It EPROTONOSUPPORT
+.It ECONNABORTED
+.It EINVAL
+.It ENODATA
+.It ENOTDIR
+.It EPROTOTYPE
+.El
+.Sh SEE ALSO
+.Xr errno 3
+.Sh STANDARDS
+Conforming to
+.St -isoC-90 ,
+.St -isoC-99 , 
+ISO/IEC 14882:2011 "ISO C++ 11"
