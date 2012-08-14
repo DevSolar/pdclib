@@ -38,24 +38,24 @@ void call_once(once_flag *flag, void (*func)(void))
 
 #if defined(_PDCLIB_MTX_T)
 typedef _PDCLIB_MTX_T  	mtx_t;
-void mtx_destroy(mtx_t *mtx);
-int mtx_init(mtx_t *mtx, int type);
-int mtx_lock(mtx_t *mtx);
-int mtx_timedlock(mtx_t *_PDCLIB_restrict mtx, const struct timespec *_PDCLIB_restrict ts);
-int mtx_trylock(mtx_t *mtx);
-int mtx_unlock(mtx_t *mtx);
+void mtx_destroy(mtx_t *mtx) _PDCLIB_nothrow;
+int mtx_init(mtx_t *mtx, int type) _PDCLIB_nothrow;
+int mtx_lock(mtx_t *mtx) _PDCLIB_nothrow;
+int mtx_timedlock(mtx_t *_PDCLIB_restrict mtx, const struct timespec *_PDCLIB_restrict ts) _PDCLIB_nothrow;
+int mtx_trylock(mtx_t *mtx) _PDCLIB_nothrow;
+int mtx_unlock(mtx_t *mtx) _PDCLIB_nothrow;
 #endif
 
 #if defined(_PDCLIB_CND_T)
 typedef _PDCLIB_CND_T  	cnd_t;
-int cnd_broadcast(cnd_t *cond);
-void cnd_destroy(cnd_t *cond);
-int cnd_init(cnd_t *cond);
-int cnd_signal(cnd_t *cond);
+int cnd_broadcast(cnd_t *cond) _PDCLIB_nothrow;
+void cnd_destroy(cnd_t *cond) _PDCLIB_nothrow;
+int cnd_init(cnd_t *cond) _PDCLIB_nothrow;
+int cnd_signal(cnd_t *cond) _PDCLIB_nothrow;
 int cnd_timedwait(cnd_t *_PDCLIB_restrict cond,
 	mtx_t *_PDCLIB_restrict mtx,
-	const struct timespec *_PDCLIB_restrict ts);
-int cnd_wait(cnd_t *cond, mtx_t *mtx);
+	const struct timespec *_PDCLIB_restrict ts) _PDCLIB_nothrow;
+int cnd_wait(cnd_t *cond, mtx_t *mtx) _PDCLIB_nothrow;
 #endif
 
 #if defined(_PDCLIB_THRD_T)
@@ -63,17 +63,20 @@ int cnd_wait(cnd_t *cond, mtx_t *mtx);
 typedef _PDCLIB_THRD_T 	thrd_t;
 typedef int (*)(void*)  thrd_start_t;
 
-int thrd_create(thrd_t *thr, thrd_start_t func, void *arg);
-thrd_t thrd_current(void);
-int thrd_detach(thrd_t thr);
-int thrd_equal(thrd_t thr0, thrd_t thr1);
+int thrd_create(thrd_t *thr, thrd_start_t func, void *arg) _PDCLIB_nothrow;
+thrd_t thrd_current(void) _PDCLIB_nothrow;
+int thrd_detach(thrd_t thr) _PDCLIB_nothrow;
+int thrd_equal(thrd_t thr0, thrd_t thr1) _PDCLIB_nothrow;
+
+/* Not nothrow: systems may use exceptions at thread exit */
 _PDCLIB_noreturn void thrd_exit(int res);
+/* Not nothrow: systems may potentially propogate exceptions out of thrd_join?*/
 int thrd_join(thrd_t thr, int *res);
 #endif
 
 #if defined(_PDCLIB_THRD_HAVE_MISC)
-int thrd_sleep(const struct timespec *duration, struct timespec *remaining);
-void thrd_yield(void);
+int thrd_sleep(const struct timespec *duration, struct timespec *remaining) _PDCLIB_nothrow;
+void thrd_yield(void) _PDCLIB_nothrow;
 #endif
 
 /* The behaviour of tss_t is woefully underspecified in the C11 standard. In 
@@ -88,10 +91,10 @@ void thrd_yield(void);
 typedef _PDCLIB_TSS_T  	tss_t;
 typedef void (*tss_dtor_t)(void*);
 
-int tss_create(tss_t *key, tss_dtor_t dtor);
-void tss_delete(tss_t key);
-void *tss_get(tss_t key);
-int tss_set(tss_t key, void *val);
+int tss_create(tss_t *key, tss_dtor_t dtor) _PDCLIB_nothrow;
+void tss_delete(tss_t key) _PDCLIB_nothrow;
+void *tss_get(tss_t key) _PDCLIB_nothrow;
+int tss_set(tss_t key, void *val) _PDCLIB_nothrow;
 #endif
 
 _PDCLIB_END_EXTERN_C

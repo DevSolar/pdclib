@@ -59,6 +59,14 @@
 #endif
 
 #if _PDCLIB_CXX_VERSION >= 2011
+  #define _PDCLIB_nothrow     noexcept
+  #define _PDCLIB_noexcept(x) noexcept(x)
+#elif _PDCLIB_CXX_VERSION
+  #define _PDCLIB_nothrow     throw()
+  #define _PDCLIB_noexcept
+#endif
+
+#if _PDCLIB_CXX_VERSION >= 2011
   // Hold off on C++ attribute syntax for now
   // #define _PDCLIB_noreturn [[noreturn]]
 #elif _PDCLIB_C_VERSION >= 2011
@@ -71,9 +79,9 @@
 #endif
 
 #ifdef __GNUC__
-	#ifndef _PDCLIB_EXPORT
-   		#define _PDCLIB_EXPORT __attribute__((__visibility__("protected")))
-   	#endif
+	  #ifndef _PDCLIB_EXPORT
+  	    #define _PDCLIB_EXPORT __attribute__((__visibility__("protected")))
+    #endif
 
    	#ifndef _PDCLIB_IMPORT
 		#define _PDCLIB_IMPORT
@@ -82,6 +90,11 @@
    	#ifndef _PDCLIB_HIDDEN
    		#define _PDCLIB_HIDDEN __attribute__((__visibility__("hidden")))
    	#endif
+
+    #ifndef _PDCLIB_nothrow
+      #define _PDCLIB_nothrow __attribute__((__nothrow__))
+      #define _PDCLIB_noexcept
+    #endif
 
 	#ifndef _PDCLIB_restrict
 		#define _PDCLIB_restrict __restrict
@@ -95,6 +108,11 @@
     /* If you don't use __noreturn__, then stdnoreturn.h will break things! */
 		#define _PDCLIB_noreturn __attribute__((__noreturn__))
 	#endif
+#endif
+
+#ifndef _PDCLIB_nothrow
+  #define _PDCLIB_nothrow
+  #define _PDCLIB_noexcept
 #endif
 
 #ifndef _PDCLIB_EXPORT

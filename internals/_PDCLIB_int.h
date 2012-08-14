@@ -441,7 +441,7 @@ extern int _PDCLIB_errno;
 /* A mechanism for delayed evaluation. (Not sure if this is really necessary, so
    no detailed documentation on the "why".)
 */
-int * _PDCLIB_errno_func( void );
+int * _PDCLIB_errno_func( void ) _PDCLIB_nothrow;
 
 /* -------------------------------------------------------------------------- */
 /* <ctype.h> lookup tables                                                    */

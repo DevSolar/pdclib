@@ -214,12 +214,12 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 /* 7.8.2 Functions for greatest-width integer types */
 
 /* Calculate the absolute value of j */
-intmax_t imaxabs( intmax_t j );
+intmax_t imaxabs( intmax_t j ) _PDCLIB_nothrow;
 
 /* Return quotient (quot) and remainder (rem) of an integer division in the
    imaxdiv_t struct.
 */
-imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom );
+imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom ) _PDCLIB_nothrow;
 
 /* Seperate the character array nptr into three parts: A (possibly empty)
    sequence of whitespace characters, a character representation of an integer
@@ -243,8 +243,8 @@ imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom );
 /* This function is equivalent to strtol() / strtoul() in <stdlib.h>, but on
    the potentially larger type.
 */
-intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
-uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
+intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base ) _PDCLIB_nothrow;
+uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base ) _PDCLIB_nothrow;
 
 /* TODO: wcstoimax(), wcstoumax() */
 

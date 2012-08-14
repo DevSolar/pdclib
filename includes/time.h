@@ -27,7 +27,7 @@ _PDCLIB_DEFINE_STRUCT_TIMESPEC()
 _PDCLIB_DEFINE_STRUCT_TM()
 #endif
 
-time_t time(time_t* t);
+time_t time(time_t* t) _PDCLIB_nothrow;
 
 _PDCLIB_END_EXTERN_C
 #endif

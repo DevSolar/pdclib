@@ -25,11 +25,11 @@ typedef _PDCLIB_wchar_t   wchar_t;
 #endif
 #endif
 
-wchar_t *wcschr( const wchar_t * haystack, wchar_t needle );
-wchar_t *wcsrchr( const wchar_t * haystack, wchar_t needle );
-size_t   wcslen( const wchar_t * string);
+wchar_t *wcschr( const wchar_t * haystack, wchar_t needle ) _PDCLIB_nothrow;
+wchar_t *wcsrchr( const wchar_t * haystack, wchar_t needle ) _PDCLIB_nothrow;
+size_t   wcslen( const wchar_t * string) _PDCLIB_nothrow;
 wchar_t *wcscpy( wchar_t * _PDCLIB_restrict dest, 
-                 const wchar_t * _PDCLIB_restrict src);
+                 const wchar_t * _PDCLIB_restrict src) _PDCLIB_nothrow;
 
 _PDCLIB_END_EXTERN_C
 #endif

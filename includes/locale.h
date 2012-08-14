@@ -90,12 +90,12 @@ extern struct lconv _PDCLIB_lconv;
    Otherwise, returns a pointer to a string associated with the specified
    category for the new locale.
 */
-char * setlocale( int category, const char * locale );
+char * setlocale( int category, const char * locale ) _PDCLIB_nothrow;
 
 /* Returns a struct lconv initialized to the values appropriate for the current
    locale setting.
 */
-struct lconv * localeconv( void );
+struct lconv * localeconv( void ) _PDCLIB_nothrow;
 
 _PDCLIB_END_EXTERN_C
 #endif
