@@ -72,12 +72,12 @@ The following shall be defined as functions:
 .Fn "size_t strlen" "const char *s"
 .\"
 .Pp
-.Sy #define _PDCLIB_POSIX_MIN(2008098L) || _PDCLIB_XOPEN_MIN(0)
+.Sy #define _XOPEN_SOURCE || _POSIX_C_SOURCE >= 200809L
 .br
 .Fn "char *strdup" "const char*src"
 .\"
 .Pp
-.Sy #define _PDCLIB_POSIX_MIN(2008098L)
+.Sy #define _POSIX_C_SOURCE >= 200809L
 .br
 .Fn "char *strndup" "const char*src" "size_t n"
 .\"
