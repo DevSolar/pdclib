@@ -336,6 +336,8 @@ typedef void * _PDCLIB_fd_t;
 /* The values of SEEK_SET, SEEK_CUR and SEEK_END, used by fseek().
    Since at least one platform (POSIX) uses the same symbols for its own "seek"
    function, we use whatever the host defines (if it does define them).
+
+   Win32 note: Must match Win32 API values (FILE_BEGIN/FILE_CURRENT/FILE_END)
 */
 #define _PDCLIB_SEEK_SET 0
 #define _PDCLIB_SEEK_CUR 1

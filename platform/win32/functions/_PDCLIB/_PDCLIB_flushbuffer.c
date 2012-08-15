@@ -33,6 +33,7 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
         BOOL res = WriteFile( stream->handle, stream->buffer + written, 
                               toWrite, &justWrote, NULL);
         written += justWrote;
+        stream->pos.offset += justWrote;
 
         if(!res) {
             stream->status |=_PDCLIB_ERRORFLAG;

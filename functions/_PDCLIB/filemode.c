@@ -15,6 +15,8 @@
 */
 unsigned int _PDCLIB_filemode( char const * const mode )
 {
+    if(!mode) return 0;
+
     unsigned rc = 0;
     switch ( mode[0] )
     {

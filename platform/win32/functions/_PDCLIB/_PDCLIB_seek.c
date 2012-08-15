@@ -10,11 +10,20 @@
 #include <errno.h>
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
+#include <windows.h>
 
+extern void _PDCLIB_w32errno( void );
 _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t offset, int whence )
 {
-    errno = ENOTSUP;
-    return EOF;
+    LARGE_INTEGER liOffset;
+    liOffset.QuadPart = offset;
+    BOOL rv = SetFilePointerEx( stream->handle, liOffset, &liOffset, whence );
+    if(!rv) {
+        _PDCLIB_w32errno();
+        return EOF;
+    }
+    stream->pos.offset = liOffset.QuadPart;
+    return liOffset.QuadPart;
 }
 
 #endif

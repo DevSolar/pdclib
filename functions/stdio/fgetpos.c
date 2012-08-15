@@ -31,6 +31,7 @@ int main( void )
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( fgetpos( fh, &pos1 ) == 0 );
     TESTCASE( fwrite( teststring, 1, strlen( teststring ), fh ) == strlen( teststring ) );
+    TESTCASE( (size_t)ftell( fh ) == strlen( teststring ) );
     TESTCASE( fgetpos( fh, &pos2 ) == 0 );
     TESTCASE( fsetpos( fh, &pos1 ) == 0 );
     TESTCASE( ftell( fh ) == 0 );

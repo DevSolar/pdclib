@@ -20,6 +20,10 @@ FILE * fopen( const char * _PDCLIB_restrict filename,
               const char * _PDCLIB_restrict mode )
 {
     int imode = _PDCLIB_filemode( mode );
+    
+    if( imode == 0 || filename == NULL )
+        return NULL;
+
     _PDCLIB_fd_t fd = _PDCLIB_open( filename, imode );
     if(fd == _PDCLIB_NOHANDLE) {
         return NULL;

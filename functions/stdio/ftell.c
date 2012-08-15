@@ -38,7 +38,8 @@ long int ftell( struct _PDCLIB_file_t * stream )
         _PDCLIB_errno = _PDCLIB_ERANGE;
         return -1;
     }
-    return (long int)( stream->pos.offset - ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx ) );
+    long int res = ( stream->pos.offset - ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx ) );
+    return res;
 }
 
 #endif
