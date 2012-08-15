@@ -59,6 +59,21 @@ HANDLE _PDCLIB_open( char const * const filename, unsigned int mode )
         NULL, creationDisposition, FILE_ATTRIBUTE_NORMAL, NULL);
 
     if(fd == INVALID_HANDLE_VALUE) {
+#if 0
+        DWORD dw = GetLastError();
+        char* msgBuf;
+        FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+            FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL,
+            dw,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+            (LPSTR) &msgBuf,
+            0, NULL );
+
+        fprintf(stderr, "Error: %s\n", msgBuf);
+#endif
         _PDCLIB_w32errno();
         return NULL;
     }

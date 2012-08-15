@@ -83,7 +83,7 @@ int main( void )
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file2 ) == 0 );
     TESTCASE( _PDCLIB_filelist == file1 );
-    TESTCASE( ( file2 = fopen( testfile1, "w" ) ) != NULL );
+    TESTCASE( ( file2 = fopen( testfile2, "w" ) ) != NULL );
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file1 ) == 0 );
     TESTCASE( _PDCLIB_filelist == file2 );
