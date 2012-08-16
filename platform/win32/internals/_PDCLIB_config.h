@@ -246,6 +246,18 @@ struct _PDCLIB_imaxdiv_t
 */
 #define _PDCLIB_DECIMAL_DIG 17
 
+/* Floating point types
+ *
+ * PDCLib (at present) assumes IEEE 754 floating point formats
+ * The following names are used:
+ *    SINGLE:   IEEE 754 single precision (32-bit)
+ *    DOUBLE:   IEEE 754 double precision (64-bit)
+ *    EXTENDED: IEEE 754 extended precision (80-bit, as x87)
+ */
+#define _PDCLIB_FLOAT_TYPE   SINGLE
+#define _PDCLIB_DOUBLE_TYPE  DOUBLE
+#define _PDCLIB_LDOUBLE_TYPE EXTENDED
+
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
 /* -------------------------------------------------------------------------- */

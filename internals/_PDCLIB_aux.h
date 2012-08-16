@@ -177,6 +177,7 @@
 
 #define _PDCLIB_cc( x, y )     x ## y
 #define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
+#define _PDCLIB_concat3( x, y, z ) _PDCLIB_concat( _PDCLIB_concat( x, y ), z )
 
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )
