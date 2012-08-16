@@ -28,22 +28,23 @@ if ! $(PDCLIB_NO_TEST) {
         regtest     = $(file:S=-regtest) ;
 
         Object $(testfile).o    : $(file) ;
-        Object $(regtestfile).o : $(file) ;
         MainFromObjects $(testfile)    : $(testfile).o $(CRT0) ;
-        MainFromObjects $(regtestfile) : $(regtestfile).o ;
         CCFLAGS on $(testfile).o += -DTEST $(PDCLIB_TEST_CCFLAGS) ;
-        CCFLAGS on $(regtestfile).o += -DTEST -DREGTEST 
-                                       $(PDCLIB_REGTEST_CCFLAGS) ;
-        CCHDRS on $(regtestfile).o = [ FIncludes [ FDirName testing ] ] ;
-
         LINKFLAGS on $(testfile)$(SUFEXE) += $(PDCLIB_TEST_LINKFLAGS) ;
-        LINKFLAGS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKFLAGS) ;
         LINKLIBS on $(testfile)$(SUFEXE) += $(PDCLIB_TEST_LINKLIBS) ;
-        LINKLIBS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKLIBS) ;
         LinkLibraries $(testfile) : $(PDCLIB) ;
-
         Test    $(test)    : $(testfile) ;
-        RegTest $(regtest) : $(regtestfile) ;
+
+        if ! $(PDCLIB_NO_REGTEST) {
+            Object $(regtestfile).o : $(file) ;
+            MainFromObjects $(regtestfile) : $(regtestfile).o ;
+            CCFLAGS on $(regtestfile).o += -DTEST -DREGTEST 
+                                    $(PDCLIB_REGTEST_CCFLAGS) ;
+            CCHDRS on $(regtestfile).o = [ FIncludes [ FDirName testing ] ] $(PDCLIB_REGTEST_CCHDRS) ;
+            LINKFLAGS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKFLAGS) ;
+            LINKLIBS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKLIBS) ;
+            RegTest $(regtest) : $(regtestfile) ;
+        }
     }
 }
 

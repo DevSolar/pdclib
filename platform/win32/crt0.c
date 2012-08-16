@@ -97,7 +97,8 @@ static LONG CALLBACK sehExceptionFilter( EXCEPTION_POINTERS * exInfo )
 }
 
 extern int main( int argc, char ** argv, char ** envp );
-_PDCLIB_noreturn void mainCRTStartup( void ) 
+
+void __cdecl mainCRTStartup( void ) 
 {
     stdin->handle  = GetStdHandle(STD_INPUT_HANDLE);
     stdout->handle = GetStdHandle(STD_OUTPUT_HANDLE);

@@ -64,11 +64,10 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
     }
 } else if $(PDCLIB_TOOLCHAIN) = "WATCOM" {
   ECHO "Watcom!" ;
-  CCFLAGS  = /zq /DWIN32 ;
-  C++FLAGS = /zq /DWIN32 ;
+  CCFLAGS  = /zq /DWIN32 /zls ;
+  C++FLAGS = /zq /DWIN32 /zls ;
   STDHDRS  = $(WATCOM)\\h\\nt ;
-
-  PDCLIB_CCFLAGS = "-za99 -zl" ;
+  PDCLIB_CCFLAGS = "-za99 -zl -s" ;
 } else {
   ECHO The value of PDCLIB_TOOLCHAIN is not recognized  ;
   ECHO Currently set to $(PDCLIB_TOOLCHAIN)  ;

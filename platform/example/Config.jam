@@ -4,7 +4,9 @@ rule PDCLibTargetHeaders {
     SubDirHdrs $(PDCLIB_TOP) platform example internals ;
 }
 
-PDCLIB_TEST_LINKFLAGS += -nostdlib ;
-PDCLIB_TEST_LINKLIBS += -lgcc ;
+if $(PDCLIB_TOOLCHAIN) = "gcc" {
+    PDCLIB_TEST_LINKFLAGS += -nostdlib ;
+    PDCLIB_TEST_LINKLIBS += -lgcc ;
+}
 
 PDCLIB_OPTIONS = nothread notime dlmalloc ;
