@@ -1,5 +1,7 @@
     {
+    assert(CHAR_MIN == -128);
     PRINTF_TEST( 4,   "-128", "%hhd", CHAR_MIN );
+    assert(CHAR_MAX == 127);
     PRINTF_TEST( 3,    "127", "%hhd", CHAR_MAX );
     PRINTF_TEST( 1,      "0", "%hhd", 0 );
     PRINTF_TEST( 6, "-32768",  "%hd", SHRT_MIN );

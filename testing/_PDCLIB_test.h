@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
+#include <assert.h>
 
 /* Some strings used for <string.h> and <stdlib.h> testing. */
 static char const abcde[] = "abcde";

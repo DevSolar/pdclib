@@ -274,10 +274,10 @@ struct _PDCLIB_imaxdiv_t
 
 #ifdef __GNUC__
   typedef char * _PDCLIB_va_list;
-  #define _PDCLIB_va_arg( ap, type ) __builtin_va_arg( ap, type )
-  #define _PDCLIB_va_copy( dest, src ) __builtin_va_copy( dest, src)
-  #define _PDCLIB_va_end( ap ) __builtin_va_end( ap ) 
-  #define _PDCLIB_va_start( ap, parmN ) __builtin_va_start( ap, parmN )
+  #define _PDCLIB_va_arg( ap, type ) (__builtin_va_arg( (ap), type ))
+  #define _PDCLIB_va_copy( dest, src ) (__builtin_va_copy( (dest), (src) ))
+  #define _PDCLIB_va_end( ap ) (__builtin_va_end( ap ) )
+  #define _PDCLIB_va_start( ap, parmN ) (__builtin_va_start( (ap), (parmN) ))
 #else
   #error Compiler support please
 #endif
