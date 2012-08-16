@@ -8,16 +8,29 @@ if ! $(PDCLIB_HAVE_PLATFORM) && ! $(PDCLIB_PLATFORM) {
     } else if $(UNIX) {
         PDCLIB_PLATFORM = "posix" ;
     } else {
-        ECHO "PDCLIB_PLATFORM not set and platform not automatically detected" ;
-        ECHO "Set PDCLIB_PLATFORM to the platform to be built for" ;
+        ECHO PDCLIB_PLATFORM not set and platform not automatically detected ;
+        ECHO Set PDCLIB_PLATFORM to the platform to be built for ;
         EXIT ;
     }
     PDCLIB_HAVE_PLATFORM = 1 ;
 }
 
-#if $(CC) = "gcc" {
-# TODO: Better toolchain handling
+if $(PDCLIB_TOOLCHAIN) = "" {
+  local __ccparts = [ SPLIT $(CC) : "-" ] ;
+  if $(JAM_TOOLSET) = "MINGW" || "gcc" in $(__ccparts) 
+      || "clang" in $(__ccparts) {
+    # GCC / GCC-alike
+    PDCLIB_TOOLCHAIN = "gcc" ;
+  } else if $(JAM_TOOLSET) != "" {
+    PDCLIB_TOOLCHAIN = $(JAM_TOOLSET) ;
+  } else {
+    ECHO PDCLIB_TOOLCHAIN is unset and I can't glean what toolset is being ;
+    ECHO used from your environment. Please set it.  ;
+    EXIT ;
+  }
+}
 
+if $(PDCLIB_TOOLCHAIN) = "gcc" {
     # No -Wcast-align      : spurious warnings when using char* to do pointer 
     #                        arithmetic
     # No -Winline          : when compiling with e.g. -Os causes spurious 
@@ -49,7 +62,18 @@ if ! $(PDCLIB_HAVE_PLATFORM) && ! $(PDCLIB_PLATFORM) {
     {
         $(LINK) $(LINKFLAGS) -o $(<) $(UNDEFS) $(>) -Wl,--start-group $(NEEDLIBS) $(LINKLIBS) -Wl,--end-group
     }
-#}
+} else if $(PDCLIB_TOOLCHAIN) = "WATCOM" {
+  ECHO "Watcom!" ;
+  CCFLAGS  = /zq /DWIN32 ;
+  C++FLAGS = /zq /DWIN32 ;
+  STDHDRS  = $(WATCOM)\\h\\nt ;
+
+  PDCLIB_CCFLAGS = "-za99 -zl" ;
+} else {
+  ECHO The value of PDCLIB_TOOLCHAIN is not recognized  ;
+  ECHO Currently set to $(PDCLIB_TOOLCHAIN)  ;
+  EXIT ;
+}
 
 if $(PDCLIB_PLATFORM) {
     include [ FDirName $(PDCLIB_TOP) platform $(PDCLIB_PLATFORM) Config.jam ] ;

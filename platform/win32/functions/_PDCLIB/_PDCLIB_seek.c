@@ -12,9 +12,11 @@
 #include <_PDCLIB_glue.h>
 #include <windows.h>
 
+#if _PDCLIB_C_MIN(2011)
 _Static_assert(SEEK_SET == FILE_BEGIN, "SEEK_SET is incorrect");
 _Static_assert(SEEK_CUR == FILE_CURRENT, "SEEK_CUR is incorrect");
 _Static_assert(SEEK_END == FILE_END, "SEEK_END is incorrect");
+#endif
 
 extern void _PDCLIB_w32errno( void );
 _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t offset, int whence )

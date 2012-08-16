@@ -27,12 +27,6 @@
 /* specific platforms, e.g. by swapping int instead of char.                  */
 #define _PDCLIB_memswp( i, j, size ) char tmp; do { tmp = *i; *i++ = *j; *j++ = tmp; } while ( --size );
 
-/* Define this to some compiler directive that can be written after the       */
-/* parameter list of a function declaration to indicate the function does     */
-/* never return. If your compiler does not support such a directive, define   */
-/* to nothing. (This is to avoid warnings with the exit functions under GCC.) */
-#define _PDCLIB_NORETURN __attribute__(( noreturn ))
-
 /* The maximum value that errno can be set to. This is used to set the size   */
 /* of the array in struct lconv (<locale.h>) holding error messages for the   */
 /* strerror() and perror() functions. (If you change this value because you   */

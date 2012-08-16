@@ -1,8 +1,9 @@
-#include <windows.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <wchar.h> // Watcom bug: winnt.h assumes string.h defines wchar_t
+#include <windows.h>
 
 static char ** argvToAnsi( wchar_t ** wargv, int argc )
 {
