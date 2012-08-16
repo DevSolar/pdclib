@@ -12,6 +12,10 @@
 #include <_PDCLIB_glue.h>
 #include <windows.h>
 
+_Static_assert(SEEK_SET == FILE_BEGIN, "SEEK_SET is incorrect");
+_Static_assert(SEEK_CUR == FILE_CURRENT, "SEEK_CUR is incorrect");
+_Static_assert(SEEK_END == FILE_END, "SEEK_END is incorrect");
+
 extern void _PDCLIB_w32errno( void );
 _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t offset, int whence )
 {
@@ -22,6 +26,10 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
         _PDCLIB_w32errno();
         return EOF;
     }
+
+    stream->ungetidx = 0;
+    stream->bufidx = 0;
+    stream->bufend = 0;
     stream->pos.offset = liOffset.QuadPart;
     return liOffset.QuadPart;
 }
