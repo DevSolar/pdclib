@@ -1644,7 +1644,6 @@ unsigned char _BitScanReverse(unsigned long *index, unsigned long mask);
    is unlikely to be needed, but is supplied just in case.
 */
 #define MMAP_FLAGS           (MAP_PRIVATE)
-static int dev_zero_fd = -1; /* Cached file descriptor for /dev/zero. */
 #define MMAP_DEFAULT(s) ((dev_zero_fd < 0) ? \
            (dev_zero_fd = open("/dev/zero", O_RDWR), \
             mmap(0, (s), MMAP_PROT, MMAP_FLAGS, dev_zero_fd, 0)) : \
