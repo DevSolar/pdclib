@@ -17,6 +17,8 @@
 #include <errno.h>
 #include <windows.h>
 
+void _PDCLIB_w32errno( void );
+
 int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
 {
     if ( ! ( stream->status & _PDCLIB_FBIN ) )
