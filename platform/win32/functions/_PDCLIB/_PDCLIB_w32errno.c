@@ -14,6 +14,8 @@
 #include <wchar.h> // Watcom bug: winnt.h assumes string.h defines wchar_t
 #include <windows.h>
 
+void _PDCLIB_w32errno(void);
+
 void _PDCLIB_w32errno(void)
 {
     // Not exhaustive
