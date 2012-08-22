@@ -25,10 +25,10 @@ enum {
 };
 
 #define ONCE_FLAG_INIT _PDCLIB_ONCE_FLAG_INIT
-#if defined(_PDCLIB_ONCE_FLAG_DONE)
+#if defined(_PDCLIB_ONCE_FLAG_IS_DONE)
 static inline void call_once(once_flag *flag, void (*func)(void))
 {
-	if(*flag != _PDCLIB_ONCE_FLAG_DONE) {
+	if(_PDCLIB_ONCE_FLAG_IS_DONE(flag)) {
 		_PDCLIB_call_once(flag, func);
 	}
 }
