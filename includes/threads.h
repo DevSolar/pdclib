@@ -28,7 +28,7 @@ enum {
 #if defined(_PDCLIB_ONCE_FLAG_IS_DONE)
 static inline void call_once(once_flag *flag, void (*func)(void))
 {
-	if(_PDCLIB_ONCE_FLAG_IS_DONE(flag)) {
+	if(!_PDCLIB_ONCE_FLAG_IS_DONE(flag)) {
 		_PDCLIB_call_once(flag, func);
 	}
 }
