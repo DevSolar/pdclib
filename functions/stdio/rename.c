@@ -46,7 +46,7 @@ int main( void )
     TESTCASE( fopen( testfile1, "r" ) == NULL );
     TESTCASE( fopen( testfile2, "r" ) == NULL );
     /* rename file 1 to file 2 - expected to fail */
-    TESTCASE( rename( testfile1, testfile2 ) == -1 );
+    TESTCASE( rename( testfile1, testfile2 ) != 0 );
     /* create file 1 */
     TESTCASE( ( file = fopen( testfile1, "w" ) ) != NULL );
     TESTCASE( fputs( "x", file ) != EOF );
@@ -71,7 +71,7 @@ int main( void )
        _PDCLIB_rename() itself.
     */
     /* NOREG as glibc overwrites existing destination file. */
-    TESTCASE_NOREG( rename( testfile1, testfile2 ) == -1 );
+    TESTCASE_NOREG( rename( testfile1, testfile2 ) != 0 );
     /* remove both files */
     TESTCASE( remove( testfile1 ) == 0 );
     TESTCASE( remove( testfile2 ) == 0 );
