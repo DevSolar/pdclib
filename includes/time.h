@@ -17,6 +17,8 @@ typedef _PDCLIB_size_t size_t;
 typedef _PDCLIB_time_t  time_t;
 typedef _PDCLIB_clock_t clock_t;
 
+#define TIME_UTC _PDCLIB_TIME_UTC
+
 #ifndef _PDCLIB_STRUCT_TIMESPEC_DEFINED
 #define _PDCLIB_STRUCT_TIMESPEC_DEFINED
 _PDCLIB_DEFINE_STRUCT_TIMESPEC()
@@ -27,7 +29,8 @@ _PDCLIB_DEFINE_STRUCT_TIMESPEC()
 _PDCLIB_DEFINE_STRUCT_TM()
 #endif
 
-time_t time(time_t* t) _PDCLIB_nothrow;
+time_t time( time_t* t ) _PDCLIB_nothrow;
+int timespec_get( struct timespec *ts, int base ) _PDCLIB_nothrow;
 
 _PDCLIB_END_EXTERN_C
 #endif

@@ -219,6 +219,19 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_clock double
 #define _PDCLIB_CLOCKS_PER_SEC 1000000
 
+/* <time.h>: TIME_UTC
+ *
+ * The TIME_UTC parameter is passed to the timespec_get function in order to get
+ * the system time in UTC since an implementation defined epoch (not necessarily
+ * the same as that used for time_t). That said, on POSIX the obvious 
+ * implementation of timespec_get for TIME_UTC is to wrap 
+ * clock_gettime(CLOCK_REALTIME, ...), which is defined as time in UTC since the
+ * same epoch.
+ *
+ * This may be any non-zero integer value.
+ */
+#define _PDCLIB_TIME_UTC 1
+
 /* -------------------------------------------------------------------------- */
 /* Floating Point                                                             */
 /* -------------------------------------------------------------------------- */
