@@ -61,7 +61,7 @@ int cnd_wait(cnd_t *cond, mtx_t *mtx) _PDCLIB_nothrow;
 #if defined(_PDCLIB_THRD_T)
 #define _PDCLIB_THRD_HAVE_MISC
 typedef _PDCLIB_THRD_T 	thrd_t;
-typedef int (*)(void*)  thrd_start_t;
+typedef int (*thrd_start_t)(void*);
 
 int thrd_create(thrd_t *thr, thrd_start_t func, void *arg) _PDCLIB_nothrow;
 thrd_t thrd_current(void) _PDCLIB_nothrow;
