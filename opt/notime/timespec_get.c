@@ -1,10 +1,9 @@
 #include <time.h>
-
 #ifndef REGTEST
-time_t time(time_t* t)
+
+int timespec_get( struct timespec *ts, int base )
 {
-	if(t) *t = -1;
-	return -1;
+    return 0;
 }
 #endif
 
