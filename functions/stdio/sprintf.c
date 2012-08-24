@@ -30,7 +30,7 @@ int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ..
 
 #include <_PDCLIB_test.h>
 
-#define testprintf( s, format, ... ) sprintf( s, format, __VA_ARGS__ )
+#define testprintf( s, ... ) sprintf( s, __VA_ARGS__ )
 
 int main( void )
 {

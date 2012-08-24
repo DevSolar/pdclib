@@ -32,9 +32,9 @@
 #define PREP_RESULT_BUFFER
 #endif
 
-#define PRINTF_TEST( expected_rc, expected_string, format, ... ) do { \
+#define PRINTF_TEST( expected_rc, expected_string, ... ) do { \
         PREP_RESULT_BUFFER \
-        int actual_rc = testprintf( target, format, __VA_ARGS__ ); \
+        int actual_rc = testprintf( target, __VA_ARGS__ ); \
         if ( ( actual_rc != expected_rc ) || \
              ( RESULT_MISMATCH( target, expected_string ) ) ) \
         { \
@@ -54,10 +54,10 @@
         memcpy( source, input_string, sizeof( input_string ) );
 #endif
 
-#define SCANF_TEST( expected_rc, input_string, format, ... ) do { \
+#define SCANF_TEST( expected_rc, input_string, ... ) do { \
         int actual_rc; \
         PREPARE_SOURCE( input_string ); \
-        actual_rc = testscanf( source, format, __VA_ARGS__ ); \
+        actual_rc = testscanf( source, __VA_ARGS__ ); \
         if ( actual_rc != expected_rc ) \
         { \
             ++TEST_RESULTS; \

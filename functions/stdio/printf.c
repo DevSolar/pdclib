@@ -29,7 +29,7 @@ int printf( const char * _PDCLIB_restrict format, ... )
 
 #include <_PDCLIB_test.h>
 
-#define testprintf( stream, format, ... ) printf( format, __VA_ARGS__ )
+#define testprintf( stream, ... ) printf( __VA_ARGS__ )
 
 int main( void )
 {

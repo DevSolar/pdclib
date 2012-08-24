@@ -29,7 +29,7 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
 
 #include <_PDCLIB_test.h>
 
-#define testprintf( stream, format, ... ) fprintf( stream, format, __VA_ARGS__ )
+#define testprintf( stream, ... ) fprintf( stream, __VA_ARGS__ )
 
 int main( void )
 {

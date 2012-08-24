@@ -125,3 +125,303 @@
     }
 #endif
     }
+
+/******************************************************************************
+ * NOTE: The following test cases are imported from the Tyndur project. They  *
+ *       are therefore under the license of said project, not CC0.            *
+ *       As said code comprises test cases, it does not form part of the      *
+ *       final compiled library, and has no bearing on its licensing.         *
+ *                                                                            *
+ *       See bug PDCLIB-6 for full details                                    *
+ ******************************************************************************/
+/*
+ * Copyright (c) 2011 The tyndur Project. All rights reserved.
+ *
+ * This code is derived from software contributed to the tyndur Project
+ * by Kevin Wolf.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+    {
+    /* Ein String ohne alles */
+    PRINTF_TEST(12, "Hallo heimur", "Hallo heimur");
+    /* Einfache Konvertierungen */
+    PRINTF_TEST(12, "Hallo heimur", "%s", "Hallo heimur");
+    PRINTF_TEST(4, "1024", "%d", 1024);
+    PRINTF_TEST(5, "-1024", "%d", -1024);
+    PRINTF_TEST(4, "1024", "%i", 1024);
+    PRINTF_TEST(5, "-1024", "%i", -1024);
+    PRINTF_TEST(4, "1024", "%u", 1024u);
+    PRINTF_TEST(10, "4294966272", "%u", -1024u);
+    PRINTF_TEST(3, "777", "%o", 0777u);
+    PRINTF_TEST(11, "37777777001", "%o", -0777u);
+    PRINTF_TEST(8, "1234abcd", "%x", 0x1234abcdu);
+    PRINTF_TEST(8, "edcb5433", "%x", -0x1234abcdu);
+    PRINTF_TEST(8, "1234ABCD", "%X", 0x1234abcdu);
+    PRINTF_TEST(8, "EDCB5433", "%X", -0x1234abcdu);
+    PRINTF_TEST(1, "x", "%c", 'x');
+    PRINTF_TEST(1, "%", "%%");
+    /* Mit %c kann man auch Nullbytes ausgeben */
+    PRINTF_TEST(1, "\0", "%c", '\0');
+    /* Vorzeichen erzwingen (Flag +) */
+    PRINTF_TEST(12, "Hallo heimur", "%+s", "Hallo heimur");
+    PRINTF_TEST(5, "+1024", "%+d", 1024);
+    PRINTF_TEST(5, "-1024", "%+d", -1024);
+    PRINTF_TEST(5, "+1024", "%+i", 1024);
+    PRINTF_TEST(5, "-1024", "%+i", -1024);
+    PRINTF_TEST(4, "1024", "%+u", 1024u);
+    PRINTF_TEST(10, "4294966272", "%+u", -1024u);
+    PRINTF_TEST(3, "777", "%+o", 0777u);
+    PRINTF_TEST(11, "37777777001", "%+o", -0777u);
+    PRINTF_TEST(8, "1234abcd", "%+x", 0x1234abcdu);
+    PRINTF_TEST(8, "edcb5433", "%+x", -0x1234abcdu);
+    PRINTF_TEST(8, "1234ABCD", "%+X", 0x1234abcdu);
+    PRINTF_TEST(8, "EDCB5433", "%+X", -0x1234abcdu);
+    PRINTF_TEST(1, "x", "%+c", 'x');
+    /* Vorzeichenplatzhalter erzwingen (Flag <space>) */
+    PRINTF_TEST(12, "Hallo heimur", "% s", "Hallo heimur");
+    PRINTF_TEST(5, " 1024", "% d", 1024);
+    PRINTF_TEST(5, "-1024", "% d", -1024);
+    PRINTF_TEST(5, " 1024", "% i", 1024);
+    PRINTF_TEST(5, "-1024", "% i", -1024);
+    PRINTF_TEST(4, "1024", "% u", 1024u);
+    PRINTF_TEST(10, "4294966272", "% u", -1024u);
+    PRINTF_TEST(3, "777", "% o", 0777u);
+    PRINTF_TEST(11, "37777777001", "% o", -0777u);
+    PRINTF_TEST(8, "1234abcd", "% x", 0x1234abcdu);
+    PRINTF_TEST(8, "edcb5433", "% x", -0x1234abcdu);
+    PRINTF_TEST(8, "1234ABCD", "% X", 0x1234abcdu);
+    PRINTF_TEST(8, "EDCB5433", "% X", -0x1234abcdu);
+    PRINTF_TEST(1, "x", "% c", 'x');
+    /* Flag + hat Vorrang über <space> */
+    PRINTF_TEST(12, "Hallo heimur", "%+ s", "Hallo heimur");
+    PRINTF_TEST(5, "+1024", "%+ d", 1024);
+    PRINTF_TEST(5, "-1024", "%+ d", -1024);
+    PRINTF_TEST(5, "+1024", "%+ i", 1024);
+    PRINTF_TEST(5, "-1024", "%+ i", -1024);
+    PRINTF_TEST(4, "1024", "%+ u", 1024u);
+    PRINTF_TEST(10, "4294966272", "%+ u", -1024u);
+    PRINTF_TEST(3, "777", "%+ o", 0777u);
+    PRINTF_TEST(11, "37777777001", "%+ o", -0777u);
+    PRINTF_TEST(8, "1234abcd", "%+ x", 0x1234abcdu);
+    PRINTF_TEST(8, "edcb5433", "%+ x", -0x1234abcdu);
+    PRINTF_TEST(8, "1234ABCD", "%+ X", 0x1234abcdu);
+    PRINTF_TEST(8, "EDCB5433", "%+ X", -0x1234abcdu);
+    PRINTF_TEST(1, "x", "%+ c", 'x');
+    /* Alternative Form */
+    PRINTF_TEST(4, "0777", "%#o", 0777u);
+    PRINTF_TEST(12, "037777777001", "%#o", -0777u);
+    PRINTF_TEST(10, "0x1234abcd", "%#x", 0x1234abcdu);
+    PRINTF_TEST(10, "0xedcb5433", "%#x", -0x1234abcdu);
+    PRINTF_TEST(10, "0X1234ABCD", "%#X", 0x1234abcdu);
+    PRINTF_TEST(10, "0XEDCB5433", "%#X", -0x1234abcdu);
+    PRINTF_TEST(1, "0", "%#o", 0u);
+    PRINTF_TEST(1, "0", "%#x", 0u);
+    PRINTF_TEST(1, "0", "%#X", 0u);
+    /* Feldbreite: Kleiner als Ausgabe */
+    PRINTF_TEST(12, "Hallo heimur", "%1s", "Hallo heimur");
+    PRINTF_TEST(4, "1024", "%1d", 1024);
+    PRINTF_TEST(5, "-1024", "%1d", -1024);
+    PRINTF_TEST(4, "1024", "%1i", 1024);
+    PRINTF_TEST(5, "-1024", "%1i", -1024);
+    PRINTF_TEST(4, "1024", "%1u", 1024u);
+    PRINTF_TEST(10, "4294966272", "%1u", -1024u);
+    PRINTF_TEST(3, "777", "%1o", 0777u);
+    PRINTF_TEST(11, "37777777001", "%1o", -0777u);
+    PRINTF_TEST(8, "1234abcd", "%1x", 0x1234abcdu);
+    PRINTF_TEST(8, "edcb5433", "%1x", -0x1234abcdu);
+    PRINTF_TEST(8, "1234ABCD", "%1X", 0x1234abcdu);
+    PRINTF_TEST(8, "EDCB5433", "%1X", -0x1234abcdu);
+    PRINTF_TEST(1, "x", "%1c", 'x');
+    /* Feldbreite: Größer als Ausgabe */
+    PRINTF_TEST(20, "               Hallo", "%20s", "Hallo");
+    PRINTF_TEST(20, "                1024", "%20d", 1024);
+    PRINTF_TEST(20, "               -1024", "%20d", -1024);
+    PRINTF_TEST(20, "                1024", "%20i", 1024);
+    PRINTF_TEST(20, "               -1024", "%20i", -1024);
+    PRINTF_TEST(20, "                1024", "%20u", 1024u);
+    PRINTF_TEST(20, "          4294966272", "%20u", -1024u);
+    PRINTF_TEST(20, "                 777", "%20o", 0777u);
+    PRINTF_TEST(20, "         37777777001", "%20o", -0777u);
+    PRINTF_TEST(20, "            1234abcd", "%20x", 0x1234abcdu);
+    PRINTF_TEST(20, "            edcb5433", "%20x", -0x1234abcdu);
+    PRINTF_TEST(20, "            1234ABCD", "%20X", 0x1234abcdu);
+    PRINTF_TEST(20, "            EDCB5433", "%20X", -0x1234abcdu);
+    PRINTF_TEST(20, "                   x", "%20c", 'x');
+    /* Feldbreite: Linksbündig */
+    PRINTF_TEST(20, "Hallo               ", "%-20s", "Hallo");
+    PRINTF_TEST(20, "1024                ", "%-20d", 1024);
+    PRINTF_TEST(20, "-1024               ", "%-20d", -1024);
+    PRINTF_TEST(20, "1024                ", "%-20i", 1024);
+    PRINTF_TEST(20, "-1024               ", "%-20i", -1024);
+    PRINTF_TEST(20, "1024                ", "%-20u", 1024u);
+    PRINTF_TEST(20, "4294966272          ", "%-20u", -1024u);
+    PRINTF_TEST(20, "777                 ", "%-20o", 0777u);
+    PRINTF_TEST(20, "37777777001         ", "%-20o", -0777u);
+    PRINTF_TEST(20, "1234abcd            ", "%-20x", 0x1234abcdu);
+    PRINTF_TEST(20, "edcb5433            ", "%-20x", -0x1234abcdu);
+    PRINTF_TEST(20, "1234ABCD            ", "%-20X", 0x1234abcdu);
+    PRINTF_TEST(20, "EDCB5433            ", "%-20X", -0x1234abcdu);
+    PRINTF_TEST(20, "x                   ", "%-20c", 'x');
+    /* Feldbreite: Padding mit 0 */
+    PRINTF_TEST(20, "00000000000000001024", "%020d", 1024);
+    PRINTF_TEST(20, "-0000000000000001024", "%020d", -1024);
+    PRINTF_TEST(20, "00000000000000001024", "%020i", 1024);
+    PRINTF_TEST(20, "-0000000000000001024", "%020i", -1024);
+    PRINTF_TEST(20, "00000000000000001024", "%020u", 1024u);
+    PRINTF_TEST(20, "00000000004294966272", "%020u", -1024u);
+    PRINTF_TEST(20, "00000000000000000777", "%020o", 0777u);
+    PRINTF_TEST(20, "00000000037777777001", "%020o", -0777u);
+    PRINTF_TEST(20, "0000000000001234abcd", "%020x", 0x1234abcdu);
+    PRINTF_TEST(20, "000000000000edcb5433", "%020x", -0x1234abcdu);
+    PRINTF_TEST(20, "0000000000001234ABCD", "%020X", 0x1234abcdu);
+    PRINTF_TEST(20, "000000000000EDCB5433", "%020X", -0x1234abcdu);
+    /* Feldbreite: Padding und alternative Form */
+    PRINTF_TEST(20, "                0777", "%#20o", 0777u);
+    PRINTF_TEST(20, "        037777777001", "%#20o", -0777u);
+    PRINTF_TEST(20, "          0x1234abcd", "%#20x", 0x1234abcdu);
+    PRINTF_TEST(20, "          0xedcb5433", "%#20x", -0x1234abcdu);
+    PRINTF_TEST(20, "          0X1234ABCD", "%#20X", 0x1234abcdu);
+    PRINTF_TEST(20, "          0XEDCB5433", "%#20X", -0x1234abcdu);
+    PRINTF_TEST(20, "00000000000000000777", "%#020o", 0777u);
+    PRINTF_TEST(20, "00000000037777777001", "%#020o", -0777u);
+    PRINTF_TEST(20, "0x00000000001234abcd", "%#020x", 0x1234abcdu);
+    PRINTF_TEST(20, "0x0000000000edcb5433", "%#020x", -0x1234abcdu);
+    PRINTF_TEST(20, "0X00000000001234ABCD", "%#020X", 0x1234abcdu);
+    PRINTF_TEST(20, "0X0000000000EDCB5433", "%#020X", -0x1234abcdu);
+    /* Feldbreite: - hat Vorrang vor 0 */
+    PRINTF_TEST(20, "Hallo               ", "%0-20s", "Hallo");
+    PRINTF_TEST(20, "1024                ", "%0-20d", 1024);
+    PRINTF_TEST(20, "-1024               ", "%0-20d", -1024);
+    PRINTF_TEST(20, "1024                ", "%0-20i", 1024);
+    PRINTF_TEST(20, "-1024               ", "%0-20i", -1024);
+    PRINTF_TEST(20, "1024                ", "%0-20u", 1024u);
+    PRINTF_TEST(20, "4294966272          ", "%0-20u", -1024u);
+    PRINTF_TEST(20, "777                 ", "%-020o", 0777u);
+    PRINTF_TEST(20, "37777777001         ", "%-020o", -0777u);
+    PRINTF_TEST(20, "1234abcd            ", "%-020x", 0x1234abcdu);
+    PRINTF_TEST(20, "edcb5433            ", "%-020x", -0x1234abcdu);
+    PRINTF_TEST(20, "1234ABCD            ", "%-020X", 0x1234abcdu);
+    PRINTF_TEST(20, "EDCB5433            ", "%-020X", -0x1234abcdu);
+    PRINTF_TEST(20, "x                   ", "%-020c", 'x');
+    /* Feldbreite: Aus Parameter */
+    PRINTF_TEST(20, "               Hallo", "%*s", 20, "Hallo");
+    PRINTF_TEST(20, "                1024", "%*d", 20, 1024);
+    PRINTF_TEST(20, "               -1024", "%*d", 20, -1024);
+    PRINTF_TEST(20, "                1024", "%*i", 20, 1024);
+    PRINTF_TEST(20, "               -1024", "%*i", 20, -1024);
+    PRINTF_TEST(20, "                1024", "%*u", 20, 1024u);
+    PRINTF_TEST(20, "          4294966272", "%*u", 20, -1024u);
+    PRINTF_TEST(20, "                 777", "%*o", 20, 0777u);
+    PRINTF_TEST(20, "         37777777001", "%*o", 20, -0777u);
+    PRINTF_TEST(20, "            1234abcd", "%*x", 20, 0x1234abcdu);
+    PRINTF_TEST(20, "            edcb5433", "%*x", 20, -0x1234abcdu);
+    PRINTF_TEST(20, "            1234ABCD", "%*X", 20, 0x1234abcdu);
+    PRINTF_TEST(20, "            EDCB5433", "%*X", 20, -0x1234abcdu);
+    PRINTF_TEST(20, "                   x", "%*c", 20, 'x');
+    /* Präzision / Mindestanzahl von Ziffern */
+    PRINTF_TEST(12, "Hallo heimur", "%.20s", "Hallo heimur");
+    PRINTF_TEST(20, "00000000000000001024", "%.20d", 1024);
+    PRINTF_TEST(21, "-00000000000000001024", "%.20d", -1024);
+    PRINTF_TEST(20, "00000000000000001024", "%.20i", 1024);
+    PRINTF_TEST(21, "-00000000000000001024", "%.20i", -1024);
+    PRINTF_TEST(20, "00000000000000001024", "%.20u", 1024u);
+    PRINTF_TEST(20, "00000000004294966272", "%.20u", -1024u);
+    PRINTF_TEST(20, "00000000000000000777", "%.20o", 0777u);
+    PRINTF_TEST(20, "00000000037777777001", "%.20o", -0777u);
+    PRINTF_TEST(20, "0000000000001234abcd", "%.20x", 0x1234abcdu);
+    PRINTF_TEST(20, "000000000000edcb5433", "%.20x", -0x1234abcdu);
+    PRINTF_TEST(20, "0000000000001234ABCD", "%.20X", 0x1234abcdu);
+    PRINTF_TEST(20, "000000000000EDCB5433", "%.20X", -0x1234abcdu);
+    /* Feldbreite und Präzision */
+    PRINTF_TEST(20, "               Hallo", "%20.5s", "Hallo heimur");
+    PRINTF_TEST(20, "               01024", "%20.5d", 1024);
+    PRINTF_TEST(20, "              -01024", "%20.5d", -1024);
+    PRINTF_TEST(20, "               01024", "%20.5i", 1024);
+    PRINTF_TEST(20, "              -01024", "%20.5i", -1024);
+    PRINTF_TEST(20, "               01024", "%20.5u", 1024u);
+    PRINTF_TEST(20, "          4294966272", "%20.5u", -1024u);
+    PRINTF_TEST(20, "               00777", "%20.5o", 0777u);
+    PRINTF_TEST(20, "         37777777001", "%20.5o", -0777u);
+    PRINTF_TEST(20, "            1234abcd", "%20.5x", 0x1234abcdu);
+    PRINTF_TEST(20, "          00edcb5433", "%20.10x", -0x1234abcdu);
+    PRINTF_TEST(20, "            1234ABCD", "%20.5X", 0x1234abcdu);
+    PRINTF_TEST(20, "          00EDCB5433", "%20.10X", -0x1234abcdu);
+    /* Präzision: 0 wird ignoriert */
+    PRINTF_TEST(20, "               Hallo", "%020.5s", "Hallo heimur");
+    PRINTF_TEST(20, "               01024", "%020.5d", 1024);
+    PRINTF_TEST(20, "              -01024", "%020.5d", -1024);
+    PRINTF_TEST(20, "               01024", "%020.5i", 1024);
+    PRINTF_TEST(20, "              -01024", "%020.5i", -1024);
+    PRINTF_TEST(20, "               01024", "%020.5u", 1024u);
+    PRINTF_TEST(20, "          4294966272", "%020.5u", -1024u);
+    PRINTF_TEST(20, "               00777", "%020.5o", 0777u);
+    PRINTF_TEST(20, "         37777777001", "%020.5o", -0777u);
+    PRINTF_TEST(20, "            1234abcd", "%020.5x", 0x1234abcdu);
+    PRINTF_TEST(20, "          00edcb5433", "%020.10x", -0x1234abcdu);
+    PRINTF_TEST(20, "            1234ABCD", "%020.5X", 0x1234abcdu);
+    PRINTF_TEST(20, "          00EDCB5433", "%020.10X", -0x1234abcdu);
+    /* Präzision 0 */
+    PRINTF_TEST(0, "", "%.0s", "Hallo heimur");
+    PRINTF_TEST(20, "                    ", "%20.0s", "Hallo heimur");
+    PRINTF_TEST(0, "", "%.s", "Hallo heimur");
+    PRINTF_TEST(20, "                    ", "%20.s", "Hallo heimur");
+    PRINTF_TEST(20, "                1024", "%20.0d", 1024);
+    PRINTF_TEST(20, "               -1024", "%20.d", -1024);
+    PRINTF_TEST(20, "                    ", "%20.d", 0);
+    PRINTF_TEST(20, "                1024", "%20.0i", 1024);
+    PRINTF_TEST(20, "               -1024", "%20.i", -1024);
+    PRINTF_TEST(20, "                    ", "%20.i", 0);
+    PRINTF_TEST(20, "                1024", "%20.u", 1024u);
+    PRINTF_TEST(20, "          4294966272", "%20.0u", -1024u);
+    PRINTF_TEST(20, "                    ", "%20.u", 0u);
+    PRINTF_TEST(20, "                 777", "%20.o", 0777u);
+    PRINTF_TEST(20, "         37777777001", "%20.0o", -0777u);
+    PRINTF_TEST(20, "                    ", "%20.o", 0u);
+    PRINTF_TEST(20, "            1234abcd", "%20.x", 0x1234abcdu);
+    PRINTF_TEST(20, "            edcb5433", "%20.0x", -0x1234abcdu);
+    PRINTF_TEST(20, "                    ", "%20.x", 0u);
+    PRINTF_TEST(20, "            1234ABCD", "%20.X", 0x1234abcdu);
+    PRINTF_TEST(20, "            EDCB5433", "%20.0X", -0x1234abcdu);
+    PRINTF_TEST(20, "                    ", "%20.X", 0u);
+    /* Negative Präzision wird ignoriert */
+    /* XXX glibc tut nicht, was ich erwartet habe, vorerst deaktiviert... */
+    /*
+     * Präzision und Feldbreite aus Parameter.
+     * + hat Vorrang vor <space>, - hat Vorrang vor 0 (das eh ignoriert wird,
+     * weil eine Präzision angegeben ist)
+     */
+    PRINTF_TEST(20, "Hallo               ", "% -0+*.*s", 20, 5, "Hallo heimur");
+    PRINTF_TEST(20, "+01024              ", "% -0+*.*d", 20, 5, 1024);
+    PRINTF_TEST(20, "-01024              ", "% -0+*.*d", 20, 5, -1024);
+    PRINTF_TEST(20, "+01024              ", "% -0+*.*i", 20, 5, 1024);
+    PRINTF_TEST(20, "-01024              ", "% 0-+*.*i", 20, 5, -1024);
+    PRINTF_TEST(20, "01024               ", "% 0-+*.*u", 20, 5, 1024u);
+    PRINTF_TEST(20, "4294966272          ", "% 0-+*.*u", 20, 5, -1024u);
+    PRINTF_TEST(20, "00777               ", "%+ -0*.*o", 20, 5, 0777u);
+    PRINTF_TEST(20, "37777777001         ", "%+ -0*.*o", 20, 5, -0777u);
+    PRINTF_TEST(20, "1234abcd            ", "%+ -0*.*x", 20, 5, 0x1234abcdu);
+    PRINTF_TEST(20, "00edcb5433          ", "%+ -0*.*x", 20, 10, -0x1234abcdu);
+    PRINTF_TEST(20, "1234ABCD            ", "% -+0*.*X", 20, 5, 0x1234abcdu);
+    PRINTF_TEST(20, "00EDCB5433          ", "% -+0*.*X", 20, 10, -0x1234abcdu);
+    }
+/******************************************************************************/
