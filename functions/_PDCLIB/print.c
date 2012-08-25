@@ -315,14 +315,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         }
         else
         {
-            char * endptr;
-            status->prec = (int)strtol( spec, &endptr, 10 );
-            if ( spec == endptr )
-            {
-                /* Decimal point but no number - bad conversion specifier. */
-                return orig_spec;
-            }
-            spec = endptr;
+            status->prec = (int)strtol( spec, (char**) &spec, 10 );
         }
         /* Having a precision cancels out any zero flag. */
         status->flags &= ~E_zero;
