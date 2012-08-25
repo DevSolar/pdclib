@@ -112,7 +112,7 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
     }
 
     // Pad field out to the precision specification
-    while( written < status->prec ) outend[-++written] = '0';
+    while( (long) written < status->prec ) outend[-++written] = '0';
 
     // If a field width specified, and zero padding was requested, then pad to
     // the field width
@@ -178,7 +178,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
     status->base  = 0;
     status->current  = 0;
     status->width = 0;
-    status->prec  = 0;
+    status->prec  = EOF;
 
     /* First come 0..n flags */
     do

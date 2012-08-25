@@ -360,14 +360,14 @@ struct _PDCLIB_status_t
 {
     int              base;   /* base to which the value shall be converted   */
     _PDCLIB_int_fast32_t flags; /* flags and length modifiers                */
-    _PDCLIB_size_t   n;      /* print: maximum characters to be written      */
+    unsigned         n;      /* print: maximum characters to be written      */
                              /* scan:  number matched conversion specifiers  */
-    _PDCLIB_size_t   i;      /* number of characters read/written            */
-    _PDCLIB_size_t   current;/* chars read/written in the CURRENT conversion */
+    unsigned         i;      /* number of characters read/written            */
+    unsigned         current;/* chars read/written in the CURRENT conversion */
     char *           s;      /* *sprintf(): target buffer                    */
                              /* *sscanf():  source string                    */
-    _PDCLIB_size_t   width;  /* specified field width                        */
-    _PDCLIB_size_t   prec;   /* specified field precision                    */
+    unsigned         width;  /* specified field width                        */
+    int              prec;   /* specified field precision                    */
     struct _PDCLIB_file_t * stream; /* *fprintf() / *fscanf() stream         */
     _PDCLIB_va_list  arg;    /* argument stack                               */
 };
