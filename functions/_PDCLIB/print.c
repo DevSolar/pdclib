@@ -325,7 +325,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             spec = endptr;
         }
         /* Having a precision cancels out any zero flag. */
-        status->flags ^= E_zero;
+        status->flags &= ~E_zero;
     }
 
     /* Optional length modifier
