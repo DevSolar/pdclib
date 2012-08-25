@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -162,6 +163,64 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
     status->current = written;
     while ( written )
         PUT( outend[-written--] );
+}
+
+static void printstr( const char * str, struct _PDCLIB_status_t * status )
+{
+    if ( status->width == 0 || status->flags & E_minus )
+    {
+        // Simple case or left justification
+        while ( str[status->current] && 
+            ( status->prec < 0 || (long)status->current < status->prec ) )
+        {
+            PUT( str[status->current++] );
+        }
+
+        while( status->current < status->width ) 
+        {
+            PUT( ' ' );
+            status->current++;
+        }
+    } else {
+        // Right justification
+        size_t len = status->prec >= 0 ? strnlen( str, status->prec ) 
+                                       :  strlen( str );
+        int padding = status->width - len;
+        while((long)status->current < padding)
+        {
+            PUT( ' ' );
+            status->current++;
+        }
+
+        for( size_t i = 0; i != len; i++ )
+        {
+            PUT( str[i] );
+            status->current++;
+        }
+    }
+}
+
+static void printchar( char chr, struct _PDCLIB_status_t * status )
+{
+    if( ! ( status->flags & E_minus ) )
+    {
+        // Right justification
+        for( ; status->current + 1 < status->width; status->current++)
+        {
+            PUT( ' ' );
+        }
+        PUT( chr );
+        status->current++;
+    } else {
+        // Left justification
+        PUT( chr );
+        status->current++;
+
+        for( ; status->current < status->width; status->current++)
+        {
+            PUT( ' ' );
+        }
+    }
 }
 
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
@@ -358,17 +417,14 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         case 'A':
             break;
         case 'c':
-            /* TODO: Flags, wide chars. */
-            PUT( va_arg( status->arg, int ) );
+            /* TODO: wide chars. */
+            printchar( va_arg( status->arg, int ), status );
             return ++spec;
         case 's':
-            /* TODO: Flags, wide chars. */
+            /* TODO: wide chars. */
             {
                 char * s = va_arg( status->arg, char * );
-                while ( *s != '\0' )
-                {
-                    PUT( *(s++) );
-                }
+                printstr( s, status );
                 return ++spec;
             }
         case 'p':
