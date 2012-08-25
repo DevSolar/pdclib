@@ -104,7 +104,7 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
         const char * digits = (status->flags & E_lower) ? 
                                 _PDCLIB_digits : _PDCLIB_Xdigits;
         uintmax_t remaining = value;
-        do {
+        if(status->prec != 0 || remaining != 0) do {
             uintmax_t digit = remaining % status->base;
             remaining /= status->base;
 
