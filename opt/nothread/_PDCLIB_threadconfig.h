@@ -5,7 +5,7 @@
 
 _PDCLIB_BEGIN_EXTERN_C
 #define _PDCLIB_ONCE_FLAG_INIT 0
-#define _PDCLIB_ONCE_FLAG_IS_DONE(_f) ((_f) == 1)
+#define _PDCLIB_ONCE_FLAG_IS_DONE(_f) (*(_f) == 1)
 typedef char _PDCLIB_once_flag;
 
 void _PDCLIB_call_once(_PDCLIB_once_flag *flag, void (*func)(void));

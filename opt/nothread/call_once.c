@@ -3,9 +3,9 @@
 
 void _PDCLIB_call_once(_PDCLIB_once_flag *flag, void (*func)(void))
 {
-	if(*flag != _PDCLIB_ONCE_FLAG_DONE) {
+	if(!_PDCLIB_ONCE_FLAG_IS_DONE(flag)) {
 		func();
-		*flag = _PDCLIB_ONCE_FLAG_DONE;
+		*flag = 1;
 	}
 }
 #endif
