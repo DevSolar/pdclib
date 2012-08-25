@@ -1,5 +1,5 @@
     {
-#if defined(_PDCLIB_CHAR_SIGNED)
+#if CHAR_MIN == -128
     assert(CHAR_MIN == -128);
     PRINTF_TEST( 4,   "-128", "%hhd", CHAR_MIN );
     assert(CHAR_MAX == 127);
