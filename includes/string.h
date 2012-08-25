@@ -184,6 +184,13 @@ char * strerror( int errnum ) _PDCLIB_nothrow;
 */
 size_t strlen( const char * s ) _PDCLIB_nothrow;
 
+#if _PDCLIB_POSIX_MIN(2008098L)
+/* Returns the length of the string s (excluding terminating '\0') or maxlen if
+ * no terminating '\0' is found in the first maxlen characters.
+ */
+size_t strnlen( const char * s, size_t maxlen ) _PDCLIB_nothrow;
+#endif
+
 #if _PDCLIB_POSIX_MIN(2008098L) || _PDCLIB_XOPEN_MIN(0)
 char * strdup( const char* src ) _PDCLIB_nothrow;
 char * strndup( const char* src, size_t n ) _PDCLIB_nothrow;
