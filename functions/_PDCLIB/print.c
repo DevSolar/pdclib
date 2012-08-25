@@ -312,6 +312,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                EOF (negative), there is no need for testing for negative here.
             */
             status->prec = va_arg( status->arg, int );
+            ++spec;
         }
         else
         {
