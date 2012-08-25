@@ -11,7 +11,6 @@ int mtx_init(mtx_t *mtx, int type)
     if(mtx->_WaitEvHandle == NULL)
         return thrd_error;
     
-    mtx->_State        = -1;
     mtx->_ThreadId     = 0;
     mtx->_NestCount    = 0;;
 

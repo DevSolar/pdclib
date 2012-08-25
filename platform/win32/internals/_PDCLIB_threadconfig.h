@@ -19,10 +19,9 @@ void _PDCLIB_call_once(_PDCLIB_once_flag *flag, void (*func)(void));
 #define _PDCLIB_MTX_T struct _PDCLIB_mtx 
 
 struct _PDCLIB_mtx {
-    void         * _WaitEvHandle;
-    volatile   signed long  _State;
-    volatile unsigned  int  _ThreadId;
-    volatile unsigned  int  _NestCount;
+    void                   * _WaitEvHandle;
+    volatile unsigned long   _ThreadId; 
+    volatile unsigned  int   _NestCount;
 };
 
 #define _PDCLIB_TSS_T struct _PDCLIB_tss *

@@ -2,7 +2,7 @@
 #include <threads.h>
 #include <windows.h>
 
-int mtx_lock(mtx_t *mtx)
+int mtx_trylock(mtx_t *mtx)
 {
     DWORD myId = GetCurrentThreadId();
 
@@ -11,15 +11,14 @@ int mtx_lock(mtx_t *mtx)
         return thrd_success;
     }
 
-    for(;;) {
-        LONG prev = InterlockedCompareExchange(&mtx->_ThreadId, myId, 0);
-        if(prev == 0)
-            return thrd_success;
+    if(mtx->_ThreadId != 0)
+        return thrd_busy;
 
-        DWORD rv = WaitForSingleObject(mtx->_WaitEvHandle, INFINITE);
-        if(rv != WAIT_OBJECT_0)
-            return thrd_error;
-    }
+    LONG prev = InterlockedCompareExchange(&mtx->_ThreadId, myId, 0);
+    if(prev == 0)
+        return thrd_success;
+    else
+        return thrd_busy;
 }
 #endif
 

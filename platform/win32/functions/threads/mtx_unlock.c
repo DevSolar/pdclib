@@ -11,19 +11,11 @@ int mtx_unlock(mtx_t *mtx)
     }
 
     mtx->_ThreadId = 0;
-
-    DWORD res = InterlockedDecrement(&mtx->_State);
-    if(res == (DWORD) -1) {
-        // We reset the state to -1; success!
-        return thrd_success;
-    }
-
     DWORD rv = SetEvent(mtx->_WaitEvHandle);
     if(rv == 0) {
         _PDCLIB_w32errno();
         return thrd_error;
     }
-
     return thrd_success;
 }
 #endif
