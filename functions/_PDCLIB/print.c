@@ -140,6 +140,9 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
                 if ( outend[-written] != '0' ) outend[-++written] = '0';
                 break;
             case 16:
+                // No prefix if zero
+                if ( value == 0 ) break;
+
                 written += padding < 2 ? 2 - padding : 0;
                 outend[-written    ] = '0';
                 outend[-written + 1] = (status->flags & E_lower) ? 'x' : 'X';
