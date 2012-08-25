@@ -32,6 +32,7 @@
 #define PREP_RESULT_BUFFER
 #endif
 
+#define GETFMT( fmt, ... ) (fmt)
 #define PRINTF_TEST( expected_rc, expected_string, ... ) do { \
         PREP_RESULT_BUFFER \
         int actual_rc = testprintf( target, __VA_ARGS__ ); \
@@ -40,7 +41,13 @@
              ( RESULT_MISMATCH( target, expected_string ) ) ) \
         { \
             ++TEST_RESULTS; \
-            fprintf( stderr, "FAILED: " __FILE__ " (" _PDCLIB_FILEID "), line %d\n        expected %2d, \"%s\"\n        actual   %2d, \"%s\"\n", __LINE__, expected_rc, expected_string, actual_rc, RESULT_STRING( target ) ); \
+            fprintf( stderr, \
+                "FAILED: " __FILE__ " (" _PDCLIB_FILEID "), line %d\n" \
+                "        format string \"%s\"\n" \
+                "        expected %2d, \"%s\"\n" \
+                "        actual   %2d, \"%s\"\n", \
+                 __LINE__, GETFMT(__VA_ARGS__, 0), expected_rc, \
+                 expected_string, actual_rc, RESULT_STRING( target ) ); \
         } \
     } while ( 0 )
 
