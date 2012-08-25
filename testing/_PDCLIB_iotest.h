@@ -15,19 +15,19 @@
 
 /* ...printf() tests */
 #if defined( _PDCLIB_FILEIO )
-    #define RESULT_MISMATCH( act, exp ) \
-        rewind( act ), \
-        result_buffer[ fread( result_buffer, 1, strlen( exp ) + 1, act ) ] = '\0', \
-        rewind( act ), \
-        memcmp( result_buffer, exp, strlen( exp ) )
+   #define GET_RESULT \
+      rewind( target ); \
+      fread( result_buffer, 1, actual_rc, target );
+   #define RESULT_MISMATCH( act, exp ) strcmp( result_buffer, exp ) != 0
    #define RESULT_STRING( tgt ) result_buffer
 #elif defined( _PDCLIB_STRINGIO )
    #define RESULT_MISMATCH( act, exp ) strcmp( act, exp ) != 0
+   #define GET_RESULT
    #define RESULT_STRING( tgt ) tgt
 #endif
 
 #ifdef _PDCLIB_FILEIO
-#define PREP_RESULT_BUFFER char result_buffer[100];
+#define PREP_RESULT_BUFFER char result_buffer[100] = { 0 }; rewind( target );
 #else
 #define PREP_RESULT_BUFFER
 #endif
@@ -35,6 +35,7 @@
 #define PRINTF_TEST( expected_rc, expected_string, ... ) do { \
         PREP_RESULT_BUFFER \
         int actual_rc = testprintf( target, __VA_ARGS__ ); \
+        GET_RESULT \
         if ( ( actual_rc != expected_rc ) || \
              ( RESULT_MISMATCH( target, expected_string ) ) ) \
         { \
