@@ -11,6 +11,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdbool.h>
+#include <limits.h>
 
 #ifndef REGTEST
 
@@ -57,136 +59,107 @@ do { \
     ++(status->i); \
 } while ( 0 )
 
+/* Maximum number of output characters = 
+ *   number of bits in (u)intmax_t / number of bits per character in smallest 
+ *   base. Smallest base is octal, 3 bits/char.
+ *
+ * Additionally require 2 extra characters for prefixes
+ */
+static const size_t maxIntLen = sizeof(intmax_t) * CHAR_BIT / 3 + 1;
 
-static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
+static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
 {
-    /* At worst, we need two prefix characters (hex prefix). */
-    char preface[3] = "\0";
-    size_t preidx = 0;
-    if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) )
+    char sign = 0;
+    if ( ! ( status->flags & E_unsigned ) ) 
     {
-        /* Octal / hexadecimal prefix for "%#" conversions */
-        preface[ preidx++ ] = '0';
-        if ( status->base == 16 )
+        intmax_t signval = (intmax_t) value;
+        bool negative = signval < 0;
+        value = signval < 0 ? -signval : signval;
+
+        if ( negative ) 
         {
-            preface[ preidx++ ] = ( status->flags & E_lower ) ? 'x' : 'X';
+            sign = '-';
+        } 
+        else if ( status->flags & E_plus ) 
+        {
+            sign = '+';
+        }
+        else if (status->flags & E_space )
+        {
+            sign = ' ';
         }
     }
-    if ( value < 0 )
+
+    // The user could theoretically ask for a silly buffer length here. 
+    // Perhaps after a certain size we should malloc? Or do we refuse to protect
+    // them from their own stupidity?
+    size_t bufLen = (status->width > maxIntLen ? status->width : maxIntLen) + 2;
+    char outbuf[bufLen];
+    char * outend = outbuf + bufLen;
+    unsigned written = 0;
+
+    // Build up our output string - backwards
     {
-        /* Negative sign for negative values - at all times. */
-        preface[ preidx++ ] = '-';
+        const char * digits = (status->flags & E_lower) ? 
+                                _PDCLIB_digits : _PDCLIB_Xdigits;
+        uintmax_t remaining = value;
+        do {
+            uintmax_t digit = remaining % status->base;
+            remaining /= status->base;
+
+            outend[-++written] = digits[digit];
+        } while(remaining != 0);
     }
-    else if ( ! ( status->flags & E_unsigned ) )
+
+    // Pad field out to the precision specification
+    while( written < status->prec ) outend[-++written] = '0';
+
+    // If a field width specified, and zero padding was requested, then pad to
+    // the field width
+    unsigned padding = 0;
+    if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )    
     {
-        /* plus sign / extra space are only for unsigned conversions */
-        if ( status->flags & E_plus )
+        while( written < status->width ) 
         {
-            preface[ preidx++ ] = '+';
-        }
-        else if ( status->flags & E_space )
-        {
-            preface[ preidx++ ] = ' ';
+            outend[-++written] = '0';
+            padding++;
         }
     }
+
+    // Prefixes
+    if ( sign != 0 )
     {
-    size_t prec_pads = ( status->prec > status->current ) ? ( status->prec - status->current ) : 0;
+        if ( padding == 0 ) written++;
+        outend[-written] = sign;
+    }
+    else if ( status->flags & E_alt )
+    {
+        switch ( status->base )
+        {
+            case 8:
+                if ( outend[-written] != '0' ) outend[-++written] = '0';
+                break;
+            case 16:
+                written += padding < 2 ? 2 - padding : 0;
+                outend[-written    ] = '0';
+                outend[-written + 1] = (status->flags & E_lower) ? 'x' : 'X';
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Space padding to field width
     if ( ! ( status->flags & ( E_minus | E_zero ) ) )
     {
-        /* Space padding is only done if no zero padding or left alignment
-           is requested. Leave space for any prefixes determined above.
-        */
-        /* The number of characters to be printed, plus prefixes if any. */
-        /* This line contained probably the most stupid, time-wasting bug
-           I've ever perpetrated. Greetings to Samface, DevL, and all
-           sceners at Breakpoint 2006.
-        */
-        size_t characters = preidx + ( ( status->current > status->prec ) ? status->current : status->prec );
-        if ( status->width > characters )
-        {
-            for ( size_t i = 0; i < status->width - characters; ++i )
-            {
-                PUT( ' ' );
-                ++(status->current);
-            }
-        }
+        while( written < status->width ) outend[-++written] = ' ';
     }
-    /* Now we did the padding, do the prefixes (if any). */
-    preidx = 0;
-    while ( preface[ preidx ] != '\0' )
-    {
-        PUT( preface[ preidx++ ] );
-        ++(status->current);
-    }
-    if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
-    {
-        /* If field is not left aligned, and zero padding is requested, do
-           so.
-        */
-        while ( status->current < status->width )
-        {
-            PUT( '0' );
-            ++(status->current);
-        }
-    }
-    /* Do the precision padding if necessary. */
-    for ( size_t i = 0; i < prec_pads; ++i )
-    {
-        PUT( '0' );
-    }
-    }
+
+    // Write output
+    status->current = written;
+    while ( written )
+        PUT( outend[-written--] );
 }
-
-
-/* This function recursively converts a given integer value to a character
-   stream. The conversion is done under the control of a given status struct
-   and written either to a character string or a stream, depending on that
-   same status struct. The status struct also keeps the function from exceeding
-   snprintf() limits, and enables any necessary padding / prefixing of the
-   output once the number of characters to be printed is known, which happens
-   at the lowermost recursion level.
-*/
-static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
-{
-    /* Registering the character being printed at the end of the function here
-       already so it will be taken into account when the deepestmost recursion
-       does the prefix / padding stuff.
-    */
-    ++(status->current);
-    if ( ( value / status->base ) != 0 )
-    {
-        /* More digits to be done - recurse deeper */
-        int2base( value / status->base, status );
-    }
-    else
-    {
-        /* We reached the last digit, the deepest point of our recursion, and
-           only now know how long the number to be printed actually is. Now we
-           have to do the sign, prefix, width, and precision padding stuff
-           before printing the numbers while we resurface from the recursion.
-        */
-        intformat( value, status );
-    }
-    /* Recursion tail - print the current digit. */
-    {
-    int digit = value % status->base;
-    if ( digit < 0 )
-    {
-        digit *= -1;
-    }
-    if ( status->flags & E_lower )
-    {
-        /* Lowercase letters. Same array used for strto...(). */
-        PUT( _PDCLIB_digits[ digit ] );
-    }
-    else
-    {
-        /* Uppercase letters. Array only used here, only 0-F. */
-        PUT( _PDCLIB_Xdigits[ digit ] );
-    }
-    }
-}
-
 
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
 {
@@ -440,30 +413,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                     value = (uintmax_t)va_arg( status->arg, size_t );
                     break;
             }
-            ++(status->current);
-            /* FIXME: The if clause means one-digit values do not get formatted */
-            /* Was introduced originally to get value to "safe" levels re. uintmax_t. */
-            if ( ( value / status->base ) != 0 )
-            {
-                int2base( (intmax_t)(value / status->base), status );
-            }
-            else
-            {
-                intformat( (intmax_t)value, status );
-            }
-            int digit = value % status->base;
-            if ( digit < 0 )
-            {
-                digit *= -1;
-            }
-            if ( status->flags & E_lower )
-            {
-                PUT( _PDCLIB_digits[ digit ] );
-            }
-            else
-            {
-                PUT( _PDCLIB_Xdigits[ digit ] );
-            }
+            int2base( value, status );
         }
         else
         {
