@@ -126,6 +126,7 @@
 #endif
     }
 
+#ifndef TEST_CONVERSION_ONLY
 /******************************************************************************
  * NOTE: The following test cases are imported from the Tyndur project. They  *
  *       are therefore under the license of said project, not CC0.            *
@@ -425,3 +426,5 @@
     PRINTF_TEST(20, "00EDCB5433          ", "% -+0*.*X", 20, 10, -0x1234abcdu);
     }
 /******************************************************************************/
+#endif
+    
