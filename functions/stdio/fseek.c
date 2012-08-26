@@ -31,7 +31,7 @@ int fseek( struct _PDCLIB_file_t * stream, long loffset, int whence )
     if ( whence == SEEK_CUR )
     {
         whence  = SEEK_SET;
-        offset += stream->pos.offset;
+        offset += _PDCLIB_ftell64( stream );
     }
 
     return ( _PDCLIB_seek( stream, offset, whence ) != EOF ) ? 0 : EOF;
@@ -83,6 +83,16 @@ int main( void )
     TESTCASE( ftell( fh ) == 2 );
     TESTCASE( fseek( fh, 2, SEEK_SET ) == 0 );
     TESTCASE( fgetc( fh ) == teststring[2] );
+    /* PDCLIB-7: Check that we handle the underlying file descriptor correctly
+     *           in the SEEK_CUR case */
+    TESTCASE( fseek( fh, 10, SEEK_SET ) == 0 );
+    TESTCASE( ftell( fh ) == 10l );
+    TESTCASE( fseek( fh, 0, SEEK_CUR ) == 0 );
+    TESTCASE( ftell( fh ) == 10l );
+    TESTCASE( fseek( fh, 2, SEEK_CUR ) == 0 );
+    TESTCASE( ftell( fh ) == 12l );
+    TESTCASE( fseek( fh, -1, SEEK_CUR ) == 0 );
+    TESTCASE( ftell( fh ) == 11l );
     /* Checking error handling */
     TESTCASE( fseek( fh, -5, SEEK_SET ) == -1 );
     TESTCASE( fseek( fh, 0, SEEK_END ) == 0 );

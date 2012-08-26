@@ -788,6 +788,7 @@ int fsetpos( FILE * stream, const fpos_t * pos ) _PDCLIB_nothrow;
    TODO: Implementation-defined errno setting for ftell().
 */
 long int ftell( FILE * stream ) _PDCLIB_nothrow;
+_PDCLIB_uint_fast64_t _PDCLIB_ftell64( FILE * stream ) _PDCLIB_nothrow;
 
 /* Equivalent to (void)fseek( stream, 0L, SEEK_SET ), except that the error
    indicator for the stream is also cleared.
