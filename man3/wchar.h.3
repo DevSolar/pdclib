@@ -58,17 +58,17 @@ in
 .In time.h .
 .\"
 .Ss Wide Character String Handling Functions
-.Fn "wchar_t *wcscpy" "wchar_t *_PDCLIB_restrict s1" "const wchar_t *_PDCLIB_restrict s2"
+.Fn "wchar_t *wcscpy" "wchar_t *restrict s1" "const wchar_t *restrict s2"
 .br
-.Fn "wchar_t *wcsncpy" "wchar_t *_PDCLIB_restrict s1" "const wchar_t *_PDCLIB_restrict s2" "size_t n"
+.Fn "wchar_t *wcsncpy" "wchar_t *restrict s1" "const wchar_t *restrict s2" "size_t n"
 .br
-.Fn "wchar_t *wmemcpy" "wchar_t *_PDCLIB_restrict s1" "const wchar_t *_PDCLIB_restrict s2" "size_t n"
+.Fn "wchar_t *wmemcpy" "wchar_t *restrict s1" "const wchar_t *restrict s2" "size_t n"
 .br
 .Fn "wchar_t *wmemmove" "wchar_t *s1" "const wchar_t *s2" "size_t n"
 .br
-.Fn "wchar_t *wcscat" "wchar_t *_PDCLIB_restrict s1" "const wchar_t *_PDCLIB_restrict s2"
+.Fn "wchar_t *wcscat" "wchar_t *restrict s1" "const wchar_t *restrict s2"
 .br
-.Fn "wchar_t *wcsncat" "wchar_t *_PDCLIB_restrict s1" "const wchar_t *_PDCLIB_restrict s2" "size_t n"
+.Fn "wchar_t *wcsncat" "wchar_t *restrict s1" "const wchar_t *restrict s2" "size_t n"
 .br
 .Fn "int wcscmp" "const wchar_t *s1" "const wchar_t *s2"
 .br
@@ -76,7 +76,7 @@ in
 .br
 .Fn "int wcsncmp" "const wchar_t *s1" "const wchar_t *s2" "size_t n"
 .br
-.Fn "size_t wcsxfrm" "wchar_t *_PDCLIB_restrict s1" "const wchar_t *_PDCLIB_restrict s2" "size_t n"
+.Fn "size_t wcsxfrm" "wchar_t *restrict s1" "const wchar_t *restrict s2" "size_t n"
 .br
 .Fn "int wmemcmp" "const wchar_t *s1" "const wchar_t *s2" "size_t n"
 .br
@@ -92,7 +92,7 @@ in
 .br
 .Fn "wchar_t *wcsstr" "const wchar_t *s1" "const wchar_t *s2"
 .br
-.Fn "wchar_t *wcstok" "wchar_t *_PDCLIB_restrict s1" "const wchar_t *_PDCLIB_restrict s2" "wchar_t **_PDCLIB_restrict ptr"
+.Fn "wchar_t *wcstok" "wchar_t *restrict s1" "const wchar_t *restrict s2" "wchar_t **restrict ptr"
 .br
 .Fn "wchar_t *wmemchr" "const wchar_t *s" "wchar_t c" "size_t n" 
 .br
@@ -101,40 +101,40 @@ in
 .Fn "wchar_t *wmemset" "wchar_t *s" "wchar_t c" "size_t n"
 .\"
 .Ss Wide Character String Formatting
-.Fn "int swprintf" "wchar_t *_PDCLIB_restrict s" "size_t n" "const wchar_t *_PDCLIB_restrict format" "..."
+.Fn "int swprintf" "wchar_t *restrict s" "size_t n" "const wchar_t *restrict format" "..."
 .br
-.Fn "int swscanf" "const wchar_t *_PDCLIB_restrict s" "const wchar_t *_PDCLIB_restrict format" "..."
+.Fn "int swscanf" "const wchar_t *restrict s" "const wchar_t *restrict format" "..."
 .br
-.Fn "int vswprintf" "wchar_t *_PDCLIB_restrict s" "size_t n" "const wchar_t *_PDCLIB_restrict format" "va_list arg"
+.Fn "int vswprintf" "wchar_t *restrict s" "size_t n" "const wchar_t *restrict format" "va_list arg"
 .br
-.Fn "int vswscanf" "const wchar_t *_PDCLIB_restrict s" "const wchar_t *_PDCLIB_restrict format" "va_list arg"
+.Fn "int vswscanf" "const wchar_t *restrict s" "const wchar_t *restrict format" "va_list arg"
 .br
-.Fn "size_t wcsftime" "wchar_t *_PDCLIB_restrict s" "size_t maxsize" "const wchar_t *_PDCLIB_restrict format" "const struct tm *_PDCLIB_restrict timeptr"
+.Fn "size_t wcsftime" "wchar_t *restrict s" "size_t maxsize" "const wchar_t *restrict format" "const struct tm *restrict timeptr"
 .\"
 .Ss Wide Character Input and Output
-.Fn "int fwprintf" "FILE *_PDCLIB_restrict stream" "const wchar_t *_PDCLIB_restrict format" "..."
+.Fn "int fwprintf" "FILE *restrict stream" "const wchar_t *restrict format" "..."
 .br
-.Fn "int fwscanf" "FILE *_PDCLIB_restrict stream" "const wchar_t *_PDCLIB_restrict format" "..."
+.Fn "int fwscanf" "FILE *restrict stream" "const wchar_t *restrict format" "..."
 .br
-.Fn "int vfwprintf" "FILE *_PDCLIB_restrict stream" "const wchar_t *_PDCLIB_restrict format" "va_list arg"
+.Fn "int vfwprintf" "FILE *restrict stream" "const wchar_t *restrict format" "va_list arg"
 .br
-.Fn "int vfwscanf" "FILE *_PDCLIB_restrict stream" "const wchar_t *_PDCLIB_restrict format" "va_list arg"
+.Fn "int vfwscanf" "FILE *restrict stream" "const wchar_t *restrict format" "va_list arg"
 .br
-.Fn "int vwprintf" "const wchar_t *_PDCLIB_restrict format" "va_list arg"
+.Fn "int vwprintf" "const wchar_t *restrict format" "va_list arg"
 .br
-.Fn "int vwscanf" "const wchar_t *_PDCLIB_restrict format" "va_list arg"
+.Fn "int vwscanf" "const wchar_t *restrict format" "va_list arg"
 .br
-.Fn "int wprintf" "const wchar_t *_PDCLIB_restrict format" "..."
+.Fn "int wprintf" "const wchar_t *restrict format" "..."
 .br
-.Fn "int wscanf" "const wchar_t *_PDCLIB_restrict format" "..."
+.Fn "int wscanf" "const wchar_t *restrict format" "..."
 .br
 .Fn "wint_t fgetwc" "FILE *stream"
 .br
-.Fn "wchar_t *fgetws" "wchar_t *_PDCLIB_restrict s" "int n" "FILE *_PDCLIB_restrict stream"
+.Fn "wchar_t *fgetws" "wchar_t *restrict s" "int n" "FILE *restrict stream"
 .br
 .Fn "wint_t fputwc" "wchar_t c" "FILE *stream"
 .br
-.Fn "int fputws" "const wchar_t *_PDCLIB_restrict s" "FILE *_PDCLIB_restrict stream"
+.Fn "int fputws" "const wchar_t *restrict s" "FILE *restrict stream"
 .br
 .Fn "int fwide" "FILE *stream" "int mode"
 .br
@@ -149,19 +149,19 @@ in
 .Fn "wint_t ungetwc" "wint_t c" "FILE *stream"
 .\"
 .Ss Wide Character String Parsing
-.Fn "double wcstod" "const wchar_t *_PDCLIB_restrict nptr" "wchar_t **_PDCLIB_restrict endptr"
+.Fn "double wcstod" "const wchar_t *restrict nptr" "wchar_t **restrict endptr"
 .br
-.Fn "float wcstof" "const wchar_t *_PDCLIB_restrict nptr" "wchar_t **_PDCLIB_restrict endptr"
+.Fn "float wcstof" "const wchar_t *restrict nptr" "wchar_t **restrict endptr"
 .br
-.Fn "long double wcstold" "const wchar_t *_PDCLIB_restrict nptr" "wchar_t **_PDCLIB_restrict endptr"
+.Fn "long double wcstold" "const wchar_t *restrict nptr" "wchar_t **restrict endptr"
 .br
-.Fn "long int wcstol" "const wchar_t *_PDCLIB_restrict nptr" "wchar_t **_PDCLIB_restrict endptr" "int base"
+.Fn "long int wcstol" "const wchar_t *restrict nptr" "wchar_t **restrict endptr" "int base"
 .br
-.Fn "long long int wcstoll" "const wchar_t *_PDCLIB_restrict nptr" "wchar_t **_PDCLIB_restrict endptr" "int base"
+.Fn "long long int wcstoll" "const wchar_t *restrict nptr" "wchar_t **restrict endptr" "int base"
 .br
-.Fn "unsigned long int wcstoul" "const wchar_t *_PDCLIB_restrict nptr" "wchar_t **_PDCLIB_restrict endptr" "int base"
+.Fn "unsigned long int wcstoul" "const wchar_t *restrict nptr" "wchar_t **restrict endptr" "int base"
 .br
-.Fn "unsigned long long int wcstoull" "const wchar_t *_PDCLIB_restrict nptr" "wchar_t **_PDCLIB_restrict endptr" "int base"
+.Fn "unsigned long long int wcstoull" "const wchar_t *restrict nptr" "wchar_t **restrict endptr" "int base"
 .\"
 .Ss Character Set Conversion
 .Fn "wint_t btowc" "int c"
@@ -170,15 +170,15 @@ in
 .br
 .Fn "int mbsinit" "const mbstate_t *ps"
 .br
-.Fn "size_t mbrlen" "const char *_PDCLIB_restrict s" "size_t n" "mbstate_t *_PDCLIB_restrict ps"
+.Fn "size_t mbrlen" "const char *restrict s" "size_t n" "mbstate_t *restrict ps"
 .br
-.Fn "size_t mbrtowc" "wchar_t *_PDCLIB_restrict pwc" "const char *_PDCLIB_restrict s" "size_t n" "mbstate_t *_PDCLIB_restrict ps"
+.Fn "size_t mbrtowc" "wchar_t *restrict pwc" "const char *restrict s" "size_t n" "mbstate_t *restrict ps"
 .br
-.Fn "size_t wcrtomb" "char *_PDCLIB_restrict s" "wchar_t wc" "mbstate_t *_PDCLIB_restrict ps"
+.Fn "size_t wcrtomb" "char *restrict s" "wchar_t wc" "mbstate_t *restrict ps"
 .br
-.Fn "size_t mbsrtowcs" "wchar_t *_PDCLIB_restrict dst" "const char **_PDCLIB_restrict src" "size_t len" "mbstate_t *_PDCLIB_restrict ps"
+.Fn "size_t mbsrtowcs" "wchar_t *restrict dst" "const char **restrict src" "size_t len" "mbstate_t *restrict ps"
 .br
-.Fn "size_t wcsrtombs" "char *_PDCLIB_restrict dst" "const wchar_t **_PDCLIB_restrict src" "size_t len" "mbstate_t *_PDCLIB_restrict ps"
+.Fn "size_t wcsrtombs" "char *restrict dst" "const wchar_t **restrict src" "size_t len" "mbstate_t *restrict ps"
 .\"
 .Sh SEE ALSO
 .Xr string.h 3
