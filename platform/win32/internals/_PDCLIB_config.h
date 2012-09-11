@@ -162,6 +162,7 @@ struct _PDCLIB_lldiv_t
 
    XX: Windows requires wchar_t be an unsigned short, but this is not compliant.
 */
+#define _PDCLIB_wint  signed short
 #define _PDCLIB_wchar unsigned short 
 #define _PDCLIB_WCHAR USHRT
 

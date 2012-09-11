@@ -32,7 +32,7 @@ typedef _PDCLIB_wint_t wint_t;
 
 #ifndef _PDCLIB_MBSTATE_T_DEFINED
 #define _PDCLIB_MBSTATE_T_DEFINED _PDCLIB_MBSTATE_T_DEFINED
-typedef _PDCLIB_mbstate_t mbstate_t;
+typedef struct _PDCLIB_mbstate_t mbstate_t;
 #endif
 
 struct tm;
@@ -78,28 +78,28 @@ size_t wcsftime(wchar_t *_PDCLIB_restrict s, size_t maxsize, const wchar_t *_PDC
 #endif
 
 /* Wide character I/O */
-int fwprintf(FILE *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, ...);
-int fwscanf(FILE *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, ...);
+int fwprintf(struct _PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, ...);
+int fwscanf(struct _PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, ...);
 int swprintf(wchar_t *_PDCLIB_restrict s, size_t n, const wchar_t *_PDCLIB_restrict format, ...);
 int swscanf(const wchar_t *_PDCLIB_restrict s, const wchar_t *_PDCLIB_restrict format, ...);
-int vfwprintf(FILE *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, va_list arg);
-int vfwscanf(FILE *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, va_list arg);
-int vswprintf(wchar_t *_PDCLIB_restrict s, size_t n, const wchar_t *_PDCLIB_restrict format, va_list arg);
-int vswscanf(const wchar_t *_PDCLIB_restrict s, const wchar_t *_PDCLIB_restrict format, va_list arg);
-int vwprintf(const wchar_t *_PDCLIB_restrict format, va_list arg);
-int vwscanf(const wchar_t *_PDCLIB_restrict format, va_list arg);
+int vfwprintf(struct _PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
+int vfwscanf(struct _PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
+int vswprintf(wchar_t *_PDCLIB_restrict s, size_t n, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
+int vswscanf(const wchar_t *_PDCLIB_restrict s, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
+int vwprintf(const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
+int vwscanf(const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
 int wprintf(const wchar_t *_PDCLIB_restrict format, ...);
 int wscanf(const wchar_t *_PDCLIB_restrict format, ...);
-wint_t fgetwc(FILE *stream);
-wchar_t *fgetws(wchar_t *_PDCLIB_restrict s, int n, FILE *_PDCLIB_restrict stream);
-wint_t fputwc(wchar_t c, FILE *stream);
-int fputws(const wchar_t *_PDCLIB_restrict s, FILE *_PDCLIB_restrict stream);
-int fwide(FILE *stream, int mode);
-wint_t getwc(FILE *stream);
+wint_t fgetwc(struct _PDCLIB_file_t *stream);
+wchar_t *fgetws(wchar_t *_PDCLIB_restrict s, int n, struct _PDCLIB_file_t *_PDCLIB_restrict stream);
+wint_t fputwc(wchar_t c, struct _PDCLIB_file_t *stream);
+int fputws(const wchar_t *_PDCLIB_restrict s, struct _PDCLIB_file_t *_PDCLIB_restrict stream);
+int fwide(struct _PDCLIB_file_t *stream, int mode);
+wint_t getwc(struct _PDCLIB_file_t *stream);
 wint_t getwchar(void);
-wint_t putwc(wchar_t c, FILE *stream);
+wint_t putwc(wchar_t c, struct _PDCLIB_file_t *stream);
 wint_t putwchar(wchar_t c);
-wint_t ungetwc(wint_t c, FILE *stream);
+wint_t ungetwc(wint_t c, struct _PDCLIB_file_t *stream);
 
 /* Wide character <-> Numeric conversions */
 #if 0

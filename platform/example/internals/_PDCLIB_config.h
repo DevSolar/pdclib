@@ -143,8 +143,9 @@ struct _PDCLIB_lldiv_t
 /* Large enough an integer to hold all character codes of the largest supported
    locale.
 */
-#define _PDCLIB_wchar unsigned short 
-#define _PDCLIB_WCHAR USHRT
+#define _PDCLIB_wint  signed int
+#define _PDCLIB_wchar unsigned int
+#define _PDCLIB_WCHAR UINT
 
 #define _PDCLIB_intptr int
 #define _PDCLIB_INTPTR INT

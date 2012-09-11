@@ -230,6 +230,7 @@ typedef _PDCLIB_ptrdiff     _PDCLIB_ptrdiff_t;
 typedef _PDCLIB_size     _PDCLIB_size_t;
 #define _PDCLIB_SIZE_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_SIZE ), _MAX )
 
+typedef _PDCLIB_wint      _PDCLIB_wint_t;
 typedef _PDCLIB_wchar     _PDCLIB_wchar_t;
 #define _PDCLIB_WCHAR_MIN _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_WCHAR ), _MIN )
 #define _PDCLIB_WCHAR_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_WCHAR ), _MAX )
@@ -464,6 +465,14 @@ struct _PDCLIB_ctype_t
     unsigned char upper;
     unsigned char lower;
     unsigned char collation;
+};
+
+/* -------------------------------------------------------------------------- */
+/* mbstate_t                                                                  */
+/* -------------------------------------------------------------------------- */
+
+struct _PDCLIB_mbstate_t {
+    _PDCLIB_uint32_t st[4];
 };
 
 #endif
