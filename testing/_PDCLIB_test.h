@@ -14,11 +14,16 @@
 #include <limits.h>
 #include <string.h>
 #include <assert.h>
+#include <wchar.h>
 
 /* Some strings used for <string.h> and <stdlib.h> testing. */
 static char const abcde[] = "abcde";
 static char const abcdx[] = "abcdx";
 static char const teststring[] = "1234567890\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n";
+
+static wchar_t const wabcde[] = L"abcde";
+static wchar_t const wabcdx[] = L"abcdx";
+static wchar_t const wteststring[] = L"1234567890\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n";
 
 /* Temporary file names */
 static char const testfile[]="testing/testfile";
