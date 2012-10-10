@@ -44,6 +44,12 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
                     return nmemb_i;
                 }
                 //lineend = false;
+                /*
+                 * The entire buffer has been flushed; this means we have to
+                 * reset our newline position as we have already written
+                 * that part of the stream.
+                 */
+                offset = 0;
             }
         }
     }
