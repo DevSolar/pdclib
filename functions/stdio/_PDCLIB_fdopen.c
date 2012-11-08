@@ -39,6 +39,12 @@ struct _PDCLIB_file_t * _PDCLIB_fdopen( _PDCLIB_fd_t fd,
         /* no memory */
         return NULL;
     }
+
+    if(mtx_init(&rc->lock, mtx_recursive) != thrd_success) {
+        free(rc);
+        return NULL;
+    }
+
     rc->status = mode;
     rc->handle = fd;
     /* Setting pointers into the memory block allocated above */

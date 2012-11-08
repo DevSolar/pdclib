@@ -33,8 +33,13 @@ int fclose( struct _PDCLIB_file_t * stream )
                     return EOF;
                 }
             }
+
+            /* Release mutex*/
+            mtx_destroy( &stream->lock );
+
             /* Close handle */
             _PDCLIB_close( stream->handle );
+
             /* Remove stream from list */
             if ( previous != NULL )
             {
