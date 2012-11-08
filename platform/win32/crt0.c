@@ -23,6 +23,7 @@ static char ** argvToAnsi( wchar_t ** wargv, int argc )
         if(rv != sz) {
             fputs("Error in C runtime initialization: "
                   "size mismatch during character set conversion", stderr);
+            abort();
         }
     }
     return argv;
