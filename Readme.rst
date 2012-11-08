@@ -1,4 +1,4 @@
-PDCLib - the `Public Domain C Library<http://pdclib.e43.eu>`_
+PDCLib - the `Public Domain C Library <http://pdclib.e43.eu>`_
 ================================
 
 What is it
@@ -12,8 +12,9 @@ extensions may optionally be provided.
 License
 -------
 
-Written in 2003-2012 by Martin "Solar" Baute,
-           2012-     by Erin Shepherd
+Written in 
+ * 2003-2012 by Martin "Solar" Baute,
+ * 2012-     by Erin Shepherd
 
 To the extent possible under law, the author(s) have dedicated all copyright 
 and related and neighboring rights to this software to the public domain 
@@ -159,46 +160,47 @@ Post 1.0, support for C11 Annexe K "Bounds checking interfaces"
 Development Status
 ------------------
 
-v0.1 - 2004-12-12
-Freestanding-only C99 implementation without any overlay, and missing
-the INTN_C() / UINTN_C() macros. <float.h> still has the enquire.c
-values hardcoded into it; not sure whether to include enquire.c in the
-package, to leave <float.h> to the overlay, or devise some parameterized
-macro magic as for <limits.h> / <stdint.h>. Not thoroughly tested, but
-I had to make the 0.1 release sometime so why not now.
+``v0.1 - 2004-12-12``
+    Freestanding-only C99 implementation without any overlay, and missing
+    the INTN_C() / UINTN_C() macros. <float.h> still has the enquire.c
+    values hardcoded into it; not sure whether to include enquire.c in the
+    package, to leave <float.h> to the overlay, or devise some parameterized
+    macro magic as for <limits.h> / <stdint.h>. Not thoroughly tested, but
+    I had to make the 0.1 release sometime so why not now.
 
-v0.2 - 2005-01-12
-Adds implementations for <string.h> (excluding strerror()), INTN_C() /
-UINTN_C() macros, and some improvements in the internal headers.
-Test drivers still missing, but added warnings about that.
+``v0.2 - 2005-01-12``
+    Adds implementations for <string.h> (excluding strerror()), INTN_C() /
+    UINTN_C() macros, and some improvements in the internal headers.
+    Test drivers still missing, but added warnings about that.
 
-v0.3 - 2005-11-21
-Adds test drivers, fixes some bugs in <string.h>.
+``v0.3 - 2005-11-21``
+    Adds test drivers, fixes some bugs in <string.h>.
 
-v0.4 - 2005-02-06
-Implementations for parts of <stdlib.h>. Still missing are the floating
-point conversions, and the wide-/multibyte-character functions.
+``v0.4 - 2005-02-06``
+    Implementations for parts of <stdlib.h>. Still missing are the floating
+    point conversions, and the wide-/multibyte-character functions.
 
-v0.4.1 - 2006-11-16
-With v0.5 (<stdio.h>) taking longer than expected, v0.4.1 was set up as
-a backport of bugfixes in the current development code.
-- #1  realloc( NULL, size ) fails           (fixed)
-- #2  stdlib.h - insufficient documentation (fixed)
-- #4  Misspelled name in credits            (fixed)
-- #5  malloc() splits off too-small nodes   (fixed)
-- #6  qsort() stack overflow                (fixed)
-- #7  malloc() bug in list handling         (fixed)
-- #8  strncmp() does not terminate at '\0'  (fixed)
-- #9  stdint.h dysfunctional                (fixed)
-- #10 NULL redefinition warnings            (fixed)
+``v0.4.1 - 2006-11-16``
+    With v0.5 (<stdio.h>) taking longer than expected, v0.4.1 was set up as
+    a backport of bugfixes in the current development code.
 
-v0.5 - 2010-12-22
-Implementations for <inttypes.h>, <errno.h>, most parts of <stdio.h>,
-and strerror() from <string.h>.
-Still no locale / wide-char support. Enabled all GCC compiler warnings I
-could find, and fixed everything that threw a warning. (You see this,
-maintainers of Open Source software? No warnings whatsoever. Stop telling
-me it cannot be done.) Fixed all known bugs in the v0.4 release.
+    - #1 realloc( NULL, size ) fails
+    - #2 stdlib.h - insufficient documentation
+    - #4  Misspelled name in credits
+    - #5  malloc() splits off too-small nodes
+    - #6  qsort() stack overflow
+    - #7  malloc() bug in list handling
+    - #8  strncmp() does not terminate at '\0'
+    - #9  stdint.h dysfunctional
+    - #10 NULL redefinition warnings
+
+``v0.5 - 2010-12-22``
+    Implementations for <inttypes.h>, <errno.h>, most parts of <stdio.h>,
+    and strerror() from <string.h>.
+    Still no locale / wide-char support. Enabled all GCC compiler warnings I
+    could find, and fixed everything that threw a warning. (You see this,
+    maintainers of Open Source software? No warnings whatsoever. Stop telling
+    me it cannot be done.) Fixed all known bugs in the v0.4 release.
 
 Near Future
 -----------
