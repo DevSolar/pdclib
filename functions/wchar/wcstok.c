@@ -78,6 +78,9 @@ wchar_t * wcstok( wchar_t * _PDCLIB_restrict s1,
 
 int main( void )
 {
+    // MinGW at least has a very nonconforming (different signature!) variety
+    // of wcstok
+#ifndef REGTEST
     wchar_t s[] = L"_a_bc__d_";
     wchar_t* state  = NULL;
     wchar_t* tokres;
@@ -104,6 +107,7 @@ int main( void )
     TESTCASE( s[4] == L'd' );
     TESTCASE( s[5] == L'\0' );
     TESTCASE( ( tokres = wcstok( NULL, L"_", &state ) ) == NULL );
+#endif
     return TEST_RESULTS;
 }
 #endif

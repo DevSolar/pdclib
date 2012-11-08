@@ -200,10 +200,21 @@
  *   XOPEN: X/Open System Interface (XSI)/Single Unix Specification
  *              0 (XPG4), 500 (SUSv2/UNIX98), 600 (SUSv3/UNIX03), 700 (SUSv4)
  *
- * PDCLib does not attempt or claim POSIX comformance, but makes available these
- * extensions as
- *   (a) useful, and
- *   (b) 
+ *   Additionally, the macros
+ *     _BSD_SOURCE, _SVID_SOURCE and _GNU_SOURCE
+ *   are adhered to. If _GNU_SOURCE is defined, _XOPEN_SOURCE and 
+ *   _POSIX_C_SOURCE are defined to their most recent values to match glibc 
+ *   behaviour
+ *
+ *   The intention of supporting these feature test macros is to ease 
+ *   application portability from these systems to PDCLib systems; in addition,
+ *   it eases support for these standards by systems supporting them which are 
+ *   using PDCLib as their default C library.
+ *
+ *   Applications targetting purely PDClib/PDCLib based platforms may define 
+ *   just _PDCLIB_EXTENSIONS, which will enable all supported extensions, plus
+ *   all features from all supported versions of C and C++.
+ *
  */
 #define _PDCLIB_C_MIN(min)         _PDCLIB_C_MINMAX(min, 3000)
 #define _PDCLIB_CXX_MIN(min)     _PDCLIB_CXX_MINMAX(min, 3000)
@@ -218,6 +229,16 @@
     #define _PDCLIB_CXX_MINMAX(min, max) 1
     #define _PDCLIB_POSIX_MINMAX(min, max) 1
     #define _PDCLIB_XOPEN_MINMAX(min, max) 1
+
+    #undef _PDCLIB_EXTENSIONS
+    #undef _PDCLIB_BSD_SOURCE 
+    #undef _PDCLIB_SVID_SOURCE
+    #undef _PDCLIB_GNU_SOURCE
+
+    #define _PDCLIB_EXTENSIONS 1
+    #define _PDCLIB_BSD_SOURCE 1
+    #define _PDCLIB_SVID_SOURCE 1
+    #define _PDCLIB_GNU_SOURCE 1
 #else
     #define _PDCLIB_C_MINMAX(min, max) \
         (_PDCLIB_C_VERSION >= (min) && _PDCLIB_C_VERSION <= (max))
@@ -234,6 +255,32 @@
         /* If _XOPEN_SOURCE is defined as empty, redefine here as zero */
         #undef _XOPEN_SOURCE
         #define _XOPEN_SOURCE 0
+    #endif
+
+    #if defined(_GNU_SOURCE)
+        #define _PDCLIB_GNU_SOURCE 1
+        #define _PDCLIB_SVID_SOURCE 1
+        #define _PDCLIB_BSD_SOURCE 1
+        #undef _XOPEN_SOURCE
+        #define _XOPEN_SOURCE 700
+    #else
+        #define _PDCLIB_GNU_SOURCE 0
+    #endif
+
+    #if defined(_PDCLIB_BSD_SOURCE)
+        // pass
+    #elif defined(_BSD_SOURCE)
+        #define _PDCLIB_BSD_SOURCE 1
+    #else
+        #define _PDCLIB_BSD_SOURCE 0
+    #endif
+
+    #if defined(_PDCLIB_SVID_SOURCE)
+        // pass
+    #elif defined(_SVID_SOURCE)
+        #define _PDCLIB_SVID_SOURCE 1
+    #else
+        #define _PDCLIB_SVID_SOURCE 0
     #endif
 
     #if _PDCLIB_XOPEN_MIN(700) && !_PDCLIB_POSIX_MIN(200809L)

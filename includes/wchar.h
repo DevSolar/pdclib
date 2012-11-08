@@ -7,7 +7,7 @@
 
 #ifndef _PDCLIB_WCHAR_H
 #define _PDCLIB_WCHAR_H
-#include <_PDCLIB_int.h>
+#include <_PDCLIB_io.h>
 _PDCLIB_BEGIN_EXTERN_C
 /* This is VASTLY incomplete. Functions being implemented as required by other
    portions of the library
@@ -100,6 +100,17 @@ wint_t getwchar(void);
 wint_t putwc(wchar_t c, struct _PDCLIB_file_t *stream);
 wint_t putwchar(wchar_t c);
 wint_t ungetwc(wint_t c, struct _PDCLIB_file_t *stream);
+
+#if _PDCLIB_GNU_SOURCE
+wint_t getwc_unlocked(struct _PDCLIB_file_t *stream);
+wint_t getwchar_unlocked(void);
+wint_t fgetwc_unlocked(struct _PDCLIB_file_t *stream);
+wint_t fputwc_unlocked(wchar_t wc, struct _PDCLIB_file_t *stream);
+wint_t putwc_unlocked(wchar_t wc, struct _PDCLIB_file_t *stream);
+wint_t putwchar_unlocked(wchar_t wc);
+wchar_t *fgetws_unlocked(wchar_t *ws, int n, struct _PDCLIB_file_t *stream);
+int fputws_unlocked(const wchar_t *ws, struct _PDCLIB_file_t *stream);
+#endif
 
 /* Wide character <-> Numeric conversions */
 #if 0

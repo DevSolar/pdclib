@@ -8,7 +8,7 @@
 
 #ifndef _PDCLIB_STDIO_H
 #define _PDCLIB_STDIO_H _PDCLIB_STDIO_H
-#include <_PDCLIB_int.h>
+#include <_PDCLIB_io.h>
 _PDCLIB_BEGIN_EXTERN_C
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
@@ -816,6 +816,50 @@ int ferror( FILE * stream ) _PDCLIB_nothrow;
    strerror( errno ) had been called).
 */
 void perror( const char * s ) _PDCLIB_nothrow;
+
+/* Unlocked I/O 
+ *
+ * Since threading was introduced in C11, FILE objects have had implicit locks
+ * to prevent data races and inconsistent output.
+ *
+ * PDCLib provides these functions from POSIX as an extension in order to enable
+ * users to access the underlying unlocked functions.
+ *
+ * For each function defined in C11 where an _unlocked variant is defined below,
+ * the behaviour of the _unlocked variant is the same except that it will not
+ * take the lock associated with the stream.
+ *
+ * flockfile, ftrylockfile and funlockfile can be used to manually manipulate 
+ * the stream locks. The behaviour of the _unlocked functions if called when the
+ * stream isn't locked by the calling thread is implementation defined.
+ */
+#if _PDCLIB_POSIX_MIN(200112L) || _PDCLIB_BSD_SOURCE || _PDCLIB_SVID_SOURCE
+void flockfile(FILE *file);
+int ftrylockfile(FILE *file);
+void funlockfile(FILE *file);
+
+int getc_unlocked(FILE *stream);
+int getchar_unlocked(void);
+int putc_unlocked(int c, FILE *stream);
+int putchar_unlocked(int c);
+#endif
+
+#if _PDCLIB_BSD_SOURCE || _PDCLIB_SVID_SOURCE
+void clearerr_unlocked(FILE *stream); 
+int feof_unlocked(FILE *stream);
+int ferror_unlocked(FILE *stream);
+int fileno_unlocked(FILE *stream);
+int fflush_unlocked(FILE *stream);
+int fgetc_unlocked(FILE *stream);
+int fputc_unlocked(int c, FILE *stream);
+size_t fread_unlocked(void *ptr, size_t size, size_t n, FILE *stream);
+size_t fwrite_unlocked(const void *ptr, size_t size, size_t n, FILE *stream);
+#endif
+
+#if _PDCLIB_GNU_SOURCE
+char *fgets_unlocked(char *s, int n, FILE *stream);
+int fputs_unlocked(const char *s, FILE *stream);
+#endif
 
 _PDCLIB_END_EXTERN_C
 #endif

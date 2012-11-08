@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <threads.h>
 #include <wchar.h> // Watcom bug: winnt.h assumes string.h defines wchar_t
 #include <windows.h>
 
@@ -112,6 +113,14 @@ void __cdecl mainCRTStartup( void )
     cl    = GetCommandLineW();
     wargv = CommandLineToArgvW(cl, &argc);
     argv  = argvToAnsi(wargv, argc);
+
+    if(        mtx_init(&stdin->lock, mtx_recursive) != thrd_success 
+            || mtx_init(&stdout->lock, mtx_recursive) != thrd_success
+            || mtx_init(&stderr->lock, mtx_recursive) != thrd_success ) {
+        fputs( "Error during C runtime initialization: "
+            "Unable to allocate stdio mutex", stderr );
+    }
+
     atexit(freeArgs);
 
     int exitStatus = main(argc, argv, NULL);
