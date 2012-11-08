@@ -1,5 +1,13 @@
-PDCLib - Public Domain C Library
+PDCLib - the `Public Domain C Library<http://pdclib.e43.eu>`_
 ================================
+
+What is it
+----------
+
+This is a C Standard Library - what's defined in ISO/IEC 9899 "Information 
+technology — Programming languages — C" or extensions to the above defined in
+ISO/IEC 14882 "Information technology — Programming languages — C++". A few 
+extensions may optionally be provided.
 
 License
 -------
@@ -14,30 +22,76 @@ worldwide. This software is distributed without any warranty.
 You should have received a copy of the CC0 Public Domain Dedication along with 
 this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-NOTE: Some configuration options may include components under non-public domain
-      conditions. In particular, selecting ptmalloc3 as the malloc 
-      implementation will cause the incorporation of elements under the BSD 
-      license.
+    **Exception:** Portions of the test suite are under different licenses. 
+    Where this is the case, it is clearly noted in the relevant location.
 
-What is it
-----------
+    The license of this code has no bearing upon the licensing of the built 
+    library (as it does not comprise part of it).
 
-This is a C Standard Library - what's defined in ISO/IEC 9899 "Information 
-technology — Programming languages — C" or extensions to the above defined in
-ISO/IEC 14882 "Information technology — Programming languages — C++". A few 
-extensions may optionally be provided.
+    At the time this was written, this exception only applies to portions of the
+    printf test suite, which are released under the terms of the 2-clause BSD
+    license (see testing/printf_testcases.h for full details)
 
 Terms for extensions
 --------------------
-Extensions are permitted where their inclusion is reasonable, they are widely
-used, in  keeping with the spirit of the standard, and do not convey 
-additional requirements upon the target system, and do not needlessly duplicate
-functionality already contained within the standard.
+Extensions are permitted only if they pass the following tests:
 
-As an example: strdup is in, because (a) it can be implemented entirely in 
-terms of existing standard C functions and (b) is very widely used. Something
-like open, write or close would not be considered, because it implies POSIXy 
-assumptions.
+Pre-existing wide usage
+    On most systems, the system C library must maintain its application binary
+    interface for long periods of time (potentially eternity). Existing wide 
+    usage demonstrates utility
+
+In keeping with the spirit of the standard
+    The extension should respect the design, intentions and conventions of the C
+    standard, and feel like a natural extension to the offered capability. 
+
+Not system dependent
+    The extension should not add any additional dependencies on the underlying 
+    system
+
+Non-duplicative
+    Extensions should not duplicate functionality already provided by the 
+    standard
+
+Disabled by default
+    PDCLib will always default to a "strictly conforming" mode exposing only
+    functionality offered by the version of the standard specified by the
+    __STDC_VERSION__, __STDC__ or __cplusplus macro; extensions will only be 
+    exposed when requested.
+
+Additionally, extra consideration will be given to extensions which are 
+difficult or impossible to implement without access to internal structures of 
+the C library.
+
+Conrete Examples:
+
+strndup
+    **Included.** strndup is easily defined in terms of existing standard 
+    functions, follows  the standard's naming conventions, is in wide usage, and
+    does not duplicate  features already provided.
+
+posix_memalign
+    **Rejected.** Has existing wide usage, is not system dependent (can be 
+    implemented, albeit inefficiently, on top of malloc), but naming is not 
+    consistent with the naming used by the standard (posix_ prefix) and 
+    duplicates functionality provided by the C11 standard
+
+open, close, read, write, ...
+    **Rejected.** Widely used, but duplicates functionality provided by the 
+    standard (FILE objects set to be unbuffered), and not able to implement full
+    semantics (e.g. in relation to POSIX fork and other functionality from the 
+    same defining standard) in a platform-neutral way
+
+strl*
+    **Rejected.** Used somewhat widely, in keeping with the standard, not system
+    dependent, but duplicative of functionality provided by (optional) Annex K 
+    of the C standard. 
+
+flockfile, funlockfile, getc_unlocked, putc_unlocked, fwrite_unlocked, ...
+    **Accepted.** Provide functionality not provided by the standard (and 
+    useful in light of the C11 addition of threading). Can be trivially 
+    implemented in terms of the <threads.h> mutex functions and the bodies of 
+    the existing I/O functions, and impossible to implement externally
 
 Internals
 ---------
@@ -92,12 +146,15 @@ all that is actually required to make PDCLib work for your platform.
 Future directions
 -----------------
 Obviously, full C89, C99 and C11 conformance; and full support for the 
-applicable portions of C++98, C++03 and C++11.
+applicable portions of C++98, C++03 and C++11 (the version which acomplishes 
+this will be christened "1.0").
 
 Support for "optimization overlays." These would allow efficient 
 implementations of certain functions on individual platforms, for example 
 memcpy, strcpy and memset. This requires further work to only compile in one
 version of a given function.
+
+Post 1.0, support for C11 Annexe K "Bounds checking interfaces"
 
 Development Status
 ------------------
