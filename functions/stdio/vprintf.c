@@ -11,6 +11,12 @@
 
 #ifndef REGTEST
 
+int vprintf_unlocked( const char * _PDCLIB_restrict format, 
+                      _PDCLIB_va_list arg )
+{
+    return vfprintf_unlocked( stdout, format, arg );
+}
+
 int vprintf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 {
     return vfprintf( stdout, format, arg );

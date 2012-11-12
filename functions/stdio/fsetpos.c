@@ -11,7 +11,8 @@
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
 
-int fsetpos( struct _PDCLIB_file_t * stream, const struct _PDCLIB_fpos_t * pos )
+int fsetpos_unlocked( struct _PDCLIB_file_t * stream, 
+                      const struct _PDCLIB_fpos_t * pos )
 {
     if ( stream->status & _PDCLIB_FWRITE )
     {
@@ -27,6 +28,15 @@ int fsetpos( struct _PDCLIB_file_t * stream, const struct _PDCLIB_fpos_t * pos )
     stream->pos.status = pos->status;
     /* TODO: Add mbstate. */
     return 0;
+}
+
+int fsetpos( struct _PDCLIB_file_t * stream, 
+             const struct _PDCLIB_fpos_t * pos )
+{
+    flockfile( stream );
+    int res = fsetpos_unlocked( stream, pos );
+    funlockfile( stream );
+    return res;
 }
 
 #endif

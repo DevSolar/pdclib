@@ -10,9 +10,17 @@
 
 #ifndef REGTEST
 
-int feof( struct _PDCLIB_file_t * stream )
+int feof_unlocked( struct _PDCLIB_file_t * stream )
 {
     return stream->status & _PDCLIB_EOFFLAG;
+}
+
+int feof( struct _PDCLIB_file_t * stream )
+{
+    flockfile( stream );
+    int eof = feof_unlocked( stream );
+    funlockfile( stream );
+    return eof;
 }
 
 #endif

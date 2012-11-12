@@ -13,7 +13,7 @@
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
-int fflush( struct _PDCLIB_file_t * stream )
+int fflush_unlocked( struct _PDCLIB_file_t * stream )
 {
     if ( stream == NULL )
     {
@@ -37,6 +37,14 @@ int fflush( struct _PDCLIB_file_t * stream )
     {
         return _PDCLIB_flushbuffer( stream );
     }
+}
+
+int fflush( struct _PDCLIB_file_t * stream )
+{
+    flockfile( stream );
+    int res = fflush_unlocked(stream);
+    funlockfile( stream );
+    return res;
 }
                 
 #endif

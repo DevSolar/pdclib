@@ -10,6 +10,12 @@
 
 #ifndef REGTEST
 
+int getchar_unlocked( void )
+{
+    return fgetc_unlocked( stdin );
+}
+
+
 int getchar( void )
 {
     return fgetc( stdin );

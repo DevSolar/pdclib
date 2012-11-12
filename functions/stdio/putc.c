@@ -10,6 +10,12 @@
 
 #ifndef REGTEST
 
+int putc_unlocked( int c, struct _PDCLIB_file_t * stream )
+{
+    return fputc_unlocked( c, stream );
+}
+
+
 int putc( int c, struct _PDCLIB_file_t * stream )
 {
     return fputc( c, stream );

@@ -788,7 +788,6 @@ int fsetpos( FILE * stream, const fpos_t * pos ) _PDCLIB_nothrow;
    TODO: Implementation-defined errno setting for ftell().
 */
 long int ftell( FILE * stream ) _PDCLIB_nothrow;
-_PDCLIB_uint_fast64_t _PDCLIB_ftell64( FILE * stream ) _PDCLIB_nothrow;
 
 /* Equivalent to (void)fseek( stream, 0L, SEEK_SET ), except that the error
    indicator for the stream is also cleared.
@@ -859,6 +858,31 @@ size_t fwrite_unlocked(const void *ptr, size_t size, size_t n, FILE *stream);
 #if _PDCLIB_GNU_SOURCE
 char *fgets_unlocked(char *s, int n, FILE *stream);
 int fputs_unlocked(const char *s, FILE *stream);
+#endif
+
+#if defined(_PDCLIB_EXTENSIONS)
+int fgetpos_unlocked( FILE * _PDCLIB_restrict stream, fpos_t * _PDCLIB_restrict pos ) _PDCLIB_nothrow;
+int fsetpos_unlocked( FILE * stream, const fpos_t * pos ) _PDCLIB_nothrow;
+long int ftell_unlocked( FILE * stream ) _PDCLIB_nothrow;
+int fseek_unlocked( FILE * stream, long int offset, int whence ) _PDCLIB_nothrow;
+
+int puts_unlocked( const char * s ) _PDCLIB_nothrow;
+int ungetc_unlocked( int c, FILE * stream ) _PDCLIB_nothrow;
+
+
+int printf_unlocked( const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
+int vprintf_unlocked( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
+int fprintf_unlocked( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
+int vfprintf_unlocked( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
+int scanf_unlocked( const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
+int vscanf_unlocked( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
+int fscanf_unlocked( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
+int vfscanf_unlocked( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
+
+
+// Todo: remove prefix?
+_PDCLIB_uint_fast64_t _PDCLIB_ftell64( FILE * stream ) _PDCLIB_nothrow;
+_PDCLIB_uint_fast64_t _PDCLIB_ftell64_unlocked( FILE * stream ) _PDCLIB_nothrow;
 #endif
 
 _PDCLIB_END_EXTERN_C

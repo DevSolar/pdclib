@@ -10,9 +10,16 @@
 
 #ifndef REGTEST
 
-void clearerr( struct _PDCLIB_file_t * stream )
+void clearerr_unlocked( struct _PDCLIB_file_t * stream )
 {
     stream->status &= ~( _PDCLIB_ERRORFLAG | _PDCLIB_EOFFLAG );
+}
+
+void clearerr( struct _PDCLIB_file_t * stream )
+{
+    flockfile( stream );
+    clearerr_unlocked( stream );
+    funlockfile( stream );
 }
 
 #endif

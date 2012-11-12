@@ -11,7 +11,10 @@
 
 #ifndef REGTEST
 
-int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
+int vsnprintf( char * _PDCLIB_restrict s, 
+               size_t n, 
+               const char * _PDCLIB_restrict format, 
+               _PDCLIB_va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
     struct _PDCLIB_status_t status;

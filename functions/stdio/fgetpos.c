@@ -10,12 +10,20 @@
 
 #ifndef REGTEST
 
-int fgetpos( struct _PDCLIB_file_t * _PDCLIB_restrict stream, struct _PDCLIB_fpos_t * _PDCLIB_restrict pos )
+int fgetpos_unlocked( struct _PDCLIB_file_t * _PDCLIB_restrict stream, struct _PDCLIB_fpos_t * _PDCLIB_restrict pos )
 {
     pos->offset = stream->pos.offset + stream->bufidx - stream->ungetidx;
     pos->status = stream->pos.status;
     /* TODO: Add mbstate. */
     return 0;
+}
+
+int fgetpos( struct _PDCLIB_file_t * _PDCLIB_restrict stream, struct _PDCLIB_fpos_t * _PDCLIB_restrict pos )
+{
+    flockfile( stream );
+    int res = fgetpos_unlocked( stream, pos );
+    funlockfile( stream );
+    return res;
 }
 
 #endif

@@ -11,7 +11,19 @@
 
 #ifndef REGTEST
 
-int fscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... )
+int fscanf_unlocked( FILE * _PDCLIB_restrict stream, 
+                     const char * _PDCLIB_restrict format, ... )
+{
+    int rc;
+    va_list ap;
+    va_start( ap, format );
+    rc = vfscanf_unlocked( stream, format, ap );
+    va_end( ap );
+    return rc;
+}
+
+int fscanf( FILE * _PDCLIB_restrict stream, 
+            const char * _PDCLIB_restrict format, ... )
 {
     int rc;
     va_list ap;

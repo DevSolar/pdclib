@@ -10,9 +10,17 @@
 
 #ifndef REGTEST
 
-int ferror( struct _PDCLIB_file_t * stream )
+int ferror_unlocked( struct _PDCLIB_file_t * stream )
 {
     return stream->status & _PDCLIB_ERRORFLAG;
+}
+
+int ferror( struct _PDCLIB_file_t * stream )
+{
+    flockfile( stream );
+    int error = ferror_unlocked( stream );
+    funlockfile( stream );
+    return error;
 }
 
 #endif

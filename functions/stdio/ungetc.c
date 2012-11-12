@@ -10,13 +10,21 @@
 
 #ifndef REGTEST
 
-int ungetc( int c, struct _PDCLIB_file_t * stream )
+int ungetc_unlocked( int c, struct _PDCLIB_file_t * stream )
 {
     if ( c == EOF || stream->ungetidx == _PDCLIB_UNGETCBUFSIZE )
     {
         return -1;
     }
     return stream->ungetbuf[stream->ungetidx++] = (unsigned char) c;
+}
+
+int ungetc( int c, struct _PDCLIB_file_t * stream )
+{
+    flockfile( stream );
+    int r = ungetc_unlocked( c, stream );
+    funlockfile( stream);
+    return r;
 }
 
 #endif

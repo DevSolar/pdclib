@@ -12,6 +12,7 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
+#include <threads.h>
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 

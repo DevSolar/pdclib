@@ -14,8 +14,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+struct _PDCLIB_file_t * freopen( 
+                            const char * _PDCLIB_restrict filename, 
+                            const char * _PDCLIB_restrict mode, 
+                            struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
+    flockfile( stream );
+
     unsigned int status = stream->status & ( _IONBF | _IOLBF | _IOFBF | _PDCLIB_FREEBUFFER | _PDCLIB_DELONCLOSE );
     /* TODO: This function can change wide orientation of a stream */
     if ( stream->status & _PDCLIB_FWRITE )
@@ -25,6 +30,7 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
     if ( ( filename == NULL ) && ( stream->filename == NULL ) )
     {
         /* TODO: Special handling for mode changes on std-streams */
+        funlockfile( stream );
         return NULL;
     }
     _PDCLIB_close( stream->handle );
@@ -49,16 +55,19 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
         /* Allocate new buffer */
         if ( ( stream->filename = (char *)malloc( strlen( filename ) ) ) == NULL )
         {
+            funlockfile( stream );
             return NULL;
         }
         strcpy( stream->filename, filename );
     }
     if ( ( mode == NULL ) || ( filename[0] == '\0' ) )
     {
+        funlockfile( stream );
         return NULL;
     }
     if ( ( stream->status = _PDCLIB_filemode( mode ) ) == 0 )
     {
+        funlockfile( stream );
         return NULL;
     }
     /* Re-add the flags we saved above */
@@ -69,8 +78,10 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
     /* TODO: Setting mbstate */
     if ( ( stream->handle = _PDCLIB_open( filename, stream->status ) ) == _PDCLIB_NOHANDLE )
     {
+        funlockfile( stream );
         return NULL;
     }
+    funlockfile( stream );
     return stream;
 }
 

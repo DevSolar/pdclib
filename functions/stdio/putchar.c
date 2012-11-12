@@ -10,6 +10,11 @@
 
 #ifndef REGTEST
 
+int putchar_unlocked( int c )
+{
+    return fputc_unlocked( c, stdout );
+}
+
 int putchar( int c )
 {
     return fputc( c, stdout );

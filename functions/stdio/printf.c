@@ -21,6 +21,16 @@ int printf( const char * _PDCLIB_restrict format, ... )
     return rc;
 }
 
+int printf_unlocked( const char * _PDCLIB_restrict format, ... )
+{
+    int rc;
+    va_list ap;
+    va_start( ap, format );
+    rc = vfprintf_unlocked( stdout, format, ap );
+    va_end( ap );
+    return rc;
+}
+
 #endif
 
 #ifdef TEST

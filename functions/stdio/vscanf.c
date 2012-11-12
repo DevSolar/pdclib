@@ -11,6 +11,11 @@
 
 #ifndef REGTEST
 
+int vscanf_unlocked( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
+{
+    return vfscanf_unlocked( stdin, format, arg );
+}
+
 int vscanf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 {
     return vfscanf( stdin, format, arg );

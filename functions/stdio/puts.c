@@ -13,7 +13,7 @@
 
 extern char * _PDCLIB_eol;
 
-int puts( const char * s )
+int puts_unlocked( const char * s )
 {
     if ( _PDCLIB_prepwrite( stdout ) == EOF )
     {
@@ -40,6 +40,14 @@ int puts( const char * s )
     {
         return 0;
     }
+}
+
+int puts( const char * s )
+{
+    flockfile( stdout );
+    int r = puts_unlocked( s );
+    funlockfile( stdout );
+    return r;
 }
 
 #endif

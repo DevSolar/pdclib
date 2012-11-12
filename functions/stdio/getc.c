@@ -10,6 +10,11 @@
 
 #ifndef REGTEST
 
+int getc_unlocked( struct _PDCLIB_file_t * stream )
+{
+    return fgetc_unlocked( stream );
+}
+
 int getc( struct _PDCLIB_file_t * stream )
 {
     return fgetc( stream );

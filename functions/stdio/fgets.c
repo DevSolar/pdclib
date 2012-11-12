@@ -12,7 +12,7 @@
 
 #include <_PDCLIB_glue.h>
 
-char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+char * fgets_unlocked( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     if ( size == 0 )
     {
@@ -44,6 +44,15 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
     }
     *dest = '\0';
     return ( dest == s ) ? NULL : s;
+}
+
+char * fgets( char * _PDCLIB_restrict s, int size, 
+              struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+{
+    flockfile( stream );
+    char* r = fgets_unlocked( s, size, stream );
+    funlockfile( stream );
+    return r;
 }
 
 #endif

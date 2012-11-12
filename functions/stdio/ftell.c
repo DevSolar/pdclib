@@ -13,9 +13,9 @@
 
 #ifndef REGTEST
 
-long int ftell( struct _PDCLIB_file_t * stream )
+long int ftell_unlocked( struct _PDCLIB_file_t * stream )
 {
-    uint_fast64_t off64 = _PDCLIB_ftell64( stream );
+    uint_fast64_t off64 = _PDCLIB_ftell64_unlocked( stream );
 
     if ( off64 > LONG_MAX )
     {
@@ -24,6 +24,14 @@ long int ftell( struct _PDCLIB_file_t * stream )
         return -1;
     }
     return off64;
+}
+
+long int ftell( struct _PDCLIB_file_t * stream )
+{
+    flockfile( stream );
+    long int off = ftell_unlocked( stream );
+    funlockfile( stream );
+    return off;
 }
 
 #endif

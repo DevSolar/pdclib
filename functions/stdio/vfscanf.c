@@ -12,7 +12,9 @@
 
 #ifndef REGTEST
 
-int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, va_list arg )
+int vfscanf_unlocked( FILE * _PDCLIB_restrict stream, 
+                      const char * _PDCLIB_restrict format, 
+                      va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
     struct _PDCLIB_status_t status;
@@ -83,6 +85,16 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
     }
     va_end( status.arg );
     return status.n;
+}
+
+int vfscanf( FILE * _PDCLIB_restrict stream, 
+             const char * _PDCLIB_restrict format, 
+             va_list arg )
+{
+    flockfile( stream );
+    int r = vfscanf_unlocked( stream, format, arg );
+    funlockfile( stream );
+    return r;
 }
 
 #endif

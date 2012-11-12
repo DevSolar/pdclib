@@ -12,7 +12,7 @@
 
 #ifndef REGTEST
 
-uint_fast64_t _PDCLIB_ftell64( struct _PDCLIB_file_t * stream )
+uint_fast64_t _PDCLIB_ftell64_unlocked( struct _PDCLIB_file_t * stream )
 {
     /* ftell() must take into account:
        - the actual *physical* offset of the file, i.e. the offset as recognized
@@ -36,6 +36,14 @@ uint_fast64_t _PDCLIB_ftell64( struct _PDCLIB_file_t * stream )
      */
 
     return ( stream->pos.offset - ( ( (int)stream->bufend - (int)stream->bufidx ) + (int)stream->ungetidx ) );
+}
+
+uint_fast64_t _PDCLIB_ftell64( struct _PDCLIB_file_t * stream )
+{
+  flockfile( stream );
+  uint_fast64_t pos = _PDCLIB_ftell64_unlocked( stream );
+  funlockfile( stream );
+  return pos;
 }
 
 #endif

@@ -12,7 +12,7 @@
 
 #include <_PDCLIB_glue.h>
 
-int fgetc( struct _PDCLIB_file_t * stream )
+int fgetc_unlocked( struct _PDCLIB_file_t * stream )
 {
     if ( _PDCLIB_prepread( stream ) == EOF )
     {
@@ -23,6 +23,14 @@ int fgetc( struct _PDCLIB_file_t * stream )
         return (unsigned char)stream->ungetbuf[ --(stream->ungetidx) ];
     }
     return (unsigned char)stream->buffer[stream->bufidx++];
+}
+
+int fgetc( struct _PDCLIB_file_t * stream )
+{
+    flockfile( stream );
+    int c = fgetc_unlocked( stream );
+    funlockfile( stream );
+    return c;
 }
 
 #endif

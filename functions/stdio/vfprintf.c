@@ -12,7 +12,9 @@
 
 #ifndef REGTEST
 
-int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, va_list arg )
+int vfprintf_unlocked( struct _PDCLIB_file_t * _PDCLIB_restrict stream, 
+                       const char * _PDCLIB_restrict format, 
+                       va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
     struct _PDCLIB_status_t status;
@@ -44,6 +46,16 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
     }
     va_end( status.arg );
     return status.i;
+}
+
+int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, 
+              const char * _PDCLIB_restrict format, 
+              va_list arg )
+{
+    flockfile( stream );
+    int r = vfprintf_unlocked( stream, format, arg );
+    funlockfile( stream );
+    return r;
 }
 
 #endif

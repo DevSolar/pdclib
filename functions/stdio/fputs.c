@@ -11,7 +11,8 @@
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
 
-int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+int fputs_unlocked( const char * _PDCLIB_restrict s, 
+                    struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     if ( _PDCLIB_prepwrite( stream ) == EOF )
     {
@@ -43,6 +44,15 @@ int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_rest
         }
     }
     return 0;
+}
+
+int fputs( const char * _PDCLIB_restrict s,
+           struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+{
+    flockfile( stream );
+    int r = fputs_unlocked( s, stream );
+    funlockfile( stream );
+    return r;
 }
 
 #endif
