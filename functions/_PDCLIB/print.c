@@ -53,7 +53,7 @@ do { \
     int character = x; \
     if ( status->i < status->n ) { \
         if ( status->stream != NULL ) \
-            putc( character, status->stream ); \
+            putc_unlocked( character, status->stream ); \
         else \
             status->s[status->i] = character; \
     } \
