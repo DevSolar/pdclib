@@ -8,7 +8,7 @@ int mtx_timedlock(mtx_t *_PDCLIB_restrict mtx,
 {
     DWORD myId = GetCurrentThreadId();
 
-    if(mtx->_ThreadId == myId) {
+    if(mtx->_ThreadId == (long) myId) {
         mtx->_NestCount++;
         return thrd_success;
     }

@@ -20,7 +20,7 @@ void _PDCLIB_call_once(_PDCLIB_once_flag *flag, void (*func)(void));
 
 struct _PDCLIB_mtx {
     void                   * _WaitEvHandle;
-    volatile unsigned long   _ThreadId; 
+    volatile          long   _ThreadId; 
     volatile unsigned  int   _NestCount;
 };
 
