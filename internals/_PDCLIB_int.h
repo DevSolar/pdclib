@@ -231,7 +231,11 @@ typedef _PDCLIB_size     _PDCLIB_size_t;
 #define _PDCLIB_SIZE_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_SIZE ), _MAX )
 
 typedef _PDCLIB_wint      _PDCLIB_wint_t;
-typedef _PDCLIB_wchar     _PDCLIB_wchar_t;
+#ifndef __cplusplus
+    typedef _PDCLIB_wchar     _PDCLIB_wchar_t;
+#else
+    typedef wchar_t _PDCLIB_wchar_t;
+#endif
 #define _PDCLIB_WCHAR_MIN _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_WCHAR ), _MIN )
 #define _PDCLIB_WCHAR_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_WCHAR ), _MAX )
 
