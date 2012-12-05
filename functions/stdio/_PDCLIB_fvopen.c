@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* _PDCLIB_fdopen( _PDCLIB_fd_t fd, const char * )
+/* _PDCLIB_fvopen( _PDCLIB_fd_t fd, _PDCLIB_fileops_t *  )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -16,7 +16,8 @@
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
-struct _PDCLIB_file_t * _PDCLIB_fdopen( _PDCLIB_fd_t fd, 
+struct _PDCLIB_file_t * _PDCLIB_fvopen( _PDCLIB_fd_t               fd, 
+                                        const _PDCLIB_fileops_t *  ops,
                                         int mode,
                                         const char * _PDCLIB_restrict filename )
 {
@@ -47,6 +48,7 @@ struct _PDCLIB_file_t * _PDCLIB_fdopen( _PDCLIB_fd_t fd,
     }
 
     rc->status = mode;
+    rc->ops    = ops;
     rc->handle = fd;
     /* Setting pointers into the memory block allocated above */
     rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );

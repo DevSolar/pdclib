@@ -33,7 +33,8 @@ struct _PDCLIB_file_t * freopen(
         funlockfile( stream );
         return NULL;
     }
-    _PDCLIB_close( stream->handle );
+    stream->ops->close(stream->handle);
+    
     /* TODO: It is not nice to do this on a stream we just closed.
        It does not matter with the current implementation of clearerr(),
        but it might start to matter if someone replaced that implementation.
@@ -76,7 +77,8 @@ struct _PDCLIB_file_t * freopen(
     stream->bufend = 0;
     stream->ungetidx = 0;
     /* TODO: Setting mbstate */
-    if ( ( stream->handle = _PDCLIB_open( filename, stream->status ) ) == _PDCLIB_NOHANDLE )
+    if ( ! _PDCLIB_open( &stream->handle, &stream->ops, filename, 
+                         stream->status ) )
     {
         funlockfile( stream );
         return NULL;

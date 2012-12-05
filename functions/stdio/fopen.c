@@ -24,15 +24,16 @@ FILE * fopen( const char * _PDCLIB_restrict filename,
     if( imode == 0 || filename == NULL )
         return NULL;
 
-    _PDCLIB_fd_t fd = _PDCLIB_open( filename, imode );
-    if(fd == _PDCLIB_NOHANDLE) {
+    _PDCLIB_fd_t              fd;
+    const _PDCLIB_fileops_t * ops;
+    if(!_PDCLIB_open( &fd, &ops, filename, imode )) {
         return NULL;
     }
 
-    FILE * f = _PDCLIB_fdopen( fd, imode, filename );
+    FILE * f = _PDCLIB_fvopen( fd, ops, imode, filename );
     if(!f) {
         int saveErrno = errno;
-        _PDCLIB_close( fd );
+        ops->close(fd);
         errno = saveErrno;
     }
     return f;

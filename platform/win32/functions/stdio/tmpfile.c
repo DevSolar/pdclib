@@ -16,7 +16,9 @@
 
 static char tmpname_prefix[4] = {0, 0, 0, 0};
 
+extern const _PDCLIB_fileops_t _PDCLIB_fileops;
 extern void _PDCLIB_w32errno( void );
+
 struct _PDCLIB_file_t * tmpfile( void )
 {
     if(!tmpname_prefix[0]) {
@@ -67,7 +69,7 @@ struct _PDCLIB_file_t * tmpfile( void )
     /* Set the file to delete on close */
     DeleteFile(name);
 
-    FILE* fs = _PDCLIB_fdopen(fd, _PDCLIB_FWRITE | _PDCLIB_FRW, name);
+    FILE* fs = _PDCLIB_fvopen(((_PDCLIB_fd_t){fd}), &_PDCLIB_fileops, _PDCLIB_FWRITE | _PDCLIB_FRW, name);
     if(!fs) {
         CloseHandle(fd);
     }

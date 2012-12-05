@@ -341,9 +341,6 @@ struct _PDCLIB_imaxdiv_t
 
 /* I/O ---------------------------------------------------------------------- */
 
-/* The type of the file descriptor returned by _PDCLIB_open(). */
-typedef void * _PDCLIB_fd_t;
-
 /* The value (of type _PDCLIB_fd_t) returned by _PDCLIB_open() if the operation
    failed.
 */

@@ -160,9 +160,11 @@
 #ifdef __cplusplus
 	#define _PDCLIB_BEGIN_EXTERN_C extern "C" {
 	#define _PDCLIB_END_EXTERN_C }
+  typedef bool _PDCLIB_bool;
 #else
-   #define _PDCLIB_BEGIN_EXTERN_C
-   #define _PDCLIB_END_EXTERN_C
+  #define _PDCLIB_BEGIN_EXTERN_C
+  #define _PDCLIB_END_EXTERN_C
+  typedef _Bool _PDCLIB_bool;
 #endif
 
 /*#if _PDCLIB_C_VERSION != 1999

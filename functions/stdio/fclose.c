@@ -39,7 +39,7 @@ int fclose( struct _PDCLIB_file_t * stream )
             mtx_destroy( &stream->lock );
 
             /* Close handle */
-            _PDCLIB_close( stream->handle );
+            stream->ops->close(stream->handle);
 
             /* Remove stream from list */
             if ( previous != NULL )

@@ -16,8 +16,11 @@
 #include <_PDCLIB_glue.h>
 #include <windows.h>
 
+extern const _PDCLIB_fileops_t _PDCLIB_fileops;
+
 void _PDCLIB_w32errno(void);
-HANDLE _PDCLIB_open( char const * const filename, unsigned int mode )
+bool _PDCLIB_open( _PDCLIB_fd_t * pFd, const _PDCLIB_fileops_t ** pOps,
+                   char const * const filename, unsigned int mode )
 {
     DWORD desiredAccess;
     DWORD creationDisposition;
@@ -51,7 +54,7 @@ HANDLE _PDCLIB_open( char const * const filename, unsigned int mode )
         break;
     default: /* Invalid mode */
         errno = EINVAL;
-        return NULL;
+        return false;
     }
 
     HANDLE fd = CreateFileA(filename, desiredAccess, 
@@ -75,7 +78,7 @@ HANDLE _PDCLIB_open( char const * const filename, unsigned int mode )
         fprintf(stderr, "Error: %s\n", msgBuf);
 #endif
         _PDCLIB_w32errno();
-        return NULL;
+        return false;
     }
 
     if(mode & _PDCLIB_FAPPEND) {
@@ -85,11 +88,13 @@ HANDLE _PDCLIB_open( char const * const filename, unsigned int mode )
         if(!ok) {
             _PDCLIB_w32errno();
             CloseHandle(fd);
-            return NULL;
+            return false;
         }
     }
 
-    return fd;
+    pFd->pointer = fd;
+    *pOps = &_PDCLIB_fileops;
+    return true;
 }
 
 #endif

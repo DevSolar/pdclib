@@ -171,12 +171,14 @@ int fflush( FILE * stream ) _PDCLIB_nothrow;
 
    Returns a pointer to the stream handle if successfull, NULL otherwise.
 */
-FILE * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode ) _PDCLIB_nothrow;
+FILE * fopen( const char * _PDCLIB_restrict filename, 
+              const char * _PDCLIB_restrict mode ) _PDCLIB_nothrow;
 
 /* Creates a stream connected to the file descriptor \p fd with mode \p mode.
    Mode must match the mode with which the file descriptor was opened.
 */
-FILE * _PDCLIB_fdopen( _PDCLIB_fd_t fd, int mode, const char* filename ) _PDCLIB_nothrow;
+FILE * _PDCLIB_fvopen( _PDCLIB_fd_t fd, const _PDCLIB_fileops_t * ops, 
+                       int mode, const char * filename ) _PDCLIB_nothrow;
 
 /* Close any file currently associated with the given stream. Open the file
    identified by the given filename with the given mode (equivalent to fopen()),

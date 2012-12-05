@@ -9,6 +9,7 @@
 */
 
 #include <_PDCLIB_int.h>
+#include <_PDCLIB_io.h>
 #include <stdbool.h>
 #include <stddef.h>
 _PDCLIB_BEGIN_EXTERN_C
@@ -49,33 +50,14 @@ void * _PDCLIB_reallocpages( void* p, size_t on, size_t nn, bool mayMove);
 
 /* stdio.h */
 
-/* A system call that opens a file identified by name in a given mode. Return 
-   a file descriptor uniquely identifying that file.
-   (The mode is the return value of the _PDCLIB_filemode() function.)
-*/
-_PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode );
-
-/* A system call that writes a stream's buffer.
-   Returns 0 on success, EOF on write error.
-   Sets stream error flags and errno appropriately on error.
-*/
-int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream );
-
-/* A system call that fills a stream's buffer.
-   Returns 0 on success, EOF on read error / EOF.
-   Sets stream EOF / error flags and errno appropriately on error.
-*/
-int _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream );
-
-/* A system call that repositions within a file. Returns new offset on success,
-   -1 / errno on error.
-*/
-_PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t offset, int whence );
-
-/* A system call that closes a file identified by given file descriptor. Return
-   zero on success, non-zero otherwise.
-*/
-int _PDCLIB_close( _PDCLIB_fd_t fd );
+/* Open the file with the given name and mode. Return the file descriptor in 
+ * *fd and a pointer to the operations structure in **ops on success.
+ *
+ * Return true on success and false on failure.
+ */
+bool _PDCLIB_open( 
+   _PDCLIB_fd_t* fd, const _PDCLIB_fileops_t** ops,
+   char const * filename, unsigned int mode );
 
 /* A system call that removes a file identified by name. Return zero on success,
    non-zero otherwise.

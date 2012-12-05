@@ -104,9 +104,9 @@ void __cdecl mainCRTStartup( void );
 
 void __cdecl mainCRTStartup( void ) 
 {
-    stdin->handle  = GetStdHandle(STD_INPUT_HANDLE);
-    stdout->handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    stderr->handle = GetStdHandle(STD_ERROR_HANDLE);
+    stdin->handle.pointer  = GetStdHandle(STD_INPUT_HANDLE);
+    stdout->handle.pointer = GetStdHandle(STD_OUTPUT_HANDLE);
+    stderr->handle.pointer = GetStdHandle(STD_ERROR_HANDLE);
 
     oldFilter = SetUnhandledExceptionFilter( sehExceptionFilter );
 
