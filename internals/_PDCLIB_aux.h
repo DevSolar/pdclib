@@ -23,28 +23,28 @@
 #endif
 
 #if defined(_PDCLIB_C_VERSION)
-	/* Pass - conditional simplification case */
+    /* Pass - conditional simplification case */
 #elif !defined(__STDC_VERSION__)
-	#define _PDCLIB_C_VERSION 1990
+    #define _PDCLIB_C_VERSION 1990
 #elif __STDC_VERSION__ == 199409L
-	#define _PDCLIB_C_VERSION 1995
+    #define _PDCLIB_C_VERSION 1995
 #elif __STDC_VERSION__ == 199901L
-	#define _PDCLIB_C_VERSION 1999
+    #define _PDCLIB_C_VERSION 1999
 #elif __STDC_VERSION__ == 201112L
-	#define _PDCLIB_C_VERSION 2011
+    #define _PDCLIB_C_VERSION 2011
 #else
-	#error Unsupported _ _STDC_VERSION_ _ (__STDC_VERSION__) (supported: ISO/IEC 9899:1990, 9899/AMD1:1995, 9899:1999, 9899:2011).
+    #error Unsupported _ _STDC_VERSION_ _ (__STDC_VERSION__) (supported: ISO/IEC 9899:1990, 9899/AMD1:1995, 9899:1999, 9899:2011).
 #endif
 
 #if !defined(__cplusplus) || defined(_PDCLIB_CXX_VERSION)
    #define _PDCLIB_CXX_VERSION 0
 #elif __cplusplus == 201103L
-	#define _PDCLIB_CXX_VERSION 2011
+    #define _PDCLIB_CXX_VERSION 2011
     /* TODO: Do we want this? */
-	#if _PDCLIB_C_VERSION < 2011
-		#undef _PDCLIB_C_VERSION
-   		#define _PDCLIB_C_VERSION 2011
-	#endif
+    #if _PDCLIB_C_VERSION < 2011
+        #undef _PDCLIB_C_VERSION
+        #define _PDCLIB_C_VERSION 2011
+    #endif
 #elif __cplusplus == 199711L
    #define _PDCLIB_CXX_VERSION 1997
 #else
@@ -52,10 +52,10 @@
 #endif
 
 #if _PDCLIB_C_VERSION >= 1999 || defined(__cplusplus)
-	#ifndef __cplusplus
-		#define _PDCLIB_restrict restrict
-  	#endif
-	#define _PDCLIB_inline   inline
+    #ifndef __cplusplus
+        #define _PDCLIB_restrict restrict
+    #endif
+    #define _PDCLIB_inline   inline
 #endif
 
 #if _PDCLIB_CXX_VERSION >= 2011
@@ -70,7 +70,7 @@
   // Hold off on C++ attribute syntax for now
   // #define _PDCLIB_noreturn [[noreturn]]
 #elif _PDCLIB_C_VERSION >= 2011
-	#define _PDCLIB_noreturn _Noreturn
+    #define _PDCLIB_noreturn _Noreturn
 #endif
 
 #ifdef _WIN32
@@ -79,35 +79,39 @@
 #endif
 
 #ifdef __GNUC__
-	  #ifndef _PDCLIB_EXPORT
-  	    #define _PDCLIB_EXPORT __attribute__((__visibility__("protected")))
+    #ifndef _PDCLIB_EXPORT
+        #define _PDCLIB_EXPORT __attribute__((__visibility__("protected")))
     #endif
 
-   	#ifndef _PDCLIB_IMPORT
-		#define _PDCLIB_IMPORT
-   	#endif
+    #ifndef _PDCLIB_IMPORT
+        #define _PDCLIB_IMPORT
+    #endif
 
-   	#ifndef _PDCLIB_HIDDEN
-   		#define _PDCLIB_HIDDEN __attribute__((__visibility__("hidden")))
-   	#endif
+    #ifndef _PDCLIB_HIDDEN
+        #define _PDCLIB_HIDDEN __attribute__((__visibility__("hidden")))
+    #endif
 
     #ifndef _PDCLIB_nothrow
       #define _PDCLIB_nothrow __attribute__((__nothrow__))
       #define _PDCLIB_noexcept
     #endif
 
-	#ifndef _PDCLIB_restrict
-		#define _PDCLIB_restrict __restrict
-	#endif
+    #ifndef _PDCLIB_restrict
+        #define _PDCLIB_restrict __restrict
+    #endif
 
-	#ifndef _PDCLIB_inline
-		#define _PDCLIB_inline __inline
-	#endif
+    #ifndef _PDCLIB_inline
+        #define _PDCLIB_inline __inline
+    #endif
 
-	#ifndef _PDCLIB_noreturn
+    #ifndef _PDCLIB_noreturn
     /* If you don't use __noreturn__, then stdnoreturn.h will break things! */
-		#define _PDCLIB_noreturn __attribute__((__noreturn__))
-	#endif
+        #define _PDCLIB_noreturn __attribute__((__noreturn__))
+    #endif
+
+    #ifndef _PDCLIB_DEPRECATED
+        #define _PDCLIB_DEPRECATED __attribute__ ((deprecated))
+    #endif
 #endif
 
 #ifndef _PDCLIB_nothrow
@@ -116,35 +120,39 @@
 #endif
 
 #ifndef _PDCLIB_EXPORT
-   	#define _PDCLIB_EXPORT
+    #define _PDCLIB_EXPORT
 #endif
 #ifndef _PDCLIB_IMPORT
-   	#define _PDCLIB_IMPORT
+    #define _PDCLIB_IMPORT
 #endif
 #ifndef _PDCLIB_HIDDEN
-   	#define _PDCLIB_HIDDEN
+    #define _PDCLIB_HIDDEN
 #endif
 
 #if defined(_PDCLIB_SHARED) 
-   	#if defined(_PDCLIB_BUILD)
-   		#define _PDCLIB_API _PDCLIB_EXPORT
-   	#else
-   		#define _PDCLIB_API _PDCLIB_IMPORT
-   	#endif
+    #if defined(_PDCLIB_BUILD)
+        #define _PDCLIB_API _PDCLIB_EXPORT
+    #else
+        #define _PDCLIB_API _PDCLIB_IMPORT
+    #endif
 #else
-   	#define _PDCLIB_API
+    #define _PDCLIB_API
 #endif
 
 #ifndef _PDCLIB_restrict
-	#define _PDCLIB_restrict
+      #define _PDCLIB_restrict
 #endif
 
 #ifndef _PDCLIB_inline
-	#define _PDCLIB_inline
+      #define _PDCLIB_inline
 #endif
 
 #ifndef _PDCLIB_noreturn
-	#define _PDCLIB_noreturn
+      #define _PDCLIB_noreturn
+#endif
+
+#ifndef _PDCLIB_DEPRECATED
+    #define _PDCLIB_DEPRECATED
 #endif
 
 #ifndef __STDC_HOSTED__
@@ -158,8 +166,8 @@
 #endif
 
 #ifdef __cplusplus
-	#define _PDCLIB_BEGIN_EXTERN_C extern "C" {
-	#define _PDCLIB_END_EXTERN_C }
+    #define _PDCLIB_BEGIN_EXTERN_C extern "C" {
+    #define _PDCLIB_END_EXTERN_C }
   typedef bool _PDCLIB_bool;
 #else
   #define _PDCLIB_BEGIN_EXTERN_C
@@ -187,9 +195,9 @@
 /* Feature test macros
  *
  * All of the feature test macros come in the following forms
- *   _PDCLIB_*_MIN(min):            Available in versions > min
- *   _PDCLIB_*_MINMAX(min, max):    Available in versions > min < max
- *   _PDCLIB_*_MAX(max):            Availabel in versions < max
+ *   _PDCLIB_*_MIN(min):            Available in versions >= min
+ *   _PDCLIB_*_MINMAX(min, max):    Available in versions >= min <= max
+ *   _PDCLIB_*_MAX(max):            Availabel in versions <= max
  *
  * The defined tests are:
  *   C:     C standard versions 
