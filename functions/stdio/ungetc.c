@@ -31,6 +31,7 @@ int ungetc( int c, struct _PDCLIB_file_t * stream )
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
+#include <stdlib.h>
 
 const char* hellostr = "Hello, world!";
 

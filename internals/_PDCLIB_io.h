@@ -151,5 +151,40 @@ struct _PDCLIB_file_t
     struct _PDCLIB_file_t *   next;     /* Pointer to next struct (internal) */
 };
 
+static inline _PDCLIB_size_t _PDCLIB_getchars( char * out, _PDCLIB_size_t n,
+                                               int stopchar,
+                                               struct _PDCLIB_file_t * stream )
+{
+    _PDCLIB_size_t i = 0;
+    int c;
+    while ( stream->ungetidx > 0 && i != n )
+    {
+        c = (unsigned char) 
+                ( out[ i++ ] = stream->ungetbuf[ --(stream->ungetidx) ] );
+        if( c == stopchar )
+            return i;
+    }
+
+    while ( i != n )
+    {
+        while ( stream->bufidx != stream->bufend && i != n) 
+        {
+            c = (unsigned char) 
+                ( out[ i++ ] = stream->buffer[ stream->bufidx++ ] );
+            if( c == stopchar )
+                return i;
+        }
+
+        if ( stream->bufidx == stream->bufend )
+        {
+            if( _PDCLIB_fillbuffer( stream ) == -1 )
+            {
+                return i;
+            }
+        }
+    }
+
+    return i;
+}
 
 #endif

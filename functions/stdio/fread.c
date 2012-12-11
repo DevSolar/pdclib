@@ -27,18 +27,10 @@ size_t fread_unlocked( void * _PDCLIB_restrict ptr,
     size_t nmemb_i;
     for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
     {
-        for ( size_t size_i = 0; size_i < size; ++size_i )
-        {
-            if ( stream->bufidx == stream->bufend )
-            {
-                if ( _PDCLIB_fillbuffer( stream ) == EOF )
-                {
-                    /* Could not read requested data */
-                    return nmemb_i;
-                }
-            }
-            dest[ nmemb_i * size + size_i ] = stream->buffer[ stream->bufidx++ ];
-        }
+        size_t numread = _PDCLIB_getchars( &dest[ nmemb_i * size ], size, EOF, 
+                                           stream );
+        if( numread != size )
+            break;
     }
     return nmemb_i;
 }

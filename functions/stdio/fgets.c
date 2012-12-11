@@ -28,20 +28,9 @@ char * fgets_unlocked( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_
         return NULL;
     }
     char * dest = s;
-    while ( ( ( *dest++ = stream->buffer[stream->bufidx++] ) != '\n' ) && --size > 0 )
-    {
-        if ( stream->bufidx == stream->bufend )
-        {
-            if ( _PDCLIB_fillbuffer( stream ) == EOF )
-            {
-                /* In case of error / EOF before a character is read, this
-                   will lead to a \0 be written anyway. Since the results
-                   are "indeterminate" by definition, this does not hurt.
-                */
-                break;
-            }
-        }
-    }
+
+    dest += _PDCLIB_getchars( dest, size - 1, '\n', stream );
+
     *dest = '\0';
     return ( dest == s ) ? NULL : s;
 }
