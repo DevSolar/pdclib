@@ -18,11 +18,12 @@ int fgetc_unlocked( struct _PDCLIB_file_t * stream )
     {
         return EOF;
     }
-    if ( stream->ungetidx > 0 )
-    {
-        return (unsigned char)stream->ungetbuf[ --(stream->ungetidx) ];
-    }
-    return (unsigned char)stream->buffer[stream->bufidx++];
+
+    char c;
+
+    size_t n = _PDCLIB_getchars( &c, 1, EOF, stream );
+
+    return n == 0 ? EOF : (unsigned char) c;
 }
 
 int fgetc( struct _PDCLIB_file_t * stream )

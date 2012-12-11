@@ -10,6 +10,7 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
+#include <stdint.h>
 
 char * gets( char * s )
 {
@@ -18,18 +19,15 @@ char * gets( char * s )
         return NULL;
     }
     char * dest = s;
-    while ( ( *dest = stdin->buffer[stdin->bufidx++] ) != '\n' )
-    {
-        ++dest;
-        if ( stdin->bufidx == stdin->bufend )
-        {
-            if ( _PDCLIB_fillbuffer( stdin ) == EOF )
-            {
-                break;
-            }
-        }
+    
+    dest += _PDCLIB_getchars( dest, SIZE_MAX, '\n', stdin );
+
+    if(*(dest - 1) == '\n') {
+        *(--dest) = '\0';
+    } else {
+        *dest = '\0';
     }
-    *dest = '\0';
+
     return ( dest == s ) ? NULL : s;
 }
 
