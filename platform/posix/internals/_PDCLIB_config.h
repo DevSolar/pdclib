@@ -2,7 +2,7 @@
 #define _PDCLIB_CONFIG_H
 
 /* Internal PDCLib configuration <_PDCLIB_config.h>
-   (Generic Template)
+   (POSIX platform)
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -55,7 +55,11 @@
 /* compiler manuals.                                                          */
 #define _PDCLIB_SHRT_BYTES  2
 #define _PDCLIB_INT_BYTES   4
-#define _PDCLIB_LONG_BYTES  4
+#if defined(_LP64) || defined(__ILP64__)
+    #define _PDCLIB_LONG_BYTES 8
+#else
+    #define _PDCLIB_LONG_BYTES 4
+#endif
 #define _PDCLIB_LLONG_BYTES 8
 
 /* <stdlib.h> defines the div() function family that allows taking quotient   */
@@ -125,9 +129,9 @@ struct _PDCLIB_lldiv_t
 /* -------------------------------------------------------------------------- */
 
 /* The result type of substracting two pointers */
-#define _PDCLIB_ptrdiff int
-#define _PDCLIB_PTRDIFF INT
-#define _PDCLIB_PTR_CONV
+#define _PDCLIB_ptrdiff long
+#define _PDCLIB_PTRDIFF LONG
+#define _PDCLIB_PTR_CONV l
 
 /* An integer type that can be accessed as atomic entity (think asynchronous
    interrupts). The type itself is not defined in a freestanding environment,
@@ -137,17 +141,18 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_SIG_ATOMIC INT
 
 /* Result type of the 'sizeof' operator (must be unsigned) */
-#define _PDCLIB_size unsigned int
-#define _PDCLIB_SIZE UINT
+#define _PDCLIB_size unsigned long
+#define _PDCLIB_SIZE ULONG
 
 /* Large enough an integer to hold all character codes of the largest supported
    locale.
 */
-#define _PDCLIB_wchar unsigned short 
-#define _PDCLIB_WCHAR USHRT
+#define _PDCLIB_wint  signed int
+#define _PDCLIB_wchar unsigned int
+#define _PDCLIB_WCHAR UINT
 
-#define _PDCLIB_intptr int
-#define _PDCLIB_INTPTR INT
+#define _PDCLIB_intptr long
+#define _PDCLIB_INTPTR LONG
 
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
 #define _PDCLIB_intmax long long int
@@ -192,8 +197,21 @@ struct _PDCLIB_imaxdiv_t
  *
  * On XSI systems, CLOCKS_PER_SEC must be defined to 1000000
  */
-#define _PDCLIB_clock double
+#define _PDCLIB_clock long
 #define _PDCLIB_CLOCKS_PER_SEC 1000000
+
+/* <time.h>: TIME_UTC
+ *
+ * The TIME_UTC parameter is passed to the timespec_get function in order to get
+ * the system time in UTC since an implementation defined epoch (not necessarily
+ * the same as that used for time_t). That said, on POSIX the obvious 
+ * implementation of timespec_get for TIME_UTC is to wrap 
+ * clock_gettime(CLOCK_REALTIME, ...), which is defined as time in UTC since the
+ * same epoch.
+ *
+ * This may be any non-zero integer value.
+ */
+#define _PDCLIB_TIME_UTC 1
 
 /* -------------------------------------------------------------------------- */
 /* Floating Point                                                             */
@@ -222,6 +240,18 @@ struct _PDCLIB_imaxdiv_t
 */
 #define _PDCLIB_DECIMAL_DIG 17
 
+/* Floating point types
+ *
+ * PDCLib (at present) assumes IEEE 754 floating point formats
+ * The following names are used:
+ *    SINGLE:   IEEE 754 single precision (32-bit)
+ *    DOUBLE:   IEEE 754 double precision (64-bit)
+ *    EXTENDED: IEEE 754 extended precision (80-bit, as x87)
+ */
+#define _PDCLIB_FLOAT_TYPE   SINGLE
+#define _PDCLIB_DOUBLE_TYPE  DOUBLE
+#define _PDCLIB_LDOUBLE_TYPE EXTENDED
+
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
 /* -------------------------------------------------------------------------- */
@@ -236,24 +266,36 @@ struct _PDCLIB_imaxdiv_t
    takes the address of member. This is undefined behaviour but should work on
    most compilers.
 */
-#define _PDCLIB_offsetof( type, member ) ( (size_t) &( ( (type *) 0 )->member ) )
+#ifdef __GNUC__
+  #define _PDCLIB_offsetof( type, member ) __builtin_offsetof( type, member )
+#else
+  #define _PDCLIB_offsetof( type, member ) ( (size_t) &( ( (type *) 0 )->member ) )
+#endif
 
 /* Variable Length Parameter List Handling (<stdarg.h>)
    The macros defined by <stdarg.h> are highly dependent on the calling
    conventions used, and you probably have to replace them with builtins of
-   your compiler. The following generic implementation works only for pure
-   stack-based architectures, and only if arguments are aligned to pointer
-   type. Credits to Michael Moody, who contributed this to the Public Domain.
+   your compiler.
 */
 
-/* Internal helper macro. va_round is not part of <stdarg.h>. */
-#define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
+#ifdef __GNUC__
+  typedef __builtin_va_list _PDCLIB_va_list;
+  #define _PDCLIB_va_arg( ap, type ) (__builtin_va_arg( (ap), type ))
+  #define _PDCLIB_va_copy( dest, src ) (__builtin_va_copy( (dest), (src) ))
+  #define _PDCLIB_va_end( ap ) (__builtin_va_end( ap ) )
+  #define _PDCLIB_va_start( ap, parmN ) (__builtin_va_start( (ap), (parmN) ))
+#elif (defined(__i386__) || defined(__i386) || defined(_M_IX86)) && !(defined(__amd64__) || defined(__x86_64__) || defined(_M_AMD64))
+  /* Internal helper macro. va_round is not part of <stdarg.h>. */
+  #define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
 
-typedef char * _PDCLIB_va_list;
-#define _PDCLIB_va_arg( ap, type ) ( (ap) += (_PDCLIB_va_round(type)), ( *(type*) ( (ap) - (_PDCLIB_va_round(type)) ) ) )
-#define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
-#define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
-#define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
+  typedef char * _PDCLIB_va_list;
+  #define _PDCLIB_va_arg( ap, type ) ( (ap) += (_PDCLIB_va_round(type)), ( *(type*) ( (ap) - (_PDCLIB_va_round(type)) ) ) )
+  #define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
+  #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
+  #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
+#else
+  #error Compiler/Architecture support please
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* OS "glue", part 1                                                          */
@@ -268,23 +310,16 @@ typedef char * _PDCLIB_va_list;
    to an appropriate value. (Too small, and malloc() will call the kernel too
    often. Too large, and you will waste memory.)
 */
-#define _PDCLIB_PAGESIZE 4096
+#define _PDCLIB_MALLOC_PAGESIZE 4096
+#define _PDCLIB_MALLOC_ALIGN 16
+#define _PDCLIB_MALLOC_GRANULARITY 64*1024
+#define _PDCLIB_MALLOC_TRIM_THRESHOLD 2*1024*1024
+#define _PDCLIB_MALLOC_MMAP_THRESHOLD 256*1024
+#define _PDCLIB_MALLOC_RELEASE_CHECK_RATE 4095
 
-/* Set this to the minimum memory node size. Any malloc() for a smaller size
-   will be satisfied by a malloc() of this size instead (to avoid excessive
-   fragmentation).
-*/
-#define _PDCLIB_MINALLOC 8
+/* TODO: Better document these */
 
 /* I/O ---------------------------------------------------------------------- */
-
-/* The type of the file descriptor returned by _PDCLIB_open(). */
-typedef int _PDCLIB_fd_t;
-
-/* The value (of type _PDCLIB_fd_t) returned by _PDCLIB_open() if the operation
-   failed.
-*/
-#define _PDCLIB_NOHANDLE ( (_PDCLIB_fd_t) -1 )
 
 /* The default size for file buffers. Must be at least 256. */
 #define _PDCLIB_BUFSIZ 1024
@@ -300,7 +335,7 @@ typedef int _PDCLIB_fd_t;
 #define _PDCLIB_FILENAME_MAX 128
 
 /* Maximum length of filenames generated by tmpnam(). (See tmpfile.c.) */
-#define _PDCLIB_L_tmpnam 46
+#define _PDCLIB_L_tmpnam 128
 
 /* Number of distinct file names that can be generated by tmpnam(). */
 #define _PDCLIB_TMP_MAX 50
