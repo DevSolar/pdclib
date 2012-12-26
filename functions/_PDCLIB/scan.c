@@ -386,7 +386,8 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         }
         case 'p':
             status->base = 16;
-            status->flags |= E_unsigned;
+            // TODO: Like _PDCLIB_print, E_pointer(?)
+            status->flags |= E_unsigned | E_long;
             break;
         case 'n':
         {
