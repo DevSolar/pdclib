@@ -97,7 +97,7 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
     size_t bufLen = (status->width > maxIntLen ? status->width : maxIntLen) + 2;
     char outbuf[bufLen];
     char * outend = outbuf + bufLen;
-    unsigned written = 0;
+    int written = 0;
 
     // Build up our output string - backwards
     {
