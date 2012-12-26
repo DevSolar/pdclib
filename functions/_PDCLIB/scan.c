@@ -162,7 +162,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     status->width = (int)strtol( spec, (char**)&spec, 10 );
     if ( spec == prev_spec )
     {
-        status->width = SIZE_MAX;
+        status->width = INT_MAX;
     }
 
     /* Optional length modifier
