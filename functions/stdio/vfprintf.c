@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include <limits.h>
 
 #ifndef REGTEST
 
@@ -20,7 +21,7 @@ int vfprintf_unlocked( struct _PDCLIB_file_t * _PDCLIB_restrict stream,
     struct _PDCLIB_status_t status;
     status.base = 0;
     status.flags = 0;
-    status.n = SIZE_MAX;
+    status.n = UINT_MAX;
     status.i = 0;
     status.current = 0;
     status.s = NULL;
