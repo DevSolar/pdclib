@@ -9,7 +9,8 @@
 #include <errno.h>
 #ifndef REGTEST
 
-int_fast64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t offset, 
+int_fast64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, 
+                           int_fast64_t offset, 
                            int whence )
 {
     int_fast64_t newPos;
