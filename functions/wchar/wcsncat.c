@@ -45,7 +45,7 @@ int main( void )
     TESTCASE( wcsncat( s, wabcdx, 10 ) == s );
     TESTCASE( s[4] == L'x' );
     TESTCASE( s[5] == L'\0' );
-    TESTCASE( wcsncat( s, "\0", 10 ) == s );
+    TESTCASE( wcsncat( s, L"\0", 10 ) == s );
     TESTCASE( s[5] == L'\0' );
     TESTCASE( s[6] == L'e' );
     TESTCASE( wcsncat( s, wabcde, 0 ) == s );
