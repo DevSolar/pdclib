@@ -10,10 +10,17 @@
 
 #ifndef REGTEST
 
-void rewind( struct _PDCLIB_file_t * stream )
+void rewind_unlocked( struct _PDCLIB_file_t * stream )
 {
     stream->status &= ~ _PDCLIB_ERRORFLAG;
-    fseek( stream, 0L, SEEK_SET );
+    fseek_unlocked( stream, 0L, SEEK_SET );
+}
+
+void rewind( struct _PDCLIB_file_t * stream )
+{
+    flockfile(stream);
+    rewind_unlocked(stream);
+    funlockfile(stream);
 }
 
 #endif
