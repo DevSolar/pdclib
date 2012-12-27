@@ -162,7 +162,7 @@ typedef unsigned long      _PDCLIB_uint32_t;
 #endif
 
 /* Setting 'int64_t', its limits, its literal, and conversion macros.         */
-#if     _PDCLIB_LONG_BYTES == 8
+#if     _PDCLIB_LONG_BYTES == 8 && !defined(_PDCLIB_INT64_IS_LLONG)
 typedef signed long        _PDCLIB_int64_t;
 typedef unsigned long      _PDCLIB_uint64_t;
 #define _PDCLIB_INT64_MAX  _PDCLIB_LONG_MAX
