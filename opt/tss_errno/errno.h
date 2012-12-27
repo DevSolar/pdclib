@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.5 Errors <errno.h>
 
    This file is part of the Public Domain C Library (PDCLib).
@@ -11,7 +9,7 @@
 #include <_PDCLIB_int.h>
 _PDCLIB_BEGIN_EXTERN_C
 
-#define errno (*_PDCLIB_errno_func())
+#define errno (*_PDCLIB_errno())
 
 /* C99 */
 #define ERANGE _PDCLIB_ERANGE

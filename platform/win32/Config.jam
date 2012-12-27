@@ -23,6 +23,6 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
     EXIT ;
 }
 
-PDCLIB_OPTIONS = notime dlmalloc mincoll ;
+PDCLIB_OPTIONS = notime dlmalloc mincoll tss_errno ;
 
 CRT0 = [ FDirName platform win32 crt0$(SUFOBJ) ] ;

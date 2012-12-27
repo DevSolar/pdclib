@@ -7,11 +7,13 @@
 */
 
 #ifndef REGTEST
-#include <_PDCLIB_int.h>
+#include <threads.h>
 
-int _PDCLIB_errno = 0;
+/* Temporary */
 
-int * _PDCLIB_errno_func()
+static int _PDCLIB_errno = 0;
+
+int * _PDCLIB_errno()
 {
     return &_PDCLIB_errno;
 }
