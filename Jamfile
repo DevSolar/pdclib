@@ -48,6 +48,9 @@ if ! $(PDCLIB_NO_TEST) {
     }
 }
 
+Main helloworld : helloworld.c ;
+LinkLibraries helloworld : $(PDCLIB) ;
+
 rule HtmlMan { 
     DEPENDS htmlman : $(<) ;
     DEPENDS $(<) : $(<:D) ;

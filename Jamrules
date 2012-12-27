@@ -58,9 +58,19 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
       -D_PDCLIB_BUILD
       $(PDCLIB_WARNINGS) ;
 
-    actions Link bind NEEDLIBS
-    {
-        $(LINK) $(LINKFLAGS) -o $(<) $(UNDEFS) $(>) -Wl,--start-group $(NEEDLIBS) $(LINKLIBS) -Wl,--end-group
+    if $(OS) = "MACOSX" {
+        # ld64 does automatic repeated searches of archives
+        # and doesn't accept --start-group/--end-group
+
+        #actions Link bind NEEDLIBS
+        #{
+        #    $(LINK) $(LINKFLAGS) -o $(<) $(UNDEFS) $(>) $(NEEDLIBS) $(LINKLIBS)
+        #}
+    } else {
+        actions Link bind NEEDLIBS
+        {
+            $(LINK) $(LINKFLAGS) -o $(<) $(UNDEFS) $(>) -Wl,--start-group $(NEEDLIBS) $(LINKLIBS) -Wl,--end-group
+        }
     }
 } else if $(PDCLIB_TOOLCHAIN) = "WATCOM" {
   ECHO "Watcom!" ;
