@@ -186,7 +186,7 @@ struct _PDCLIB_imaxdiv_t
  * any functions for manipulating more accurate values of time_t, this is 
  * probably not useful.
  */
-#define _PDCLIB_time  unsigned long long
+#define _PDCLIB_time  long
 
 /* <time.h>: clock_t
  *

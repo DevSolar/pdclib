@@ -16,6 +16,7 @@
 #include <limits.h>
 
 #ifndef REGTEST
+#include <threads.h>
 
 /* In a POSIX system, stdin / stdout / stderr are equivalent to the (int) file
    descriptors 0, 1, and 2 respectively.
@@ -30,13 +31,61 @@ static unsigned char _PDCLIB_sout_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_serr_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 
 extern _PDCLIB_fileops_t _PDCLIB_fileops;
-static struct _PDCLIB_file_t _PDCLIB_serr = { &_PDCLIB_fileops, { .sval = 2 }, 0, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_serr_ungetbuf, _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, NULL };
-static struct _PDCLIB_file_t _PDCLIB_sout = { &_PDCLIB_fileops, { .sval = 1 }, 0, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sout_ungetbuf, _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, &_PDCLIB_serr };
-static struct _PDCLIB_file_t _PDCLIB_sin  = { &_PDCLIB_fileops, { .sval = 0 }, 0, _PDCLIB_sin_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sin_ungetbuf, _IOLBF | _PDCLIB_FREAD | _PDCLIB_STATIC, NULL, &_PDCLIB_sout };
+
+static struct _PDCLIB_file_t _PDCLIB_serr = { 
+    .ops        = &_PDCLIB_fileops, 
+    .handle     = { .sval = 2 }, 
+    .buffer     = _PDCLIB_serr_buffer, 
+    .bufsize    = BUFSIZ, 
+    .bufidx     = 0, 
+    .bufend     = 0, 
+    .pos        = { 0, 0 }, 
+    .ungetidx   = 0, 
+    .ungetbuf   = _PDCLIB_serr_ungetbuf, 
+    .status     = _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, 
+    .filename   = NULL, 
+    .next       = NULL,
+};
+static struct _PDCLIB_file_t _PDCLIB_sout = { 
+    .ops        = &_PDCLIB_fileops, 
+    .handle     = { .sval = 1 },
+    .buffer     = _PDCLIB_sout_buffer, 
+    .bufsize    = BUFSIZ, 
+    .bufidx     = 0, 
+    .bufend     = 0, 
+    .pos        = { 0, 0 }, 
+    .ungetidx   = 0, 
+    .ungetbuf   = _PDCLIB_sout_ungetbuf, 
+    .status     = _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, 
+    .filename   = NULL, 
+    .next       = &_PDCLIB_serr 
+};
+static struct _PDCLIB_file_t _PDCLIB_sin  = { 
+    .ops        = &_PDCLIB_fileops, 
+    .handle     = { .sval = 0 }, 
+    .buffer     = _PDCLIB_sin_buffer, 
+    .bufsize    = BUFSIZ, 
+    .bufidx     = 0, 
+    .bufend     = 0, 
+    .pos        = { 0, 0 }, 
+    .ungetidx   = 0, 
+    .ungetbuf   = _PDCLIB_sin_ungetbuf, 
+    .status     = _IOLBF | _PDCLIB_FREAD | _PDCLIB_STATIC, 
+    .filename   = NULL, 
+    .next       = &_PDCLIB_sout 
+};
 
 struct _PDCLIB_file_t * stdin  = &_PDCLIB_sin;
 struct _PDCLIB_file_t * stdout = &_PDCLIB_sout;
 struct _PDCLIB_file_t * stderr = &_PDCLIB_serr;
+
+/* Todo: Better solution than this! */
+__attribute__((constructor)) void init_stdio(void)
+{
+    mtx_init(&stdin->lock,  mtx_recursive);
+    mtx_init(&stdout->lock, mtx_recursive);
+    mtx_init(&stderr->lock, mtx_recursive);
+}
 
 /* FIXME: This approach is a possible attack vector. */
 struct _PDCLIB_file_t * _PDCLIB_filelist = &_PDCLIB_sin;
