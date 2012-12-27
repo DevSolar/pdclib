@@ -120,7 +120,7 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
     unsigned padding = 0;
     if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )    
     {
-        while( written < status->width ) 
+        while( written < (int) status->width ) 
         {
             outend[-++written] = '0';
             padding++;
@@ -156,7 +156,7 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
     // Space padding to field width
     if ( ! ( status->flags & ( E_minus | E_zero ) ) )
     {
-        while( written < status->width ) outend[-++written] = ' ';
+        while( written < (int) status->width ) outend[-++written] = ' ';
     }
 
     // Write output

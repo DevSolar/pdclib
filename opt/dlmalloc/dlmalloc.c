@@ -3836,7 +3836,7 @@ static void* mmap_alloc(mstate m, size_t nb) {
 /* Realloc using mmap */
 static mchunkptr mmap_resize(mstate m, mchunkptr oldp, size_t nb, int flags) {
   size_t oldsize = chunksize(oldp);
-  flags = flags; /* placate people compiling -Wunused */
+  (void) flags;
   if (is_small(nb)) /* Can't shrink mmap regions below small size */
     return 0;
   /* Keep old chunk if big enough but not too big */

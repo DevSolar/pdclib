@@ -18,7 +18,7 @@ int strncmp( const char * s1, const char * s2, size_t n )
         ++s2;
         --n;
     }
-    if ( ( n == 0 ) )
+    if ( n == 0 )
     {
         return 0;
     }

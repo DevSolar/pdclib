@@ -91,4 +91,3 @@
 #define _PDCLIB_LDBL_MAX_10_EXP  _PDCLIB_concat3( _PDCLIB_FP_, _PDCLIB_LDOUBLE_TYPE, _MAX_10_EXP )
 
 #endif
-         
