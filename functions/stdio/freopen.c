@@ -21,7 +21,10 @@ struct _PDCLIB_file_t * freopen(
 {
     flockfile( stream );
 
-    unsigned int status = stream->status & ( _IONBF | _IOLBF | _IOFBF | _PDCLIB_FREEBUFFER | _PDCLIB_DELONCLOSE );
+    unsigned int status = stream->status & 
+        ( _IONBF | _IOLBF | _IOFBF | _PDCLIB_FREEBUFFER 
+        | _PDCLIB_DELONCLOSE | _PDCLIB_STATIC );
+
     /* TODO: This function can change wide orientation of a stream */
     if ( stream->status & _PDCLIB_FWRITE )
     {
