@@ -29,9 +29,10 @@ static unsigned char _PDCLIB_sin_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_sout_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_serr_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 
-static struct _PDCLIB_file_t _PDCLIB_serr = { 2, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_serr_ungetbuf, _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, NULL };
-static struct _PDCLIB_file_t _PDCLIB_sout = { 1, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sout_ungetbuf, _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, &_PDCLIB_serr };
-static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, _PDCLIB_sin_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sin_ungetbuf, _IOLBF | _PDCLIB_FREAD | _PDCLIB_STATIC, NULL, &_PDCLIB_sout };
+extern _PDCLIB_fileops_t _PDCLIB_fileops;
+static struct _PDCLIB_file_t _PDCLIB_serr = { &_PDCLIB_fileops, { .sval = 2 }, 0, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_serr_ungetbuf, _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, NULL };
+static struct _PDCLIB_file_t _PDCLIB_sout = { &_PDCLIB_fileops, { .sval = 1 }, 0, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sout_ungetbuf, _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, &_PDCLIB_serr };
+static struct _PDCLIB_file_t _PDCLIB_sin  = { &_PDCLIB_fileops, { .sval = 0 }, 0, _PDCLIB_sin_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sin_ungetbuf, _IOLBF | _PDCLIB_FREAD | _PDCLIB_STATIC, NULL, &_PDCLIB_sout };
 
 struct _PDCLIB_file_t * stdin  = &_PDCLIB_sin;
 struct _PDCLIB_file_t * stdout = &_PDCLIB_sout;

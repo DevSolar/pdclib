@@ -21,36 +21,32 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-extern struct _PDCLIB_file_t * _PDCLIB_filelist;
+extern const _PDCLIB_fileops_t _PDCLIB_fileops;
 
-/* This is an example implementation of tmpfile() fit for use with POSIX
-   kernels.
-*/
-struct _PDCLIB_file_t * tmpfile( void )
+FILE* _PDCLIB_nothrow tmpfile( void )
 {
-    FILE * rc;
-    /* This is the chosen way to get high-quality randomness. Replace as
-       appropriate.
-    */
-    FILE * randomsource = fopen( "/proc/sys/kernel/random/uuid", "rb" );
-    char filename[ L_tmpnam ];
-    _PDCLIB_fd_t fd;
-    if ( randomsource == NULL )
+
+    /* Good quality random source */
+    int urandom = open( "/dev/urandom", O_RDONLY | O_CLOEXEC );
+    if(urandom == -1)
     {
+        // TODO: errno!
         return NULL;
     }
+
+    int fd;
+    char filename[ L_tmpnam ];
     for ( ;; )
     {
-        /* Get a filename candidate. What constitutes a valid filename and
-           where temporary files are usually located is platform-dependent,
-           which is one reason why this function is located in the platform
-           overlay. The other reason is that a *good* implementation should
-           use high-quality randomness instead of a pseudo-random sequence to
-           generate the filename candidate, which is *also* platform-dependent.
-        */
-        unsigned int random;
-        fscanf( randomsource, "%u", &random ); 
-        sprintf( filename, "/tmp/%u.tmp", random );
+        long long randnum;
+        if( read(urandom, &randnum, sizeof randnum ) != sizeof randnum )
+        {
+            // TODO: errno!
+            close( urandom );
+            return NULL;
+        }
+
+        sprintf( filename, "/tmp/%llx.tmp", randnum );
         /* Check if file of this name exists. Note that fopen() is a very weak
            check, which does not take e.g. access permissions into account
            (file might exist but not readable). Replace with something more
@@ -61,27 +57,18 @@ struct _PDCLIB_file_t * tmpfile( void )
         {
             break;
         }
-        close( fd );
     }
-    fclose( randomsource );
-    /* See fopen(). */
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + L_tmpnam + BUFSIZ ) ) == NULL )
+    close( urandom );
+
+    FILE* rc = _PDCLIB_fvopen(((_PDCLIB_fd_t){ .sval = fd}), &_PDCLIB_fileops,
+                                _PDCLIB_FWRITE | _PDCLIB_FRW | 
+                                _PDCLIB_DELONCLOSE, filename);
+    if( rc == NULL ) 
     {
-        /* No memory to set up FILE structure */
         close( fd );
         return NULL;
     }
-    rc->status = _PDCLIB_filemode( "wb+" ) | _IOLBF | _PDCLIB_DELONCLOSE;
-    rc->handle = fd;
-    rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
-    rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
-    rc->buffer   = rc->filename + L_tmpnam;
-    strcpy( rc->filename, filename );
-    rc->bufsize = BUFSIZ;
-    rc->bufidx = 0;
-    rc->ungetidx = 0;
-    rc->next = _PDCLIB_filelist;
-    _PDCLIB_filelist = rc;
+
     return rc;
 }
 

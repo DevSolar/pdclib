@@ -62,6 +62,9 @@
 #endif
 #define _PDCLIB_LLONG_BYTES 8
 
+// Match Darwin headers
+#define _PDCLIB_INT64_IS_LLONG
+
 /* <stdlib.h> defines the div() function family that allows taking quotient   */
 /* and remainder of an integer division in one operation. Many platforms      */
 /* support this in hardware / opcode, and the standard permits ordering of    */
@@ -147,9 +150,9 @@ struct _PDCLIB_lldiv_t
 /* Large enough an integer to hold all character codes of the largest supported
    locale.
 */
-#define _PDCLIB_wint  signed int
-#define _PDCLIB_wchar unsigned int
-#define _PDCLIB_WCHAR UINT
+#define _PDCLIB_wint  int
+#define _PDCLIB_wchar int
+#define _PDCLIB_WCHAR INT
 
 #define _PDCLIB_intptr long
 #define _PDCLIB_INTPTR LONG
@@ -353,122 +356,5 @@ struct _PDCLIB_imaxdiv_t
    this capability dependent on implementation-defined behaviour (not good).
 */
 #define _PDCLIB_UNGETCBUFSIZE 1
-
-/* errno -------------------------------------------------------------------- */
-
-/* These are the values that _PDCLIB_errno can be set to by the library.
-
-   By keeping PDCLib's errno in the _PDCLIB_* namespace, the library is capable
-   to "translate" between errno values used by the hosting operating system and
-   those used and passed out by the library.
-
-   Example: In the example platform, the remove() function uses the unlink()
-   system call as backend. Linux sets its errno to EISDIR if you try to unlink()
-   a directory, but POSIX demands EPERM. Within the remove() function, you can
-   catch the 'errno == EISDIR', and set '_PDCLIB_errno = _PDCLIB_EPERM'. Anyone
-   using PDCLib's <errno.h> will "see" EPERM instead of EISDIR (the _PDCLIB_*
-   prefix removed by <errno.h> mechanics).
-
-   If you do not want that kind of translation, you might want to "match" the
-   values used by PDCLib with those used by the host OS, as to avoid confusion.
-
-   The C standard only defines three distinct errno values: ERANGE, EDOM, and
-   EILSEQ. The standard leaves it up to "the implementation" whether there are
-   any more beyond those three. There is some controversy as to whether errno is
-   such a good idea at all, so you might want to come up with a different error
-   reporting facility for your platform. 
-
-   Things used to say "Since errno values beyond the three defined by the 
-   standard are not portable anyway (unless you look at POSIX), having your own
-   error reporting facility would not hurt anybody either." at this point. 
-   However, then somebody birthed C++11 into the world, which copied POSIX's 
-   errno values into C++. Yes, even EINTR. Therefore, this library defines 
-   them. That said, thats nothing stopping you from using your own error 
-   reporting facility for things outside the C library.
-
-   Sometimes the standard says to set errno to indicate an error, but does not 
-   prescribe a value. We will use a value from the following list. If POSIX 
-   defines a value, we use that; otherwise, we use as seems suitable.
-
-   If porting to a system which uses an errno-like reporting system (e.g. a 
-   UNIX), you'll probably want to define them to match what the OS uses
-*/
-/* C errno values */
-#define _PDCLIB_ERANGE 1
-#define _PDCLIB_EDOM   2
-#define _PDCLIB_EILSEQ 3
-
-/* C++11/POSIX errno values */
-#define _PDCLIB_E2BIG 4
-#define _PDCLIB_ECONNRESET 5
-#define _PDCLIB_EISCONN 6
-#define _PDCLIB_ENOENT 7
-#define _PDCLIB_ENOTRECOVERABLE 8
-#define _PDCLIB_EROFS 9
-#define _PDCLIB_EACCES 10
-#define _PDCLIB_EDEADLK 11
-#define _PDCLIB_EISDIR 12
-#define _PDCLIB_ENOEXEC 13
-#define _PDCLIB_ENOTSOCK 14
-#define _PDCLIB_ESPIPE 15
-#define _PDCLIB_EADDRINUSE 16
-#define _PDCLIB_EDESTADDRREQ 17
-#define _PDCLIB_ELOOP 18
-#define _PDCLIB_ENOLCK 19
-#define _PDCLIB_ENOTSUPP 20
-#define _PDCLIB_ESRCH 21
-#define _PDCLIB_EADDRNOTAVAIL 22
-#define _PDCLIB_EMFILE 23
-#define _PDCLIB_ENOLINK 24
-#define _PDCLIB_ENOTTY 25
-#define _PDCLIB_ETIME 26
-#define _PDCLIB_EAFNOSUPPORT 27
-#define _PDCLIB_EEXIST 28
-#define _PDCLIB_EMLINK 29
-#define _PDCLIB_ENOMEM 30
-#define _PDCLIB_ENXIO 31
-#define _PDCLIB_ETIMEDOUT 32
-#define _PDCLIB_EAGAIN 33
-#define _PDCLIB_EFAULT 34
-#define _PDCLIB_EMSGSIZE 35
-#define _PDCLIB_ENOMSG 36
-#define _PDCLIB_EOPNOTSUPP 37
-#define _PDCLIB_ETXTBSY 38
-#define _PDCLIB_EALREADY 39
-#define _PDCLIB_EFBIG 40
-#define _PDCLIB_ENAMETOOLONG 41
-#define _PDCLIB_ENOPROTOOPT 42
-#define _PDCLIB_EOVERFLOW 43
-#define _PDCLIB_EWOULDBLOCK _PDCLIB_EAGAIN
-#define _PDCLIB_EBADF 44
-#define _PDCLIB_EHOSTUNREACH 45
-#define _PDCLIB_ENETDOWN 46
-#define _PDCLIB_ENOSPC 47
-#define _PDCLIB_EOWNERDEAD 48
-#define _PDCLIB_EXDEV 49
-#define _PDCLIB_EBADMSG 50
-#define _PDCLIB_EIDRM 51
-#define _PDCLIB_ENETRESET 52
-#define _PDCLIB_ENOSR 53
-#define _PDCLIB_EPERM 54
-#define _PDCLIB_EBUSY 55
-#define _PDCLIB_ENETUNREACH 56
-#define _PDCLIB_ENOSTR 57
-#define _PDCLIB_EPIPE 58
-#define _PDCLIB_ECANCELED 59
-#define _PDCLIB_EINPROGRESS 60
-#define _PDCLIB_ENFILE 61
-#define _PDCLIB_ENOSYS 62
-#define _PDCLIB_EPROTO 63
-#define _PDCLIB_ECHILD 64
-#define _PDCLIB_EINTR 65
-#define _PDCLIB_ENOBUFS 66
-#define _PDCLIB_ENOTCONN 67
-#define _PDCLIB_EPROTONOSUPPORT 68
-#define _PDCLIB_ECONNABORTED 69
-#define _PDCLIB_EINVAL 70
-#define _PDCLIB_ENODATA 71
-#define _PDCLIB_ENOTDIR 72
-#define _PDCLIB_EPROTOTYPE 73
 
 #endif
