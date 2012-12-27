@@ -154,7 +154,7 @@ int main( void )
     strcpy( s, presort );
     qsort( s, 1, 1, compare );
     TESTCASE( strcmp( s, presort ) == 0 );
-#if __BSD_VISIBLE
+#if defined(REGTEST) && (__BSD_VISIBLE || __APPLE__)
     puts( "qsort.c: Skipping test #4 for BSD as it goes into endless loop here." );
 #else
     qsort( s, 100, 0, compare );
