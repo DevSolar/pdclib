@@ -33,7 +33,7 @@ static inline void call_once(once_flag *flag, void (*func)(void))
 	}
 }
 #else
-void call_once(once_flag *flag, void (*func)(void))
+void call_once(once_flag *flag, void (*func)(void));
 #endif
 
 #if defined(_PDCLIB_MTX_T)
