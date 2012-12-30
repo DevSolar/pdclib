@@ -854,7 +854,6 @@ int putchar_unlocked(int c);
 void clearerr_unlocked(FILE *stream); 
 int feof_unlocked(FILE *stream);
 int ferror_unlocked(FILE *stream);
-int fileno_unlocked(FILE *stream);
 int fflush_unlocked(FILE *stream);
 int fgetc_unlocked(FILE *stream);
 int fputc_unlocked(int c, FILE *stream);
