@@ -9,8 +9,8 @@
 #include "_PDCLIB_int.h"
 
 #ifndef __cplusplus
-typedef _PDCLIB_int_least16_t   _PDCLIB_char16_t;
-typedef _PDCLIB_int_least32_t   _PDCLIB_char32_t;
+typedef _PDCLIB_int16_t         _PDCLIB_char16_t;
+typedef _PDCLIB_int32_t         _PDCLIB_char32_t;
 #else
 typedef char16_t                _PDCLIB_char16_t;
 typedef char32_t                _PDCLIB_char32_t;
@@ -27,7 +27,7 @@ typedef char32_t                _PDCLIB_char32_t;
 static inline int _PDCLIB_wcrtoc32(
             _PDCLIB_char32_t    *_PDCLIB_restrict   out, 
     const   _PDCLIB_wchar_t     *_PDCLIB_restrict   in,
-            _PDCLIB__PDCLIB_size_t                          bufsize,
+            _PDCLIB_size_t                          bufsize,
             _PDCLIB_mbstate_t   *_PDCLIB_restrict   ps  
 )
 {
@@ -68,7 +68,7 @@ static inline int _PDCLIB_wcrtoc32(
 static inline _PDCLIB_size_t _PDCLIB_c32rtowc(
             _PDCLIB_wchar_t     *_PDCLIB_restrict   out,
     const   _PDCLIB_char32_t    *_PDCLIB_restrict   in,
-            _PDCLIB__PDCLIB_size_t                          bufsize,
+            _PDCLIB_size_t                          bufsize,
             _PDCLIB_mbstate_t   *_PDCLIB_restrict   ps
 )
 {
@@ -99,7 +99,7 @@ static inline _PDCLIB_size_t _PDCLIB_c32rtowc(
 static inline _PDCLIB_size_t _PDCLIB_wcrtoc32(
             _PDCLIB_char32_t    *_PDCLIB_restrict   out, 
     const   _PDCLIB_wchar_t     *_PDCLIB_restrict   in,
-            _PDCLIB__PDCLIB_size_t                          bufsize,
+            _PDCLIB_size_t                          bufsize,
             _PDCLIB_mbstate_t   *_PDCLIB_restrict   ps  
 )
 {
@@ -110,7 +110,7 @@ static inline _PDCLIB_size_t _PDCLIB_wcrtoc32(
 static inline _PDCLIB_size_t _PDCLIB_c32rtowc(
             _PDCLIB_wchar_t     *_PDCLIB_restrict   out,
     const   _PDCLIB_char32_t    *_PDCLIB_restrict   in,
-            _PDCLIB__PDCLIB_size_t                          bufsize,
+            _PDCLIB_size_t                          bufsize,
             _PDCLIB_mbstate_t   *_PDCLIB_restrict   ps
 )
 {
@@ -128,7 +128,7 @@ typedef struct {
      * _P_outsize or _P_insize reached zero and no coding errors were 
      * encountered), else return false.
      */
-    _PDCLIB_bool_t (*__mbtoc32)(
+    _PDCLIB_bool (*__mbtoc32)(
         _PDCLIB_char32_t       **_PDCLIB_restrict   _P_outbuf,
         _PDCLIB_size_t          *_PDCLIB_restrict   _P_outsz,
         const char             **_PDCLIB_restrict   _P_inbuf,
@@ -136,7 +136,7 @@ typedef struct {
         _PDCLIB_mbstate_t       *_PDCLIB_restrict   _P_ps
     );
 
-    _PDCLIB_bool_t (*__c32tomb)(
+    _PDCLIB_bool (*__c32tomb)(
         char                   **_PDCLIB_restrict  _P_outbuf,
         _PDCLIB_size_t          *_PDCLIB_restrict  _P_outsz,
         const _PDCLIB_char32_t **_PDCLIB_restrict  _P_inbuf,
