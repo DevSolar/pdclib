@@ -22,7 +22,7 @@ typedef _PDCLIB_size_t size_t;
 
 #ifndef _PDCLIB_MBSTATE_T_DEFINED
 #define _PDCLIB_MBSTATE_T_DEFINED _PDCLIB_MBSTATE_T_DEFINED
-typedef struct _PDCLIB_mbstate_t mbstate_t;
+typedef _PDCLIB_mbstate_t mbstate_t;
 #endif
 
 #ifndef __cplusplus

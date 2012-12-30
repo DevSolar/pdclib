@@ -32,7 +32,7 @@ typedef _PDCLIB_wint_t wint_t;
 
 #ifndef _PDCLIB_MBSTATE_T_DEFINED
 #define _PDCLIB_MBSTATE_T_DEFINED _PDCLIB_MBSTATE_T_DEFINED
-typedef struct _PDCLIB_mbstate_t mbstate_t;
+typedef _PDCLIB_mbstate_t mbstate_t;
 #endif
 
 struct tm;
