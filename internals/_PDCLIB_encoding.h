@@ -120,6 +120,14 @@ static inline _PDCLIB_size_t _PDCLIB_c32rtowc(
 #endif
 
 typedef struct {
+    /* Reads at most *_P_insz bytes from *_P_inbuf and writes the result into 
+     * *_P_outbuf, writing at most *_P_outsz characters. Updates *_P_outbuf,
+     * *_P_outsz, *_P_inbuf, *_P_outsz with the resulting state
+     *
+     * Returns true if the conversion completed successfully (i.e. one of 
+     * _P_outsize or _P_insize reached zero and no coding errors were 
+     * encountered), else return false.
+     */
     _PDCLIB_bool_t (*__mbtoc32)(
         _PDCLIB_char32_t       **_PDCLIB_restrict   _P_outbuf,
         _PDCLIB_size_t          *_PDCLIB_restrict   _P_outsz,
