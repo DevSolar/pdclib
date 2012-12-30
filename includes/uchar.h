@@ -35,5 +35,6 @@ typedef _PDCLIB_char16_t char16_t;
 #define _PDCLIB_CHAR32_T_DEFINED _PDCLIB_CHAR32_T_DEFINED
 typedef _PDCLIB_char32_t char32_t;
 #endif
+#endif
 
 #endif
