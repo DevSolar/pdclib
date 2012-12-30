@@ -181,6 +181,15 @@
     #define _PDCLIB_DEPRECATED __attribute__ ((__deprecated__))
 #endif
 
+#if !defined(_PDCLIB_UNREACHABLE) && _PDCLIB_GCC_BUILTIN(__builtin_unreachable, 4, 0)
+    #define _PDCLIB_UNREACHABLE __builtin_unreachable()
+#endif
+
+#if !defined(_PDCLIB_UNDEFINED) && defined(__GNUC__)
+    #define _PDCLIB_UNDEFINED(_var) \
+        do { __asm__("" : "=X"(_var)); } while(0)
+#endif
+
 /* No-op fallbacks */
 
 #ifndef _PDCLIB_nothrow
@@ -222,6 +231,14 @@
 
 #ifndef _PDCLIB_DEPRECATED
     #define _PDCLIB_DEPRECATED
+#endif
+
+#ifndef _PDCLIB_UNREACHABLE
+    #define _PDCLIB_UNREACHABLE do {} while(0)
+#endif
+
+#ifndef _PDCLIB_UNDEFINED
+    #define _PDCLIB_UNDEFINED(_var) do {} while(0)
 #endif
 
 /*#if _PDCLIB_C_VERSION != 1999
