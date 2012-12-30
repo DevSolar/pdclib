@@ -8,6 +8,7 @@
 #ifndef _PDCLIB_WCHAR_H
 #define _PDCLIB_WCHAR_H
 #include <_PDCLIB_io.h>
+#include <_PDCLIB_encoding.h>
 _PDCLIB_BEGIN_EXTERN_C
 /* This is VASTLY incomplete. Functions being implemented as required by other
    portions of the library

@@ -418,12 +418,4 @@ struct _PDCLIB_ctype_t
     unsigned char collation;
 };
 
-/* -------------------------------------------------------------------------- */
-/* mbstate_t                                                                  */
-/* -------------------------------------------------------------------------- */
-
-typedef struct _PDCLIB_mbstate_t {
-    _PDCLIB_uint32_t st[4];
-} _PDCLIB_mbstate_t;
-
 #endif

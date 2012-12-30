@@ -16,6 +16,33 @@ typedef char16_t                _PDCLIB_char16_t;
 typedef char32_t                _PDCLIB_char32_t;
 #endif
 
+/* -------------------------------------------------------------------------- */
+/* mbstate_t                                                                  */
+/* -------------------------------------------------------------------------- */
+
+typedef struct _PDCLIB_mbstate_t {
+    union {
+        /* Is this the best way to represent this? Is this big enough? */
+        _PDCLIB_uint64_t _St64[15];
+        _PDCLIB_uint32_t _St32[31];
+        _PDCLIB_uint16_t _St16[62];
+        unsigned char    _StUC[124];
+        signed   char    _StSC[124];
+                 char    _StC [124];
+    };
+
+    union {
+        /* c16/related functions: Surrogate storage
+         *
+         * If zero, no surrogate pending. If nonzero, surrogate.
+         */
+        _PDCLIB_uint16_t     _Surrogate;
+
+        /* Reserved for potential mbtoutf8/etc functions */
+        unsigned char        _U8[4];
+    };
+} _PDCLIB_mbstate_t;
+
 #ifdef _PDCLIB_WCHAR_IS_UCS2
 /* Must be cauued with bufsize >= 1, in != NULL, out != NULL, ps != NULL
  *
