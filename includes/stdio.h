@@ -872,6 +872,7 @@ int fgetpos_unlocked( FILE * _PDCLIB_restrict stream, fpos_t * _PDCLIB_restrict 
 int fsetpos_unlocked( FILE * stream, const fpos_t * pos ) _PDCLIB_nothrow;
 long int ftell_unlocked( FILE * stream ) _PDCLIB_nothrow;
 int fseek_unlocked( FILE * stream, long int offset, int whence ) _PDCLIB_nothrow;
+void rewind_unlocked( FILE * stream ) _PDCLIB_nothrow;
 
 int puts_unlocked( const char * s ) _PDCLIB_nothrow;
 int ungetc_unlocked( int c, FILE * stream ) _PDCLIB_nothrow;
