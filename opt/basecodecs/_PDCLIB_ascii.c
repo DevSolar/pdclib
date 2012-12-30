@@ -18,7 +18,7 @@ static bool asciitoc32(
 {
     while(*p_outsz && *p_insz) {
         unsigned char c = **p_inbuf;
-        if(c > 128)
+        if(c > 127)
             return false;
         **p_outbuf = c;
 
@@ -40,7 +40,7 @@ static bool c32toascii(
 {
     while(*p_outsz && *p_insz) {
         char32_t c = **p_inbuf;
-        if(c > 128)
+        if(c > 127)
             return false;
         **p_outbuf = c;
 
