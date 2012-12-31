@@ -55,6 +55,7 @@ size_t _PDCLIB_c32srtombs(
 
 int main( void )
 {
+    TESTCASE( NO_TESTDRIVER );
     return TEST_RESULTS;
 }
 #endif

@@ -54,6 +54,7 @@ size_t _PDCLIB_mbsrtoc32s(
 
 int main( void )
 {
+    TESTCASE( NO_TESTDRIVER );
     return TEST_RESULTS;
 }
 #endif
