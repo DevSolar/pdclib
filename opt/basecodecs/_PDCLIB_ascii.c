@@ -10,11 +10,11 @@
 #include <_PDCLIB_encoding.h>
 
 static bool asciitoc32(
-    char32_t       **restrict   p_outbuf,
-    size_t          *restrict   p_outsz,
-    const char     **restrict   p_inbuf,
-    size_t          *restrict   p_insz,
-    mbstate_t       *restrict   p_ps
+    char32_t       *restrict *restrict   p_outbuf,
+    size_t                   *restrict   p_outsz,
+    const char     *restrict *restrict   p_inbuf,
+    size_t                   *restrict   p_insz,
+    mbstate_t                *restrict   p_ps
 )
 {
     while(*p_outsz && *p_insz) {
@@ -35,11 +35,11 @@ static bool asciitoc32(
 }
 
 static bool c32toascii(
-    char           **restrict  p_outbuf,
-    size_t          *restrict  p_outsz,
-    const char32_t **restrict  p_inbuf,
-    size_t          *restrict  p_insz,
-    mbstate_t       *restrict  p_ps
+    char           *restrict *restrict  p_outbuf,
+    size_t                   *restrict  p_outsz,
+    const char32_t *restrict *restrict  p_inbuf,
+    size_t                   *restrict  p_insz,
+    mbstate_t                *restrict  p_ps
 )
 {
     while(*p_outsz && *p_insz) {

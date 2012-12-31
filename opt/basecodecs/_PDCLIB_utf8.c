@@ -56,11 +56,11 @@ end_conversion:             \
     do { if((c & 0xC0) != 0x80) return false; } while(0)
 
 static bool utf8toc32(
-    char32_t       **restrict   p_outbuf,
-    size_t          *restrict   p_outsz,
-    const char     **restrict   p_inbuf,
-    size_t          *restrict   p_insz,
-    mbstate_t       *restrict   p_s
+    char32_t       *restrict *restrict   p_outbuf,
+    size_t                   *restrict   p_outsz,
+    const char     *restrict *restrict   p_inbuf,
+    size_t                   *restrict   p_insz,
+    mbstate_t                *restrict   p_s
 )
 {
     START_CONVERSION
@@ -165,11 +165,11 @@ enum {
 };
 
 static bool c32toutf8(
-    char           **restrict  p_outbuf,
-    size_t          *restrict  p_outsz,
-    const char32_t **restrict  p_inbuf,
-    size_t          *restrict  p_insz,
-    mbstate_t       *restrict  p_s
+    char           *restrict *restrict  p_outbuf,
+    size_t                   *restrict  p_outsz,
+    const char32_t *restrict *restrict  p_inbuf,
+    size_t                   *restrict  p_insz,
+    mbstate_t                *restrict  p_s
 )
 {
     START_CONVERSION

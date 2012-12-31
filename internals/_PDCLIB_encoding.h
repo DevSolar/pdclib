@@ -102,19 +102,19 @@ struct _PDCLIB_charcodec {
     /* UCS-4 variants. Mandatory. */
 
     _PDCLIB_bool (*__mbstoc32s)(
-        _PDCLIB_char32_t       **_PDCLIB_restrict   _P_outbuf,
-        _PDCLIB_size_t          *_PDCLIB_restrict   _P_outsz,
-        const char             **_PDCLIB_restrict   _P_inbuf,
-        _PDCLIB_size_t          *_PDCLIB_restrict   _P_insz,
-        _PDCLIB_mbstate_t       *_PDCLIB_restrict   _P_ps
+        _PDCLIB_char32_t       *_PDCLIB_restrict *_PDCLIB_restrict   _P_outbuf,
+        _PDCLIB_size_t                           *_PDCLIB_restrict   _P_outsz,
+        const char             *_PDCLIB_restrict *_PDCLIB_restrict   _P_inbuf,
+        _PDCLIB_size_t                           *_PDCLIB_restrict   _P_insz,
+        _PDCLIB_mbstate_t                        *_PDCLIB_restrict   _P_ps
     );
 
     _PDCLIB_bool (*__c32stombs)(
-        char                   **_PDCLIB_restrict  _P_outbuf,
-        _PDCLIB_size_t          *_PDCLIB_restrict  _P_outsz,
-        const _PDCLIB_char32_t **_PDCLIB_restrict  _P_inbuf,
-        _PDCLIB_size_t          *_PDCLIB_restrict  _P_insz,
-        _PDCLIB_mbstate_t       *_PDCLIB_restrict  _P_ps
+        char                   *_PDCLIB_restrict *_PDCLIB_restrict  _P_outbuf,
+        _PDCLIB_size_t                           *_PDCLIB_restrict  _P_outsz,
+        const _PDCLIB_char32_t *_PDCLIB_restrict *_PDCLIB_restrict  _P_inbuf,
+        _PDCLIB_size_t                           *_PDCLIB_restrict  _P_insz,
+        _PDCLIB_mbstate_t                        *_PDCLIB_restrict  _P_ps
     );
 
     /* UTF-16 variants; same as above except optional. 
@@ -124,19 +124,19 @@ struct _PDCLIB_charcodec {
      */
 
     _PDCLIB_bool (*__mbstoc16s)(
-        _PDCLIB_char16_t       **_PDCLIB_restrict   _P_outbuf,
-        _PDCLIB_size_t          *_PDCLIB_restrict   _P_outsz,
-        const char             **_PDCLIB_restrict   _P_inbuf,
-        _PDCLIB_size_t          *_PDCLIB_restrict   _P_insz,
-        _PDCLIB_mbstate_t       *_PDCLIB_restrict   _P_ps
+        _PDCLIB_char16_t       *_PDCLIB_restrict *_PDCLIB_restrict   _P_outbuf,
+        _PDCLIB_size_t                           *_PDCLIB_restrict   _P_outsz,
+        const char             *_PDCLIB_restrict *_PDCLIB_restrict   _P_inbuf,
+        _PDCLIB_size_t                           *_PDCLIB_restrict   _P_insz,
+        _PDCLIB_mbstate_t                        *_PDCLIB_restrict   _P_ps
     );
 
     _PDCLIB_bool (*__c16stombs)(
-        char                   **_PDCLIB_restrict  _P_outbuf,
-        _PDCLIB_size_t          *_PDCLIB_restrict  _P_outsz,
-        const _PDCLIB_char16_t **_PDCLIB_restrict  _P_inbuf,
-        _PDCLIB_size_t          *_PDCLIB_restrict  _P_insz,
-        _PDCLIB_mbstate_t       *_PDCLIB_restrict  _P_ps
+        char                   *_PDCLIB_restrict *_PDCLIB_restrict  _P_outbuf,
+        _PDCLIB_size_t                           *_PDCLIB_restrict  _P_outsz,
+        const _PDCLIB_char16_t *_PDCLIB_restrict *_PDCLIB_restrict  _P_inbuf,
+        _PDCLIB_size_t                           *_PDCLIB_restrict  _P_insz,
+        _PDCLIB_mbstate_t                        *_PDCLIB_restrict  _P_ps
     );
 };
 
