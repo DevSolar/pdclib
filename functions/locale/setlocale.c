@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* setlocale( int, const char * )
 
    This file is part of the Public Domain C Library (PDCLib).
@@ -7,8 +5,8 @@
 */
 
 #include <locale.h>
-
 #ifndef REGTEST
+#include <_PDCLIB_locale.h>
 
 char * setlocale( int category, const char * locale )
 {

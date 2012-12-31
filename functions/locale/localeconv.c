@@ -4,9 +4,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_locale.h>
-
+#include <locale.h>
 #ifndef REGTEST
+#include <_PDCLIB_locale.h>
 
 struct lconv * localeconv( void )
 {

@@ -7,9 +7,9 @@
 */
 
 #include <stdio.h>
-#include <_PDCLIB_io.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 extern _PDCLIB_file_t * _PDCLIB_filelist;
 
 void _PDCLIB_closeall( void )
