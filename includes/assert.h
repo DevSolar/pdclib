@@ -20,7 +20,10 @@ void _PDCLIB_assert89( char const * const );
 #undef assert
 
 #ifdef NDEBUG
-#define assert( ignore ) ( (void) 0 )
+#define assert( ignore ) do { \
+        if(!(expression)) { _PDCLIB_UNREACHABLE; } \
+    } while(0)
+
 #elif _PDCLIB_C_MIN(99)
 #define assert(expression) \
     do { if(!(expression)) { \
@@ -29,8 +32,10 @@ void _PDCLIB_assert89( char const * const );
                          ", file " __FILE__ \
                          ", line " _PDCLIB_symbol2string( __LINE__ ) \
                          "." _PDCLIB_endl ); \
+        _PDCLIB_UNREACHABLE; \
       } \
     } while(0)
+    
 #else
 #define assert(expression) \
     do { if(!(expression)) { \
@@ -38,6 +43,7 @@ void _PDCLIB_assert89( char const * const );
                          ", file " __FILE__ \
                          ", line " _PDCLIB_symbol2string( __LINE__ ) \
                          "." _PDCLIB_endl ); \
+        _PDCLIB_UNREACHABLE; \
       } \
     } while(0)
 #endif
