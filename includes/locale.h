@@ -97,6 +97,30 @@ char * setlocale( int category, const char * locale ) _PDCLIB_nothrow;
 */
 struct lconv * localeconv( void ) _PDCLIB_nothrow;
 
+#if _PDCLIB_POSIX_MIN(2008)
+typedef _PDCLIB_locale_t locale_t;
+
+/* Set the thread locale to newlocale
+ *
+ * If newlocale is (locale_t)0, then doesn't change the locale and just returns
+ * the existing locale.
+ *
+ * If newlocale is LC_GLOBAL_LOCALE, resets the thread's locale to use the 
+ * global locale.
+ *
+ * Returns the previous thread locale. If the thread had no previous locale, 
+ * returns the global locale.
+ */
+locale_t uselocale(locale_t newlocale);
+
+/* Returns a copy of loc */
+locale_t duplocale(locale_t loc);
+
+/* Frees the passed locale object */
+void freelocale(locale_t loc);
+
+#endif
+
 _PDCLIB_END_EXTERN_C
 #endif
 

@@ -384,7 +384,7 @@ typedef struct _PDCLIB_mbstate {
 } _PDCLIB_mbstate_t;
 
 typedef struct _PDCLIB_charcodec  _PDCLIB_charcodec_t;
-typedef struct _PDCLIB_locale     _PDCLIB_locale_t;
+typedef struct _PDCLIB_locale    *_PDCLIB_locale_t;
 typedef struct lconv              _PDCLIB_lconv_t;
 
 /* -------------------------------------------------------------------------- */
