@@ -147,15 +147,21 @@ static inline _PDCLIB_size_t _PDCLIB_c32rtowc(
 #endif
 
 typedef struct {
-    /* Reads at most *_P_insz bytes from *_P_inbuf and writes the result into 
-     * *_P_outbuf, writing at most *_P_outsz characters. Updates *_P_outbuf,
-     * *_P_outsz, *_P_inbuf, *_P_outsz with the resulting state
+    /* Reads at most *_P_insz code units from *_P_inbuf and writes the result 
+     * into *_P_outbuf, writing at most *_P_outsz code units. Updates 
+     * *_P_outbuf, *_P_outsz, *_P_inbuf, *_P_outsz with the resulting state
+     *
+     * If _P_outbuf is NULL, then the input must be processed but no output 
+     * generated. _P_outsz may be processed as normal.
      *
      * Returns true if the conversion completed successfully (i.e. one of 
      * _P_outsize or _P_insize reached zero and no coding errors were 
      * encountered), else return false.
      */
-    _PDCLIB_bool (*__mbtoc32)(
+
+    /* UCS-4 variants. Mandatory. */
+
+    _PDCLIB_bool (*__mbstoc32s)(
         _PDCLIB_char32_t       **_PDCLIB_restrict   _P_outbuf,
         _PDCLIB_size_t          *_PDCLIB_restrict   _P_outsz,
         const char             **_PDCLIB_restrict   _P_inbuf,
@@ -163,10 +169,32 @@ typedef struct {
         _PDCLIB_mbstate_t       *_PDCLIB_restrict   _P_ps
     );
 
-    _PDCLIB_bool (*__c32tomb)(
+    _PDCLIB_bool (*__c32stombs)(
         char                   **_PDCLIB_restrict  _P_outbuf,
         _PDCLIB_size_t          *_PDCLIB_restrict  _P_outsz,
         const _PDCLIB_char32_t **_PDCLIB_restrict  _P_inbuf,
+        _PDCLIB_size_t          *_PDCLIB_restrict  _P_insz,
+        _PDCLIB_mbstate_t       *_PDCLIB_restrict  _P_ps
+    );
+
+    /* UTF-16 variants; same as above except optional. 
+     *
+     * If not provided, _PDCLib will internally synthesize on top of the UCS-4
+     * variants above, albeit at a performance cost.
+     */
+
+    _PDCLIB_bool (*__mbstoc16s)(
+        _PDCLIB_char16_t       **_PDCLIB_restrict   _P_outbuf,
+        _PDCLIB_size_t          *_PDCLIB_restrict   _P_outsz,
+        const char             **_PDCLIB_restrict   _P_inbuf,
+        _PDCLIB_size_t          *_PDCLIB_restrict   _P_insz,
+        _PDCLIB_mbstate_t       *_PDCLIB_restrict   _P_ps
+    );
+
+    _PDCLIB_bool (*__c16stombs)(
+        char                   **_PDCLIB_restrict  _P_outbuf,
+        _PDCLIB_size_t          *_PDCLIB_restrict  _P_outsz,
+        const _PDCLIB_char16_t **_PDCLIB_restrict  _P_inbuf,
         _PDCLIB_size_t          *_PDCLIB_restrict  _P_insz,
         _PDCLIB_mbstate_t       *_PDCLIB_restrict  _P_ps
     );

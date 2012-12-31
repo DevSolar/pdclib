@@ -44,11 +44,12 @@ end_conversion:             \
     goto end_conversion;    \
 } while(0)
 
-#define OUT32(_c)  do {         \
-    (*((*p_outbuf)++)) = (_c);  \
-    (*p_outsz)--;               \
-    _PDCLIB_UNDEFINED(accum);   \
-    state = DecStart;           \
+#define OUT32(_c)  do {             \
+    if(p_outbuf)                    \
+        (*((*p_outbuf)++)) = (_c);  \
+    (*p_outsz)--;                   \
+    _PDCLIB_UNDEFINED(accum);       \
+    state = DecStart;               \
 } while(0)
 #define CHECK_CONTINUATION \
     do { if((c & 0xC0) != 0x80) return false; } while(0)
@@ -172,20 +173,20 @@ static bool c32toutf8(
 {
     START_CONVERSION
     while(*p_outsz) {
-        char     *c8 =  *p_outbuf;
+        unsigned char outc;
         switch(state) {
         case Enc3R:
-            *c8 = 0x80 | ((accum >> 12) & 0x3F);
+            outc = 0x80 | ((accum >> 12) & 0x3F);
             state = Enc2R;
             break;
 
         case Enc2R:
-            *c8 = 0x80 | ((accum >> 6) & 0x3F);
+            outc = 0x80 | ((accum >> 6) & 0x3F);
             state = Enc1R;
             break;
 
         case Enc1R:
-            *c8 = 0x80 | (accum & 0x3F);
+            outc = 0x80 | (accum & 0x3F);
             state = EncStart;
             _PDCLIB_UNDEFINED(accum);
             break;
@@ -199,17 +200,17 @@ static bool c32toutf8(
             (*p_insz)--;
 
             if(accum <= 0x7F) {
-                *c8 = accum;
+                outc = accum;
                 state = EncStart;
                 _PDCLIB_UNDEFINED(accum);
             } else if(accum <= 0x7FF) {
-                *c8 = 0xC0 | (accum >> 6);
+                outc = 0xC0 | (accum >> 6);
                 state = Enc1R;
             } else if(accum <= 0xFFFF) {
-                *c8 = 0xE0 | (accum >> 12);
+                outc = 0xE0 | (accum >> 12);
                 state = Enc2R;
             } else if(accum <= 0x10FFFF) {
-                *c8 = 0xF0 | (accum >> 18);
+                outc = 0xF0 | (accum >> 18);
                 state = Enc3R;
             } else {
                 FINISH(false);
@@ -217,12 +218,20 @@ static bool c32toutf8(
             break;
         }
 
-
-        (*p_outbuf)++; 
+        if(p_outbuf) {
+            **p_outbuf = outc;
+            (*p_outbuf)++; 
+        }
         (*p_outsz)--;        
     }
     END_CONVERSION;
 }
+
+_PDCLIB_charcodec _PDCLIB_utf8_codec = {
+    .__mbstoc32s = utf8toc32,
+    .__c32stombs = c32toutf8,
+};
+
 #endif
 
 #ifdef TEST

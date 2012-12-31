@@ -20,10 +20,13 @@ static bool asciitoc32(
         unsigned char c = **p_inbuf;
         if(c > 127)
             return false;
-        **p_outbuf = c;
+        
+        if(p_outbuf) {
+            **p_outbuf = c;
+            (*p_outbuf)++; 
+        }
 
         (*p_inbuf)++;
-        (*p_outbuf)++; 
         (*p_insz)--; 
         (*p_outsz)--;
     }
@@ -42,15 +45,24 @@ static bool c32toascii(
         char32_t c = **p_inbuf;
         if(c > 127)
             return false;
-        **p_outbuf = c;
+
+        if(p_outbuf) {
+            **p_outbuf = c;
+            (*p_outbuf)++; 
+        }
 
         (*p_inbuf)++;
-        (*p_outbuf)++; 
         (*p_insz)--; 
         (*p_outsz)--;        
     }
     return true;
 }
+
+_PDCLIB_charcodec _PDCLIB_ascii_codec = {
+    .__mbstoc32s = asciitoc32,
+    .__c32stombs = c32toascii,
+};
+
 #endif
 
 #ifdef TEST

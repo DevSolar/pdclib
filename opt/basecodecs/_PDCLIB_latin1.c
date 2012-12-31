@@ -18,10 +18,13 @@ static bool latin1toc32(
 {
     while(*p_outsz && *p_insz) {
         unsigned char c = **p_inbuf;
-        **p_outbuf = c;
+
+        if(p_outbuf) {
+            **p_outbuf = c;
+            (*p_outbuf)++; 
+        }
 
         (*p_inbuf)++;
-        (*p_outbuf)++; 
         (*p_insz)--; 
         (*p_outsz)--;
     }
@@ -40,15 +43,24 @@ static bool c32tolatin1(
         char32_t c = **p_inbuf;
         if(c > 255)
             return false;
-        **p_outbuf = c;
+
+        if(p_outbuf) {
+            **p_outbuf = c;
+            (*p_outbuf)++;
+        }
 
         (*p_inbuf)++;
-        (*p_outbuf)++; 
         (*p_insz)--; 
         (*p_outsz)--;        
     }
     return true;
 }
+
+_PDCLIB_charcodec _PDCLIB_latin1_codec = {
+    .__mbstoc32s = latin1toc32,
+    .__c32stombs = c32tolatin1,
+};
+
 #endif
 
 #ifdef TEST
