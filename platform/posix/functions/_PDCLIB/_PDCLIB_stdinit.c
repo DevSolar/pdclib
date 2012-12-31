@@ -16,6 +16,7 @@
 #include <limits.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 #include <threads.h>
 
 /* In a POSIX system, stdin / stdout / stderr are equivalent to the (int) file
@@ -32,42 +33,39 @@ static unsigned char _PDCLIB_serr_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 
 extern _PDCLIB_fileops_t _PDCLIB_fileops;
 
-static struct _PDCLIB_file_t _PDCLIB_serr = { 
+static FILE _PDCLIB_serr = { 
     .ops        = &_PDCLIB_fileops, 
     .handle     = { .sval = 2 }, 
     .buffer     = _PDCLIB_serr_buffer, 
     .bufsize    = BUFSIZ, 
     .bufidx     = 0, 
     .bufend     = 0, 
-    .pos        = { 0, 0 }, 
     .ungetidx   = 0, 
     .ungetbuf   = _PDCLIB_serr_ungetbuf, 
     .status     = _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, 
     .filename   = NULL, 
     .next       = NULL,
 };
-static struct _PDCLIB_file_t _PDCLIB_sout = { 
+static FILE _PDCLIB_sout = { 
     .ops        = &_PDCLIB_fileops, 
     .handle     = { .sval = 1 },
     .buffer     = _PDCLIB_sout_buffer, 
     .bufsize    = BUFSIZ, 
     .bufidx     = 0, 
     .bufend     = 0, 
-    .pos        = { 0, 0 }, 
     .ungetidx   = 0, 
     .ungetbuf   = _PDCLIB_sout_ungetbuf, 
     .status     = _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, 
     .filename   = NULL, 
     .next       = &_PDCLIB_serr 
 };
-static struct _PDCLIB_file_t _PDCLIB_sin  = { 
+static FILE _PDCLIB_sin  = { 
     .ops        = &_PDCLIB_fileops, 
     .handle     = { .sval = 0 }, 
     .buffer     = _PDCLIB_sin_buffer, 
     .bufsize    = BUFSIZ, 
     .bufidx     = 0, 
     .bufend     = 0, 
-    .pos        = { 0, 0 }, 
     .ungetidx   = 0, 
     .ungetbuf   = _PDCLIB_sin_ungetbuf, 
     .status     = _IOLBF | _PDCLIB_FREAD | _PDCLIB_STATIC, 
@@ -75,9 +73,9 @@ static struct _PDCLIB_file_t _PDCLIB_sin  = {
     .next       = &_PDCLIB_sout 
 };
 
-struct _PDCLIB_file_t * stdin  = &_PDCLIB_sin;
-struct _PDCLIB_file_t * stdout = &_PDCLIB_sout;
-struct _PDCLIB_file_t * stderr = &_PDCLIB_serr;
+FILE * stdin  = &_PDCLIB_sin;
+FILE * stdout = &_PDCLIB_sout;
+FILE * stderr = &_PDCLIB_serr;
 
 /* Todo: Better solution than this! */
 __attribute__((constructor)) void init_stdio(void)
@@ -88,7 +86,7 @@ __attribute__((constructor)) void init_stdio(void)
 }
 
 /* FIXME: This approach is a possible attack vector. */
-struct _PDCLIB_file_t * _PDCLIB_filelist = &_PDCLIB_sin;
+FILE * _PDCLIB_filelist = &_PDCLIB_sin;
 
 /* "C" locale - defaulting to ASCII-7.
    1 kByte (+ 4 byte) of <ctype.h> data.

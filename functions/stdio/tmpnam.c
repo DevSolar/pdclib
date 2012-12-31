@@ -11,7 +11,7 @@
 #ifndef REGTEST
 
 #include <string.h>
-#include <_PDCLIB_glue.h>
+#include <_PDCLIB_io.h>
 
 char * tmpnam( char * s )
 {

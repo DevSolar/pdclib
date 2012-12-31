@@ -1,4 +1,4 @@
-/* _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream )
+/* _PDCLIB_fillbuffer( FILE * stream )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -8,8 +8,9 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
+#include <_PDCLIB_io.h>
 
-int _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream )
+int _PDCLIB_fillbuffer( FILE * stream )
 {
     size_t bytesRead;
     bool ok = stream->ops->read( stream->handle, stream->buffer, stream->bufsize,

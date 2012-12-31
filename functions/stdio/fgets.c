@@ -9,10 +9,9 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-#include <_PDCLIB_glue.h>
-
-char * fgets_unlocked( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+char * fgets_unlocked( char * _PDCLIB_restrict s, int size, FILE * _PDCLIB_restrict stream )
 {
     if ( size == 0 )
     {
@@ -36,7 +35,7 @@ char * fgets_unlocked( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_
 }
 
 char * fgets( char * _PDCLIB_restrict s, int size, 
-              struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+              FILE * _PDCLIB_restrict stream )
 {
     flockfile( stream );
     char* r = fgets_unlocked( s, size, stream );

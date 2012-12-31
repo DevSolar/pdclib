@@ -8,8 +8,9 @@
 #include <stdint.h>
 #include <errno.h>
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int_fast64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, 
+int_fast64_t _PDCLIB_seek( FILE * stream, 
                            int_fast64_t offset, 
                            int whence )
 {

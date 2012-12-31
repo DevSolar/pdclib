@@ -11,6 +11,7 @@
 #include <ctype.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
 int vfscanf_unlocked( FILE * _PDCLIB_restrict stream, 
                       const char * _PDCLIB_restrict format, 

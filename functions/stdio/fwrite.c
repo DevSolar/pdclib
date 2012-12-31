@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-
+#include <_PDCLIB_io.h>
 #include <_PDCLIB_glue.h>
 
 #include <stdbool.h>
@@ -19,7 +19,7 @@
 
 size_t fwrite_unlocked( const void * _PDCLIB_restrict ptr, 
                size_t size, size_t nmemb, 
-               struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+               FILE * _PDCLIB_restrict stream )
 {
     if ( _PDCLIB_prepwrite( stream ) == EOF )
     {
@@ -92,7 +92,7 @@ size_t fwrite_unlocked( const void * _PDCLIB_restrict ptr,
 
 size_t fwrite( const void * _PDCLIB_restrict ptr, 
                size_t size, size_t nmemb, 
-               struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+               FILE * _PDCLIB_restrict stream )
 {
     flockfile( stream );
     size_t r = fwrite_unlocked( ptr, size, nmemb, stream );

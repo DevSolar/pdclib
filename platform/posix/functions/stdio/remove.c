@@ -12,16 +12,16 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-
+#include <_PDCLIB_io.h>
 #include <string.h>
 
-extern struct _PDCLIB_file_t * _PDCLIB_filelist;
+extern FILE * _PDCLIB_filelist;
 
 extern int unlink( const char * pathname );
 
 int remove( const char * pathname )
 {
-    struct _PDCLIB_file_t * current = _PDCLIB_filelist;
+    FILE * current = _PDCLIB_filelist;
     while ( current != NULL )
     {
         if ( ( current->filename != NULL ) && ( strcmp( current->filename, pathname ) == 0 ) )

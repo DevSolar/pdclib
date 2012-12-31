@@ -7,8 +7,7 @@
 
 #ifndef _PDCLIB_WCHAR_H
 #define _PDCLIB_WCHAR_H
-#include <_PDCLIB_io.h>
-#include <_PDCLIB_encoding.h>
+#include <_PDCLIB_int.h>
 _PDCLIB_BEGIN_EXTERN_C
 /* This is VASTLY incomplete. Functions being implemented as required by other
    portions of the library
@@ -79,38 +78,38 @@ size_t wcsftime(wchar_t *_PDCLIB_restrict s, size_t maxsize, const wchar_t *_PDC
 #endif
 
 /* Wide character I/O */
-int fwprintf(struct _PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, ...);
-int fwscanf(struct _PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, ...);
+int fwprintf(_PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, ...);
+int fwscanf(_PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, ...);
 int swprintf(wchar_t *_PDCLIB_restrict s, size_t n, const wchar_t *_PDCLIB_restrict format, ...);
 int swscanf(const wchar_t *_PDCLIB_restrict s, const wchar_t *_PDCLIB_restrict format, ...);
-int vfwprintf(struct _PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
-int vfwscanf(struct _PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
+int vfwprintf(_PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
+int vfwscanf(_PDCLIB_file_t *_PDCLIB_restrict stream, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
 int vswprintf(wchar_t *_PDCLIB_restrict s, size_t n, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
 int vswscanf(const wchar_t *_PDCLIB_restrict s, const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
 int vwprintf(const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
 int vwscanf(const wchar_t *_PDCLIB_restrict format, _PDCLIB_va_list arg);
 int wprintf(const wchar_t *_PDCLIB_restrict format, ...);
 int wscanf(const wchar_t *_PDCLIB_restrict format, ...);
-wint_t fgetwc(struct _PDCLIB_file_t *stream);
-wchar_t *fgetws(wchar_t *_PDCLIB_restrict s, int n, struct _PDCLIB_file_t *_PDCLIB_restrict stream);
-wint_t fputwc(wchar_t c, struct _PDCLIB_file_t *stream);
-int fputws(const wchar_t *_PDCLIB_restrict s, struct _PDCLIB_file_t *_PDCLIB_restrict stream);
-int fwide(struct _PDCLIB_file_t *stream, int mode);
-wint_t getwc(struct _PDCLIB_file_t *stream);
+wint_t fgetwc(_PDCLIB_file_t *stream);
+wchar_t *fgetws(wchar_t *_PDCLIB_restrict s, int n, _PDCLIB_file_t *_PDCLIB_restrict stream);
+wint_t fputwc(wchar_t c, _PDCLIB_file_t *stream);
+int fputws(const wchar_t *_PDCLIB_restrict s, _PDCLIB_file_t *_PDCLIB_restrict stream);
+int fwide(_PDCLIB_file_t *stream, int mode);
+wint_t getwc(_PDCLIB_file_t *stream);
 wint_t getwchar(void);
-wint_t putwc(wchar_t c, struct _PDCLIB_file_t *stream);
+wint_t putwc(wchar_t c, _PDCLIB_file_t *stream);
 wint_t putwchar(wchar_t c);
-wint_t ungetwc(wint_t c, struct _PDCLIB_file_t *stream);
+wint_t ungetwc(wint_t c, _PDCLIB_file_t *stream);
 
 #if _PDCLIB_GNU_SOURCE
-wint_t getwc_unlocked(struct _PDCLIB_file_t *stream);
+wint_t getwc_unlocked(_PDCLIB_file_t *stream);
 wint_t getwchar_unlocked(void);
-wint_t fgetwc_unlocked(struct _PDCLIB_file_t *stream);
-wint_t fputwc_unlocked(wchar_t wc, struct _PDCLIB_file_t *stream);
-wint_t putwc_unlocked(wchar_t wc, struct _PDCLIB_file_t *stream);
+wint_t fgetwc_unlocked(_PDCLIB_file_t *stream);
+wint_t fputwc_unlocked(wchar_t wc, _PDCLIB_file_t *stream);
+wint_t putwc_unlocked(wchar_t wc, _PDCLIB_file_t *stream);
 wint_t putwchar_unlocked(wchar_t wc);
-wchar_t *fgetws_unlocked(wchar_t *ws, int n, struct _PDCLIB_file_t *stream);
-int fputws_unlocked(const wchar_t *ws, struct _PDCLIB_file_t *stream);
+wchar_t *fgetws_unlocked(wchar_t *ws, int n, _PDCLIB_file_t *stream);
+int fputws_unlocked(const wchar_t *ws, _PDCLIB_file_t *stream);
 #endif
 
 /* Wide character <-> Numeric conversions */

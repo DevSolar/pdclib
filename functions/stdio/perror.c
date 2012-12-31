@@ -9,7 +9,6 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-
 #include <errno.h>
 #include <locale.h>
 

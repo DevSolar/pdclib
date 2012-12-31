@@ -8,7 +8,7 @@
 
 #ifndef _PDCLIB_STDIO_H
 #define _PDCLIB_STDIO_H _PDCLIB_STDIO_H
-#include <_PDCLIB_io.h>
+#include <_PDCLIB_int.h>
 _PDCLIB_BEGIN_EXTERN_C
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
@@ -27,8 +27,8 @@ typedef _PDCLIB_size_t size_t;
 #define _IONBF 4
 
 /* The following are platform-dependant, and defined in _PDCLIB_config.h. */
-typedef struct _PDCLIB_fpos_t fpos_t;
-typedef struct _PDCLIB_file_t FILE;
+typedef _PDCLIB_fpos_t fpos_t;
+typedef _PDCLIB_file_t FILE;
 #define EOF -1
 #define BUFSIZ _PDCLIB_BUFSIZ
 #define FOPEN_MAX _PDCLIB_FOPEN_MAX

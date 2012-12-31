@@ -9,8 +9,9 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int ungetc_unlocked( int c, struct _PDCLIB_file_t * stream )
+int ungetc_unlocked( int c, FILE * stream )
 {
     if ( c == EOF || stream->ungetidx == _PDCLIB_UNGETCBUFSIZE )
     {
@@ -19,7 +20,7 @@ int ungetc_unlocked( int c, struct _PDCLIB_file_t * stream )
     return stream->ungetbuf[stream->ungetidx++] = (unsigned char) c;
 }
 
-int ungetc( int c, struct _PDCLIB_file_t * stream )
+int ungetc( int c, FILE * stream )
 {
     flockfile( stream );
     int r = ungetc_unlocked( c, stream );

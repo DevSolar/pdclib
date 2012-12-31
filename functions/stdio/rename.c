@@ -13,11 +13,11 @@
 
 #include <string.h>
 
-extern struct _PDCLIB_file_t * _PDCLIB_filelist;
+extern _PDCLIB_file_t * _PDCLIB_filelist;
 
 int rename( const char * old, const char * new )
 {
-    struct _PDCLIB_file_t * current = _PDCLIB_filelist;
+    FILE * current = _PDCLIB_filelist;
     while ( current != NULL )
     {
         if ( ( current->filename != NULL ) && ( strcmp( current->filename, old ) == 0 ) )

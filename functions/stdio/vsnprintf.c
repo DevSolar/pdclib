@@ -10,6 +10,7 @@
 #include <stdarg.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
 int vsnprintf( char * _PDCLIB_restrict s, 
                size_t n, 

@@ -9,8 +9,9 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
+#include <_PDCLIB_io.h>
 
-int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
+int _PDCLIB_flushbuffer( FILE * stream )
 {
     if ( ! ( stream->status & _PDCLIB_FBIN ) )
     {

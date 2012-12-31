@@ -12,8 +12,9 @@
 #include <limits.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int vfprintf_unlocked( struct _PDCLIB_file_t * _PDCLIB_restrict stream, 
+int vfprintf_unlocked( FILE * _PDCLIB_restrict stream, 
                        const char * _PDCLIB_restrict format, 
                        va_list arg )
 {
@@ -49,7 +50,7 @@ int vfprintf_unlocked( struct _PDCLIB_file_t * _PDCLIB_restrict stream,
     return status.i;
 }
 
-int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, 
+int vfprintf( FILE * _PDCLIB_restrict stream, 
               const char * _PDCLIB_restrict format, 
               va_list arg )
 {

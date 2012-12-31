@@ -16,6 +16,7 @@
 #include <limits.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
 extern const _PDCLIB_fileops_t _PDCLIB_fileops;
 

@@ -1,7 +1,5 @@
-#ifndef _PDCLIB_GLUE_H
-#define _PDCLIB_GLUE_H
-/* $Id$ */
-
+#ifndef __PDCLIB_GLUE_H
+#define __PDCLIB_GLUE_H __PDCLIB_GLUE_H
 /* OS glue functions declaration <_PDCLIB_glue.h>
 
    This file is part of the Public Domain C Library (PDCLib).

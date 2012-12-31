@@ -13,7 +13,7 @@
 
 #ifndef REGTEST
 
-long int ftell_unlocked( struct _PDCLIB_file_t * stream )
+long int ftell_unlocked( FILE * stream )
 {
     uint_fast64_t off64 = _PDCLIB_ftell64_unlocked( stream );
 
@@ -26,7 +26,7 @@ long int ftell_unlocked( struct _PDCLIB_file_t * stream )
     return off64;
 }
 
-long int ftell( struct _PDCLIB_file_t * stream )
+long int ftell( FILE * stream )
 {
     flockfile( stream );
     long int off = ftell_unlocked( stream );
@@ -38,8 +38,10 @@ long int ftell( struct _PDCLIB_file_t * stream )
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
-
 #include <stdlib.h>
+#ifndef REGTEST
+#include <_PDCLIB_io.h>
+#endif
 
 int main( void )
 {

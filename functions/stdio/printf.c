@@ -10,6 +10,7 @@
 #include <stdarg.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
 int printf( const char * _PDCLIB_restrict format, ... )
 {

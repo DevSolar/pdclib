@@ -11,8 +11,9 @@
 #include <limits.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mode, size_t size )
+int setvbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mode, size_t size )
 {
     switch ( mode )
     {
@@ -71,9 +72,10 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
-
 #include <errno.h>
-
+#ifndef REGTEST
+#include <_PDCLIB_io.h>
+#endif
 #define BUFFERSIZE 500
 
 int main( void )

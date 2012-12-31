@@ -10,8 +10,9 @@
 #include <stdarg.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int fprintf_unlocked( struct _PDCLIB_file_t * _PDCLIB_restrict stream, 
+int fprintf_unlocked( FILE * _PDCLIB_restrict stream, 
                       const char * _PDCLIB_restrict format, ... )
 {
     int rc;
@@ -22,7 +23,7 @@ int fprintf_unlocked( struct _PDCLIB_file_t * _PDCLIB_restrict stream,
     return rc;
 }
 
-int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream,
+int fprintf( FILE * _PDCLIB_restrict stream,
              const char * _PDCLIB_restrict format, ... )
 {
     int rc;

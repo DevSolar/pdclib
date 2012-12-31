@@ -11,18 +11,21 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_glue.h>
+#include <_PDCLIB_io.h>
 #include <string.h>
 #include <threads.h>
 
-extern struct _PDCLIB_file_t * _PDCLIB_filelist;
+extern FILE * _PDCLIB_filelist;
 
-struct _PDCLIB_file_t * _PDCLIB_fvopen( _PDCLIB_fd_t               fd, 
-                                        const _PDCLIB_fileops_t *  ops,
-                                        int mode,
-                                        const char * _PDCLIB_restrict filename )
+FILE * _PDCLIB_fvopen( 
+    _PDCLIB_fd_t                                    fd, 
+    const _PDCLIB_fileops_t    *_PDCLIB_restrict    ops,
+    int                                             mode,
+    const char                  *_PDCLIB_restrict   filename
+)
 {
     size_t filename_len;
-    struct _PDCLIB_file_t * rc;
+    FILE * rc;
     if ( mode == NULL )
     {
         /* Mode invalid */
@@ -36,7 +39,7 @@ struct _PDCLIB_file_t * _PDCLIB_fvopen( _PDCLIB_fd_t               fd,
        Data buffer comes last because it might change in size ( setvbuf() ).
     */
     filename_len = filename ? strlen( filename ) + 1 : 1;
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + filename_len + BUFSIZ ) ) == NULL )
+    if ( ( rc = calloc( 1, sizeof( FILE ) + _PDCLIB_UNGETCBUFSIZE + filename_len + BUFSIZ ) ) == NULL )
     {
         /* no memory */
         return NULL;
@@ -51,7 +54,7 @@ struct _PDCLIB_file_t * _PDCLIB_fvopen( _PDCLIB_fd_t               fd,
     rc->ops    = ops;
     rc->handle = fd;
     /* Setting pointers into the memory block allocated above */
-    rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
+    rc->ungetbuf = (unsigned char *)rc + sizeof( FILE );
     rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
     rc->buffer   = rc->filename + filename_len;
     /* Copying filename to FILE structure */

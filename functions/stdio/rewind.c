@@ -9,14 +9,15 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-void rewind_unlocked( struct _PDCLIB_file_t * stream )
+void rewind_unlocked( FILE * stream )
 {
     stream->status &= ~ _PDCLIB_ERRORFLAG;
     fseek_unlocked( stream, 0L, SEEK_SET );
 }
 
-void rewind( struct _PDCLIB_file_t * stream )
+void rewind( FILE * stream )
 {
     flockfile(stream);
     rewind_unlocked(stream);

@@ -1,5 +1,5 @@
-#ifndef _PDCLIB_PDCLIB_FLOAT_H
-#define _PDCLIB_PDCLIB_FLOAT_H _PDCLIB_PDCLIB_FLOAT_H
+#ifndef __PDCLIB_PDCLIB_FLOAT_H
+#define __PDCLIB_PDCLIB_FLOAT_H __PDCLIB_PDCLIB_FLOAT_H
 
 /* PDCLib internal floating point logic <_PDCLIB_float.h>
 

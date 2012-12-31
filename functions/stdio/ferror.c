@@ -9,13 +9,14 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int ferror_unlocked( struct _PDCLIB_file_t * stream )
+int ferror_unlocked( FILE * stream )
 {
     return stream->status & _PDCLIB_ERRORFLAG;
 }
 
-int ferror( struct _PDCLIB_file_t * stream )
+int ferror( FILE * stream )
 {
     flockfile( stream );
     int error = ferror_unlocked( stream );

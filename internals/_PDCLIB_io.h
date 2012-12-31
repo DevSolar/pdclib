@@ -1,9 +1,9 @@
-#ifndef _PDCLIB_IO_H
-#define _PDCLIB_IO_H
+#ifndef __PDCLIB_IO_H
+#define __PDCLIB_IO_H __PDCLIB_IO_H
 #include "_PDCLIB_int.h"
 #include "_PDCLIB_threadconfig.h"
 
-/* PDCLib internal I/O logic <_PDCLIB_int.h>
+/* PDCLib internal I/O logic <_PDCLIB_io.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -34,7 +34,7 @@
 /* stream handle should not be free()d on close (stdin, stdout, stderr) */
 #define _PDCLIB_STATIC     32768u
 
-typedef union _PDCLIB_fd
+union _PDCLIB_fd
 {
 #if defined(_PDCLIB_OSFD_T)
     _PDCLIB_OSFD_T      osfd;
@@ -42,25 +42,68 @@ typedef union _PDCLIB_fd
     void *              pointer;
     _PDCLIB_uintptr_t   uval;
     _PDCLIB_intptr_t    sval;     
-} _PDCLIB_fd_t;
+};
 
-/* Internal functions */
+/******************************************************************************/
+/* Internal functions                                                         */
+/******************************************************************************/
+
+/* The worker for all printf() type of functions. The pointer spec should point
+   to the introducing '%' of a conversion specifier. The status structure is to
+   be that of the current printf() function, of which the members n, s, stream
+   and arg will be preserved; i will be updated; and all others will be trashed
+   by the function.
+   Returns a pointer to the first character not parsed as conversion specifier.
+*/
+const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
+
+/* The worker for all scanf() type of functions. The pointer spec should point
+   to the introducing '%' of a conversion specifier. The status structure is to
+   be that of the current scanf() function, of which the member stream will be
+   preserved; n, i, and s will be updated; and all others will be trashed by
+   the function.
+   Returns a pointer to the first character not parsed as conversion specifier,
+   or NULL in case of error.
+   FIXME: Should distinguish between matching and input error
+*/
+const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status );
+
+/* Parsing any fopen() style filemode string into a number of flags. */
+unsigned int _PDCLIB_filemode( const char * mode );
+
+/* Sanity checking and preparing of read buffer, should be called first thing 
+   by any stdio read-data function.
+   Returns 0 on success, EOF on error.
+   On error, EOF / error flags and errno are set appropriately.
+*/
+int _PDCLIB_prepread( _PDCLIB_file_t * stream );
+
+/* Sanity checking, should be called first thing by any stdio write-data
+   function.
+   Returns 0 on success, EOF on error.
+   On error, error flags and errno are set appropriately.
+*/
+int _PDCLIB_prepwrite( _PDCLIB_file_t * stream );
+
+/* Closing all streams on program exit */
+void _PDCLIB_closeall( void );
+
 /* Writes a stream's buffer.
    Returns 0 on success, EOF on write error.
    Sets stream error flags and errno appropriately on error.
 */
-int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream );
+int _PDCLIB_flushbuffer( _PDCLIB_file_t * stream );
 
 /* Fills a stream's buffer.
    Returns 0 on success, EOF on read error / EOF.
    Sets stream EOF / error flags and errno appropriately on error.
 */
-int _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream );
+int _PDCLIB_fillbuffer( _PDCLIB_file_t * stream );
 
 /* Repositions within a file. Returns new offset on success,
    -1 / errno on error.
 */
-_PDCLIB_int_fast64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, 
+_PDCLIB_int_fast64_t _PDCLIB_seek( _PDCLIB_file_t * stream, 
                                   _PDCLIB_int_fast64_t offset, int whence );
 
 /* File backend I/O operations
@@ -68,7 +111,7 @@ _PDCLIB_int_fast64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream,
  * PDCLib will call through to these methods as needed to implement the stdio
  * functions.
  */
-typedef struct _PDCLIB_fileops
+struct _PDCLIB_fileops
 {
     /*! Read length bytes from the file into buf; returning the number of bytes
      *  actually read in *numBytesRead.
@@ -123,17 +166,10 @@ typedef struct _PDCLIB_fileops
      */
     _PDCLIB_bool (*wwrite)( _PDCLIB_fd_t self, const _PDCLIB_wchar_t * buf, 
                      _PDCLIB_size_t length, _PDCLIB_size_t * numCharsWritten );
-} _PDCLIB_fileops_t;
-
-/* Position / status structure for getpos() / fsetpos(). */
-struct _PDCLIB_fpos_t
-{
-    _PDCLIB_int_fast64_t offset; /* File position offset */
-    int                  status; /* Multibyte parsing state (unused, reserved) */
 };
 
 /* FILE structure */
-struct _PDCLIB_file_t
+struct _PDCLIB_file
 {
     const _PDCLIB_fileops_t * ops;
     _PDCLIB_fd_t              handle;   /* OS file handle */
@@ -142,18 +178,18 @@ struct _PDCLIB_file_t
     _PDCLIB_size_t            bufsize;  /* Size of buffer */
     _PDCLIB_size_t            bufidx;   /* Index of current position in buffer */
     _PDCLIB_size_t            bufend;   /* Index of last pre-read character in buffer */
-    struct _PDCLIB_fpos_t     pos;      /* Offset and multibyte parsing state */
     _PDCLIB_size_t            ungetidx; /* Number of ungetc()'ed characters */
     unsigned char *           ungetbuf; /* ungetc() buffer */
     unsigned int              status;   /* Status flags; see above */
     /* multibyte parsing status to be added later */
+    _PDCLIB_fpos_t            pos;      /* Offset and multibyte parsing state */
     char *                    filename; /* Name the current stream has been opened with */
-    struct _PDCLIB_file_t *   next;     /* Pointer to next struct (internal) */
+    _PDCLIB_file_t *          next;     /* Pointer to next struct (internal) */
 };
 
 static inline _PDCLIB_size_t _PDCLIB_getchars( char * out, _PDCLIB_size_t n,
                                                int stopchar,
-                                               struct _PDCLIB_file_t * stream )
+                                               _PDCLIB_file_t * stream )
 {
     _PDCLIB_size_t i = 0;
     int c;

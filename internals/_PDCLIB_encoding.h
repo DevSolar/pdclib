@@ -4,63 +4,27 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_ENCODING_H
-#define _PDCLIB_ENCODING_H _PDCLIB_ENCODING_H
+#ifndef __PDCLIB_ENCODING_H
+#define __PDCLIB_ENCODING_H __PDCLIB_ENCODING_H
 #include "_PDCLIB_int.h"
 
-#ifndef __cplusplus
-typedef _PDCLIB_int16_t         _PDCLIB_char16_t;
-typedef _PDCLIB_int32_t         _PDCLIB_char32_t;
-#else
-typedef char16_t                _PDCLIB_char16_t;
-typedef char32_t                _PDCLIB_char32_t;
-#endif
-
-/* -------------------------------------------------------------------------- */
-/* mbstate_t                                                                  */
-/* -------------------------------------------------------------------------- */
-
-typedef struct _PDCLIB_mbstate_t {
-    union {
-        /* Is this the best way to represent this? Is this big enough? */
-        _PDCLIB_uint64_t _St64[15];
-        _PDCLIB_uint32_t _St32[31];
-        _PDCLIB_uint16_t _St16[62];
-        unsigned char    _StUC[124];
-        signed   char    _StSC[124];
-                 char    _StC [124];
-    };
-
-    union {
-        /* c16/related functions: Surrogate storage
-         *
-         * If zero, no surrogate pending. If nonzero, surrogate.
-         */
-        _PDCLIB_uint16_t     _Surrogate;
-
-        /* Reserved for potential mbtoutf8/etc functions */
-        unsigned char        _U8[4];
-    };
-} _PDCLIB_mbstate_t;
-
-#ifdef _PDCLIB_WCHAR_IS_UCS2
 /* Must be cauued with bufsize >= 1, in != NULL, out != NULL, ps != NULL
  *
- * Converts a wchar to a UCS4 (char32_t) value. Returns
+ * Converts a UTF-16 (char16_t) to a UCS4 (char32_t) value. Returns
  *   1, 2   : Valid character (converted to UCS-4)
  *   -1     : Encoding error
  *   -2     : Partial character (only lead surrogate in buffer)
  */
-static inline int _PDCLIB_wcrtoc32(
+static inline int _PDCLIB_c16rtoc32(
             _PDCLIB_char32_t    *_PDCLIB_restrict   out, 
-    const   _PDCLIB_wchar_t     *_PDCLIB_restrict   in,
+    const   _PDCLIB_char16_t    *_PDCLIB_restrict   in,
             _PDCLIB_size_t                          bufsize,
             _PDCLIB_mbstate_t   *_PDCLIB_restrict   ps  
 )
 {
     if(ps->_Surrogate) {
         // We already have a lead surrogate
-        if(*in & ~0x3FF != 0xDC00) {
+        if((*in & ~0x3FF) != 0xDC00) {
             // Encoding error
             return -1;
         } else {
@@ -69,11 +33,11 @@ static inline int _PDCLIB_wcrtoc32(
             ps->_Surrogate = 0;
             return 1;
         }
-    } if(*in & ~0x3FF == 0xD800) {
+    } if((*in & ~0x3FF) == 0xD800) {
         // Lead surrogate
         if(bufsize >= 2) {
             // Buffer big enough
-            if(in[1] & ~0x3FF != 0xDC00) {
+            if((in[1] & ~0x3FF) != 0xDC00) {
                 // Encoding error
                 return -1;
             } else {
@@ -92,7 +56,7 @@ static inline int _PDCLIB_wcrtoc32(
     }
 }
 
-static inline _PDCLIB_size_t _PDCLIB_c32rtowc(
+static inline _PDCLIB_size_t _PDCLIB_c32rtoc16(
             _PDCLIB_wchar_t     *_PDCLIB_restrict   out,
     const   _PDCLIB_char32_t    *_PDCLIB_restrict   in,
             _PDCLIB_size_t                          bufsize,
@@ -121,32 +85,8 @@ static inline _PDCLIB_size_t _PDCLIB_c32rtowc(
         }
     }
 }
-#else
-/* Dummy implementation for when wc == c32 */
-static inline _PDCLIB_size_t _PDCLIB_wcrtoc32(
-            _PDCLIB_char32_t    *_PDCLIB_restrict   out, 
-    const   _PDCLIB_wchar_t     *_PDCLIB_restrict   in,
-            _PDCLIB_size_t                          bufsize,
-            _PDCLIB_mbstate_t   *_PDCLIB_restrict   ps  
-)
-{
-    *out = *in;
-    return 1;
-}
 
-static inline _PDCLIB_size_t _PDCLIB_c32rtowc(
-            _PDCLIB_wchar_t     *_PDCLIB_restrict   out,
-    const   _PDCLIB_char32_t    *_PDCLIB_restrict   in,
-            _PDCLIB_size_t                          bufsize,
-            _PDCLIB_mbstate_t   *_PDCLIB_restrict   ps
-)
-{
-    *out = *in;
-    return 1;
-}
-#endif
-
-typedef struct {
+struct _PDCLIB_charcodec {
     /* Reads at most *_P_insz code units from *_P_inbuf and writes the result 
      * into *_P_outbuf, writing at most *_P_outsz code units. Updates 
      * *_P_outbuf, *_P_outsz, *_P_inbuf, *_P_outsz with the resulting state
@@ -198,6 +138,6 @@ typedef struct {
         _PDCLIB_size_t          *_PDCLIB_restrict  _P_insz,
         _PDCLIB_mbstate_t       *_PDCLIB_restrict  _P_ps
     );
-} _PDCLIB_charcodec;
+};
 
 #endif

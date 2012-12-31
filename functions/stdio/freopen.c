@@ -9,15 +9,16 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-
+#include <_PDCLIB_io.h>
 #include <_PDCLIB_glue.h>
 #include <stdlib.h>
 #include <string.h>
 
-struct _PDCLIB_file_t * freopen( 
-                            const char * _PDCLIB_restrict filename, 
-                            const char * _PDCLIB_restrict mode, 
-                            struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+FILE * freopen( 
+    const char * _PDCLIB_restrict filename, 
+    const char * _PDCLIB_restrict mode, 
+    FILE * _PDCLIB_restrict stream 
+)
 {
     flockfile( stream );
 

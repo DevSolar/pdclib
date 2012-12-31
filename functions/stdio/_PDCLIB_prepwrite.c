@@ -1,6 +1,6 @@
 /* $Id$ */
 
-/* _PDCLIB_prepwrite( struct _PDCLIB_file_t * )
+/* _PDCLIB_prepwrite( FILE * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -10,7 +10,9 @@
 #include <errno.h>
 
 #ifndef REGTEST
-int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream )
+#include <_PDCLIB_io.h>
+   
+int _PDCLIB_prepwrite( FILE * stream )
 {
     if ( ( stream->bufidx < stream->bufend ) || ( stream->ungetidx > 0 ) ||
          ( stream->status & ( _PDCLIB_FREAD | _PDCLIB_ERRORFLAG | _PDCLIB_WIDESTREAM | _PDCLIB_EOFFLAG ) ) ||

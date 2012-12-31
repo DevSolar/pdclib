@@ -9,15 +9,16 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-
-#include <_PDCLIB_glue.h>
+#include <_PDCLIB_io.h>
 
 #include <stdbool.h>
 #include <string.h>
 
-size_t fread_unlocked( void * _PDCLIB_restrict ptr, 
-                       size_t size, size_t nmemb, 
-                       struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+size_t fread_unlocked( 
+    void * _PDCLIB_restrict ptr, 
+    size_t size, size_t nmemb, 
+    FILE * _PDCLIB_restrict stream 
+)
 {
     if ( _PDCLIB_prepread( stream ) == EOF )
     {
@@ -37,7 +38,7 @@ size_t fread_unlocked( void * _PDCLIB_restrict ptr,
 
 size_t fread( void * _PDCLIB_restrict ptr, 
               size_t size, size_t nmemb, 
-              struct _PDCLIB_file_t * _PDCLIB_restrict stream )
+              FILE * _PDCLIB_restrict stream )
 {
     flockfile( stream );
     size_t r = fread_unlocked( ptr, size, nmemb, stream );

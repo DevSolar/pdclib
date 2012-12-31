@@ -9,10 +9,9 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-#include <_PDCLIB_glue.h>
-
-int fseek_unlocked( struct _PDCLIB_file_t * stream, long loffset, int whence )
+int fseek_unlocked( FILE * stream, long loffset, int whence )
 {
     _PDCLIB_int64_t offset = loffset;
     if ( stream->status & _PDCLIB_FWRITE )
@@ -37,7 +36,7 @@ int fseek_unlocked( struct _PDCLIB_file_t * stream, long loffset, int whence )
     return ( _PDCLIB_seek( stream, offset, whence ) != EOF ) ? 0 : EOF;
 }
 
-int fseek( struct _PDCLIB_file_t * stream, long loffset, int whence )
+int fseek( FILE * stream, long loffset, int whence )
 {
     flockfile( stream );
     int r = fseek_unlocked( stream, loffset, whence );

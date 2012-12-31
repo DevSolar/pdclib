@@ -9,10 +9,10 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
+#include <_PDCLIB_io.h>
 
-int fsetpos_unlocked( struct _PDCLIB_file_t * stream, 
-                      const struct _PDCLIB_fpos_t * pos )
+int fsetpos_unlocked( FILE * stream, 
+                      const _PDCLIB_fpos_t * pos )
 {
     if ( stream->status & _PDCLIB_FWRITE )
     {
@@ -25,13 +25,13 @@ int fsetpos_unlocked( struct _PDCLIB_file_t * stream,
     {
         return EOF;
     }
-    stream->pos.status = pos->status;
-    /* TODO: Add mbstate. */
+    stream->pos.mbs = pos->mbs;
+    
     return 0;
 }
 
-int fsetpos( struct _PDCLIB_file_t * stream, 
-             const struct _PDCLIB_fpos_t * pos )
+int fsetpos( FILE * stream, 
+             const _PDCLIB_fpos_t * pos )
 {
     flockfile( stream );
     int res = fsetpos_unlocked( stream, pos );

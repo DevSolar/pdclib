@@ -10,11 +10,12 @@
 #include <stdlib.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 #include <_PDCLIB_glue.h>
 #include <string.h>
 #include <errno.h>
 
-extern struct _PDCLIB_file_t * _PDCLIB_filelist;
+extern FILE * _PDCLIB_filelist;
 
 FILE * fopen( const char * _PDCLIB_restrict filename, 
               const char * _PDCLIB_restrict mode )

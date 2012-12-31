@@ -8,6 +8,7 @@
 #include <stdarg.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 #include <threads.h>
 #include <stdlib.h>
 

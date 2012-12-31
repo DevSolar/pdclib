@@ -7,7 +7,7 @@
 
 #ifndef _PDCLIB_UCHAR_H
 #define _PDCLIB_UCHAR_H
-#include <_PDCLIB_encoding.h>
+#include <_PDCLIB_int.h>
 _PDCLIB_BEGIN_EXTERN_C
 
 /* This is mostly a placeholder. for now. This header will be completed by the

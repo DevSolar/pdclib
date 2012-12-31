@@ -9,13 +9,14 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int feof_unlocked( struct _PDCLIB_file_t * stream )
+int feof_unlocked( FILE * stream )
 {
     return stream->status & _PDCLIB_EOFFLAG;
 }
 
-int feof( struct _PDCLIB_file_t * stream )
+int feof( FILE * stream )
 {
     flockfile( stream );
     int eof = feof_unlocked( stream );

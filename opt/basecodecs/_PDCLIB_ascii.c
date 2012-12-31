@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #ifndef REGTEST
 #include <uchar.h>
+#include <_PDCLIB_encoding.h>
 
 static bool asciitoc32(
     char32_t       **restrict   p_outbuf,
@@ -58,7 +59,7 @@ static bool c32toascii(
     return true;
 }
 
-_PDCLIB_charcodec _PDCLIB_ascii_codec = {
+_PDCLIB_charcodec_t _PDCLIB_ascii_codec = {
     .__mbstoc32s = asciitoc32,
     .__c32stombs = c32toascii,
 };

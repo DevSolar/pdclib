@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #ifndef REGTEST
 #include <uchar.h>
+#include <_PDCLIB_encoding.h>
 
 static bool latin1toc32(
     char32_t       **restrict   p_outbuf,
@@ -56,7 +57,7 @@ static bool c32tolatin1(
     return true;
 }
 
-_PDCLIB_charcodec _PDCLIB_latin1_codec = {
+_PDCLIB_charcodec_t _PDCLIB_latin1_codec = {
     .__mbstoc32s = latin1toc32,
     .__c32stombs = c32tolatin1,
 };

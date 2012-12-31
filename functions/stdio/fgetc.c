@@ -9,10 +9,9 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-#include <_PDCLIB_glue.h>
-
-int fgetc_unlocked( struct _PDCLIB_file_t * stream )
+int fgetc_unlocked( FILE * stream )
 {
     if ( _PDCLIB_prepread( stream ) == EOF )
     {
@@ -26,7 +25,7 @@ int fgetc_unlocked( struct _PDCLIB_file_t * stream )
     return n == 0 ? EOF : (unsigned char) c;
 }
 
-int fgetc( struct _PDCLIB_file_t * stream )
+int fgetc( FILE * stream )
 {
     flockfile( stream );
     int c = fgetc_unlocked( stream );

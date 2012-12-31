@@ -1,5 +1,5 @@
-#ifndef _PDCLIB_AUX_H
-#define _PDCLIB_AUX_H
+#ifndef __PDCLIB_AUX_H
+#define __PDCLIB_AUX_H __PDCLIB_AUX_H
 
 /* Auxiliary PDCLib code <_PDCLIB_aux.h>
 

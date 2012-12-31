@@ -11,15 +11,15 @@
 #include <errno.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
+#include <_PDCLIB_io.h>
 #include <threads.h>
 
-extern struct _PDCLIB_file_t * _PDCLIB_filelist;
+extern FILE * _PDCLIB_filelist;
 
-int fclose( struct _PDCLIB_file_t * stream )
+int fclose( FILE * stream )
 {
-    struct _PDCLIB_file_t * current = _PDCLIB_filelist;
-    struct _PDCLIB_file_t * previous = NULL;
+    FILE * current = _PDCLIB_filelist;
+    FILE * previous = NULL;
     /* Checking that the FILE handle is actually one we had opened before. */
     while ( current != NULL )
     {
@@ -78,8 +78,8 @@ int fclose( struct _PDCLIB_file_t * stream )
 int main( void )
 {
 #ifndef REGTEST
-    struct _PDCLIB_file_t * file1;
-    struct _PDCLIB_file_t * file2;
+    FILE * file1;
+    FILE * file2;
     remove( testfile1 );
     remove( testfile2 );
     TESTCASE( _PDCLIB_filelist == stdin );
