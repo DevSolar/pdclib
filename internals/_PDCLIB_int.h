@@ -364,6 +364,8 @@ typedef struct _PDCLIB_charcodec *_PDCLIB_charcodec_t;
 typedef struct _PDCLIB_locale    *_PDCLIB_locale_t;
 typedef struct lconv              _PDCLIB_lconv_t;
 
+_PDCLIB_size_t _PDCLIB_mb_cur_max( void );
+
 /* -------------------------------------------------------------------------- */
 /* stdio                                                                      */
 /* -------------------------------------------------------------------------- */

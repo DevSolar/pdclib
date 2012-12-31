@@ -21,6 +21,11 @@ typedef _PDCLIB_size_t size_t;
 #define NULL _PDCLIB_NULL
 #endif
 
+#ifndef _PDCLIB_MB_CUR_MAX_DEFINED
+#define _PDCLIB_MB_CUR_MAX_DEFINED
+#define MB_CUR_MAX (_PDCLIB_mb_cur_max())
+#endif
+
 /* Numeric conversion functions */
 
 /* TODO: atof(), strtof(), strtod(), strtold() */

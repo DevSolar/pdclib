@@ -138,6 +138,8 @@ struct _PDCLIB_charcodec {
         _PDCLIB_size_t                           *_PDCLIB_restrict  _P_insz,
         _PDCLIB_mbstate_t                        *_PDCLIB_restrict  _P_ps
     );
+
+    size_t __mb_max;
 };
 
 #endif

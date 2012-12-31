@@ -62,6 +62,7 @@ static bool c32toascii(
 struct _PDCLIB_charcodec _PDCLIB_ascii_codec = {
     .__mbstoc32s = asciitoc32,
     .__c32stombs = c32toascii,
+    .__mb_max    = 1,
 };
 
 #endif

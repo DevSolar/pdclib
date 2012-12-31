@@ -60,6 +60,7 @@ static bool c32tolatin1(
 struct _PDCLIB_charcodec _PDCLIB_latin1_codec = {
     .__mbstoc32s = latin1toc32,
     .__c32stombs = c32tolatin1,
+    .__mb_max    = 1,
 };
 
 #endif
