@@ -326,29 +326,6 @@ extern int _PDCLIB_errno;
 int * _PDCLIB_errno_func( void ) _PDCLIB_nothrow;
 
 /* -------------------------------------------------------------------------- */
-/* <ctype.h> lookup tables                                                    */
-/* -------------------------------------------------------------------------- */
-
-#define _PDCLIB_CTYPE_ALPHA   1
-#define _PDCLIB_CTYPE_BLANK   2
-#define _PDCLIB_CTYPE_CNTRL   4
-#define _PDCLIB_CTYPE_GRAPH   8
-#define _PDCLIB_CTYPE_PUNCT  16
-#define _PDCLIB_CTYPE_SPACE  32
-#define _PDCLIB_CTYPE_LOWER  64
-#define _PDCLIB_CTYPE_UPPER 128
-#define _PDCLIB_CTYPE_DIGIT 256
-#define _PDCLIB_CTYPE_XDIGT 512
-
-struct _PDCLIB_ctype_t
-{
-    _PDCLIB_uint16_t flags;
-    unsigned char upper;
-    unsigned char lower;
-    unsigned char collation;
-};
-
-/* -------------------------------------------------------------------------- */
 /* locale / wchar / uchar                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -383,7 +360,7 @@ typedef struct _PDCLIB_mbstate {
     };
 } _PDCLIB_mbstate_t;
 
-typedef struct _PDCLIB_charcodec  _PDCLIB_charcodec_t;
+typedef struct _PDCLIB_charcodec *_PDCLIB_charcodec_t;
 typedef struct _PDCLIB_locale    *_PDCLIB_locale_t;
 typedef struct lconv              _PDCLIB_lconv_t;
 

@@ -9,12 +9,11 @@
 #include <ctype.h>
 
 #ifndef REGTEST
-
-#include <locale.h>
+#include <_PDCLIB_locale.h>
 
 int iscntrl( int c )
 {
-    return ( _PDCLIB_lconv.ctype[c].flags & _PDCLIB_CTYPE_CNTRL );
+    return ( _PDCLIB_threadlocale()->_CType[c].flags & _PDCLIB_CTYPE_CNTRL );
 }
 
 #endif

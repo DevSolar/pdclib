@@ -10,7 +10,7 @@
 
 #ifndef REGTEST
 #include <errno.h>
-#include <locale.h>
+#include <_PDCLIB_locale.h>
 
 /* TODO: Doing this via a static array is not the way to do it. */
 void perror( const char * s )
@@ -25,7 +25,7 @@ void perror( const char * s )
     }
     else
     {
-        fprintf( stderr, "%s\n", _PDCLIB_lconv._PDCLIB_errno_texts[errno] );
+        fprintf( stderr, "%s\n", _PDCLIB_threadlocale()->_ErrnoStr[errno] );
     }
     return;
 }

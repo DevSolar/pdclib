@@ -9,12 +9,11 @@
 #include <ctype.h>
 
 #ifndef REGTEST
-
-#include <locale.h>
+#include <_PDCLIB_locale.h>
 
 int isgraph( int c )
 {
-    return ( _PDCLIB_lconv.ctype[c].flags & _PDCLIB_CTYPE_GRAPH );
+    return ( _PDCLIB_threadlocale()->_CType[c].flags & _PDCLIB_CTYPE_GRAPH );
 }
 
 #endif

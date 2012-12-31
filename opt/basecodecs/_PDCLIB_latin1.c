@@ -57,7 +57,7 @@ static bool c32tolatin1(
     return true;
 }
 
-_PDCLIB_charcodec_t _PDCLIB_latin1_codec = {
+struct _PDCLIB_charcodec _PDCLIB_latin1_codec = {
     .__mbstoc32s = latin1toc32,
     .__c32stombs = c32tolatin1,
 };

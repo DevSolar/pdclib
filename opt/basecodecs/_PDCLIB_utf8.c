@@ -228,7 +228,7 @@ static bool c32toutf8(
     END_CONVERSION;
 }
 
-_PDCLIB_charcodec_t _PDCLIB_utf8_codec = {
+struct _PDCLIB_charcodec _PDCLIB_utf8_codec = {
     .__mbstoc32s = utf8toc32,
     .__c32stombs = c32toutf8,
 };

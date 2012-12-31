@@ -17,6 +17,7 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
+#include <_PDCLIB_locale.h>
 #include <threads.h>
 
 /* In a POSIX system, stdin / stdout / stderr are equivalent to the (int) file
@@ -77,9 +78,11 @@ FILE * stdin  = &_PDCLIB_sin;
 FILE * stdout = &_PDCLIB_sout;
 FILE * stderr = &_PDCLIB_serr;
 
+tss_t _PDCLIB_locale_tss;
 /* Todo: Better solution than this! */
 __attribute__((constructor)) void init_stdio(void)
 {
+    tss_create(&_PDCLIB_locale_tss, (tss_dtor_t) freelocale);
     mtx_init(&stdin->lock,  mtx_recursive);
     mtx_init(&stdout->lock, mtx_recursive);
     mtx_init(&stderr->lock, mtx_recursive);
@@ -92,7 +95,8 @@ FILE * _PDCLIB_filelist = &_PDCLIB_sin;
    1 kByte (+ 4 byte) of <ctype.h> data.
    Each line: flags, lowercase, uppercase, collation.
 */
-static struct _PDCLIB_ctype_t _ctype[] = {
+static 
+_PDCLIB_ctype_t global_ctype[] = {
     { /* EOF */    0,    0,    0,    0 },
     { /* NUL */ _PDCLIB_CTYPE_CNTRL,                                             0x00, 0x00, 0x00 },
     { /* SOH */ _PDCLIB_CTYPE_CNTRL,                                             0x01, 0x01, 0x01 },
@@ -352,15 +356,7 @@ static struct _PDCLIB_ctype_t _ctype[] = {
     { 0x00, 0xFF, 0xFF, 0xFF }
 };
 
-struct lconv _PDCLIB_lconv = { 
-    /* _PDCLIB_ctype      */ _ctype + 1,
-    /* _PDCLIB_errno_texts */
-    {
-        /* no error */ (char *)"",
-        /* ERANGE   */ (char *)"ERANGE (Range error)",
-        /* EDOM     */ (char *)"EDOM (Domain error)",
-        /* EILSEQ   */ (char *)"EILSEQ (Illegal sequence)"
-    },
+static struct lconv global_lconv = { 
     /* decimal_point      */ (char *)".",
     /* thousands_sep      */ (char *)"",
     /* grouping           */ (char *)"",
@@ -385,6 +381,20 @@ struct lconv _PDCLIB_lconv = {
     /* int_n_sep_by_space */ CHAR_MAX,
     /* int_p_sign_posn    */ CHAR_MAX,
     /* int_n_sign_posn    */ CHAR_MAX,
+};
+
+extern struct _PDCLIB_charcodec _PDCLIB_ascii_codec;
+struct _PDCLIB_locale _PDCLIB_global_locale 
+= {
+    ._Codec = &_PDCLIB_ascii_codec,
+    ._Conv  = &global_lconv,
+    ._CType = &global_ctype[1],
+    ._ErrnoStr = {
+        /* no error */ (char *)"",
+        /* ERANGE   */ (char *)"ERANGE (Range error)",
+        /* EDOM     */ (char *)"EDOM (Domain error)",
+        /* EILSEQ   */ (char *)"EILSEQ (Illegal sequence)"
+    },
 };
 
 #endif

@@ -34,8 +34,6 @@ _PDCLIB_BEGIN_EXTERN_C
 */
 struct lconv
 {
-    struct _PDCLIB_ctype_t * ctype;  /* internal <ctype.h> information        */
-    char * _PDCLIB_errno_texts[_PDCLIB_ERRNO_MAX]; /* strerror() / perror()   */
     char * decimal_point;      /* decimal point character                     */
     char * thousands_sep;      /* character for seperating groups of digits   */
     char * grouping;           /* string indicating the size of digit groups  */
@@ -61,9 +59,6 @@ struct lconv
     char int_p_sign_posn;      /* Same as above, for international format     */
     char int_n_sign_posn;      /* Same as above, for international format     */
 };
-
-/* This is strictly internal, and visible here for technical reasons only. */
-extern struct lconv _PDCLIB_lconv;
 
 /* First arguments to setlocale().
    TODO: Beware, values might change before v0.6 is released.
@@ -98,7 +93,13 @@ char * setlocale( int category, const char * locale ) _PDCLIB_nothrow;
 struct lconv * localeconv( void ) _PDCLIB_nothrow;
 
 #if _PDCLIB_POSIX_MIN(2008)
+
+/* POSIX locale type */
 typedef _PDCLIB_locale_t locale_t;
+
+/* Global locale */
+extern struct _PDCLIB_locale _PDCLIB_global_locale;
+#define LC_GLOBAL_LOCALE (&_PDCLIB_global_locale)
 
 /* Set the thread locale to newlocale
  *

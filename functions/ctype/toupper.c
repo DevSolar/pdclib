@@ -9,12 +9,11 @@
 #include <ctype.h>
 
 #ifndef REGTEST
-
-#include <locale.h>
+#include <_PDCLIB_locale.h>
 
 int toupper( int c )
 {
-    return _PDCLIB_lconv.ctype[c].upper;
+    return _PDCLIB_threadlocale()->_CType[c].upper;
 }
 
 #endif
