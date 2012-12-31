@@ -356,38 +356,35 @@ _PDCLIB_ctype_t global_ctype[] = {
     { 0x00, 0xFF, 0xFF, 0xFF }
 };
 
-static struct lconv global_lconv = { 
-    /* decimal_point      */ (char *)".",
-    /* thousands_sep      */ (char *)"",
-    /* grouping           */ (char *)"",
-    /* mon_decimal_point  */ (char *)"",
-    /* mon_thousands_sep  */ (char *)"",
-    /* mon_grouping       */ (char *)"",
-    /* positive_sign      */ (char *)"",
-    /* negative_sign      */ (char *)"",
-    /* currency_symbol    */ (char *)"",
-    /* int_curr_symbol    */ (char *)"",
-    /* frac_digits        */ CHAR_MAX,
-    /* p_cs_precedes      */ CHAR_MAX,
-    /* n_cs_precedes      */ CHAR_MAX,
-    /* p_sep_by_space     */ CHAR_MAX,
-    /* n_sep_by_space     */ CHAR_MAX,
-    /* p_sign_posn        */ CHAR_MAX,
-    /* n_sign_posn        */ CHAR_MAX,
-    /* int_frac_digits    */ CHAR_MAX,
-    /* int_p_cs_precedes  */ CHAR_MAX,
-    /* int_n_cs_precedes  */ CHAR_MAX,
-    /* int_p_sep_by_space */ CHAR_MAX,
-    /* int_n_sep_by_space */ CHAR_MAX,
-    /* int_p_sign_posn    */ CHAR_MAX,
-    /* int_n_sign_posn    */ CHAR_MAX,
-};
-
 extern struct _PDCLIB_charcodec _PDCLIB_ascii_codec;
-struct _PDCLIB_locale _PDCLIB_global_locale 
-= {
+struct _PDCLIB_locale _PDCLIB_global_locale = {
     ._Codec = &_PDCLIB_ascii_codec,
-    ._Conv  = &global_lconv,
+    ._Conv  = { 
+        /* decimal_point      */ (char *)".",
+        /* thousands_sep      */ (char *)"",
+        /* grouping           */ (char *)"",
+        /* mon_decimal_point  */ (char *)"",
+        /* mon_thousands_sep  */ (char *)"",
+        /* mon_grouping       */ (char *)"",
+        /* positive_sign      */ (char *)"",
+        /* negative_sign      */ (char *)"",
+        /* currency_symbol    */ (char *)"",
+        /* int_curr_symbol    */ (char *)"",
+        /* frac_digits        */ CHAR_MAX,
+        /* p_cs_precedes      */ CHAR_MAX,
+        /* n_cs_precedes      */ CHAR_MAX,
+        /* p_sep_by_space     */ CHAR_MAX,
+        /* n_sep_by_space     */ CHAR_MAX,
+        /* p_sign_posn        */ CHAR_MAX,
+        /* n_sign_posn        */ CHAR_MAX,
+        /* int_frac_digits    */ CHAR_MAX,
+        /* int_p_cs_precedes  */ CHAR_MAX,
+        /* int_n_cs_precedes  */ CHAR_MAX,
+        /* int_p_sep_by_space */ CHAR_MAX,
+        /* int_n_sep_by_space */ CHAR_MAX,
+        /* int_p_sign_posn    */ CHAR_MAX,
+        /* int_n_sign_posn    */ CHAR_MAX,
+    },
     ._CType = &global_ctype[1],
     ._ErrnoStr = {
         /* no error */ (char *)"",
