@@ -189,10 +189,14 @@ _PDCLIB_locale_t     _PDCLIB_restrict   l);
 
 #if _PDCLIB_WCHAR_ENCODING == _PDCLIB_WCHAR_ENCODING_UTF16
     #define _PDCLIB_mbrtocwc_l mbrtoc16_l
+    #define _PDCLIB_mbrtocwc   mbrtoc16
     #define _PDCLIB_cwcrtomb_l c16rtomb_l
+    #define _PDCLIB_cwcrtomb   c16rtomb
 #elif _PDCLIB_WCHAR_ENCODING == _PDCLIB_WCHAR_ENCODING_UCS4
     #define _PDCLIB_mbrtocwc_l mbrtoc32_l
+    #define _PDCLIB_mbrtocwc   mbrtoc32
     #define _PDCLIB_cwcrtomb_l c32rtomb_l
+    #define _PDCLIB_cwcrtomb   c32rtomb
 #else
     #error _PDCLIB_WCHAR_ENCODING not defined correctly
     #error Define to one of _PDCLIB_WCHAR_ENCODING_UCS4 or _PDCLIB_WCHAR_ENCODING_UTF16
