@@ -348,16 +348,23 @@ typedef struct _PDCLIB_mbstate {
                  char    _StC [124];
     };
 
-    union {
-        /* c16/related functions: Surrogate storage
-         *
-         * If zero, no surrogate pending. If nonzero, surrogate.
-         */
-        _PDCLIB_uint16_t     _Surrogate;
+    /* c16/related functions: Surrogate storage
+     *
+     * If zero, no surrogate pending. If nonzero, surrogate.
+     */
+    _PDCLIB_uint16_t     _Surrogate;
 
-        /* Reserved for potential mbtoutf8/etc functions */
-        unsigned char        _U8[4];
-    };
+    /* In cases where the underlying codec is capable of regurgitating a 
+     * character without consuming any extra input (e.g. a surrogate pair in a
+     * UCS-4 to UTF-16 conversion) then these fields are used to track that 
+     * state. In particular, they are used to buffer/fake the input for mbrtowc
+     * and similar functions.
+     *
+     * See _PDCLIB_encoding.h for values of _PendState and the resultant value 
+     * in _PendChar.
+     */
+    unsigned char _PendState;
+             char _PendChar;
 } _PDCLIB_mbstate_t;
 
 typedef struct _PDCLIB_charcodec *_PDCLIB_charcodec_t;

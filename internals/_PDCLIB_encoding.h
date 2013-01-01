@@ -6,7 +6,7 @@
 
 #ifndef __PDCLIB_ENCODING_H
 #define __PDCLIB_ENCODING_H __PDCLIB_ENCODING_H
-#include "_PDCLIB_int.h"
+#include <uchar.h>
 
 /* Must be cauued with bufsize >= 1, in != NULL, out != NULL, ps != NULL
  *
@@ -141,5 +141,61 @@ struct _PDCLIB_charcodec {
 
     size_t __mb_max;
 };
+
+/* mbstate _PendState values */
+enum {
+    /* Nothing pending; _PendChar ignored */
+    _PendClear = 0, 
+
+    /* Process the character stored in _PendChar before reading the buffer 
+     * passed for the conversion
+     */
+    _PendPrefix = 1,
+};
+
+/* XXX Defining these here is temporary - will move to xlocale in future */
+size_t mbrtoc16_l(
+        char16_t    *_PDCLIB_restrict   pc16,
+        const char  *_PDCLIB_restrict   s, 
+        size_t                          n,
+        mbstate_t   *_PDCLIB_restrict   ps,
+_PDCLIB_locale_t     _PDCLIB_restrict   l);
+
+size_t c16rtomb_l(
+        char        *_PDCLIB_restrict   s, 
+        char16_t                        c16, 
+        mbstate_t   *_PDCLIB_restrict   ps,
+_PDCLIB_locale_t     _PDCLIB_restrict   l);
+
+size_t mbrtoc32_l(
+        char32_t    *_PDCLIB_restrict   pc32,
+        const char  *_PDCLIB_restrict   s, 
+        size_t                          n,
+        mbstate_t   *_PDCLIB_restrict   ps,
+_PDCLIB_locale_t     _PDCLIB_restrict   l);
+
+size_t c32rtomb_l(
+        char        *_PDCLIB_restrict   s, 
+        char32_t                        c32,
+        mbstate_t   *_PDCLIB_restrict   ps,
+_PDCLIB_locale_t     _PDCLIB_restrict   l);
+
+#define _PDCLIB_WCHAR_ENCODING_UTF16 16
+#define _PDCLIB_WCHAR_ENCODING_UCS4  32
+
+#if !defined(_PDCLIB_WCHAR_ENCODING)
+    #define _PDCLIB_WCHAR_ENCODING 0
+#endif
+
+#if _PDCLIB_WCHAR_ENCODING == _PDCLIB_WCHAR_ENCODING_UTF16
+    #define _PDCLIB_mbrtocwc_l mbrtoc16_l
+    #define _PDCLIB_cwcrtomb_l c16rtomb_l
+#elif _PDCLIB_WCHAR_ENCODING == _PDCLIB_WCHAR_ENCODING_UCS4
+    #define _PDCLIB_mbrtocwc_l mbrtoc32_l
+    #define _PDCLIB_cwcrtomb_l c32rtomb_l
+#else
+    #error _PDCLIB_WCHAR_ENCODING not defined correctly
+    #error Define to one of _PDCLIB_WCHAR_ENCODING_UCS4 or _PDCLIB_WCHAR_ENCODING_UTF16
+#endif
 
 #endif

@@ -327,6 +327,9 @@ struct _PDCLIB_imaxdiv_t
 /* Locale method. See _PDCLIB_locale.h */
 #define _PDCLIB_LOCALE_METHOD _PDCLIB_LOCALE_METHOD_TSS
 
+/* wchar_t encoding */
+#define _PDCLIB_WCHAR_ENCODING _PDCLIB_WCHAR_ENCODING_UCS4
+
 /* I/O ---------------------------------------------------------------------- */
 
 /* The default size for file buffers. Must be at least 256. */

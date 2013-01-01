@@ -33,6 +33,7 @@ size_t mbrtoc32_l(
             // A character was output
             if(nr == n) {
                 // The output character resulted entirely from stored state
+                // With UTF-32, this shouldn't be possible?
                 return (size_t) -3;
             } else if(pc32[-1] == 0) {
                 // Was null character
