@@ -79,7 +79,8 @@ size_t mbrtowc(
     mbstate_t *restrict ps
 )
 {
-    return mbrtowc_l(pwc, s, n, ps, _PDCLIB_threadlocale());
+    static mbstate_t st;
+    return mbrtowc_l(pwc, s, n, ps ? ps : &st, _PDCLIB_threadlocale());
 }
 
 #endif

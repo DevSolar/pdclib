@@ -32,7 +32,8 @@ size_t wcrtomb(
     mbstate_t   *restrict   ps
 )
 {
-    return _PDCLIB_cwcrtomb(s, wc, ps);
+    static mbstate_t st;
+    return _PDCLIB_cwcrtomb(s, wc, ps ? ps : &st);
 }
 
 #endif
