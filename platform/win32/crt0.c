@@ -5,6 +5,8 @@
 #include <threads.h>
 #include <wchar.h> // Watcom bug: winnt.h assumes string.h defines wchar_t
 #include <windows.h>
+#include <_PDCLIB_io.h>
+#include <_PDCLIB_locale.h>
 
 static char ** argvToAnsi( wchar_t ** wargv, int argc )
 {
@@ -114,11 +116,19 @@ void __cdecl mainCRTStartup( void )
     wargv = CommandLineToArgvW(cl, &argc);
     argv  = argvToAnsi(wargv, argc);
 
+    if(tss_create(&_PDCLIB_locale_tss, (tss_dtor_t) freelocale) 
+            != thrd_success) {
+        fputs( "Error during C runtime initialization: "
+               "Unable to allocate locale TLS", stderr );
+        exit( EXIT_FAILURE );
+    }
+
     if(        mtx_init(&stdin->lock, mtx_recursive) != thrd_success 
             || mtx_init(&stdout->lock, mtx_recursive) != thrd_success
             || mtx_init(&stderr->lock, mtx_recursive) != thrd_success ) {
         fputs( "Error during C runtime initialization: "
             "Unable to allocate stdio mutex", stderr );
+        exit( EXIT_FAILURE );
     }
 
     atexit(freeArgs);
