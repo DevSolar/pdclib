@@ -7,6 +7,7 @@
 */
 
 #include <signal.h>
+#include <errno.h>
 
 #ifndef REGTEST
 
@@ -56,7 +57,7 @@ void (*signal( int sig, void (*func)( int ) ) )( int )
             /* The standard calls for an unspecified "positive value". You
                will probably want to define a specific value for this.
             */
-            _PDCLIB_errno = 1;
+            errno = 1;
             return SIG_ERR;
     }
     return oldhandler;
