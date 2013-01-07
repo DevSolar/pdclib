@@ -314,8 +314,8 @@ extern char _PDCLIB_Xdigits[];
 /* -------------------------------------------------------------------------- */
 
 #ifndef __cplusplus
-typedef _PDCLIB_int16_t         _PDCLIB_char16_t;
-typedef _PDCLIB_int32_t         _PDCLIB_char32_t;
+typedef _PDCLIB_uint16_t        _PDCLIB_char16_t;
+typedef _PDCLIB_uint32_t        _PDCLIB_char32_t;
 #else
 typedef char16_t                _PDCLIB_char16_t;
 typedef char32_t                _PDCLIB_char32_t;
