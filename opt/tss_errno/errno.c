@@ -13,7 +13,7 @@
 
 static int _PDCLIB_errno = 0;
 
-int * _PDCLIB_errno()
+int * _PDCLIB_errno_func()
 {
     return &_PDCLIB_errno;
 }

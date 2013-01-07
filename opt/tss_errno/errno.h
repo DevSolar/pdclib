@@ -9,8 +9,8 @@
 #include <_PDCLIB_int.h>
 _PDCLIB_BEGIN_EXTERN_C
 
-extern int * _PDCLIB_errno( void );
-#define errno (*_PDCLIB_errno())
+extern int * _PDCLIB_errno_func( void );
+#define errno (*_PDCLIB_errno_func())
 
 /* C99 */
 #define ERANGE _PDCLIB_ERANGE
