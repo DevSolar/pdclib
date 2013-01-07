@@ -310,22 +310,6 @@ extern char _PDCLIB_digits[];
 extern char _PDCLIB_Xdigits[];
 
 /* -------------------------------------------------------------------------- */
-/* errno                                                                      */
-/* -------------------------------------------------------------------------- */
-
-/* If PDCLib would call its error number "errno" directly, there would be no way
-   to catch its value from underlying system calls that also use it (i.e., POSIX
-   operating systems). That is why we use an internal name, providing a means to
-   access it through <errno.h>.
-*/
-extern int _PDCLIB_errno;
-
-/* A mechanism for delayed evaluation. (Not sure if this is really necessary, so
-   no detailed documentation on the "why".)
-*/
-int * _PDCLIB_errno_func( void ) _PDCLIB_nothrow;
-
-/* -------------------------------------------------------------------------- */
 /* locale / wchar / uchar                                                     */
 /* -------------------------------------------------------------------------- */
 
