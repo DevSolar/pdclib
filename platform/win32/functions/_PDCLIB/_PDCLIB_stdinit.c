@@ -17,6 +17,8 @@
 
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
+#include <_PDCLIB_locale.h>
+#include <_PDCLIB_encoding.h>
 
 extern const _PDCLIB_fileops_t _PDCLIB_fileops;
 
@@ -32,22 +34,59 @@ static unsigned char _PDCLIB_sin_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_sout_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_serr_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 
-static struct _PDCLIB_file_t _PDCLIB_serr = { &_PDCLIB_fileops, NULL, { 0 }, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_serr_ungetbuf, _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, NULL };
-static struct _PDCLIB_file_t _PDCLIB_sout = { &_PDCLIB_fileops, NULL, { 0 }, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sout_ungetbuf, _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, &_PDCLIB_serr };
-static struct _PDCLIB_file_t _PDCLIB_sin  = { &_PDCLIB_fileops, NULL, { 0 }, _PDCLIB_sin_buffer,  BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sin_ungetbuf,  _IOLBF | _PDCLIB_FREAD  | _PDCLIB_STATIC, NULL, &_PDCLIB_sout };
+static FILE _PDCLIB_serr = { 
+    .ops        = &_PDCLIB_fileops, 
+    .buffer     = _PDCLIB_serr_buffer, 
+    .bufsize    = BUFSIZ, 
+    .bufidx     = 0, 
+    .bufend     = 0, 
+    .ungetidx   = 0, 
+    .ungetbuf   = _PDCLIB_serr_ungetbuf, 
+    .status     = _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, 
+    .filename   = NULL, 
+    .next       = NULL,
+};
+static FILE _PDCLIB_sout = { 
+    .ops        = &_PDCLIB_fileops, 
+    .buffer     = _PDCLIB_sout_buffer, 
+    .bufsize    = BUFSIZ, 
+    .bufidx     = 0, 
+    .bufend     = 0, 
+    .ungetidx   = 0, 
+    .ungetbuf   = _PDCLIB_sout_ungetbuf, 
+    .status     = _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, 
+    .filename   = NULL, 
+    .next       = &_PDCLIB_serr 
+};
+static FILE _PDCLIB_sin  = { 
+    .ops        = &_PDCLIB_fileops, 
+    .buffer     = _PDCLIB_sin_buffer, 
+    .bufsize    = BUFSIZ, 
+    .bufidx     = 0, 
+    .bufend     = 0, 
+    .ungetidx   = 0, 
+    .ungetbuf   = _PDCLIB_sin_ungetbuf, 
+    .status     = _IOLBF | _PDCLIB_FREAD | _PDCLIB_STATIC, 
+    .filename   = NULL, 
+    .next       = &_PDCLIB_sout 
+};
 
-struct _PDCLIB_file_t * stdin  = &_PDCLIB_sin;
-struct _PDCLIB_file_t * stdout = &_PDCLIB_sout;
-struct _PDCLIB_file_t * stderr = &_PDCLIB_serr;
+
+FILE* stdin  = &_PDCLIB_sin;
+FILE* stdout = &_PDCLIB_sout;
+FILE* stderr = &_PDCLIB_serr;
 
 /* FIXME: This approach is a possible attack vector. */
-struct _PDCLIB_file_t * _PDCLIB_filelist = &_PDCLIB_sin;
+FILE* _PDCLIB_filelist = &_PDCLIB_sin;
+
+tss_t _PDCLIB_locale_tss;
 
 /* "C" locale - defaulting to ASCII-7.
    1 kByte (+ 4 byte) of <ctype.h> data.
    Each line: flags, lowercase, uppercase, collation.
 */
-static struct _PDCLIB_ctype_t _ctype[] = {
+static 
+_PDCLIB_ctype_t global_ctype[] = {
     { /* EOF */    0,    0,    0,    0 },
     { /* NUL */ _PDCLIB_CTYPE_CNTRL,                                             0x00, 0x00, 0x00 },
     { /* SOH */ _PDCLIB_CTYPE_CNTRL,                                             0x01, 0x01, 0x01 },
@@ -307,41 +346,43 @@ static struct _PDCLIB_ctype_t _ctype[] = {
     { 0x00, 0xFF, 0xFF, 0xFF }
 };
 
-struct lconv _PDCLIB_lconv = { 
-    /* _PDCLIB_ctype      */ _ctype + 1,
-    /* _PDCLIB_errno_texts */
-    {
+extern struct _PDCLIB_charcodec _PDCLIB_ascii_codec;
+struct _PDCLIB_locale _PDCLIB_global_locale = {
+    ._Codec = &_PDCLIB_ascii_codec,
+    ._Conv  = { 
+        /* decimal_point      */ (char *)".",
+        /* thousands_sep      */ (char *)"",
+        /* grouping           */ (char *)"",
+        /* mon_decimal_point  */ (char *)"",
+        /* mon_thousands_sep  */ (char *)"",
+        /* mon_grouping       */ (char *)"",
+        /* positive_sign      */ (char *)"",
+        /* negative_sign      */ (char *)"",
+        /* currency_symbol    */ (char *)"",
+        /* int_curr_symbol    */ (char *)"",
+        /* frac_digits        */ CHAR_MAX,
+        /* p_cs_precedes      */ CHAR_MAX,
+        /* n_cs_precedes      */ CHAR_MAX,
+        /* p_sep_by_space     */ CHAR_MAX,
+        /* n_sep_by_space     */ CHAR_MAX,
+        /* p_sign_posn        */ CHAR_MAX,
+        /* n_sign_posn        */ CHAR_MAX,
+        /* int_frac_digits    */ CHAR_MAX,
+        /* int_p_cs_precedes  */ CHAR_MAX,
+        /* int_n_cs_precedes  */ CHAR_MAX,
+        /* int_p_sep_by_space */ CHAR_MAX,
+        /* int_n_sep_by_space */ CHAR_MAX,
+        /* int_p_sign_posn    */ CHAR_MAX,
+        /* int_n_sign_posn    */ CHAR_MAX,
+    },
+    ._CType = &global_ctype[1],
+    ._ErrnoStr = {
         /* no error */ (char *)"",
         /* ERANGE   */ (char *)"ERANGE (Range error)",
         /* EDOM     */ (char *)"EDOM (Domain error)",
         /* EILSEQ   */ (char *)"EILSEQ (Illegal sequence)"
     },
-    /* decimal_point      */ (char *)".",
-    /* thousands_sep      */ (char *)"",
-    /* grouping           */ (char *)"",
-    /* mon_decimal_point  */ (char *)"",
-    /* mon_thousands_sep  */ (char *)"",
-    /* mon_grouping       */ (char *)"",
-    /* positive_sign      */ (char *)"",
-    /* negative_sign      */ (char *)"",
-    /* currency_symbol    */ (char *)"",
-    /* int_curr_symbol    */ (char *)"",
-    /* frac_digits        */ CHAR_MAX,
-    /* p_cs_precedes      */ CHAR_MAX,
-    /* n_cs_precedes      */ CHAR_MAX,
-    /* p_sep_by_space     */ CHAR_MAX,
-    /* n_sep_by_space     */ CHAR_MAX,
-    /* p_sign_posn        */ CHAR_MAX,
-    /* n_sign_posn        */ CHAR_MAX,
-    /* int_frac_digits    */ CHAR_MAX,
-    /* int_p_cs_precedes  */ CHAR_MAX,
-    /* int_n_cs_precedes  */ CHAR_MAX,
-    /* int_p_sep_by_space */ CHAR_MAX,
-    /* int_n_sep_by_space */ CHAR_MAX,
-    /* int_p_sign_posn    */ CHAR_MAX,
-    /* int_n_sign_posn    */ CHAR_MAX,
 };
-
 #endif
 
 #ifdef TEST
