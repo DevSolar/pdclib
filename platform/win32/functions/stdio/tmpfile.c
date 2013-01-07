@@ -19,7 +19,7 @@ static char tmpname_prefix[4] = {0, 0, 0, 0};
 extern const _PDCLIB_fileops_t _PDCLIB_fileops;
 extern void _PDCLIB_w32errno( void );
 
-struct _PDCLIB_file_t * tmpfile( void )
+FILE* tmpfile( void )
 {
     if(!tmpname_prefix[0]) {
         char namebuf[MAX_PATH+1];
