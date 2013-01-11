@@ -75,12 +75,12 @@ static inline _PDCLIB_size_t _PDCLIB_c32rtoc16(
         return 1;
     } else {
         // Supplementary plane character
-        *out = 0xD800 | (*in & 0x3FF);
+        *out = 0xD800 | (*in >> 10);
         if(bufsize >= 2) {
-            out[1] = 0xDC00 | (*in >> 10);
+            out[1] = 0xDC00 | (*in & 0x3FF);
             return 2;
         } else {
-            ps->_Surrogate = 0xDC00 | (*in >> 10);
+            ps->_Surrogate = 0xDC00 | (*in & 0x3FF);
             return 1;
         }
     }
