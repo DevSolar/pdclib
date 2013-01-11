@@ -1,5 +1,5 @@
 /* size_t mbrtoc32(
-    char16_t    *restrict   pc16,
+    char32_t    *restrict   pc32,
     const char  *restrict   s, 
     size_t                  n,
     mbstate_t   *restrict   ps);
