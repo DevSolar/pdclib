@@ -13,7 +13,7 @@
 
 extern FILE * _PDCLIB_filelist;
 
-int fflush_unlocked( FILE * stream )
+int _PDCLIB_fflush_unlocked( FILE * stream )
 {
     if ( stream == NULL )
     {
@@ -41,9 +41,9 @@ int fflush_unlocked( FILE * stream )
 
 int fflush( FILE * stream )
 {
-    flockfile( stream );
-    int res = fflush_unlocked(stream);
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int res = _PDCLIB_fflush_unlocked(stream);
+    _PDCLIB_funlockfile( stream );
     return res;
 }
                 

@@ -41,9 +41,9 @@ uint_fast64_t _PDCLIB_ftell64_unlocked( FILE * stream )
 
 uint_fast64_t _PDCLIB_ftell64( FILE * stream )
 {
-  flockfile( stream );
+  _PDCLIB_flockfile( stream );
   uint_fast64_t pos = _PDCLIB_ftell64_unlocked( stream );
-  funlockfile( stream );
+  _PDCLIB_funlockfile( stream );
   return pos;
 }
 

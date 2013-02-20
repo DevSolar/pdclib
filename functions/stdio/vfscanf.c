@@ -13,7 +13,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int vfscanf_unlocked( FILE * _PDCLIB_restrict stream, 
+int _PDCLIB_vfscanf_unlocked( FILE * _PDCLIB_restrict stream, 
                       const char * _PDCLIB_restrict format, 
                       va_list arg )
 {
@@ -47,18 +47,18 @@ int vfscanf_unlocked( FILE * _PDCLIB_restrict stream,
                 }
                 if ( ! feof( stream ) )
                 {
-                    ungetc( c, stream );
+                    _PDCLIB_ungetc_unlocked( c, stream );
                 }
             }
             else
             {
                 /* Non-whitespace char in format string: Match verbatim */
-                if ( ( ( c = getc( stream ) ) != *format ) || feof( stream ) )
+                if ( ( ( c = _PDCLIB_getc_unlocked( stream ) ) != *format ) || feof( stream ) )
                 {
                     /* Matching error */
                     if ( ! feof( stream ) && ! ferror( stream ) )
                     {
-                        ungetc( c, stream );
+                        _PDCLIB_ungetc_unlocked( c, stream );
                     }
                     else if ( status.n == 0 )
                     {
@@ -92,9 +92,9 @@ int vfscanf( FILE * _PDCLIB_restrict stream,
              const char * _PDCLIB_restrict format, 
              va_list arg )
 {
-    flockfile( stream );
-    int r = vfscanf_unlocked( stream, format, arg );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int r = _PDCLIB_vfscanf_unlocked( stream, format, arg );
+    _PDCLIB_funlockfile( stream );
     return r;
 }
 

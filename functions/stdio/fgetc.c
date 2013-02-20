@@ -11,7 +11,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int fgetc_unlocked( FILE * stream )
+int _PDCLIB_fgetc_unlocked( FILE * stream )
 {
     if ( _PDCLIB_prepread( stream ) == EOF )
     {
@@ -27,9 +27,9 @@ int fgetc_unlocked( FILE * stream )
 
 int fgetc( FILE * stream )
 {
-    flockfile( stream );
-    int c = fgetc_unlocked( stream );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int c = _PDCLIB_fgetc_unlocked( stream );
+    _PDCLIB_funlockfile( stream );
     return c;
 }
 

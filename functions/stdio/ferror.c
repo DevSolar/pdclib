@@ -11,16 +11,16 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int ferror_unlocked( FILE * stream )
+int _PDCLIB_ferror_unlocked( FILE * stream )
 {
     return stream->status & _PDCLIB_ERRORFLAG;
 }
 
 int ferror( FILE * stream )
 {
-    flockfile( stream );
-    int error = ferror_unlocked( stream );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int error = _PDCLIB_ferror_unlocked( stream );
+    _PDCLIB_funlockfile( stream );
     return error;
 }
 

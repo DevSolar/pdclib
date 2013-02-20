@@ -11,7 +11,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int fsetpos_unlocked( FILE * stream, 
+int _PDCLIB_fsetpos_unlocked( FILE * stream, 
                       const _PDCLIB_fpos_t * pos )
 {
     if ( stream->status & _PDCLIB_FWRITE )
@@ -33,9 +33,9 @@ int fsetpos_unlocked( FILE * stream,
 int fsetpos( FILE * stream, 
              const _PDCLIB_fpos_t * pos )
 {
-    flockfile( stream );
-    int res = fsetpos_unlocked( stream, pos );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int res = _PDCLIB_fsetpos_unlocked( stream, pos );
+    _PDCLIB_funlockfile( stream );
     return res;
 }
 

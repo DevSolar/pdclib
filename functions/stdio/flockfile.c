@@ -12,7 +12,7 @@
 #include <threads.h>
 #include <stdlib.h>
 
-void flockfile( FILE * file )
+void _PDCLIB_flockfile( FILE * file )
 {
     if( mtx_lock( &file->lock ) != thrd_success ) {
         abort();

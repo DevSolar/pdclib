@@ -11,7 +11,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int fgetpos_unlocked( FILE * _PDCLIB_restrict stream, _PDCLIB_fpos_t * _PDCLIB_restrict pos )
+int _PDCLIB_fgetpos_unlocked( FILE * _PDCLIB_restrict stream, _PDCLIB_fpos_t * _PDCLIB_restrict pos )
 {
     pos->offset = stream->pos.offset + stream->bufidx - stream->ungetidx;
     pos->mbs    = stream->pos.mbs;
@@ -21,9 +21,9 @@ int fgetpos_unlocked( FILE * _PDCLIB_restrict stream, _PDCLIB_fpos_t * _PDCLIB_r
 
 int fgetpos( FILE * _PDCLIB_restrict stream, _PDCLIB_fpos_t * _PDCLIB_restrict pos )
 {
-    flockfile( stream );
-    int res = fgetpos_unlocked( stream, pos );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int res = _PDCLIB_fgetpos_unlocked( stream, pos );
+    _PDCLIB_funlockfile( stream );
     return res;
 }
 

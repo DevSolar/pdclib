@@ -12,7 +12,7 @@
 #include <threads.h>
 #include <stdlib.h>
 
-int ftrylockfile( FILE * file )
+int _PDCLIB_ftrylockfile( FILE * file )
 {
     int res = mtx_trylock( &file->lock );
     switch(res) {

@@ -16,6 +16,7 @@
 #include <limits.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
@@ -53,7 +54,7 @@ do { \
     int character = x; \
     if ( status->i < status->n ) { \
         if ( status->stream != NULL ) \
-            putc_unlocked( character, status->stream ); \
+            _PDCLIB_putc_unlocked( character, status->stream ); \
         else \
             status->s[status->i] = character; \
     } \

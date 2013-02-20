@@ -11,17 +11,17 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-void rewind_unlocked( FILE * stream )
+void _PDCLIB_rewind_unlocked( FILE * stream )
 {
     stream->status &= ~ _PDCLIB_ERRORFLAG;
-    fseek_unlocked( stream, 0L, SEEK_SET );
+    _PDCLIB_fseek_unlocked( stream, 0L, SEEK_SET );
 }
 
 void rewind( FILE * stream )
 {
-    flockfile(stream);
-    rewind_unlocked(stream);
-    funlockfile(stream);
+    _PDCLIB_flockfile(stream);
+    _PDCLIB_rewind_unlocked(stream);
+    _PDCLIB_funlockfile(stream);
 }
 
 #endif

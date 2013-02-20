@@ -168,7 +168,7 @@ struct _PDCLIB_fileops
                      _PDCLIB_size_t length, _PDCLIB_size_t * numCharsWritten );
 };
 
-/* FILE structure */
+/* struct _PDCLIB_file structure */
 struct _PDCLIB_file
 {
     const _PDCLIB_fileops_t * ops;
@@ -222,5 +222,48 @@ static inline _PDCLIB_size_t _PDCLIB_getchars( char * out, _PDCLIB_size_t n,
 
     return i;
 }
+
+/* Unlocked functions - internal names 
+ *
+ * We can't use the functions using their "normal" names internally because that
+ * would cause namespace leakage. Therefore, we use them by prefixed internal 
+ * names
+ */
+void _PDCLIB_flockfile(struct _PDCLIB_file *file) _PDCLIB_nothrow;
+int _PDCLIB_ftrylockfile(struct _PDCLIB_file *file) _PDCLIB_nothrow;
+void _PDCLIB_funlockfile(struct _PDCLIB_file *file) _PDCLIB_nothrow;
+
+int _PDCLIB_getc_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+int _PDCLIB_getchar_unlocked(void) _PDCLIB_nothrow;
+int _PDCLIB_putc_unlocked(int c, struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+int _PDCLIB_putchar_unlocked(int c) _PDCLIB_nothrow;
+void _PDCLIB_clearerr_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow; 
+int _PDCLIB_feof_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+int _PDCLIB_ferror_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+int _PDCLIB_fflush_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+int _PDCLIB_fgetc_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+int _PDCLIB_fputc_unlocked(int c, struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+_PDCLIB_size_t _PDCLIB_fread_unlocked(void *ptr, _PDCLIB_size_t size, _PDCLIB_size_t n, struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+_PDCLIB_size_t _PDCLIB_fwrite_unlocked(const void *ptr, _PDCLIB_size_t size, _PDCLIB_size_t n, struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+char *_PDCLIB_fgets_unlocked(char *s, int n, struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+int _PDCLIB_fputs_unlocked(const char *s, struct _PDCLIB_file *stream) _PDCLIB_nothrow;
+int _PDCLIB_fgetpos_unlocked( struct _PDCLIB_file * _PDCLIB_restrict stream, _PDCLIB_fpos_t * _PDCLIB_restrict pos ) _PDCLIB_nothrow;
+int _PDCLIB_fsetpos_unlocked( struct _PDCLIB_file * stream, const _PDCLIB_fpos_t * pos ) _PDCLIB_nothrow;
+long int _PDCLIB_ftell_unlocked( struct _PDCLIB_file * stream ) _PDCLIB_nothrow;
+int _PDCLIB_fseek_unlocked( struct _PDCLIB_file * stream, long int offset, int whence ) _PDCLIB_nothrow;
+void _PDCLIB_rewind_unlocked( struct _PDCLIB_file * stream ) _PDCLIB_nothrow;
+
+int _PDCLIB_puts_unlocked( const char * s ) _PDCLIB_nothrow;
+int _PDCLIB_ungetc_unlocked( int c, struct _PDCLIB_file * stream ) _PDCLIB_nothrow;
+
+
+int _PDCLIB_printf_unlocked( const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
+int _PDCLIB_vprintf_unlocked( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
+int _PDCLIB_fprintf_unlocked( struct _PDCLIB_file * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
+int _PDCLIB_vfprintf_unlocked( struct _PDCLIB_file * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
+int _PDCLIB_scanf_unlocked( const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
+int _PDCLIB_vscanf_unlocked( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
+int _PDCLIB_fscanf_unlocked( struct _PDCLIB_file * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
+int _PDCLIB_vfscanf_unlocked( struct _PDCLIB_file * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
 
 #endif

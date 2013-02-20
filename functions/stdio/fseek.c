@@ -11,7 +11,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int fseek_unlocked( FILE * stream, long loffset, int whence )
+int _PDCLIB_fseek_unlocked( FILE * stream, long loffset, int whence )
 {
     _PDCLIB_int64_t offset = loffset;
     if ( stream->status & _PDCLIB_FWRITE )
@@ -30,7 +30,7 @@ int fseek_unlocked( FILE * stream, long loffset, int whence )
     if ( whence == SEEK_CUR )
     {
         whence  = SEEK_SET;
-        offset += _PDCLIB_ftell64( stream );
+        offset += _PDCLIB_ftell64_unlocked( stream );
     }
 
     return ( _PDCLIB_seek( stream, offset, whence ) != EOF ) ? 0 : EOF;
@@ -38,9 +38,9 @@ int fseek_unlocked( FILE * stream, long loffset, int whence )
 
 int fseek( FILE * stream, long loffset, int whence )
 {
-    flockfile( stream );
-    int r = fseek_unlocked( stream, loffset, whence );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int r = _PDCLIB_fseek_unlocked( stream, loffset, whence );
+    _PDCLIB_funlockfile( stream );
     return r;
 }
 

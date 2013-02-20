@@ -9,10 +9,11 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int getchar_unlocked( void )
+int _PDCLIB_getchar_unlocked( void )
 {
-    return fgetc_unlocked( stdin );
+    return _PDCLIB_fgetc_unlocked( stdin );
 }
 
 

@@ -12,8 +12,9 @@
 #include <errno.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-long int ftell_unlocked( FILE * stream )
+long int _PDCLIB_ftell_unlocked( FILE * stream )
 {
     uint_fast64_t off64 = _PDCLIB_ftell64_unlocked( stream );
 
@@ -28,9 +29,9 @@ long int ftell_unlocked( FILE * stream )
 
 long int ftell( FILE * stream )
 {
-    flockfile( stream );
-    long int off = ftell_unlocked( stream );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    long int off = _PDCLIB_ftell_unlocked( stream );
+    _PDCLIB_funlockfile( stream );
     return off;
 }
 

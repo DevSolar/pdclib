@@ -11,7 +11,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int fputs_unlocked( const char * _PDCLIB_restrict s, 
+int _PDCLIB_fputs_unlocked( const char * _PDCLIB_restrict s, 
                     FILE * _PDCLIB_restrict stream )
 {
     if ( _PDCLIB_prepwrite( stream ) == EOF )
@@ -49,9 +49,9 @@ int fputs_unlocked( const char * _PDCLIB_restrict s,
 int fputs( const char * _PDCLIB_restrict s,
            FILE * _PDCLIB_restrict stream )
 {
-    flockfile( stream );
-    int r = fputs_unlocked( s, stream );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int r = _PDCLIB_fputs_unlocked( s, stream );
+    _PDCLIB_funlockfile( stream );
     return r;
 }
 

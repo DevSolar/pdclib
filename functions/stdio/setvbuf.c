@@ -15,7 +15,7 @@
 
 int setvbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mode, size_t size )
 {
-    _PDCLIB_lockfile( stream );
+    _PDCLIB_flockfile( stream );
     switch ( mode )
     {
         case _IONBF:

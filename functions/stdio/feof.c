@@ -11,16 +11,16 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int feof_unlocked( FILE * stream )
+int _PDCLIB_feof_unlocked( FILE * stream )
 {
     return stream->status & _PDCLIB_EOFFLAG;
 }
 
 int feof( FILE * stream )
 {
-    flockfile( stream );
-    int eof = feof_unlocked( stream );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int eof = _PDCLIB_feof_unlocked( stream );
+    _PDCLIB_funlockfile( stream );
     return eof;
 }
 

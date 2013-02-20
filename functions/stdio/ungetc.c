@@ -11,7 +11,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int ungetc_unlocked( int c, FILE * stream )
+int _PDCLIB_ungetc_unlocked( int c, FILE * stream )
 {
     if ( c == EOF || stream->ungetidx == _PDCLIB_UNGETCBUFSIZE )
     {
@@ -22,9 +22,9 @@ int ungetc_unlocked( int c, FILE * stream )
 
 int ungetc( int c, FILE * stream )
 {
-    flockfile( stream );
-    int r = ungetc_unlocked( c, stream );
-    funlockfile( stream);
+    _PDCLIB_flockfile( stream );
+    int r = _PDCLIB_ungetc_unlocked( c, stream );
+    _PDCLIB_funlockfile( stream);
     return r;
 }
 

@@ -20,7 +20,7 @@ FILE * freopen(
     FILE * _PDCLIB_restrict stream 
 )
 {
-    flockfile( stream );
+    _PDCLIB_flockfile( stream );
 
     unsigned int status = stream->status & 
         ( _IONBF | _IOLBF | _IOFBF | _PDCLIB_FREEBUFFER 
@@ -34,7 +34,7 @@ FILE * freopen(
     if ( ( filename == NULL ) && ( stream->filename == NULL ) )
     {
         /* TODO: Special handling for mode changes on std-streams */
-        funlockfile( stream );
+        _PDCLIB_funlockfile( stream );
         return NULL;
     }
     stream->ops->close(stream->handle);
@@ -43,7 +43,7 @@ FILE * freopen(
        It does not matter with the current implementation of clearerr(),
        but it might start to matter if someone replaced that implementation.
     */
-    clearerr( stream );
+    _PDCLIB_clearerr_unlocked( stream );
     /* The new filename might not fit the old buffer */
     if ( filename == NULL )
     {
@@ -60,19 +60,19 @@ FILE * freopen(
         /* Allocate new buffer */
         if ( ( stream->filename = (char *)malloc( strlen( filename ) ) ) == NULL )
         {
-            funlockfile( stream );
+            _PDCLIB_funlockfile( stream );
             return NULL;
         }
         strcpy( stream->filename, filename );
     }
     if ( ( mode == NULL ) || ( filename[0] == '\0' ) )
     {
-        funlockfile( stream );
+        _PDCLIB_funlockfile( stream );
         return NULL;
     }
     if ( ( stream->status = _PDCLIB_filemode( mode ) ) == 0 )
     {
-        funlockfile( stream );
+        _PDCLIB_funlockfile( stream );
         return NULL;
     }
     /* Re-add the flags we saved above */
@@ -84,10 +84,10 @@ FILE * freopen(
     if ( ! _PDCLIB_open( &stream->handle, &stream->ops, filename, 
                          stream->status ) )
     {
-        funlockfile( stream );
+        _PDCLIB_funlockfile( stream );
         return NULL;
     }
-    funlockfile( stream );
+    _PDCLIB_funlockfile( stream );
     return stream;
 }
 

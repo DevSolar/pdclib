@@ -9,11 +9,11 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
+#include <_PDCLIB_io.h>
 
 extern char * _PDCLIB_eol;
 
-int puts_unlocked( const char * s )
+int _PDCLIB_puts_unlocked( const char * s )
 {
     if ( _PDCLIB_prepwrite( stdout ) == EOF )
     {
@@ -44,9 +44,9 @@ int puts_unlocked( const char * s )
 
 int puts( const char * s )
 {
-    flockfile( stdout );
-    int r = puts_unlocked( s );
-    funlockfile( stdout );
+    _PDCLIB_flockfile( stdout );
+    int r = _PDCLIB_puts_unlocked( s );
+    _PDCLIB_funlockfile( stdout );
     return r;
 }
 

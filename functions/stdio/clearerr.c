@@ -11,16 +11,16 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-void clearerr_unlocked( FILE * stream )
+void _PDCLIB_clearerr_unlocked( FILE * stream )
 {
     stream->status &= ~( _PDCLIB_ERRORFLAG | _PDCLIB_EOFFLAG );
 }
 
 void clearerr( FILE * stream )
 {
-    flockfile( stream );
-    clearerr_unlocked( stream );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    _PDCLIB_clearerr_unlocked( stream );
+    _PDCLIB_funlockfile( stream );
 }
 
 #endif

@@ -17,7 +17,7 @@
 
 //TODO OS(2012-08-01): Ascertain purpose of lineend & potentially remove
 
-size_t fwrite_unlocked( const void * _PDCLIB_restrict ptr, 
+size_t _PDCLIB_fwrite_unlocked( const void * _PDCLIB_restrict ptr, 
                size_t size, size_t nmemb, 
                FILE * _PDCLIB_restrict stream )
 {
@@ -94,9 +94,9 @@ size_t fwrite( const void * _PDCLIB_restrict ptr,
                size_t size, size_t nmemb, 
                FILE * _PDCLIB_restrict stream )
 {
-    flockfile( stream );
-    size_t r = fwrite_unlocked( ptr, size, nmemb, stream );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    size_t r = _PDCLIB_fwrite_unlocked( ptr, size, nmemb, stream );
+    _PDCLIB_funlockfile( stream );
     return r;
 }
 

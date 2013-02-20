@@ -12,7 +12,7 @@
 #include <threads.h>
 #include <stdlib.h>
 
-void funlockfile( FILE * file )
+void _PDCLIB_funlockfile( FILE * file )
 {
     int res = mtx_unlock( &file->lock );
     switch(res) {

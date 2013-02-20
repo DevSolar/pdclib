@@ -9,10 +9,11 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-
-int getc_unlocked( FILE * stream )
+#include <_PDCLIB_io.h>
+   
+int _PDCLIB_getc_unlocked( FILE * stream )
 {
-    return fgetc_unlocked( stream );
+    return _PDCLIB_fgetc_unlocked( stream );
 }
 
 int getc( FILE * stream )

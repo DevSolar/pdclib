@@ -14,7 +14,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int vfprintf_unlocked( FILE * _PDCLIB_restrict stream, 
+int _PDCLIB_vfprintf_unlocked( FILE * _PDCLIB_restrict stream, 
                        const char * _PDCLIB_restrict format, 
                        va_list arg )
 {
@@ -54,9 +54,9 @@ int vfprintf( FILE * _PDCLIB_restrict stream,
               const char * _PDCLIB_restrict format, 
               va_list arg )
 {
-    flockfile( stream );
-    int r = vfprintf_unlocked( stream, format, arg );
-    funlockfile( stream );
+    _PDCLIB_flockfile( stream );
+    int r = _PDCLIB_vfprintf_unlocked( stream, format, arg );
+    _PDCLIB_funlockfile( stream );
     return r;
 }
 

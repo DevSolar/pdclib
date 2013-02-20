@@ -9,10 +9,11 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+#include <_PDCLIB_io.h>
 
-int putchar_unlocked( int c )
+int _PDCLIB_putchar_unlocked( int c )
 {
-    return fputc_unlocked( c, stdout );
+    return _PDCLIB_fputc_unlocked( c, stdout );
 }
 
 int putchar( int c )
