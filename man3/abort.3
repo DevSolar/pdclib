@@ -4,19 +4,19 @@
 .Dd
 .Dt abort 3
 .Os
-
+.\"
 .Sh NAME
 .Nm abort
 .Nd abnormal process termination
-
+.\"
 .Sh SYNOPSIS
 .In stdlib.h
 .Fn "noreturn void abort" "void"
-
+.\"
 .Sh DESCRIPTION
 .Fn abort
 causes abnormal process termination to occur.
-
+.\"
 .Pp
 First,
 .Dv SIGABRT
@@ -29,7 +29,7 @@ will then proceed to cause the process to terminate with a failure exit status.
 It is implementation defined whether any open
 .Vt FILE
 streams are flushed before the process exits.
-
+.\"
 .Sh IMPLEMENTATION NOTES
 PDCLib implements termination (in the case that the 
 .Dv SIGABRT
@@ -39,13 +39,13 @@ Therefore, stream flushing rules for
 .Nm
 follow those defined for
 .Fn _Exit .
-
+.\"
 .Sh SEE ALSO
 .Xr exit 3
 .Xr quick_exit 3
 .Xr _Exit 3
 .Xr raise 3
-
+.\"
 .Sh STANDARDS
 .Fn abort
 is first defined in

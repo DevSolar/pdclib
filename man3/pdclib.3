@@ -4,11 +4,11 @@
 .Dd
 .Dt PDCLIB 3
 .Os
-
+.\"
 .Sh NAME
 .Nm PDCLib
 .Nd Public domain, portable C library
-
+.\"
 .Sh LIBRARY
 .Lb pdclib
 .Sh SYNOPSIS
@@ -31,7 +31,7 @@
 .In threads.h
 .In time.h
 .In wchar.h
-
+.\"
 .Sh DESCRIPTION
 The
 .Nm
@@ -57,7 +57,7 @@ to the appropriate value. For example, in the following definition:
 .br
 .Fn "char * strdup" "const char *"
 .Ed
-
+.\"
 it is documented that defining either 
 .Dv _XOPEN_SOURCE
 or
@@ -68,7 +68,7 @@ before the first inclusion of
 .In string.h
 will expose a definition of the function
 .Fn strdup
-
+.\"
 .Sh SEE ALSO
 .Xr cc 1 ,
 .Xr c++ 7

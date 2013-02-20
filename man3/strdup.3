@@ -4,11 +4,11 @@
 .Dd
 .Dt strdup 3
 .Os
-
+.\"
 .Sh NAME
 .Nm strdup
 .Nd string duplication
-
+.\"
 .Sh SYNOPSIS
 .Sy #define _XOPEN_SOURCE || _POSIX_C_SOURCE >= 200809L
 .In string.h
@@ -17,7 +17,7 @@
 .Sy #define _POSIX_C_SOURCE >= 200809L
 .In string.h
 .Fn "char *strndup" "const char *str" "size_t len"
-
+.\"
 .Sh DESCRIPTION
 .Fn strdup
 allocates a new buffer of sufficient size as to be able to hold the entirety of
@@ -25,7 +25,7 @@ allocates a new buffer of sufficient size as to be able to hold the entirety of
 including the terminating character, and copies the contents of
 .Va str
 into it.
-
+.\"
 .Pp
 .Fn strndup
 allocates a buffer large enough to contain
@@ -38,17 +38,17 @@ including the trailing null character, whichever is smaller. The first
 characters of 
 .Va str
 are then copied into it, and a null character appended.
-
+.\"
 .Pp
 The buffers returned by these functions must be released by a call to
 .Fn free .
-
+.\"
 .Sh SEE ALSO
 .Xr free 3
 .Xr malloc 3
 .Xr strcpy 3
 .Xr strncpy 3
-
+.\"
 .Sh STANDARDS
 .Fn strdup
 first specified in 
