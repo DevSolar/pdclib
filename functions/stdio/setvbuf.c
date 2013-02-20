@@ -15,6 +15,7 @@
 
 int setvbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mode, size_t size )
 {
+    _PDCLIB_lockfile( stream );
     switch ( mode )
     {
         case _IONBF:
@@ -30,6 +31,7 @@ int setvbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mo
                 /* PDCLib only supports buffers up to INT_MAX in size. A size
                    of zero doesn't make sense.
                 */
+                _PDCLIB_funlockfile( stream );
                 return -1;
             }
             if ( buf == NULL )
@@ -48,6 +50,7 @@ int setvbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mo
                     if ( ( buf = (char *) malloc( size ) ) == NULL )
                     {
                         /* Out of memory error. */
+                        _PDCLIB_funlockfile( stream );
                         return -1;
                     }
                     /* This buffer must be free()d on fclose() */
@@ -59,12 +62,14 @@ int setvbuf( FILE * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mo
             break;
         default:
             /* If mode is something else than _IOFBF, _IOLBF or _IONBF -> exit */
+            _PDCLIB_funlockfile( stream );
             return -1;
     }
     /* Deleting current buffer mode */
     stream->status &= ~( _IOFBF | _IOLBF | _IONBF );
     /* Set user-defined mode */
     stream->status |= mode;
+    _PDCLIB_funlockfile( stream );
     return 0;
 }
 
