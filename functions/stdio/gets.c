@@ -14,13 +14,16 @@
 
 char * gets( char * s )
 {
+    _PDCLIB_flockfile( stdin );
     if ( _PDCLIB_prepread( stdin ) == EOF )
     {
+        _PDCLIB_funlockfile( stdin );
         return NULL;
     }
     char * dest = s;
     
     dest += _PDCLIB_getchars( dest, SIZE_MAX, '\n', stdin );
+    _PDCLIB_funlockfile( stdin );
 
     if(*(dest - 1) == '\n') {
         *(--dest) = '\0';
