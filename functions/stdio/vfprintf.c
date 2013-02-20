@@ -37,7 +37,7 @@ int vfprintf_unlocked( FILE * _PDCLIB_restrict stream,
         if ( ( *format != '%' ) || ( ( rc = _PDCLIB_print( format, &status ) ) == format ) )
         {
             /* No conversion specifier, print verbatim */
-            putc( *(format++), stream );
+            _PDCLIB_putc_unlocked( *(format++), stream );
             status.i++;
         }
         else
