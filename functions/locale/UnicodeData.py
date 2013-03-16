@@ -49,14 +49,18 @@ categories = {
     'Sc': BIT_GRAPH,                            # Currency symbol
     'Sk': BIT_GRAPH,                            # Non-letterlike modifier symbol
     'So': BIT_GRAPH,                            # Other symbol
-    'Zs': BIT_SPACE | BIT_GRAPH | BIT_BLANK,    # Non-zero-width space character
-    'Zl': BIT_SPACE | BIT_GRAPH,                # Line separator
-    'Zp': BIT_SPACE | BIT_GRAPH,                # Paragraph separator
+    'Zs': BIT_SPACE,                            # Non-zero-width space character
+    'Zl': BIT_SPACE,                            # Line separator
+    'Zp': BIT_SPACE,                            # Paragraph separator
     'Cc': BIT_CNTRL,                            # C0/C1 control codes
 }
 
 # Characters with special properties
 special = {
+    # Blank characters
+    0x0020: BIT_SPACE | BIT_BLANK, # space
+    0x0009: BIT_SPACE | BIT_BLANK, # tab
+
     # Digits
     0x0030: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
     0x0031: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
