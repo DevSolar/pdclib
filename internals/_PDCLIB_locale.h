@@ -59,6 +59,9 @@
 #define _PDCLIB_CTYPE_DIGIT 256
 #define _PDCLIB_CTYPE_XDIGT 512
 
+#define _PDCLIB_WCTRANS_TOLOWER 1
+#define _PDCLIB_WCTRANS_TOUPPER 2
+
 typedef struct _PDCLIB_ctype
 {
     _PDCLIB_uint16_t flags;
