@@ -9,9 +9,6 @@
 #define _PDCLIB_WCHAR_H
 #include <_PDCLIB_int.h>
 _PDCLIB_BEGIN_EXTERN_C
-/* This is VASTLY incomplete. Functions being implemented as required by other
-   portions of the library
- */
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
