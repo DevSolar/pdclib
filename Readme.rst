@@ -228,10 +228,6 @@ PDCLib needs a threading abstraction; therefore, C11's thread library is being
 implemented to provide the backing for this (as there is no purpose in 
 implementing two abstractions)
 
-Cleanup portions of <stdio.h>, particularly the backend. _PDCLIB_fillbuffer and
-_PDCLIB_flushbuffer in particular do not feel 'well' factored and need to know
-too much about FILE's internals. 
-
 Modularize the library somewhat. This can already be seen with components under 
 "opt/". This structure is preliminary; it will likely change as the process 
 continues.
