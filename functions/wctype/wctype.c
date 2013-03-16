@@ -94,13 +94,13 @@ int main( void )
     TESTCASE(wctype("xdigit") != 0);
 
     TESTCASE_NOREG(wctype("alpha")  == _PDCLIB_CTYPE_ALPHA);
-    TESTCASE_NOREG(wctype("alnum")  == _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_DIGIT);
+    TESTCASE_NOREG(wctype("alnum")  == (_PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_DIGIT));
     TESTCASE_NOREG(wctype("blank")  == _PDCLIB_CTYPE_BLANK);
     TESTCASE_NOREG(wctype("cntrl")  == _PDCLIB_CTYPE_CNTRL);
     TESTCASE_NOREG(wctype("digit")  == _PDCLIB_CTYPE_DIGIT);
     TESTCASE_NOREG(wctype("graph")  == _PDCLIB_CTYPE_GRAPH);
     TESTCASE_NOREG(wctype("lower")  == _PDCLIB_CTYPE_LOWER);
-    TESTCASE_NOREG(wctype("print")  == _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_SPACE);
+    TESTCASE_NOREG(wctype("print")  == (_PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_SPACE));
     TESTCASE_NOREG(wctype("punct")  == _PDCLIB_CTYPE_PUNCT);
     TESTCASE_NOREG(wctype("space")  == _PDCLIB_CTYPE_SPACE);
     TESTCASE_NOREG(wctype("upper")  == _PDCLIB_CTYPE_UPPER);
