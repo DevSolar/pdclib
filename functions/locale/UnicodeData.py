@@ -26,6 +26,7 @@ BIT_SPACE =  32
 BIT_LOWER =  64
 BIT_UPPER = 128
 BIT_DIGIT = 256
+BIT_XDIGT = 512
 
 # Category to bitfield mapping
 categories = {
@@ -52,6 +53,38 @@ categories = {
     'Zl': BIT_SPACE | BIT_GRAPH,                # Line separator
     'Zp': BIT_SPACE | BIT_GRAPH,                # Paragraph separator
     'Cc': BIT_CNTRL,                            # C0/C1 control codes
+}
+
+# Characters with special properties
+special = {
+    # Digits
+    0x0030: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0031: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0032: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0033: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0034: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0035: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0036: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0037: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0038: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+    0x0039: BIT_XDIGT | BIT_DIGIT | BIT_GRAPH,
+
+    # A-F (hex uppercase)
+    0x0041: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_UPPER,
+    0x0042: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_UPPER,
+    0x0043: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_UPPER,
+    0x0044: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_UPPER,
+    0x0045: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_UPPER,
+    0x0046: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_UPPER,
+
+
+    # a-f (hex lowercase)
+    0x0061: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_LOWER,
+    0x0062: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_LOWER,
+    0x0063: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_LOWER,
+    0x0064: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_LOWER,
+    0x0065: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_LOWER,
+    0x0066: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_LOWER,
 }
 
 in_file  = open('UnicodeData.txt', 'r')
@@ -83,7 +116,7 @@ try:
         num       = int(num_hex, 16)
         upper_case = int(upper_case_hex, 16) if len(upper_case_hex) else num
         lower_case = int(lower_case_hex, 16) if len(lower_case_hex) else num
-        bits = categories.get(category, 0)
+        bits = special.get(num, categories.get(category, 0))
 
         if upper_case == 0 and lower_case == 0 and bits == 0:
             continue
