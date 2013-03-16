@@ -64,18 +64,18 @@ struct lconv
    TODO: Beware, values might change before v0.6 is released.
 */
 /* Entire locale */
-#define LC_ALL      0
+#define LC_ALL      -1
 /* Collation (strcoll(), strxfrm()) */
-#define LC_COLLATE  1
+#define LC_COLLATE  0
 /* Character types (<ctype.h>) */
-#define LC_CTYPE    2
+#define LC_CTYPE    1
 /* Monetary formatting (as returned by localeconv) */
-#define LC_MONETARY 3
+#define LC_MONETARY 2
 /* Decimal-point character (for printf() / scanf() functions), string
    conversions, nonmonetary formatting as returned by localeconv              */
-#define LC_NUMERIC  4
+#define LC_NUMERIC  3
 /* Time formats (strftime(), wcsftime()) */
-#define LC_TIME     5
+#define LC_TIME     4
 
 /* The category parameter can be any of the LC_* macros to specify if the call
    to setlocale() shall affect the entire locale or only a portion thereof.
@@ -93,6 +93,14 @@ char * setlocale( int category, const char * locale ) _PDCLIB_nothrow;
 struct lconv * localeconv( void ) _PDCLIB_nothrow;
 
 #if _PDCLIB_POSIX_MIN(2008)
+#define LC_COLLATE_MASK  (1 << LC_COLLATE)
+#define LC_CTYPE_MASK    (1 << LC_CTYPE)
+#define LC_MONETARY_MASK (1 << LC_MONETARY)
+#define LC_NUMERIC_MASK  (1 << LC_NUMERIC)
+#define LC_TIME_MASK     (1 << LC_TIME) 
+#define LC_ALL_MASK      (LC_COLLATE_MASK | LC_CTYPE_MASK | LC_MONETARY_MASK | \
+                          LC_NUMERIC_MASK | LC_TIME_MASK)
+
 
 /* POSIX locale type */
 typedef _PDCLIB_locale_t locale_t;
@@ -100,6 +108,8 @@ typedef _PDCLIB_locale_t locale_t;
 /* Global locale */
 extern struct _PDCLIB_locale _PDCLIB_global_locale;
 #define LC_GLOBAL_LOCALE (&_PDCLIB_global_locale)
+
+locale_t newlocale(int category_mask, const char *locale, locale_t base); 
 
 /* Set the thread locale to newlocale
  *
