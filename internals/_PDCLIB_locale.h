@@ -75,6 +75,25 @@ typedef struct _PDCLIB_wcinfo
     _PDCLIB_uint32_t upper;
 } _PDCLIB_wcinfo_t;
 
+extern _PDCLIB_wcinfo_t _PDCLIB_wcinfo[];
+extern size_t           _PDCLIB_wcinfo_size;
+
+static inline int _PDCLIB_wcinfo_cmp( const void * _key, const void * _obj )
+{
+    _PDCLIB_uint32_t * key = (_PDCLIB_uint32_t *) _key;
+    _PDCLIB_wcinfo_t * obj = (_PDCLIB_wcinfo_t *) _obj;
+    return *key - obj->num;
+}
+
+static inline _PDCLIB_wcinfo_t * _PDCLIB_wcgetinfo( _PDCLIB_uint32_t num )
+{
+    _PDCLIB_wcinfo_t *info = (_PDCLIB_wcinfo_t*) 
+        bsearch( &num, _PDCLIB_wcinfo, _PDCLIB_wcinfo_size, 
+                 sizeof( _PDCLIB_wcinfo[0] ), _PDCLIB_wcinfo_cmp );
+
+    return info;
+}
+
 static inline _PDCLIB_wint_t _PDCLIB_unpackwint( _PDCLIB_wint_t wc )
 {
     if( sizeof(_PDCLIB_wchar_t) == 2 && sizeof(_PDCLIB_wint_t) == 4 ) {
