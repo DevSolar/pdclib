@@ -7,6 +7,12 @@
 """
 Converts the character information provdied by Unicode in the UnicodeData.txt
 file from the Unicode character database into a table for use by PDCLib.
+
+Usage: Download the UnicodeData.txt file to the same directory as this script 
+and then run it. Both Python 2 and 3 are supported.
+
+Download the data from
+    ftp://ftp.unicode.org/Public/UNIDATA/UnicodeData.txt
 """
 import os
 
