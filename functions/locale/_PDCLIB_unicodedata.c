@@ -10,9 +10,10 @@
  * in Exhibit 1 of the Unicode Terms of Use, found at
  *   http://www.unicode.org/copyright.html#Exhibit1
  */
+ #ifndef REGTEST
  #include <_PDCLIB_locale.h>
 
- _PDCLIB_wctype_t _PDCLIB_wctype[] = {
+ _PDCLIB_wcinfo_t _PDCLIB_wcinfo[] = {
 //   { value,	flags,	lower,	upper	}, // name
      { 0x0,	0x4,	0x0,	0x0 }, // <control>
     { 0x1,	0x4,	0x1,	0x1 }, // <control>
@@ -24445,5 +24446,15 @@
     { 0x10FFFD,	0x0,	0x10FFFD,	0x10FFFD }, // <Plane 16 Private Use, Last>
 };
 
-size_t _PDCLIB_wctype_size = sizeof(_PDCLIB_wctype) / sizeof(_PDCLIB_wctype[0]);
+
+size_t _PDCLIB_wcinfo_size = sizeof(_PDCLIB_wcinfo) / sizeof(_PDCLIB_wcinfo[0]);
+#endif
+
+#ifdef TEST
+#include <_PDCLIB_test.h>
+int main( void )
+{
+    return TEST_RESULTS;
+}
+#endif
 

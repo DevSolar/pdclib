@@ -67,13 +67,13 @@ typedef struct _PDCLIB_ctype
     unsigned char collation;
 } _PDCLIB_ctype_t;
 
-typedef struct _PDCLIB_wctype
+typedef struct _PDCLIB_wcinfo
 {
     _PDCLIB_uint32_t num;
     _PDCLIB_uint16_t flags;
     _PDCLIB_uint32_t lower;
     _PDCLIB_uint32_t upper;
-} _PDCLIB_wctype_t;
+} _PDCLIB_wcinfo_t;
 
 struct _PDCLIB_locale {
     _PDCLIB_charcodec_t          _Codec;
