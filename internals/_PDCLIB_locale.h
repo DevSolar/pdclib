@@ -69,10 +69,10 @@ typedef struct _PDCLIB_ctype
 
 typedef struct _PDCLIB_wcinfo
 {
-    _PDCLIB_uint32_t num;
+    _PDCLIB_wint_t   num;
     _PDCLIB_uint16_t flags;
-    _PDCLIB_uint32_t lower;
-    _PDCLIB_uint32_t upper;
+    _PDCLIB_wint_t   lower;
+    _PDCLIB_wint_t   upper;
 } _PDCLIB_wcinfo_t;
 
 extern _PDCLIB_wcinfo_t _PDCLIB_wcinfo[];
