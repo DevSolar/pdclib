@@ -45,7 +45,9 @@ struct tm;
 #define WCHAR_MAX _PDCLIB_WCHAR_MAX
 #endif
 
+#ifndef _WEOF
 #define WEOF ((wint_t) -1)
+#endif
 
 /* Wide character string handling */
 wchar_t *wcscpy(wchar_t *_PDCLIB_restrict s1, const wchar_t *_PDCLIB_restrict s2);
