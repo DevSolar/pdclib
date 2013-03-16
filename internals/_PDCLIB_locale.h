@@ -75,6 +75,30 @@ typedef struct _PDCLIB_wcinfo
     _PDCLIB_uint32_t upper;
 } _PDCLIB_wcinfo_t;
 
+static inline _PDCLIB_wint_t _PDCLIB_unpackwint( _PDCLIB_wint_t wc )
+{
+    if( sizeof(_PDCLIB_wchar_t) == 2 && sizeof(_PDCLIB_wint_t) == 4 ) {
+        /* On UTF-16 platforms, as an extension accept a "packed surrogate"
+         * encoding. We accept the surrogate pairs either way
+         */
+
+        _PDCLIB_wint_t c = (wc & 0xF800F800);
+        if(c == (_PDCLIB_wint_t) 0xD800DC00) {
+            // MSW: Lead, LSW: Trail
+            _PDCLIB_wint_t lead  = wc >> 16 & 0x3FF;
+            _PDCLIB_wint_t trail = wc       & 0x3FF;
+            wc = lead << 10 | trail;
+        } else if(c == (_PDCLIB_wint_t) 0xDC00D800) {
+            // MSW: Trail, LSW: Lead
+            _PDCLIB_wint_t trail = wc >> 16 & 0x3FF;
+            _PDCLIB_wint_t lead  = wc       & 0x3FF;
+            wc = lead << 10 | trail;
+        }
+
+    }
+    return wc;
+}
+
 struct _PDCLIB_locale {
     _PDCLIB_charcodec_t          _Codec;
     struct lconv                 _Conv;
