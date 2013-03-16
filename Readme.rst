@@ -1,8 +1,9 @@
+==============================================================
 PDCLib - the `Public Domain C Library <http://pdclib.e43.eu>`_
-================================
+==============================================================
 
 What is it
-----------
+==========
 
 This is a C Standard Library - what's defined in ISO/IEC 9899 "Information 
 technology — Programming languages — C" or extensions to the above defined in
@@ -10,7 +11,7 @@ ISO/IEC 14882 "Information technology — Programming languages — C++". A few
 extensions may optionally be provided.
 
 License
--------
+=======
 
 Written in 
  * 2003-2012 by Martin "Solar" Baute,
@@ -23,18 +24,33 @@ worldwide. This software is distributed without any warranty.
 You should have received a copy of the CC0 Public Domain Dedication along with 
 this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-    **Exception:** Portions of the test suite are under different licenses. 
-    Where this is the case, it is clearly noted in the relevant location.
+Exceptions
+----------
 
-    The license of this code has no bearing upon the licensing of the built 
-    library (as it does not comprise part of it).
+Unicode Character Data
+~~~~~~~~~~~~~~~~~~~~~~
+PDCLib necessarily includes Unicode character data derived from that provided by
+Unicode, Inc in its' implementation of the localization and wide character 
+support (in particular for use by the ctype.h and wctype.h functions.)
 
-    At the time this was written, this exception only applies to portions of the
-    printf test suite, which are released under the terms of the 2-clause BSD
-    license (see testing/printf_testcases.h for full details)
+Unicode, Inc licenses that data under a license agreement which can be found at
+<http://www.unicode.org/copyright.html#Exhibit1>, or in the file 
+UNICODE_DATA_LICENSE.txt. found in the same directory as this file.
+
+Test Suite
+~~~~~~~~~~
+Portions of the test suite are under different licenses. Where this is the case, 
+it is clearly noted in the relevant location.
+
+The license of this code has no bearing upon the licensing of the built library 
+(as it does not comprise part of it).
+
+At the time this was written, this exception only applies to portions of the 
+printf test suite, which are released under the terms of the 2-clause BSD 
+license (see testing/printf_testcases.h for full details)
 
 Terms for extensions
---------------------
+====================
 Extensions are permitted only if they pass the following tests:
 
 Pre-existing wide usage
@@ -95,7 +111,7 @@ flockfile, funlockfile, getc_unlocked, putc_unlocked, fwrite_unlocked, ...
     the existing I/O functions, and impossible to implement externally
 
 Internals
----------
+=========
 
 As a namespace convention, everything (files, typedefs, functions,
 macros) not defined in ISO/IEC 9899 is prefixed with _PDCLIB.
@@ -145,7 +161,7 @@ of PDCLib (or link them into the appropriate places). That should be
 all that is actually required to make PDCLib work for your platform.
 
 Future directions
------------------
+=================
 Obviously, full C89, C99 and C11 conformance; and full support for the 
 applicable portions of C++98, C++03 and C++11 (the version which acomplishes 
 this will be christened "1.0").
@@ -158,7 +174,7 @@ version of a given function.
 Post 1.0, support for C11 Annexe K "Bounds checking interfaces"
 
 Development Status
-------------------
+==================
 
 ``v0.1 - 2004-12-12``
     Freestanding-only C99 implementation without any overlay, and missing
@@ -203,7 +219,7 @@ Development Status
     me it cannot be done.) Fixed all known bugs in the v0.4 release.
 
 Near Future
------------
+===========
 Current development directions are:
 
 Implement portions of the C11 standard that have a direct impact on the way 
