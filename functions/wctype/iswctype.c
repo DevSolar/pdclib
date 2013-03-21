@@ -8,15 +8,20 @@
 #ifndef REGTEST
 #include <_PDCLIB_locale.h>
 
-int iswctype( wint_t wc, wctype_t desc )
+int _PDCLIB_iswctype_l( wint_t wc, wctype_t desc, locale_t l )
 {
     wc = _PDCLIB_unpackwint( wc );
 
-    _PDCLIB_wcinfo_t *info = _PDCLIB_wcgetinfo( wc );
+    _PDCLIB_wcinfo_t *info = _PDCLIB_wcgetinfo( l, wc );
 
     if(!info) return 0;
 
     return info->flags & desc;
+}
+
+int iswctype( wint_t wc, wctype_t desc )
+{
+    return _PDCLIB_iswctype_l( wc, desc, _PDCLIB_threadlocale() );
 }
 
 #endif

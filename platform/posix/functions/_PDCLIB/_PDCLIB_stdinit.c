@@ -18,6 +18,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 #include <_PDCLIB_locale.h>
+#include <_PDCLIB_clocale.h>
 #include <threads.h>
 
 /* In a POSIX system, stdin / stdout / stderr are equivalent to the (int) file
@@ -79,14 +80,6 @@ FILE * stdout = &_PDCLIB_sout;
 FILE * stderr = &_PDCLIB_serr;
 
 tss_t _PDCLIB_locale_tss;
-/* Todo: Better solution than this! */
-__attribute__((constructor)) void init_stdio(void)
-{
-    tss_create(&_PDCLIB_locale_tss, (tss_dtor_t) freelocale);
-    mtx_init(&stdin->lock,  mtx_recursive);
-    mtx_init(&stdout->lock, mtx_recursive);
-    mtx_init(&stderr->lock, mtx_recursive);
-}
 
 /* FIXME: This approach is a possible attack vector. */
 FILE * _PDCLIB_filelist = &_PDCLIB_sin;
@@ -393,6 +386,16 @@ struct _PDCLIB_locale _PDCLIB_global_locale = {
         /* EILSEQ   */ (char *)"EILSEQ (Illegal sequence)"
     },
 };
+
+/* Todo: Better solution than this! */
+__attribute__((constructor)) void init_stdio(void)
+{
+    _PDCLIB_initclocale( &_PDCLIB_global_locale );
+    tss_create(&_PDCLIB_locale_tss, (tss_dtor_t) freelocale);
+    mtx_init(&stdin->lock,  mtx_recursive);
+    mtx_init(&stdout->lock, mtx_recursive);
+    mtx_init(&stderr->lock, mtx_recursive);
+}
 
 #endif
 

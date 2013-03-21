@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <_PDCLIB_io.h>
 #include <_PDCLIB_locale.h>
+#include <_PDCLIB_clocale.h>
 
 static char ** argvToAnsi( wchar_t ** wargv, int argc )
 {
@@ -115,6 +116,8 @@ void __cdecl mainCRTStartup( void )
     cl    = GetCommandLineW();
     wargv = CommandLineToArgvW(cl, &argc);
     argv  = argvToAnsi(wargv, argc);
+
+    _PDCLIB_initclocale( &_PDCLIB_global_locale );
 
     if(tss_create(&_PDCLIB_locale_tss, (tss_dtor_t) freelocale) 
             != thrd_success) {

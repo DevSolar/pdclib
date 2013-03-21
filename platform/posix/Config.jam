@@ -11,4 +11,4 @@ if $(OS) = "MACOSX" {
     PDCLIB_TEST_LINKLIBS += -lgcc ;
 }
 
-PDCLIB_OPTIONS = pthreads notime dlmalloc basecodecs ;
+PDCLIB_OPTIONS = pthreads notime dlmalloc basecodecs c_locale ;
