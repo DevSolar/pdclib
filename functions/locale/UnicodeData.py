@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: <encoding name> -*-
+# -*- coding: ascii -*-
 # Unicode Data Converter
 #
 # This file is part of the Public Domain C Library (PDCLib).
