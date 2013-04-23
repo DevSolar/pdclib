@@ -17,6 +17,9 @@
  * _St32[1] is the character accumulated so far
  */
 
+static bool utf8_mbsinit( const mbstate_t *p_s )
+{ return p_s->_StUC[0] == 0; }
+
 enum {
     DecStart = 0,
 
@@ -52,6 +55,7 @@ end_conversion:             \
     _PDCLIB_UNDEFINED(accum);       \
     state = DecStart;               \
 } while(0)
+
 #define CHECK_CONTINUATION \
     do { if((c & 0xC0) != 0x80) return false; } while(0)
 
@@ -229,6 +233,7 @@ static bool c32toutf8(
 }
 
 struct _PDCLIB_charcodec _PDCLIB_utf8_codec = {
+    .__mbsinit   = utf8_mbsinit,
     .__mbstoc32s = utf8toc32,
     .__c32stombs = c32toutf8,
     .__mb_max    = 4,

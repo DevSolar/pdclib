@@ -99,6 +99,9 @@ struct _PDCLIB_charcodec {
      * encountered), else return false.
      */
 
+    /* mbsinit. Mandatory. */
+    _PDCLIB_bool (*__mbsinit)(const _PDCLIB_mbstate_t *_P_ps);
+
     /* UCS-4 variants. Mandatory. */
 
     _PDCLIB_bool (*__mbstoc32s)(

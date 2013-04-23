@@ -9,6 +9,9 @@
 #include <uchar.h>
 #include <_PDCLIB_encoding.h>
 
+static bool ascii_mbsinit( const mbstate_t *ps )
+{ return 1; }
+
 static bool asciitoc32(
     char32_t       *restrict *restrict   p_outbuf,
     size_t                   *restrict   p_outsz,
@@ -60,6 +63,7 @@ static bool c32toascii(
 }
 
 struct _PDCLIB_charcodec _PDCLIB_ascii_codec = {
+    .__mbsinit   = ascii_mbsinit,
     .__mbstoc32s = asciitoc32,
     .__c32stombs = c32toascii,
     .__mb_max    = 1,

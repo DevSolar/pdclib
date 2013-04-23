@@ -9,6 +9,9 @@
 #include <uchar.h>
 #include <_PDCLIB_encoding.h>
 
+static bool latin1_mbsinit( const mbstate_t *ps )
+{ return 1; }
+
 static bool latin1toc32(
     char32_t       *restrict *restrict   p_outbuf,
     size_t                   *restrict   p_outsz,
@@ -58,6 +61,7 @@ static bool c32tolatin1(
 }
 
 struct _PDCLIB_charcodec _PDCLIB_latin1_codec = {
+    .__mbsinit   = latin1_mbsinit,
     .__mbstoc32s = latin1toc32,
     .__c32stombs = c32tolatin1,
     .__mb_max    = 1,
