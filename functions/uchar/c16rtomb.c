@@ -24,6 +24,8 @@ size_t c16rtomb_l(
 )
 {
     const char16_t *restrict psrc = &c16;
+    char buf[s ? 0 : MB_CUR_MAX];
+    s =      s ? s : buf;
 
     if(!l->_Codec->__c16stombs) {
         // Codec doesn't support direct conversion - translate via UCS-4
