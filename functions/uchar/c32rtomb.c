@@ -23,6 +23,9 @@ size_t c32rtomb_l(
     locale_t     restrict   l
 )
 {
+    char buf[s ? 0 : MB_CUR_MAX];
+    s =      s ? s : buf;
+
     const char32_t *restrict psrc = &c32;
     size_t srcsz  = 1;
     size_t dstsz  = MB_CUR_MAX;
