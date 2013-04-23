@@ -65,7 +65,7 @@ int vfprintf( FILE * _PDCLIB_restrict stream,
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/vfprintf.c"
 #define _PDCLIB_FILEIO
-
+#include <stddef.h>
 #include <_PDCLIB_test.h>
 
 static int testprintf( FILE * stream, const char * format, ... )

@@ -30,6 +30,7 @@
 #define E_space    (1<<3)
 #define E_zero     (1<<4)
 #define E_done     (1<<5)
+
 #define E_char     (1<<6)
 #define E_short    (1<<7)
 #define E_long     (1<<8)
@@ -38,9 +39,14 @@
 #define E_size     (1<<11)
 #define E_ptrdiff  (1<<12)
 #define E_intptr   (1<<13)
+
 #define E_ldouble  (1<<14)
+
 #define E_lower    (1<<15)
 #define E_unsigned (1<<16)
+
+#define E_TYPES (E_char | E_short | E_long | E_llong | E_intmax \
+                | E_size | E_ptrdiff | E_intptr)
 
 /* This macro delivers a given character to either a memory buffer or a stream,
    depending on the contents of 'status' (struct _PDCLIB_status_t).
@@ -423,9 +429,8 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 return ++spec;
             }
         case 'p':
-            /* TODO: E_long -> E_intptr */
             status->base = 16;
-            status->flags |= ( E_lower | E_unsigned | E_alt | E_long );
+            status->flags |= ( E_lower | E_unsigned | E_alt | E_intptr );
             break;
         case 'n':
            {
@@ -437,7 +442,6 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             /* No conversion specifier. Bad conversion. */
             return orig_spec;
     }
-
     /* Do the actual output based on our findings */
     if ( status->base != 0 )
     {
@@ -446,7 +450,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         if ( status->flags & E_unsigned )
         {
             uintmax_t value;
-            switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_size ) )
+            switch ( status->flags & E_TYPES )
             {
                 case E_char:
                     value = (uintmax_t)(unsigned char)va_arg( status->arg, int );
@@ -466,12 +470,20 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 case E_size:
                     value = (uintmax_t)va_arg( status->arg, size_t );
                     break;
+                case E_intptr:
+                    value = (uintmax_t)va_arg( status->arg, uintptr_t );
+                    break;
+                case E_ptrdiff:
+                    value = (uintmax_t)va_arg( status->arg, ptrdiff_t );
+                    break;
+                case E_intmax:
+                    value = va_arg( status->arg, uintmax_t );
             }
             int2base( value, status );
         }
         else
         {
-            switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_intmax ) )
+            switch ( status->flags & E_TYPES )
             {
                 case E_char:
                     int2base( (intmax_t)(char)va_arg( status->arg, int ), status );
@@ -487,6 +499,12 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                     break;
                 case E_llong:
                     int2base( (intmax_t)va_arg( status->arg, long long ), status );
+                    break;
+                case E_size:
+                    int2base( (intmax_t)va_arg( status->arg, size_t ), status );
+                    break;
+                case E_intptr:
+                    int2base( (intmax_t)va_arg( status->arg, intptr_t ), status );
                     break;
                 case E_ptrdiff:
                     int2base( (intmax_t)va_arg( status->arg, ptrdiff_t ), status );

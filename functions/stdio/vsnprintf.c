@@ -62,7 +62,8 @@ int vsnprintf( char * _PDCLIB_restrict s,
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/vsnprintf.c"
 #define _PDCLIB_STRINGIO
-
+#include <stdint.h>
+#include <stddef.h>
 #include <_PDCLIB_test.h>
 
 static int testprintf( char * s, const char * format, ... )

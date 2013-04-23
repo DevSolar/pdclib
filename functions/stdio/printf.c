@@ -37,6 +37,8 @@ int _PDCLIB_printf_unlocked( const char * _PDCLIB_restrict format, ... )
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/printf.c"
 #define _PDCLIB_FILEIO
+#include <stdint.h>
+#include <stddef.h>
 
 #include <_PDCLIB_test.h>
 

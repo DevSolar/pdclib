@@ -28,7 +28,8 @@ int vprintf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/vprintf.c"
 #define _PDCLIB_FILEIO
-
+#include <stdint.h>
+#include <stddef.h>
 #include <_PDCLIB_test.h>
 
 static int testprintf( FILE * stream, const char * format, ... )

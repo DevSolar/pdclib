@@ -125,6 +125,11 @@
     }
 #endif
     }
+    /* PDCLIB-20: Verify "unusual" combinations of length and signedness */
+    PRINTF_TEST( 1,  "1", "%tu", (ptrdiff_t)  1); // unsigned prtdiff_t
+    PRINTF_TEST( 2, "-1", "%jd", (intmax_t)  -1); // intmax_t
+    PRINTF_TEST( 1,  "1", "%ju", (uintmax_t)  1); // uintmax_t
+    PRINTF_TEST( 1,  "1", "%zd", (size_t)     1); // signed size_t
 
 #ifndef TEST_CONVERSION_ONLY
 /******************************************************************************

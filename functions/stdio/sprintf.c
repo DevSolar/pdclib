@@ -27,6 +27,7 @@ int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ..
 #ifdef TEST
 #define _PDCLIB_FILEID "stdio/sprintf.c"
 #define _PDCLIB_STRINGIO
+#include <stddef.h>
 
 #include <_PDCLIB_test.h>
 

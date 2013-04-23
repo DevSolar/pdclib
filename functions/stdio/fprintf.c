@@ -39,6 +39,8 @@ int fprintf( FILE * _PDCLIB_restrict stream,
 #endif
 
 #ifdef TEST
+#include <stdint.h>
+#include <stddef.h>
 #define _PDCLIB_FILEID "stdio/fprintf.c"
 #define _PDCLIB_FILEIO
 
