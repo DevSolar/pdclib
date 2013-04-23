@@ -58,6 +58,7 @@ size_t c16rtomb_l(
             if((c16 & 0xFC00) == 0xDC00) {
                 // Trailing surrogate
                 char32_t c32 = (ps->_Surrogate & 0x3FF) << 10 | (c16 & 0x3FF);
+                ps->_Surrogate = 0;
                 return c32rtomb_l(s, c32, ps, l);
             } else {
                 // Not a trailing surrogate - encoding error
