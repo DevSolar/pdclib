@@ -93,8 +93,8 @@ struct _PDCLIB_locale {
     char                        *_ErrnoStr[_PDCLIB_ERRNO_MAX];
 };
 
-extern _PDCLIB_wcinfo_t _PDCLIB_wcinfo[];
-extern size_t           _PDCLIB_wcinfo_size;
+extern const _PDCLIB_wcinfo_t _PDCLIB_wcinfo[];
+extern const size_t           _PDCLIB_wcinfo_size;
 
 static inline int _PDCLIB_wcinfo_cmp( const void * _key, const void * _obj )
 {
