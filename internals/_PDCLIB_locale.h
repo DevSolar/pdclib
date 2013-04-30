@@ -80,13 +80,14 @@ typedef struct _PDCLIB_wcinfo
 } _PDCLIB_wcinfo_t;
 
 struct _PDCLIB_locale {
-    _PDCLIB_charcodec_t          _Codec;
+    const _PDCLIB_charcodec_t    _Codec;
     struct lconv                 _Conv;
 
     /* ctype / wctype */
-    _PDCLIB_wcinfo_t            *_WCType;
+    /* XXX: Maybe re-evaluate constness of these later on? */
+    const _PDCLIB_wcinfo_t      *_WCType;
     _PDCLIB_size_t               _WCTypeSize;
-    _PDCLIB_ctype_t             *_CType; 
+    const _PDCLIB_ctype_t       *_CType; 
 
     /* perror/strerror */
     char                        *_ErrnoStr[_PDCLIB_ERRNO_MAX];

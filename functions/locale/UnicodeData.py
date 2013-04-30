@@ -109,7 +109,7 @@ try:
  #ifndef REGTEST
  #include <_PDCLIB_locale.h>
 
- _PDCLIB_wcinfo_t _PDCLIB_wcinfo[] = {
+const _PDCLIB_wcinfo_t _PDCLIB_wcinfo[] = {
 //   { value,\tflags,\tlower,\tupper\t}, // name
  """)
     for line in in_file:
@@ -129,7 +129,7 @@ try:
             num, bits, lower_case, upper_case, name))
     out_file.write('};\n\n')
     out_file.write("""
-size_t _PDCLIB_wcinfo_size = sizeof(_PDCLIB_wcinfo) / sizeof(_PDCLIB_wcinfo[0]);
+const size_t _PDCLIB_wcinfo_size = sizeof(_PDCLIB_wcinfo) / sizeof(_PDCLIB_wcinfo[0]);
 #endif
 
 #ifdef TEST

@@ -85,8 +85,7 @@ tss_t _PDCLIB_locale_tss;
    1 kByte (+ 4 byte) of <ctype.h> data.
    Each line: flags, lowercase, uppercase, collation.
 */
-static 
-_PDCLIB_ctype_t global_ctype[] = {
+static const _PDCLIB_ctype_t global_ctype[] = {
     { /* EOF */    0,    0,    0,    0 },
     { /* NUL */ _PDCLIB_CTYPE_CNTRL,                                             0x00, 0x00, 0x00 },
     { /* SOH */ _PDCLIB_CTYPE_CNTRL,                                             0x01, 0x01, 0x01 },
@@ -346,7 +345,7 @@ _PDCLIB_ctype_t global_ctype[] = {
     { 0x00, 0xFF, 0xFF, 0xFF }
 };
 
-extern struct _PDCLIB_charcodec _PDCLIB_ascii_codec;
+extern const struct _PDCLIB_charcodec _PDCLIB_ascii_codec;
 struct _PDCLIB_locale _PDCLIB_global_locale = {
     ._Codec = &_PDCLIB_ascii_codec,
     ._Conv  = { 
