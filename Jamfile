@@ -50,6 +50,8 @@ if ! $(PDCLIB_NO_TEST) {
 
 Main helloworld : helloworld.c ;
 LinkLibraries helloworld : $(PDCLIB) ;
+LINKLIBS on helloworld$(SUFEXE) += $(PDCLIB_TEST_LINKLIBS) ;
+LINKFLAGS on helloworld$(SUFEXE) += $(PDCLIB_TEST_LINKFLAGS) ;
 
 rule HtmlMan { 
     DEPENDS htmlman : $(<) ;
