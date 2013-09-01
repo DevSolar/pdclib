@@ -48,6 +48,8 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
       #-nostdinc 
       -std=c11 
       -g 
+      -ffunction-sections
+      -fdata-sections
       -D_PDCLIB_BUILD
       $(PDCLIB_WARNINGS) ;
     PDCLIB_C++FLAGS =
@@ -55,6 +57,8 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
       #-nostdinc
       -std=c++11
       -g
+      -ffunction-sections
+      -fdata-sections
       -D_PDCLIB_BUILD
       $(PDCLIB_WARNINGS) ;
 
@@ -67,6 +71,7 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
         #    $(LINK) $(LINKFLAGS) -o $(<) $(UNDEFS) $(>) $(NEEDLIBS) $(LINKLIBS)
         #}
     } else {
+        PDCLIB_TEST_LINKFLAGS += -Wl,--gc-sections ;
         actions Link bind NEEDLIBS
         {
             $(LINK) $(LINKFLAGS) -o $(<) $(UNDEFS) $(>) -Wl,--start-group $(NEEDLIBS) $(LINKLIBS) -Wl,--end-group
