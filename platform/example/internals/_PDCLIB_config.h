@@ -55,7 +55,11 @@
 /* compiler manuals.                                                          */
 #define _PDCLIB_SHRT_BYTES  2
 #define _PDCLIB_INT_BYTES   4
-#define _PDCLIB_LONG_BYTES  4
+#if defined(__LP64__) || defined(_LP64)
+#  define _PDCLIB_LONG_BYTES 8
+#else
+#  define _PDCLIB_LONG_BYTES  4
+#endif
 #define _PDCLIB_LLONG_BYTES 8
 
 /* <stdlib.h> defines the div() function family that allows taking quotient   */
@@ -125,8 +129,8 @@ struct _PDCLIB_lldiv_t
 /* -------------------------------------------------------------------------- */
 
 /* The result type of substracting two pointers */
-#define _PDCLIB_ptrdiff int
-#define _PDCLIB_PTRDIFF INT
+#define _PDCLIB_ptrdiff long
+#define _PDCLIB_PTRDIFF LONG
 #define _PDCLIB_PTR_CONV
 
 /* An integer type that can be accessed as atomic entity (think asynchronous
@@ -137,8 +141,8 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_SIG_ATOMIC INT
 
 /* Result type of the 'sizeof' operator (must be unsigned) */
-#define _PDCLIB_size unsigned int
-#define _PDCLIB_SIZE UINT
+#define _PDCLIB_size unsigned long
+#define _PDCLIB_SIZE ULONG
 
 /* Large enough an integer to hold all character codes of the largest supported
    locale.
@@ -147,8 +151,8 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_wchar unsigned int
 #define _PDCLIB_WCHAR UINT
 
-#define _PDCLIB_intptr int
-#define _PDCLIB_INTPTR INT
+#define _PDCLIB_intptr long
+#define _PDCLIB_INTPTR LONG
 
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
 #define _PDCLIB_intmax long long int
@@ -236,6 +240,22 @@ struct _PDCLIB_imaxdiv_t
 */
 #define _PDCLIB_DECIMAL_DIG 17
 
+/* Floating point types
+ *
+ * PDCLib (at present) assumes IEEE 754 floating point formats
+ * The following names are used:
+ *    SINGLE:   IEEE 754 single precision (32-bit)
+ *    DOUBLE:   IEEE 754 double precision (64-bit)
+ *    EXTENDED: IEEE 754 extended precision (80-bit, as x87)
+ */
+#define _PDCLIB_FLOAT_TYPE   SINGLE
+#define _PDCLIB_DOUBLE_TYPE  DOUBLE
+#if defined(__i386__) || defined(__amd64__)
+  #define _PDCLIB_LDOUBLE_TYPE EXTENDED
+#else
+  #define _PDCLIB_LDOUBLE_TYPE DOUBLE
+#endif
+
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
 /* -------------------------------------------------------------------------- */
@@ -291,15 +311,15 @@ typedef char * _PDCLIB_va_list;
 
 /* TODO: Better document these */
 
+/* Locale --------------------------------------------------------------------*/
+
+/* Locale method. See _PDCLIB_locale.h */
+/* #define _PDCLIB_LOCALE_METHOD _PDCLIB_LOCALE_METHOD_TSS */
+
+/* wchar_t encoding */
+#define _PDCLIB_WCHAR_ENCODING _PDCLIB_WCHAR_ENCODING_UCS4
+
 /* I/O ---------------------------------------------------------------------- */
-
-/* The type of the file descriptor returned by _PDCLIB_open(). */
-typedef int _PDCLIB_fd_t;
-
-/* The value (of type _PDCLIB_fd_t) returned by _PDCLIB_open() if the operation
-   failed.
-*/
-#define _PDCLIB_NOHANDLE ( (_PDCLIB_fd_t) -1 )
 
 /* The default size for file buffers. Must be at least 256. */
 #define _PDCLIB_BUFSIZ 1024

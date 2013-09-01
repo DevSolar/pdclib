@@ -335,7 +335,9 @@ struct _PDCLIB_imaxdiv_t
 
 /* Locale --------------------------------------------------------------------*/
 
-/* Locale method. See _PDCLIB_locale.h */
+/* Locale method. See _PDCLIB_locale.h. If undefined, POSIX per-thread locales
+ * will be disabled
+ */
 #define _PDCLIB_LOCALE_METHOD _PDCLIB_LOCALE_METHOD_TSS
 
 /* wchar_t encoding */

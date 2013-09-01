@@ -9,4 +9,11 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
     PDCLIB_TEST_LINKLIBS += -lgcc ;
 }
 
-PDCLIB_OPTIONS = nothread notime dlmalloc ;
+PDCLIB_OPTIONS = 
+	nothread 
+	notime 
+	dlmalloc 
+	tss_errno 
+	basecodecs 
+    c_locale 
+    ;

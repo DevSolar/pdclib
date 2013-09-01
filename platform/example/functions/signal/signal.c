@@ -11,6 +11,7 @@
 #ifndef REGTEST
 
 #include <stdlib.h>
+#include <errno.h>
 
 void (*_PDCLIB_sigabrt)( int ) = SIG_DFL;
 void (*_PDCLIB_sigfpe)( int )  = SIG_DFL;
@@ -53,10 +54,7 @@ void (*signal( int sig, void (*func)( int ) ) )( int )
             _PDCLIB_sigterm = func;
             break;
         default:
-            /* The standard calls for an unspecified "positive value". You
-               will probably want to define a specific value for this.
-            */
-            _PDCLIB_errno = 1;
+            errno = EINVAL;
             return SIG_ERR;
     }
     return oldhandler;

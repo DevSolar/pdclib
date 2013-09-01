@@ -14,8 +14,6 @@
 #include <_PDCLIB_glue.h>
 #include <errno.h>
 
-static void * membreak = NULL;
-
 void * _PDCLIB_allocpages( size_t n )
 {
     errno = ENOTSUP;
