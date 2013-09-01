@@ -8,6 +8,7 @@
 #ifndef REGTEST
 #include <_PDCLIB_locale.h>
 
+#ifdef _PDCLIB_LOCALE_METHOD
 locale_t uselocale( locale_t newloc )
 {
     locale_t oldloc = _PDCLIB_threadlocale();
@@ -20,6 +21,7 @@ locale_t uselocale( locale_t newloc )
 
     return oldloc;
 }
+#endif
 
 #endif
 

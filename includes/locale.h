@@ -109,6 +109,8 @@ typedef _PDCLIB_locale_t locale_t;
 extern struct _PDCLIB_locale _PDCLIB_global_locale;
 #define LC_GLOBAL_LOCALE (&_PDCLIB_global_locale)
 
+#ifdef _PDCLIB_LOCALE_METHOD
+
 locale_t newlocale(int category_mask, const char *locale, locale_t base); 
 
 /* Set the thread locale to newlocale
@@ -129,6 +131,7 @@ locale_t duplocale(locale_t loc);
 
 /* Frees the passed locale object */
 void freelocale(locale_t loc);
+#endif
 
 #endif
 

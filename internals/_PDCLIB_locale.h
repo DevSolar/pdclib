@@ -10,7 +10,11 @@
 #define _PDCLIB_LOCALE_METHOD_THREAD_LOCAL  'T'
 
 #if !defined(_PDCLIB_LOCALE_METHOD)
-    #error _PDCLIB_LOCALE_METHOD undefined: don't know where I'm storing the thread locale
+    /* If undefined, no POSIX per thread locales */
+    static inline locale_t _PDCLIB_threadlocale( void )
+    {
+        return &_PDCLIB_global_locale;
+    }
 #elif _PDCLIB_LOCALE_METHOD == _PDCLIB_LOCALE_METHOD_TSS
     extern tss_t _PDCLIB_locale_tss;
     static inline locale_t _PDCLIB_threadlocale( void )
