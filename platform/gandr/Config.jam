@@ -1,0 +1,14 @@
+rule PDCLibTargetConfig { }
+rule PDCLibTargetHeaders {
+    SubDirHdrs $(PDCLIB_TOP) platform gandr includes ;
+}
+
+PDCLIB_OPTIONS = 
+    nothread
+    notime 
+    dlmalloc 
+    mincoll 
+    tss_errno 
+    basecodecs 
+    c_locale 
+    ;
