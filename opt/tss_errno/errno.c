@@ -6,6 +6,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <errno.h>
 #ifndef REGTEST
 #include <threads.h>
 
@@ -22,8 +23,6 @@ int * _PDCLIB_errno_func()
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
-
-#include <errno.h>
 
 int main( void )
 {
