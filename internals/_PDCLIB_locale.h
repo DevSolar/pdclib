@@ -11,28 +11,25 @@
 
 #if !defined(_PDCLIB_LOCALE_METHOD)
     /* If undefined, no POSIX per thread locales */
-    static inline locale_t _PDCLIB_threadlocale( void )
-    {
-        return &_PDCLIB_global_locale;
-    }
+    #define _PDCLIB_threadlocale() (&_PDCLIB_global_locale)
 #elif _PDCLIB_LOCALE_METHOD == _PDCLIB_LOCALE_METHOD_TSS
     extern tss_t _PDCLIB_locale_tss;
     static inline locale_t _PDCLIB_threadlocale( void )
     {
         locale_t l = tss_get(_PDCLIB_locale_tss);
-        if(l == NULL)
+        if ( l == NULL )
             l = &_PDCLIB_global_locale;
         return l;
     }
 
     static inline void _PDCLIB_setthreadlocale( locale_t l )
     {
-        if(tss_set(_PDCLIB_locale_tss, l) != thrd_success)
+        if ( tss_set( _PDCLIB_locale_tss, l ) != thrd_success )
             abort();
     }
 #elif _PDCLIB_LOCALE_METHOD == _PDCLIB_LOCALE_METHOD_THREAD_LOCAL
     extern thread_local locale_t _PDCLIB_locale_tls;
-    #define _PDCLIB_threadlocale() (_PDCLIB_locale_tls || &_PDCLIB_global_locale)
+    #define _PDCLIB_threadlocale() ( _PDCLIB_locale_tls || &_PDCLIB_global_locale )
     static inline locale_t _PDCLIB_threadlocale( void )
     {
         locale_t l = _PDCLIB_locale_tls;
@@ -77,10 +74,11 @@ typedef struct _PDCLIB_ctype
 
 typedef struct _PDCLIB_wcinfo
 {
-    _PDCLIB_wint_t   num;
+    _PDCLIB_wint_t   start;
+    _PDCLIB_uint16_t length;
     _PDCLIB_uint16_t flags;
-    _PDCLIB_wint_t   lower;
-    _PDCLIB_wint_t   upper;
+    _PDCLIB_wint_t   lower_delta;
+    _PDCLIB_wint_t   upper_delta;
 } _PDCLIB_wcinfo_t;
 
 struct _PDCLIB_locale {
@@ -102,12 +100,23 @@ extern const size_t           _PDCLIB_wcinfo_size;
 
 static inline int _PDCLIB_wcinfo_cmp( const void * _key, const void * _obj )
 {
-    _PDCLIB_uint32_t * key = (_PDCLIB_uint32_t *) _key;
+    _PDCLIB_int32_t * key = (_PDCLIB_int32_t *) _key;
     _PDCLIB_wcinfo_t * obj = (_PDCLIB_wcinfo_t *) _obj;
-    return *key - obj->num;
+    if ( *key < obj->start ) 
+    {
+        return -1;
+    } 
+    else if ( *key >= obj->start + obj->length )
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
-static inline _PDCLIB_wcinfo_t * _PDCLIB_wcgetinfo( locale_t l, _PDCLIB_uint32_t num )
+static inline _PDCLIB_wcinfo_t * _PDCLIB_wcgetinfo( locale_t l, _PDCLIB_int32_t num )
 {
     _PDCLIB_wcinfo_t *info = (_PDCLIB_wcinfo_t*) 
         bsearch( &num, l->_WCType, l->_WCTypeSize, 

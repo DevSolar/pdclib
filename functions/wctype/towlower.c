@@ -12,11 +12,11 @@ wint_t _PDCLIB_towlower_l( wint_t wc, locale_t l )
 {
     wint_t uwc = _PDCLIB_unpackwint( wc );
     _PDCLIB_wcinfo_t *info = _PDCLIB_wcgetinfo( l, uwc );
-    if( info && info->lower != uwc ) 
+    if( info ) 
     {
-        wc = info->lower;
+        uwc += info->lower_delta;
     }
-    return wc;
+    return uwc;
 }
 
 wint_t towlower( wint_t wc )

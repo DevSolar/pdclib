@@ -13,6 +13,9 @@ and then run it. Both Python 2 and 3 are supported.
 
 Download the data from
     ftp://ftp.unicode.org/Public/UNIDATA/UnicodeData.txt
+
+We do some simple "run" compression, because characters in the Unicode Data file
+tend to come in groups with the same properties.
 """
 import os
 
@@ -91,9 +94,62 @@ special = {
     0x0066: BIT_XDIGT | BIT_ALPHA | BIT_GRAPH | BIT_LOWER,
 }
 
+class Group:
+    def __init__(self, start, flags, upper_delta, lower_delta):
+        self.start = start
+        self.flags = flags
+        self.upper_delta = upper_delta
+        self.lower_delta = lower_delta
+        self.chars = []
+
+    def add_char(self, num, label):
+        self.chars.append((num, label))
+
+    def write_to_file(self, f):
+        for char in self.chars:
+            f.write("// %x %s\n" % char)
+        f.write("    { 0x%X, \t0x%X, \t0x%X, \t%d, \t%d },\n" %
+            (self.start, len(self.chars), self.flags, self.lower_delta, self.upper_delta))
+
+    def next(self):
+        return self.start + len(self.chars)
+
+groups = []
+
+def add_char(num, upper, lower, bits, label):
+    upper_delta = upper - num
+    lower_delta = lower - num
+
+    if len(groups) != 0:
+        cur = groups[-1]
+        if num == cur.next() and cur.flags == bits and \
+                cur.upper_delta == upper_delta and \
+                cur.lower_delta == lower_delta:
+            cur.add_char(num, label)
+            return
+
+    g = Group(num, bits, upper_delta, lower_delta)
+    g.add_char(num, label)
+    groups.append(g)
+
 in_file  = open('UnicodeData.txt', 'r')
 out_file = open('_PDCLIB_unicodedata.c', 'w')
 try:
+    for line in in_file:
+        (num_hex, name, category, combining_class, bidi_class, decomposition,
+         numeric_type, numeric_digit, numeric_value, mirrored, u1name, iso_com, 
+         upper_case_hex, lower_case_hex, title_case_hex) = line.split(";")
+
+        num        = int(num_hex, 16)
+        upper_case = int(upper_case_hex, 16) if len(upper_case_hex) else num
+        lower_case = int(lower_case_hex, 16) if len(lower_case_hex) else num
+        bits = special.get(num, categories.get(category, 0))
+
+        if upper_case == 0 and lower_case == 0 and bits == 0:
+            continue
+
+        add_char(num, upper_case, lower_case, bits, name)
+
     out_file.write("""
 /* Unicode Character Information ** AUTOMATICALLY GENERATED FILE **
  *
@@ -110,23 +166,10 @@ try:
  #include <_PDCLIB_locale.h>
 
 const _PDCLIB_wcinfo_t _PDCLIB_wcinfo[] = {
-//   { value,\tflags,\tlower,\tupper\t}, // name
+//   { value, \tlength, \tflags,\tlower,\tupper\t}, // name
  """)
-    for line in in_file:
-        (num_hex, name, category, combining_class, bidi_class, decomposition,
-         numeric_type, numeric_digit, numeric_value, mirrored, u1name, iso_com, 
-         upper_case_hex, lower_case_hex, title_case_hex) = line.split(";")
-
-        num       = int(num_hex, 16)
-        upper_case = int(upper_case_hex, 16) if len(upper_case_hex) else num
-        lower_case = int(lower_case_hex, 16) if len(lower_case_hex) else num
-        bits = special.get(num, categories.get(category, 0))
-
-        if upper_case == 0 and lower_case == 0 and bits == 0:
-            continue
-
-        out_file.write("    { 0x%X,\t0x%X,\t0x%X,\t0x%X }, // %s\n" % (
-            num, bits, lower_case, upper_case, name))
+    for g in groups:
+        g.write_to_file(out_file)
     out_file.write('};\n\n')
     out_file.write("""
 const size_t _PDCLIB_wcinfo_size = sizeof(_PDCLIB_wcinfo) / sizeof(_PDCLIB_wcinfo[0]);
