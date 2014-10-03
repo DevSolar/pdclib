@@ -17,7 +17,7 @@ extern int * _PDCLIB_errno_func( void );
 #define EDOM _PDCLIB_EDOM
 #define EILSEQ _PDCLIB_EILSEQ
 
-/* C++11. Yes, they did just copy the POSIX errno list into the standard 
+/* C++11. Yes, they did just copy the POSIX errno list into the standard
  *
   * ...take a DEEP breath...
  */
@@ -92,6 +92,10 @@ extern int * _PDCLIB_errno_func( void );
 #define ENODATA _PDCLIB_ENODATA
 #define ENOTDIR _PDCLIB_ENOTDIR
 #define EPROTOTYPE _PDCLIB_EPROTOTYPE
+
+#ifdef _PDCLIB_EIO
+#define EIO _PDCLIB_EIO
+#endif
 
 _PDCLIB_END_EXTERN_C
 #endif

@@ -283,7 +283,8 @@ typedef __builtin_va_list _PDCLIB_va_list;
 #define _PDCLIB_ENODATA 71
 #define _PDCLIB_ENOTDIR 72
 #define _PDCLIB_EPROTOTYPE 73
+#define _PDCLIB_EIO 74
 
-#define _PDCLIB_ERRNO_MAX 73
+#define _PDCLIB_ERRNO_MAX 74
 
 #endif
