@@ -56,7 +56,7 @@ int fclose( FILE * stream )
                 remove( stream->filename );
             }
             /* Free user buffer (SetVBuf allocated) */
-            if ( ! ( stream->status & _PDCLIB_FREEBUFFER ) )
+            if ( stream->status & _PDCLIB_FREEBUFFER )
             {
                 free( stream->buffer );
             }
