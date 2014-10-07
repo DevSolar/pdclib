@@ -287,7 +287,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         case 's':
         {
             char * c = va_arg( status->arg, char * );
-            while ( ( status->current < status->width ) && 
+            while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 if ( isspace( rc ) )
@@ -347,7 +347,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             } while ( *endspec != ']' );
             // read according to scanlist, equiv. to %s above
             char * c = va_arg( status->arg, char * );
-            while ( ( status->current < status->width ) && 
+            while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 if ( negative_scanlist )

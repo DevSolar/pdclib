@@ -53,9 +53,10 @@ union _PDCLIB_fd
    be that of the current printf() function, of which the members n, s, stream
    and arg will be preserved; i will be updated; and all others will be trashed
    by the function.
-   Returns a pointer to the first character not parsed as conversion specifier.
+   Returns the number of characters parsed as a conversion specifier (0 if none
+   parsed); returns -1 if the underlying I/O callback returns failure.
 */
-const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
+int _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
 
 /* The worker for all scanf() type of functions. The pointer spec should point
    to the introducing '%' of a conversion specifier. The status structure is to
@@ -71,7 +72,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 /* Parsing any fopen() style filemode string into a number of flags. */
 unsigned int _PDCLIB_filemode( const char * mode );
 
-/* Sanity checking and preparing of read buffer, should be called first thing 
+/* Sanity checking and preparing of read buffer, should be called first thing
    by any stdio read-data function.
    Returns 0 on success, EOF on error.
    On error, EOF / error flags and errno are set appropriately.
@@ -103,7 +104,7 @@ int _PDCLIB_fillbuffer( _PDCLIB_file_t * stream );
 /* Repositions within a file. Returns new offset on success,
    -1 / errno on error.
 */
-_PDCLIB_int_fast64_t _PDCLIB_seek( _PDCLIB_file_t * stream, 
+_PDCLIB_int_fast64_t _PDCLIB_seek( _PDCLIB_file_t * stream,
                                   _PDCLIB_int_fast64_t offset, int whence );
 
 /* File backend I/O operations
@@ -122,49 +123,49 @@ struct _PDCLIB_fileops
      *  On error, returns false and sets errno appropriately. *numBytesRead is
      *  ignored in this situation.
      */
-    _PDCLIB_bool (*read)( _PDCLIB_fd_t self, 
-                          void * buf, 
-                          _PDCLIB_size_t length, 
+    _PDCLIB_bool (*read)( _PDCLIB_fd_t self,
+                          void * buf,
+                          _PDCLIB_size_t length,
                           _PDCLIB_size_t * numBytesRead );
 
     /*! Write length bytes to the file from buf; returning the number of bytes
      *  actually written in *numBytesWritten
      *
      *  Returns true if bytes were written successfully. On error, returns false
-     *  and setss errno appropriately (as with read, *numBytesWritten is 
+     *  and setss errno appropriately (as with read, *numBytesWritten is
      *  ignored)
      */
-    _PDCLIB_bool (*write)( _PDCLIB_fd_t self, const void * buf, 
+    _PDCLIB_bool (*write)( _PDCLIB_fd_t self, const void * buf,
                    _PDCLIB_size_t length, _PDCLIB_size_t * numBytesWritten );
 
     /* Seek to the file offset specified by offset, from location whence, which
      * may be one of the standard constants SEEK_SET/SEEK_CUR/SEEK_END
      */
-    _PDCLIB_bool (*seek)( _PDCLIB_fd_t self, _PDCLIB_int_fast64_t offset, 
+    _PDCLIB_bool (*seek)( _PDCLIB_fd_t self, _PDCLIB_int_fast64_t offset,
                           int whence, _PDCLIB_int_fast64_t *newPos );
 
     void (*close)( _PDCLIB_fd_t self );
 
-    /*! Behaves as read does, except for wide characters. Both length and 
+    /*! Behaves as read does, except for wide characters. Both length and
      *  *numCharsRead represent counts of characters, not bytes.
      *
      *  This function is optional; if missing, PDCLib will buffer the character
      *  data as bytes and perform translation directly into the user's buffers.
-     *  It is useful if your backend can directly take wide characters (for 
+     *  It is useful if your backend can directly take wide characters (for
      *  example, the Windows console)
      */
-    _PDCLIB_bool (*wread)( _PDCLIB_fd_t self, _PDCLIB_wchar_t * buf, 
+    _PDCLIB_bool (*wread)( _PDCLIB_fd_t self, _PDCLIB_wchar_t * buf,
                      _PDCLIB_size_t length, _PDCLIB_size_t * numCharsRead );
 
     /* Behaves as write does, except for wide characters. As with wread, both
      * length and *numCharsWritten are character counts.
      *
-     * This function is also optional; if missing, PDCLib will buffer the 
-     * character data as bytes and do translation directly from the user's 
-     * buffers. You only need to implement this if your backend can directly 
+     * This function is also optional; if missing, PDCLib will buffer the
+     * character data as bytes and do translation directly from the user's
+     * buffers. You only need to implement this if your backend can directly
      * take wide characters (for example, the Windows console)
      */
-    _PDCLIB_bool (*wwrite)( _PDCLIB_fd_t self, const _PDCLIB_wchar_t * buf, 
+    _PDCLIB_bool (*wwrite)( _PDCLIB_fd_t self, const _PDCLIB_wchar_t * buf,
                      _PDCLIB_size_t length, _PDCLIB_size_t * numCharsWritten );
 };
 
@@ -195,7 +196,7 @@ static inline _PDCLIB_size_t _PDCLIB_getchars( char * out, _PDCLIB_size_t n,
     int c;
     while ( stream->ungetidx > 0 && i != n )
     {
-        c = (unsigned char) 
+        c = (unsigned char)
                 ( out[ i++ ] = stream->ungetbuf[ --(stream->ungetidx) ] );
         if( c == stopchar )
             return i;
@@ -203,9 +204,9 @@ static inline _PDCLIB_size_t _PDCLIB_getchars( char * out, _PDCLIB_size_t n,
 
     while ( i != n )
     {
-        while ( stream->bufidx != stream->bufend && i != n) 
+        while ( stream->bufidx != stream->bufend && i != n)
         {
-            c = (unsigned char) 
+            c = (unsigned char)
                 ( out[ i++ ] = stream->buffer[ stream->bufidx++ ] );
             if( c == stopchar )
                 return i;
@@ -223,10 +224,10 @@ static inline _PDCLIB_size_t _PDCLIB_getchars( char * out, _PDCLIB_size_t n,
     return i;
 }
 
-/* Unlocked functions - internal names 
+/* Unlocked functions - internal names
  *
  * We can't use the functions using their "normal" names internally because that
- * would cause namespace leakage. Therefore, we use them by prefixed internal 
+ * would cause namespace leakage. Therefore, we use them by prefixed internal
  * names
  */
 void _PDCLIB_flockfile(struct _PDCLIB_file *file) _PDCLIB_nothrow;
@@ -237,7 +238,7 @@ int _PDCLIB_getc_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
 int _PDCLIB_getchar_unlocked(void) _PDCLIB_nothrow;
 int _PDCLIB_putc_unlocked(int c, struct _PDCLIB_file *stream) _PDCLIB_nothrow;
 int _PDCLIB_putchar_unlocked(int c) _PDCLIB_nothrow;
-void _PDCLIB_clearerr_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow; 
+void _PDCLIB_clearerr_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
 int _PDCLIB_feof_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
 int _PDCLIB_ferror_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;
 int _PDCLIB_fflush_unlocked(struct _PDCLIB_file *stream) _PDCLIB_nothrow;

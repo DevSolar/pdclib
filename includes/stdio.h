@@ -36,7 +36,7 @@ typedef _PDCLIB_file_t FILE;
 #define L_tmpnam _PDCLIB_L_tmpnam
 #define TMP_MAX _PDCLIB_TMP_MAX
 
-/* See fseek(), third argument 
+/* See fseek(), third argument
  *
  * Some system headers (e.g. windows) also define the SEEK_* values. Check for
  * this and validate that they're the same value
@@ -74,7 +74,7 @@ extern FILE * stderr;
 int remove( const char * filename ) _PDCLIB_nothrow;
 
 /* Rename the given old file to the given new name.
-   Returns zero if successful, non-zero otherwise. 
+   Returns zero if successful, non-zero otherwise.
    This implementation does detect if the old filename corresponds to an open
    file, and fails the rename in this case.
    If there already is a file with the new filename, behaviour is defined by
@@ -171,13 +171,13 @@ int fflush( FILE * stream ) _PDCLIB_nothrow;
 
    Returns a pointer to the stream handle if successfull, NULL otherwise.
 */
-FILE * fopen( const char * _PDCLIB_restrict filename, 
+FILE * fopen( const char * _PDCLIB_restrict filename,
               const char * _PDCLIB_restrict mode ) _PDCLIB_nothrow;
 
 /* Creates a stream connected to the file descriptor \p fd with mode \p mode.
    Mode must match the mode with which the file descriptor was opened.
 */
-FILE * _PDCLIB_fvopen( _PDCLIB_fd_t fd, const _PDCLIB_fileops_t * ops, 
+FILE * _PDCLIB_fvopen( _PDCLIB_fd_t fd, const _PDCLIB_fileops_t * ops,
                        int mode, const char * filename ) _PDCLIB_nothrow;
 
 /* Close any file currently associated with the given stream. Open the file
@@ -691,7 +691,7 @@ int getchar( void ) _PDCLIB_nothrow;
    and NULL is returned. If a read error occurs, the contents of s are indeter-
    minate, and NULL is returned.
 
-   This function is dangerous and has been a great source of security 
+   This function is dangerous and has been a great source of security
    vulnerabilities. Do not use it. It was removed by C11.
 */
 char * gets( char * s ) _PDCLIB_DEPRECATED _PDCLIB_nothrow;
@@ -823,7 +823,7 @@ int ferror( FILE * stream ) _PDCLIB_nothrow;
 */
 void perror( const char * s ) _PDCLIB_nothrow;
 
-/* Unlocked I/O 
+/* Unlocked I/O
  *
  * Since threading was introduced in C11, FILE objects have had implicit locks
  * to prevent data races and inconsistent output.
@@ -835,7 +835,7 @@ void perror( const char * s ) _PDCLIB_nothrow;
  * the behaviour of the _unlocked variant is the same except that it will not
  * take the lock associated with the stream.
  *
- * flockfile, ftrylockfile and funlockfile can be used to manually manipulate 
+ * flockfile, ftrylockfile and funlockfile can be used to manually manipulate
  * the stream locks. The behaviour of the _unlocked functions if called when the
  * stream isn't locked by the calling thread is implementation defined.
  */
@@ -851,7 +851,7 @@ int putchar_unlocked(int c) _PDCLIB_nothrow;
 #endif
 
 #if _PDCLIB_BSD_SOURCE || _PDCLIB_SVID_SOURCE
-void clearerr_unlocked(FILE *stream) _PDCLIB_nothrow; 
+void clearerr_unlocked(FILE *stream) _PDCLIB_nothrow;
 int feof_unlocked(FILE *stream) _PDCLIB_nothrow;
 int ferror_unlocked(FILE *stream) _PDCLIB_nothrow;
 int fflush_unlocked(FILE *stream) _PDCLIB_nothrow;
@@ -866,7 +866,19 @@ char *fgets_unlocked(char *s, int n, FILE *stream) _PDCLIB_nothrow;
 int fputs_unlocked(const char *s, FILE *stream) _PDCLIB_nothrow;
 #endif
 
-#if defined(_PDCLIB_EXTENSIONS)
+#if _PDCLIB_EXTENSIONS
+int _vcbprintf(
+    void *p,
+    _PDCLIB_size_t ( *cb ) ( void *p, const char *buf, _PDCLIB_size_t size ),
+    const char *format,
+    _PDCLIB_va_list arg );
+
+int _cbprintf(
+    void *p,
+    size_t ( *cb ) ( void *p, const char *buf, size_t size ),
+    const char *format,
+    ... );
+
 int fgetpos_unlocked( FILE * _PDCLIB_restrict stream, fpos_t * _PDCLIB_restrict pos ) _PDCLIB_nothrow;
 int fsetpos_unlocked( FILE * stream, const fpos_t * pos ) _PDCLIB_nothrow;
 long int ftell_unlocked( FILE * stream ) _PDCLIB_nothrow;

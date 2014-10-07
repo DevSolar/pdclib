@@ -48,47 +48,85 @@
 #define E_TYPES (E_char | E_short | E_long | E_llong | E_intmax \
                 | E_size | E_ptrdiff | E_intptr)
 
-/* This macro delivers a given character to either a memory buffer or a stream,
-   depending on the contents of 'status' (struct _PDCLIB_status_t).
-   x - the character to be delivered
-   i - pointer to number of characters already delivered in this call
-   n - pointer to maximum number of characters to be delivered in this call
-   s - the buffer into which the character shall be delivered
-*/
-#define PUT( x ) \
-do { \
-    int character = x; \
-    if ( status->i < status->n ) { \
-        if ( status->stream != NULL ) \
-            _PDCLIB_putc_unlocked( character, status->stream ); \
-        else \
-            status->s[status->i] = character; \
-    } \
-    ++(status->i); \
-} while ( 0 )
+/* returns true if callback-based output succeeded; else false */
+static inline bool cbout(
+    struct _PDCLIB_status_t * status,
+    const void * buf,
+    size_t size )
+{
+    size_t rv = status->write( status->ctx, buf, size );
+    status->i       += rv;
+    status->current += rv;
+    return rv == size;
+}
 
-/* Maximum number of output characters = 
- *   number of bits in (u)intmax_t / number of bits per character in smallest 
+/* repeated output of a single character */
+static inline bool cbrept(
+    struct _PDCLIB_status_t * status,
+    char c,
+    size_t times )
+{
+    if ( sizeof(size_t) == 8 && CHAR_BIT == 8)
+    {
+        uint64_t spread = UINT64_C(0x0101010101010101) * c;
+        while ( times )
+        {
+            size_t n = times > 8 ? 8 : times;
+            if ( !cbout( status, &spread, n ) )
+                return false;
+            times -= n;
+        }
+        return true;
+    }
+    else if ( sizeof(size_t) == 4  && CHAR_BIT == 8)
+    {
+        uint32_t spread = UINT32_C(0x01010101) * c;
+        while ( times )
+        {
+            size_t n = times > 4 ? 4 : times;
+            if ( !cbout( status, &spread, n ) )
+                return false;
+            times -= n;
+        }
+        return true;
+    }
+    else
+    {
+        while ( times )
+        {
+            if ( !cbout( status, &c, 1) )
+                return false;
+            times--;
+        }
+        return true;
+    }
+}
+
+
+/* Maximum number of output characters =
+ *   number of bits in (u)intmax_t / number of bits per character in smallest
  *   base. Smallest base is octal, 3 bits/char.
  *
  * Additionally require 2 extra characters for prefixes
+ *
+ * Returns false if an I/O error occured.
  */
 static const size_t maxIntLen = sizeof(intmax_t) * CHAR_BIT / 3 + 1;
 
-static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
+static bool int2base( uintmax_t value, struct _PDCLIB_status_t * status )
 {
     char sign = 0;
-    if ( ! ( status->flags & E_unsigned ) ) 
+    if ( ! ( status->flags & E_unsigned ) )
     {
         intmax_t signval = (intmax_t) value;
         bool negative = signval < 0;
         value = signval < 0 ? -signval : signval;
 
-        if ( negative ) 
+        if ( negative )
         {
             sign = '-';
-        } 
-        else if ( status->flags & E_plus ) 
+        }
+        else if ( status->flags & E_plus )
         {
             sign = '+';
         }
@@ -98,7 +136,7 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
         }
     }
 
-    // The user could theoretically ask for a silly buffer length here. 
+    // The user could theoretically ask for a silly buffer length here.
     // Perhaps after a certain size we should malloc? Or do we refuse to protect
     // them from their own stupidity?
     size_t bufLen = (status->width > maxIntLen ? status->width : maxIntLen) + 2;
@@ -108,7 +146,7 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
 
     // Build up our output string - backwards
     {
-        const char * digits = (status->flags & E_lower) ? 
+        const char * digits = (status->flags & E_lower) ?
                                 _PDCLIB_digits : _PDCLIB_Xdigits;
         uintmax_t remaining = value;
         if(status->prec != 0 || remaining != 0) do {
@@ -125,9 +163,9 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
     // If a field width specified, and zero padding was requested, then pad to
     // the field width
     unsigned padding = 0;
-    if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )    
+    if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
     {
-        while( written < (int) status->width ) 
+        while( written < (int) status->width )
         {
             outend[-++written] = '0';
             padding++;
@@ -167,77 +205,88 @@ static void int2base( uintmax_t value, struct _PDCLIB_status_t * status )
     }
 
     // Write output
-    status->current = written;
-    while ( written )
-        PUT( outend[-written--] );
+    return cbout( status, outend - written, written );
 }
 
-static void printstr( const char * str, struct _PDCLIB_status_t * status )
+/* print a string. returns false if an I/O error occured */
+static bool printstr( const char * str, struct _PDCLIB_status_t * status )
 {
+    size_t len = status->prec >= 0 ? strnlen( str, status-> prec)
+                                   : strlen(str);
+
     if ( status->width == 0 || status->flags & E_minus )
     {
         // Simple case or left justification
-        while ( str[status->current] && 
-            ( status->prec < 0 || (long)status->current < status->prec ) )
+        if ( status->prec > 0 )
         {
-            PUT( str[status->current++] );
+            len = (unsigned) status->prec < len ? (unsigned)  status->prec : len;
         }
 
-        while( status->current < status->width ) 
-        {
-            PUT( ' ' );
-            status->current++;
+        if ( !cbout( status, str, len ) )
+            return false;
+
+        /* right padding */
+        if ( status->width > status->current ) {
+            len = status->width - status->current;
+
+            if ( !cbrept( status, ' ', len ) )
+                return false;
         }
     } else {
         // Right justification
-        size_t len = status->prec >= 0 ? strnlen( str, status->prec ) 
-                                       :  strlen( str );
-        int padding = status->width - len;
-        while((long)status->current < padding)
-        {
-            PUT( ' ' );
-            status->current++;
+
+        if ( status->width > len ) {
+            size_t padding = status->width - len;
+
+            if ( !cbrept( status, ' ', padding ))
+                return false;
         }
 
-        for( size_t i = 0; i != len; i++ )
-        {
-            PUT( str[i] );
-            status->current++;
-        }
+        if ( !cbout( status, str, len ) )
+            return false;
     }
+
+    return true;
 }
 
-static void printchar( char chr, struct _PDCLIB_status_t * status )
+static bool printchar( char chr, struct _PDCLIB_status_t * status )
 {
     if( ! ( status->flags & E_minus ) )
     {
         // Right justification
-        for( ; status->current + 1 < status->width; status->current++)
-        {
-            PUT( ' ' );
+        if ( status-> width ) {
+            size_t justification = status->width - status->current - 1;
+            if ( !cbrept( status, ' ', justification ))
+                return false;
         }
-        PUT( chr );
-        status->current++;
+
+        if ( !cbout( status, &chr, 1 ))
+            return false;
     } else {
         // Left justification
-        PUT( chr );
-        status->current++;
 
-        for( ; status->current < status->width; status->current++)
-        {
-            PUT( ' ' );
+        if ( !cbout( status, &chr, 1 ))
+            return false;
+
+        if ( status->width > status->current ) {
+            if ( !cbrept( status, ' ', status->width - status->current ) )
+                return false;
         }
     }
+
+    return true;
 }
 
-const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
+int _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
 {
     const char * orig_spec = spec;
     if ( *(++spec) == '%' )
     {
         /* %% -> print single '%' */
-        PUT( *spec );
-        return ++spec;
+        if ( !cbout(status, spec, 1) )
+            return -1;
+        ++spec;
+        return (spec - orig_spec);
     }
     /* Initializing status structure */
     status->flags = 0;
@@ -419,14 +468,18 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             break;
         case 'c':
             /* TODO: wide chars. */
-            printchar( va_arg( status->arg, int ), status );
-            return ++spec;
+            if ( !printchar( va_arg( status->arg, int ), status ) )
+                return -1;
+            ++spec;
+            return (spec - orig_spec);
         case 's':
             /* TODO: wide chars. */
             {
                 char * s = va_arg( status->arg, char * );
-                printstr( s, status );
-                return ++spec;
+                if ( !printstr( s, status ) )
+                    return -1;
+                ++spec;
+                return (spec - orig_spec);
             }
         case 'p':
             status->base = 16;
@@ -436,11 +489,12 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
            {
                int * val = va_arg( status->arg, int * );
                *val = status->i;
-               return ++spec;
+               ++spec;
+               return (spec - orig_spec);
            }
         default:
             /* No conversion specifier. Bad conversion. */
-            return orig_spec;
+            return 0;
     }
     /* Do the actual output based on our findings */
     if ( status->base != 0 )
@@ -479,55 +533,55 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 case E_intmax:
                     value = va_arg( status->arg, uintmax_t );
             }
-            int2base( value, status );
+            if ( !int2base( value, status ) )
+                return -1;
         }
         else
         {
+            intmax_t value;
             switch ( status->flags & E_TYPES )
             {
                 case E_char:
-                    int2base( (intmax_t)(char)va_arg( status->arg, int ), status );
+                    value = (intmax_t)(char)va_arg( status->arg, int );
                     break;
                 case E_short:
-                    int2base( (intmax_t)(short)va_arg( status->arg, int ), status );
+                    value = (intmax_t)(short)va_arg( status->arg, int );
                     break;
                 case 0:
-                    int2base( (intmax_t)va_arg( status->arg, int ), status );
+                    value = (intmax_t)va_arg( status->arg, int );
                     break;
                 case E_long:
-                    int2base( (intmax_t)va_arg( status->arg, long ), status );
+                    value = (intmax_t)va_arg( status->arg, long );
                     break;
                 case E_llong:
-                    int2base( (intmax_t)va_arg( status->arg, long long ), status );
+                    value = (intmax_t)va_arg( status->arg, long long );
                     break;
                 case E_size:
-                    int2base( (intmax_t)va_arg( status->arg, size_t ), status );
+                    value = (intmax_t)va_arg( status->arg, size_t );
                     break;
                 case E_intptr:
-                    int2base( (intmax_t)va_arg( status->arg, intptr_t ), status );
+                    value = (intmax_t)va_arg( status->arg, intptr_t );
                     break;
                 case E_ptrdiff:
-                    int2base( (intmax_t)va_arg( status->arg, ptrdiff_t ), status );
+                    value = (intmax_t)va_arg( status->arg, ptrdiff_t );
                     break;
                 case E_intmax:
-                    int2base( va_arg( status->arg, intmax_t ), status );
+                    value = va_arg( status->arg, intmax_t );
                     break;
             }
+
+            if (!int2base( value, status ) )
+                return -1;
         }
-        if ( status->flags & E_minus )
+
+        if ( status->flags & E_minus && status->current < status->width )
         {
-            while ( status->current < status->width )
-            {
-                PUT( ' ' );
-                ++(status->current);
-            }
-        }
-        if ( status->i >= status->n && status->n > 0 )
-        {
-            status->s[status->n - 1] = '\0';
+            if (!cbrept( status, ' ', status->width - status->current ))
+                return -1;
         }
     }
-    return ++spec;
+    ++spec;
+    return spec - orig_spec;
 }
 
 #endif
@@ -539,22 +593,30 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 #include <_PDCLIB_test.h>
 
 #ifndef REGTEST
+static size_t testcb( void *p, const char *buf, size_t size )
+{
+    char **destbuf = p;
+    memcpy(*destbuf, buf, size);
+    *destbuf += size;
+    return size;
+}
+
 static int testprintf( char * buffer, const char * format, ... )
 {
-    /* Members: base, flags, n, i, current, s, width, prec, stream, arg      */
+    /* Members: base, flags, n, i, current, width, prec, ctx, cb, arg      */
     struct _PDCLIB_status_t status;
     status.base = 0;
     status.flags = 0;
     status.n = 100;
     status.i = 0;
     status.current = 0;
-    status.s = buffer;
     status.width = 0;
     status.prec = 0;
-    status.stream = NULL;
+    status.ctx = &buffer;
+    status.write = testcb;
     va_start( status.arg, format );
     memset( buffer, '\0', 100 );
-    if ( *(_PDCLIB_print( format, &status )) != '\0' )
+    if ( _PDCLIB_print( format, &status ) != strlen( format ) )
     {
         printf( "_PDCLIB_print() did not return end-of-specifier on '%s'.\n", format );
         ++TEST_RESULTS;

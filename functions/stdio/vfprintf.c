@@ -14,44 +14,20 @@
 #ifndef REGTEST
 #include <_PDCLIB_io.h>
 
-int _PDCLIB_vfprintf_unlocked( FILE * _PDCLIB_restrict stream, 
-                       const char * _PDCLIB_restrict format, 
-                       va_list arg )
+static size_t filecb(void *p, const char *buf, size_t size)
 {
-    /* TODO: This function should interpret format as multibyte characters.  */
-    struct _PDCLIB_status_t status;
-    status.base = 0;
-    status.flags = 0;
-    status.n = UINT_MAX;
-    status.i = 0;
-    status.current = 0;
-    status.s = NULL;
-    status.width = 0;
-    status.prec = 0;
-    status.stream = stream;
-    va_copy( status.arg, arg );
-
-    while ( *format != '\0' )
-    {
-        const char * rc;
-        if ( ( *format != '%' ) || ( ( rc = _PDCLIB_print( format, &status ) ) == format ) )
-        {
-            /* No conversion specifier, print verbatim */
-            _PDCLIB_putc_unlocked( *(format++), stream );
-            status.i++;
-        }
-        else
-        {
-            /* Continue parsing after conversion specifier */
-            format = rc;
-        }
-    }
-    va_end( status.arg );
-    return status.i;
+    return _PDCLIB_fwrite_unlocked( buf, 1, size, (FILE*) p );
 }
 
-int vfprintf( FILE * _PDCLIB_restrict stream, 
-              const char * _PDCLIB_restrict format, 
+int _PDCLIB_vfprintf_unlocked( FILE * _PDCLIB_restrict stream,
+                       const char * _PDCLIB_restrict format,
+                       va_list arg )
+{
+    return _vcbprintf(stream, filecb, format, arg);
+}
+
+int vfprintf( FILE * _PDCLIB_restrict stream,
+              const char * _PDCLIB_restrict format,
               va_list arg )
 {
     _PDCLIB_flockfile( stream );

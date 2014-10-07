@@ -338,13 +338,13 @@ typedef struct _PDCLIB_mbstate {
      */
     _PDCLIB_uint16_t     _Surrogate;
 
-    /* In cases where the underlying codec is capable of regurgitating a 
+    /* In cases where the underlying codec is capable of regurgitating a
      * character without consuming any extra input (e.g. a surrogate pair in a
-     * UCS-4 to UTF-16 conversion) then these fields are used to track that 
+     * UCS-4 to UTF-16 conversion) then these fields are used to track that
      * state. In particular, they are used to buffer/fake the input for mbrtowc
      * and similar functions.
      *
-     * See _PDCLIB_encoding.h for values of _PendState and the resultant value 
+     * See _PDCLIB_encoding.h for values of _PendState and the resultant value
      * in _PendChar.
      */
     unsigned char _PendState;
@@ -375,17 +375,26 @@ typedef struct _PDCLIB_file     _PDCLIB_file_t; // Rename to _PDCLIB_FILE?
 /* Status structure required by _PDCLIB_print(). */
 struct _PDCLIB_status_t
 {
+    /* XXX This structure is horrible now. scanf needs its own */
+
     int              base;   /* base to which the value shall be converted   */
     _PDCLIB_int_fast32_t flags; /* flags and length modifiers                */
-    unsigned         n;      /* print: maximum characters to be written      */
+    unsigned         n;      /* print: maximum characters to be written (snprintf) */
                              /* scan:  number matched conversion specifiers  */
     unsigned         i;      /* number of characters read/written            */
     unsigned         current;/* chars read/written in the CURRENT conversion */
-    char *           s;      /* *sprintf(): target buffer                    */
-                             /* *sscanf():  source string                    */
     unsigned         width;  /* specified field width                        */
     int              prec;   /* specified field precision                    */
-    _PDCLIB_file_t * stream; /* *fprintf() / *fscanf() stream         */
+
+    union {
+        void *           ctx;    /* context for callback */
+        const char *     s;      /* input string for scanf */
+    };
+
+    union {
+        _PDCLIB_size_t ( *write ) ( void *p, const char *buf, _PDCLIB_size_t size );
+        _PDCLIB_file_t *stream;  /* for scanf */
+    };
     _PDCLIB_va_list  arg;    /* argument stack                               */
 };
 
