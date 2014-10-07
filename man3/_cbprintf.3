@@ -1,0 +1,113 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt _CBPRINTF 3
+.Os
+.\"
+.Sh NAME
+.Nm _cbprintf ,
+.Nm _vcbprintf ,
+.Nm _cbwprintf ,
+.Nm _vcbwprintf
+.Nd formatted output conversion by callback
+.\"
+.Sh SYNOPSIS
+.In stdio.h
+.Fn "int _cbprintf"   "void *p" "size_t (*cb)(void *p, const char    *buf, size_t size)" "const char *fmt" "..."
+.Fn "int _vcbprintf"  "void *p" "size_t (*cb)(void *p, const char    *buf, size_t size)" "const char *fmt" "va_list ap"
+.Pp
+.In wchar.h
+.Fn "int _cbwprintf"  "void *p" "size_t (*cb)(void *p, const wchar_t *buf, size_t size)" "const wchar_t *fmt" "..."
+.Fn "int _vcbwprintf" "void *p" "size_t (*cb)(void *p, const wchar_t *buf, size_t size)" "const wchar_t *fmt" "va_list ap"
+.\"
+.Sh DESCRIPTION
+These functions permit the
+.Fn printf
+string formatting functionality to be reused outside the C standard library,
+without the limitation of using the
+.Fn sprintf
+function for this process, that the whole formatted string must exist in memory
+at once.
+.Pp
+.\"
+These functions shall exhibit the same behaviour and conversion specifiers as
+the
+.Xr printf 3
+function, except they shall perform their output by calling the
+.Fa cb
+callback, passing the characters to be output as the
+.Fa buf
+parameter, and the count of such characters as
+.Fa size .
+.Pp
+.\"
+The implementation is permitted to invoke
+.Fa cb
+with a non-zero number of characters as many times as it deems necessary
+necessary. That is, the implementation may decide to call it only once it has
+finished conversion of the entire string, or it may call it multiple times as it
+incrementally performs a conversion (it would be legal for an implementation to
+invoke the callback for every character produced).
+.Pp
+.\"
+During all invocations, the callback will be passed as
+.Fa p
+the same value as was passed to the function.
+.Pp
+.\"
+The callback shall return
+.Fa size
+on success, or any other value on failure
+.\"
+.Sh RETURN VALUES
+The functions shall return the number of characters produced by the conversion
+on success, or a negative number on failure. If the number of characters
+converted exceeds
+.Dv INT_MAX ,
+then
+.Dv INT_MAX
+shall be returned.
+.\"
+.Sh EXAMPLES
+Using
+.Fn _vcbprintf
+to reimplement printf
+.Bd -literal -offset indent
+static size_t do_output(void *p, const char *buf, size_t size)
+{
+    return fwrite(buf, 1, size, (FILE *) p);
+}
+
+int myprintf(const char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+    return _vcbprintf(stdout, do_output, ap);
+    va_end(ap);
+}
+.Ed
+.\"
+.Sh ERRORS
+This function shall not affect errno, however the callbacks it invokes may
+.\"
+.Sh SEE ALSO
+.Xr printf 3
+.\"
+.Sh RATIONALE
+Sensible implementations of the ISO C standard library implement an analogous
+system internally, permitting them to share their implementation of formatting
+between
+.Xr printf 3
+and
+.Xr sprintf 3 .
+Therefore, implementing a callback based variant is not of substantial
+complexity.
+.Pp
+These functions permit the reuse of this functionality by applications and
+libraries (for example, a logging library) without the need to reimplement it,
+and without the aforementioned memory limitation imposed by
+.Xr sprintf 3 .
+.\"
+.Sh HISTORY
+This nonstandard extension was first defined by PDCLib.
