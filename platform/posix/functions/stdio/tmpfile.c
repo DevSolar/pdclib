@@ -13,13 +13,15 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <_PDCLIB_glue.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <unistd.h>
+#ifdef __linux__
+/* get O_CLOEXEC without sys/types.h being awful */
+#include <asm/fcntl.h>
+int open(const char *fname, int flags, ...);
+#else
+#include <fcntl.h>
+#endif
 
 extern const _PDCLIB_fileops_t _PDCLIB_fileops;
 
@@ -52,7 +54,7 @@ FILE* _PDCLIB_nothrow tmpfile( void )
            (file might exist but not readable). Replace with something more
            appropriate.
         */
-        fd = open( filename, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR );
+        fd = open( filename, O_CREAT | O_EXCL | O_RDWR, 0600 );
         if ( fd != -1 )
         {
             break;
@@ -61,9 +63,9 @@ FILE* _PDCLIB_nothrow tmpfile( void )
     close( urandom );
 
     FILE* rc = _PDCLIB_fvopen(((_PDCLIB_fd_t){ .sval = fd}), &_PDCLIB_fileops,
-                                _PDCLIB_FWRITE | _PDCLIB_FRW | 
+                                _PDCLIB_FWRITE | _PDCLIB_FRW |
                                 _PDCLIB_DELONCLOSE, filename);
-    if( rc == NULL ) 
+    if( rc == NULL )
     {
         close( fd );
         return NULL;

@@ -121,9 +121,15 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_fast32 int
 #define _PDCLIB_FAST32_CONV
 
+#ifdef __LP64__
+#define _PDCLIB_FAST64 LONG
+#define _PDCLIB_fast64 long
+#define _PDCLIB_FAST64_CONV l
+#else
 #define _PDCLIB_FAST64 LLONG
 #define _PDCLIB_fast64 long long
 #define _PDCLIB_FAST64_CONV ll
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* What follows are a couple of "special" typedefs and their limits. Again,   */
@@ -173,17 +179,17 @@ struct _PDCLIB_imaxdiv_t
     _PDCLIB_intmax rem;
 };
 
-/* <time.h>: time_t 
- * The C standard doesn't define what representation of time is stored in 
+/* <time.h>: time_t
+ * The C standard doesn't define what representation of time is stored in
  * time_t when returned by time() , but POSIX defines it to be seconds since the
- * UNIX epoch and most appplications expect that. 
+ * UNIX epoch and most appplications expect that.
  *
- * time_t is also used as the tv_sec member of struct timespec, which *is* 
+ * time_t is also used as the tv_sec member of struct timespec, which *is*
  * defined as a linear count of seconds.
  *
  * time_t is defined as a "real type", so may be a floating point type, but with
  * the presence of the nanosecond accurate struct timespec, and with the lack of
- * any functions for manipulating more accurate values of time_t, this is 
+ * any functions for manipulating more accurate values of time_t, this is
  * probably not useful.
  */
 #define _PDCLIB_time  long
@@ -191,12 +197,12 @@ struct _PDCLIB_imaxdiv_t
 /* <time.h>: clock_t
  *
  * A count of "clock ticks", where the length of a clock tick is unspecified by
- * the standard. The implementation is required to provide a macro, 
+ * the standard. The implementation is required to provide a macro,
  * CLOCKS_PER_SEC, which is the number of "clock ticks" which corresponds to one
  * second.
  *
  * clock_t may be any real type (i.e. integral or floating), and its type on
- * various systems differs. 
+ * various systems differs.
  *
  * On XSI systems, CLOCKS_PER_SEC must be defined to 1000000
  */
@@ -207,8 +213,8 @@ struct _PDCLIB_imaxdiv_t
  *
  * The TIME_UTC parameter is passed to the timespec_get function in order to get
  * the system time in UTC since an implementation defined epoch (not necessarily
- * the same as that used for time_t). That said, on POSIX the obvious 
- * implementation of timespec_get for TIME_UTC is to wrap 
+ * the same as that used for time_t). That said, on POSIX the obvious
+ * implementation of timespec_get for TIME_UTC is to wrap
  * clock_gettime(CLOCK_REALTIME, ...), which is defined as time in UTC since the
  * same epoch.
  *

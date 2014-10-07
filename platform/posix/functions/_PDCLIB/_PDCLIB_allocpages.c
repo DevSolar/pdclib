@@ -9,10 +9,17 @@
 */
 
 #ifndef REGTEST
+#ifdef __linux__
+#define _GNU_SOURCE
+#endif
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/mman.h>
 #include <_PDCLIB_glue.h>
+
+#ifndef MAP_ANON
+#define MAP_ANON MAP_ANOYNMOUS
+#endif
 
 void * _PDCLIB_allocpages( size_t n )
 {

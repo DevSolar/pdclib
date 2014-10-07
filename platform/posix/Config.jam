@@ -7,8 +7,13 @@ rule PDCLibTargetHeaders {
 if $(OS) = "MACOSX" {
     # Need to link libSystem
 } else {
-    PDCLIB_TEST_LINKFLAGS += -nostdlib ;
-    PDCLIB_TEST_LINKLIBS += -lgcc ;
+    #PDCLIB_TEST_LINKFLAGS += -nostdlib ;
+    PDCLIB_TEST_LINKLIBS += -lgcc -lpthread ;
 }
 
-PDCLIB_OPTIONS = pthreads notime dlmalloc basecodecs c_locale ;
+PDCLIB_OPTIONS =
+    pthreads
+    notime
+    dlmalloc
+    basecodecs
+    c_locale ;

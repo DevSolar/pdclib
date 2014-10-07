@@ -5,13 +5,15 @@
 */
 
 #ifndef REGTEST
+#define _FILE_OFFSET_BITS 64
 #include <stdio.h>
 #include <stdint.h>
 #include <_PDCLIB_glue.h>
 #include <errno.h>
 #include <unistd.h>
+typedef int64_t off_t;
 
-static bool readf( _PDCLIB_fd_t fd, void * buf, size_t length, 
+static bool readf( _PDCLIB_fd_t fd, void * buf, size_t length,
                    size_t * numBytesRead )
 {
     ssize_t res = read(fd.sval, buf, length);
@@ -23,7 +25,7 @@ static bool readf( _PDCLIB_fd_t fd, void * buf, size_t length,
     }
 }
 
-static bool writef( _PDCLIB_fd_t fd, const void * buf, size_t length, 
+static bool writef( _PDCLIB_fd_t fd, const void * buf, size_t length,
                    size_t * numBytesWritten )
 {
     ssize_t res = write(fd.sval, buf, length);

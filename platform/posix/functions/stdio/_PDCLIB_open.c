@@ -1,4 +1,4 @@
-/* _PDCLIB_open(_PDCLIB_fd_t*, const _PDCLIB_fileops_t**, 
+/* _PDCLIB_open(_PDCLIB_fd_t*, const _PDCLIB_fileops_t**,
                 char const*, unsigned int)
 
    This file is part of the Public Domain C Library (PDCLib).
@@ -9,9 +9,10 @@
 #include <_PDCLIB_io.h>
 #include <fcntl.h>
 
+
 extern const _PDCLIB_fileops_t _PDCLIB_fileops;
 
-bool _PDCLIB_open( 
+bool _PDCLIB_open(
    _PDCLIB_fd_t* fd, const _PDCLIB_fileops_t** ops,
    char const * filename, unsigned int mode )
 {
@@ -40,8 +41,7 @@ bool _PDCLIB_open(
             return -1;
     }
 
-    fd->sval = open(filename, osmode, 
-        S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+    fd->sval = open(filename, osmode, 0664);
     if(fd->sval == -1) {
         return false;
     }
