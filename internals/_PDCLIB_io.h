@@ -14,7 +14,7 @@
 */
 #define _PDCLIB_FREAD     8u
 #define _PDCLIB_FWRITE   16u
-#define _PDCLIB_FAPPEND  32u 
+#define _PDCLIB_FAPPEND  32u
 #define _PDCLIB_FRW      64u
 #define _PDCLIB_FBIN    128u
 
@@ -41,7 +41,7 @@ union _PDCLIB_fd
 #endif
     void *              pointer;
     _PDCLIB_uintptr_t   uval;
-    _PDCLIB_intptr_t    sval;     
+    _PDCLIB_intptr_t    sval;
 };
 
 /******************************************************************************/
@@ -206,20 +206,42 @@ static inline _PDCLIB_size_t _PDCLIB_getchars( char * out, _PDCLIB_size_t n,
     {
         while ( stream->bufidx != stream->bufend && i != n)
         {
-            c = (unsigned char)
-                ( out[ i++ ] = stream->buffer[ stream->bufidx++ ] );
+            c = (unsigned char) stream->buffer[ stream->bufidx++ ];
+#ifdef _PDCLIB_NEED_EOL_TRANSLATION
+            if ( !( stream->status & _PDCLIB_FBIN ) && c == '\r' )
+            {
+                if ( stream->bufidx == stream->bufend )
+                    break;
+
+                if ( stream->buffer[ stream->bufidx ] == '\n' )
+                {
+                    c = '\n';
+                    stream->bufidx++;
+                }
+            }
+#endif
+            out[ i++ ] = c;
+
             if( c == stopchar )
                 return i;
         }
 
-        if ( stream->bufidx == stream->bufend )
+        if ( i != n )
         {
             if( _PDCLIB_fillbuffer( stream ) == -1 )
             {
-                return i;
+                break;
             }
         }
     }
+
+#ifdef _PDCLIB_NEED_EOL_TRANSLATION
+    if ( i != n && stream->bufidx != stream->bufend )
+    {
+        // we must have EOF'd immediately after a \r
+        out[ i++ ] = stream->buffer[ stream->bufidx++ ];
+    }
+#endif
 
     return i;
 }

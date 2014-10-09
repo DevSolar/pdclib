@@ -184,6 +184,9 @@ typedef __builtin_va_list _PDCLIB_va_list;
 /* The default size for file buffers. Must be at least 256. */
 #define _PDCLIB_BUFSIZ 1024
 
+/* We need \n -> \r\n translation for text files */
+#define _PDCLIB_NEED_EOL_TRANSLATION 1
+
 /* Minimum number of files we can open simultaneously. C says this must be >= 8,
  * so we say that. May actually be a lie in some cases...
  */
