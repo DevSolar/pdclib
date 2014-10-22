@@ -196,5 +196,17 @@ char * strdup( const char* src ) _PDCLIB_nothrow;
 char * strndup( const char* src, size_t n ) _PDCLIB_nothrow;
 #endif
 
+#if _PDCLIB_BSD_SOURCE
+size_t strlcpy(
+   char *_PDCLIB_restrict _Dst,
+   const char *_PDCLIB_restrict _Src,
+   size_t _DstSize) _PDCLIB_nothrow;
+
+size_t strlcat(
+   char *_PDCLIB_restrict _Dst,
+   const char *_PDCLIB_restrict _Src,
+   size_t _DstSize) _PDCLIB_nothrow;
+#endif
+
 _PDCLIB_END_EXTERN_C
 #endif
