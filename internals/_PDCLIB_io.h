@@ -179,6 +179,9 @@ struct _PDCLIB_file
     _PDCLIB_size_t            bufsize;  /* Size of buffer */
     _PDCLIB_size_t            bufidx;   /* Index of current position in buffer */
     _PDCLIB_size_t            bufend;   /* Index of last pre-read character in buffer */
+#ifdef _PDCLIB_NEED_EOL_TRANSLATION
+    _PDCLIB_size_t            bufnlexp; /* Current position of buffer newline expansion */
+#endif
     _PDCLIB_size_t            ungetidx; /* Number of ungetc()'ed characters */
     unsigned char *           ungetbuf; /* ungetc() buffer */
     unsigned int              status;   /* Status flags; see above */

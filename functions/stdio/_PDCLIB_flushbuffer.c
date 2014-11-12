@@ -11,15 +11,23 @@
 #include <_PDCLIB_glue.h>
 #include <_PDCLIB_io.h>
 
+
 static int flushsubbuffer( FILE * stream, size_t length )
 {
+    size_t justWrote;
     size_t written = 0;
     int rv = 0;
 
+#if 0
+    // Very useful for debugging buffering issues
+    char l = '<', r = '>';
+    stream->ops->write( stream->handle, &l,  1, &justWrote );
+#endif
+
     while( written != length )
     {
-        size_t justWrote;
         size_t toWrite = length - written;
+
         bool res = stream->ops->write( stream->handle, stream->buffer + written,
                               toWrite, &justWrote);
         written += justWrote;
@@ -27,55 +35,71 @@ static int flushsubbuffer( FILE * stream, size_t length )
 
         if (!res)
         {
-            stream->status |=_PDCLIB_ERRORFLAG;
+            stream->status |= _PDCLIB_ERRORFLAG;
             rv = EOF;
             break;
         }
     }
 
-    stream->bufidx -= written;
+#if 0
+    stream->ops->write( stream->handle, &r,  1, &justWrote );
+#endif
+
+    stream->bufidx   -= written;
+#ifdef _PDCLIB_NEED_EOL_TRANSLATION
+    stream->bufnlexp -= written;
+#endif
     memmove( stream->buffer, stream->buffer + written, stream->bufidx );
 
     return rv;
 }
 
-#if defined(_PDCLIB_NEED_EOL_TRANSLATION)
-#undef  _PDCLIB_NEED_EOL_TRANSLATION
-#define _PDCLIB_NEED_EOL_TRANSLATION 1
-#else
-#define _PDCLIB_NEED_EOL_TRANSLATION 0
-#endif
-
 int _PDCLIB_flushbuffer( FILE * stream )
 {
+#ifdef _PDCLIB_NEED_EOL_TRANSLATION
     // if a text stream, and this platform needs EOL translation, well...
-    if ( ! ( stream->status & _PDCLIB_FBIN ) && _PDCLIB_NEED_EOL_TRANSLATION )
+    if ( ! ( stream->status & _PDCLIB_FBIN ) )
     {
-        size_t pos;
-        for ( pos = 0; pos < stream->bufidx; pos++ )
+        // Special case: buffer is full and we start with a \n
+        if ( stream->bufnlexp == 0
+            && stream->bufidx == stream->bufend
+            && stream->buffer[0] == '\n' )
         {
-            if (stream->buffer[pos] == '\n' ) {
+            char cr = '\r';
+            size_t written = 0;
+            bool res = stream->ops->write( stream->handle, &cr, 1, &written );
+
+            if (!res) {
+                stream->status |= _PDCLIB_ERRORFLAG;
+                return EOF;
+            }
+
+        }
+
+        for ( ; stream->bufnlexp < stream->bufidx; stream->bufnlexp++ )
+        {
+            if (stream->buffer[stream->bufnlexp] == '\n' ) {
                 if ( stream->bufidx == stream->bufend ) {
                     // buffer is full. Need to print out everything up till now
-                    if( flushsubbuffer( stream, pos ) )
+                    if( flushsubbuffer( stream, stream->bufnlexp - 1 ) )
                     {
                         return EOF;
                     }
-
-                    pos = 0;
                 }
 
                 // we have spare space in buffer. Shift everything 1char and
                 // insert \r
-                memmove( &stream->buffer[pos+1], &stream->buffer[pos], stream->bufidx - pos );
-                stream->buffer[pos] = '\r';
+                memmove( &stream->buffer[stream->bufnlexp + 1],
+                         &stream->buffer[stream->bufnlexp],
+                         stream->bufidx - stream->bufnlexp );
+                stream->buffer[stream->bufnlexp] = '\r';
 
-                pos += 2;
+                stream->bufnlexp++;
                 stream->bufidx++;
             }
         }
     }
-
+#endif
     return flushsubbuffer( stream, stream->bufidx );
 }
 

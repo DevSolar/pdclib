@@ -17,8 +17,8 @@
 
 extern FILE * _PDCLIB_filelist;
 
-FILE * _PDCLIB_fvopen( 
-    _PDCLIB_fd_t                                    fd, 
+FILE * _PDCLIB_fvopen(
+    _PDCLIB_fd_t                                    fd,
     const _PDCLIB_fileops_t    *_PDCLIB_restrict    ops,
     int                                             mode,
     const char                  *_PDCLIB_restrict   filename
@@ -62,6 +62,9 @@ FILE * _PDCLIB_fvopen(
     /* Initializing the rest of the structure */
     rc->bufsize = BUFSIZ;
     rc->bufidx = 0;
+#ifdef _PDCLIB_NEED_EOL_TRANSLATION
+    rc->bufnlexp = 0;
+#endif
     rc->ungetidx = 0;
     /* Setting buffer to _IOLBF because "when opened, a stream is fully
        buffered if and only if it can be determined not to refer to an
