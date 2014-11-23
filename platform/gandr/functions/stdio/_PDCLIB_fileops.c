@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <gd_bal.h>
 
-static bool readf( _PDCLIB_fd_t fd, void * buf, size_t length, 
+static bool readf( _PDCLIB_fd_t fd, void * buf, size_t length,
                    size_t * numBytesRead )
 {
     int rv = gd_read(fd.pointer, buf, length, numBytesRead );
@@ -19,7 +19,7 @@ static bool readf( _PDCLIB_fd_t fd, void * buf, size_t length,
     return rv >= 0;
 }
 
-static bool writef( _PDCLIB_fd_t fd, const void * buf, size_t length, 
+static bool writef( _PDCLIB_fd_t fd, const void * buf, size_t length,
                    size_t * numBytesWritten )
 {
     int rv = gd_write(fd.pointer, buf, length, numBytesWritten );
@@ -30,7 +30,7 @@ static bool writef( _PDCLIB_fd_t fd, const void * buf, size_t length,
 static bool seekf( _PDCLIB_fd_t fd, int_fast64_t offset, int whence,
     int_fast64_t* newPos )
 {
-    int rv = gd_seek( fd.pointer, offset, whence, &newPos );
+    int rv = gd_seek( fd.pointer, offset, whence, newPos );
 
     return rv >= 0;
 }
