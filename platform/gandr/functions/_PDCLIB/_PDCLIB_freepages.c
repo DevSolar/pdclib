@@ -13,10 +13,15 @@
 #include <stddef.h>
 #include <_PDCLIB_glue.h>
 #include <errno.h>
+#include <gd_bal.h>
 
 void _PDCLIB_freepages( void * p, size_t n )
 {
-    return;
+    int rv = 0;
+    if((rv = gd_free_pages( p, n ))) {
+        perror("_PDCLIB_freepages");
+        abort();
+    }
 }
 
 #ifdef TEST

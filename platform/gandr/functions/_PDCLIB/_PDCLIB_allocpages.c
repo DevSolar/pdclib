@@ -6,18 +6,23 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-/* This is a stub implementation of _PDCLIB_allocpages
-*/
-
 #include <stdint.h>
 #include <stddef.h>
 #include <_PDCLIB_glue.h>
 #include <errno.h>
+#include <gd_bal.h>
 
 void * _PDCLIB_allocpages( size_t n )
 {
-    errno = ENOTSUP;
-    return NULL;
+    void *p = NULL;
+    int rv = gd_alloc_pages( gd_loader_data, &p, n );
+
+    if (rv) {
+        errno = rv;
+        return NULL;
+    } else {
+        return p;
+    }
 }
 
 #ifdef TEST
