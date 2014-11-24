@@ -31,7 +31,7 @@
 /* compiler manuals.                                                          */
 #define _PDCLIB_SHRT_BYTES  2
 #define _PDCLIB_INT_BYTES 4
-#if defined(__lp64__)
+#if defined(__LP64__)
   #define _PDCLIB_LONG_BYTES 8
 #else
   #define _PDCLIB_LONG_BYTES 4
