@@ -18,7 +18,13 @@ static void init_malloc_global_mutex(void)
 	mtx_init(&malloc_global_mutex, mtx_plain);
 }
 
-#define MMAP(s)   _PDCLIB_allocpages((s)/_PDCLIB_MALLOC_PAGESIZE)
+static inline void *MMAP( size_t nbytes )
+{
+    void *p = _PDCLIB_allocpages( nbytes / _PDCLIB_MALLOC_PAGESIZE );
+    return p ? p : (void*) (~(size_t)0);
+}
+
+#define MMAP(s) MMAP(s)
 #define DIRECT_MMAP(s) MMAP(s)
 #define MUNMAP(a, s) ((_PDCLIB_freepages((a), (s)/_PDCLIB_MALLOC_PAGESIZE)), 0)
 #define MREMAP(a, osz, nsz, mv) _PDCLIB_reallocpages((a), (osz)/_PDCLIB_MALLOC_PAGESIZE, (nsz)/_PDCLIB_MALLOC_PAGESIZE, (mv))
@@ -67,7 +73,7 @@ static void init_malloc_global_mutex(void)
 #define MAX_RELEASE_CHECK_RATE _PDCLIB_MALLOC_RELEASE_CHECK_RATE
 
 /* C standard says this is so */
-#define REALLOC_ZERO_BYTES_FREES 1 
+#define REALLOC_ZERO_BYTES_FREES 1
 #define LACKS_UNISTD_H
 #define LACKS_FCNTL_H
 #define LACKS_SYS_PARAM_H
