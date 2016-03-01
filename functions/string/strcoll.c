@@ -14,7 +14,7 @@
 
 int strcoll( const char * s1, const char * s2 )
 {
-    _PDCLIB_ctype_t * ctype = _PDCLIB_threadlocale()->_CType;
+    const _PDCLIB_ctype_t * ctype = _PDCLIB_threadlocale()->_CType;
 
     while ( ( *s1 ) && ( ctype[(unsigned char)*s1].collation == ctype[(unsigned char)*s2].collation ) )
     {

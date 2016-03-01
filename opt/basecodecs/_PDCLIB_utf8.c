@@ -254,11 +254,11 @@ int main( void )
 
     char32_t c32out[8];
 
-    char32_t *c32ptr = &c32out[0];
-    size_t    c32rem = 8;
-    char     *chrptr = (char*) &input[0];
-    size_t    chrrem = strlen(input);
-    mbstate_t mbs = { 0 };
+    char32_t   *c32ptr = &c32out[0];
+    size_t      c32rem = 8;
+    const char *chrptr = (char*) &input[0];
+    size_t      chrrem = strlen(input);
+    mbstate_t   mbs = { 0 };
 
     TESTCASE(utf8toc32(&c32ptr, &c32rem, &chrptr, &chrrem, &mbs));
     TESTCASE(c32rem == 0);

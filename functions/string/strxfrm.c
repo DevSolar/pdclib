@@ -14,7 +14,7 @@
 
 size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, size_t n )
 {
-    _PDCLIB_ctype_t *ctype = _PDCLIB_threadlocale()->_CType;
+    const _PDCLIB_ctype_t *ctype = _PDCLIB_threadlocale()->_CType;
     size_t len = strlen( s2 );
     if ( len < n )
     {
