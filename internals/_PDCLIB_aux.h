@@ -96,7 +96,7 @@
 #endif
 
 #ifdef __has_attribute
-   #define _PDCLIB_HAS_ATTRIBUTE(x) __has_builtin(x)
+   #define _PDCLIB_HAS_ATTRIBUTE(x) __has_attribute(x)
 #else
    #define _PDCLIB_HAS_ATTRIBUTE(x) (0)
 #endif
