@@ -6,15 +6,33 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_ASSERT_H
-#define _PDCLIB_ASSERT_H _PDCLIB_ASSERT_H
 #include <_PDCLIB_aux.h>
 #include <_PDCLIB_config.h>
+
+/*
+   Defines a macro assert() that, depending on the value of the preprocessor
+   symbol NDEBUG, does
+   * evaluate to a void expression if NDEBUG is set OR the parameter expression
+     evaluates to true;
+   * print an error message and terminates the program if NDEBUG is not set AND
+     the parameter expression evaluates to false.
+  The error message contains the parameter expression, name of the source file
+  (__FILE__), line number (__LINE__), and (from C99 onward) name of the function
+  (__func__).
+   The header can be included MULTIPLE times, and redefines the macro depending
+   on the current setting of NDEBUG.
+*/
+
 _PDCLIB_BEGIN_EXTERN_C
+
+#ifndef _PDCLIB_ASSERT_H
+#define _PDCLIB_ASSERT_H _PDCLIB_ASSERT_H
 
 /* Functions _NOT_ tagged noreturn as this hampers debugging */
 void _PDCLIB_assert99( char const * const, char const * const, char const * const );
 void _PDCLIB_assert89( char const * const );
+
+#endif
 
 /* If NDEBUG is set, assert() is a null operation. */
 #undef assert
@@ -49,5 +67,3 @@ void _PDCLIB_assert89( char const * const );
 #endif
 
 _PDCLIB_END_EXTERN_C
-#endif
-
