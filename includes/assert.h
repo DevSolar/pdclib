@@ -42,10 +42,7 @@ void _PDCLIB_assert89( char const * const );
 #undef assert
 
 #ifdef NDEBUG
-#define assert( ignore ) do { \
-        if(!(expression)) { _PDCLIB_UNREACHABLE; } \
-    } while(0)
-
+#define assert( ignore ) ( (void) 0 )
 #elif _PDCLIB_C_MIN(99)
 #define assert(expression) \
     do { if(!(expression)) { \
