@@ -30,6 +30,12 @@ _PDCLIB_BEGIN_EXTERN_C
 void _PDCLIB_assert99( char const * const, char const * const, char const * const );
 void _PDCLIB_assert89( char const * const );
 
+#if _PDCLIB_C_VERSION >= 2011
+#define static_assert _Static_assert
+#else
+#define static_assert( e, m )
+#endif
+
 #endif
 
 /* If NDEBUG is set, assert() is a null operation. */

@@ -249,11 +249,18 @@
 /* Helper macros:                                                             */
 /* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending  */
 /* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
+/* _PDCLIB_concat3( x, y, z ) is the same for three tokens                    */
+/* _PDCLIB_static_assert( x ) provides a compile-time check mechanism         */
 /* -------------------------------------------------------------------------- */
 
 #define _PDCLIB_cc( x, y )     x ## y
 #define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
 #define _PDCLIB_concat3( x, y, z ) _PDCLIB_concat( _PDCLIB_concat( x, y ), z )
+#if _PDCLIB_C_VERSION >= 2011
+#define _PDCLIB_static_assert _Static_assert
+#else
+#define _PDCLIB_static_assert( e, m ) ;enum { _PDCLIB_concat( _PDCLIB_assert_, __LINE__ ) = 1 / ( !!( e ) ) }
+#endif
 
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )

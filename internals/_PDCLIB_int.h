@@ -310,6 +310,22 @@ extern char _PDCLIB_digits[];
 extern char _PDCLIB_Xdigits[];
 
 /* -------------------------------------------------------------------------- */
+/* Sanity checks                                                              */
+/* -------------------------------------------------------------------------- */
+
+#if _PDCLIB_C_VERSION >= 2011
+_Static_assert( sizeof( short ) == _PDCLIB_SHRT_BYTES, "_PDCLIB_SHRT_BYTES incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( sizeof( int ) == _PDCLIB_INT_BYTES, "_PDCLIB_INT_BYTES incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( sizeof( long ) == _PDCLIB_LONG_BYTES, "_PDCLIB_LONG_BYTES incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( sizeof( long long ) == _PDCLIB_LLONG_BYTES, "_PDCLIB_LLONG_BYTES incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( ( (char)-1 < 0 ) == _PDCLIB_CHAR_SIGNED, "_PDCLIB_CHAR_SIGNED incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( sizeof( _PDCLIB_wchar ) == sizeof( L'x' ), "_PDCLIB_wchar incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( sizeof( void * ) == sizeof( _PDCLIB_intptr ), "_PDCLIB_intptr incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( sizeof( sizeof( 1 ) ) == sizeof( _PDCLIB_size ), "_PDCLIB_size incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( sizeof( &_PDCLIB_digits[1] - &_PDCLIB_digits[0] ) == sizeof( _PDCLIB_ptrdiff ), "_PDCLIB_ptrdiff incorrectly defined, check _PDCLIB_config.h" );
+#endif
+
+/* -------------------------------------------------------------------------- */
 /* locale / wchar / uchar                                                     */
 /* -------------------------------------------------------------------------- */
 
