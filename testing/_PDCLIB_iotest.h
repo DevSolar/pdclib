@@ -15,7 +15,10 @@
 #if defined( _PDCLIB_FILEIO )
    #define GET_RESULT \
       rewind( target ); \
-      fread( result_buffer, 1, actual_rc, target );
+      if ( (int)fread( result_buffer, 1, actual_rc, target ) != actual_rc ) \
+      { \
+          fprintf( stderr, "GET_RESULT failed." ); \
+      }
    #define RESULT_MISMATCH( act, exp ) strcmp( result_buffer, exp ) != 0
    #define RESULT_STRING( tgt ) result_buffer
 #elif defined( _PDCLIB_STRINGIO )

@@ -16,6 +16,8 @@
 
 #ifndef REGTEST
 
+#include "_PDCLIB_io.h"
+
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
 */
@@ -116,7 +118,7 @@ static bool IN_SCANSET( const char * scanlist, const char * end_scanlist, int rc
 const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 {
     /* generic input character */
-    int rc;
+    int rc = EOF;
     const char * orig_spec = spec;
     if ( *(++spec) == '%' )
     {
