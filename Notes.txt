@@ -1,6 +1,4 @@
-﻿$Id$
-
-Credits
+﻿Credits
 =======
 
 The vast majority of PDCLib is original work by me. I felt it was the only way

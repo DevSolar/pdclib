@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* strtoull( const char *, char * *, int )
 
    This file is part of the Public Domain C Library (PDCLib).

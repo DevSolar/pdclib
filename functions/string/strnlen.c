@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* strnlen( const char *, size_t len )
 
    This file is part of the Public Domain C Library (PDCLib).

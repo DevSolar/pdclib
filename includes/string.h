@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.21 String handling <string.h>
 
    This file is part of the Public Domain C Library (PDCLib).

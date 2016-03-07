@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.14 Signal handling <string.h>
 
    This file is part of the Public Domain C Library (PDCLib).

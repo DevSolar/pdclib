@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* snprintf( char *, size_t, const char *, ... )
 
    This file is part of the Public Domain C Library (PDCLib).

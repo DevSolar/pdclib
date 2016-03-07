@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.8 Format conversion of integer types <inttypes.h>
 
    This file is part of the Public Domain C Library (PDCLib).

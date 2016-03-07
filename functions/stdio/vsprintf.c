@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* vsprintf( char *, const char *, va_list ap )
 
    This file is part of the Public Domain C Library (PDCLib).

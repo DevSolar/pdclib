@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* vsscanf( const char *, const char *, va_list arg )
 
    This file is part of the Public Domain C Library (PDCLib).

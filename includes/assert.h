@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.2 Diagnostics <assert.h>
 
    This file is part of the Public Domain C Library (PDCLib).

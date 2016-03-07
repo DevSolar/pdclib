@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.4 Character handling <ctype.h>
 
    This file is part of the Public Domain C Library (PDCLib).

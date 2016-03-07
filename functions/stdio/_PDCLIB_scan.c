@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* _PDCLIB_scan( const char *, struct _PDCLIB_status_t * )
 
    This file is part of the Public Domain C Library (PDCLib).

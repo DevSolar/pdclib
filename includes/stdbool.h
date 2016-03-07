@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.16 Boolean type and values <stdbool.h>
 
    This file is part of the Public Domain C Library (PDCLib).

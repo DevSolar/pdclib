@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.20 General utilities <stdlib.h>
 
    This file is part of the Public Domain C Library (PDCLib).

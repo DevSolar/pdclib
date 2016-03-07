@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* _PDCLIB_fvopen( _PDCLIB_fd_t fd, _PDCLIB_fileops_t *  )
 
    This file is part of the Public Domain C Library (PDCLib).

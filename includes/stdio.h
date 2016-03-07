@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.19 Input/output <stdio.h>
 
    This file is part of the Public Domain C Library (PDCLib).

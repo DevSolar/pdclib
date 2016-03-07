@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* bsearch( const void *, const void *, size_t, size_t, int(*)( const void *, const void * ) )
 
    This file is part of the Public Domain C Library (PDCLib).

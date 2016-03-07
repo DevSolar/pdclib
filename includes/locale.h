@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* 7.11 Localization <locale.h>
 
    This file is part of the Public Domain C Library (PDCLib).
