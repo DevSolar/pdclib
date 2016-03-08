@@ -82,8 +82,8 @@ typedef struct _PDCLIB_wcinfo
 } _PDCLIB_wcinfo_t;
 
 struct _PDCLIB_locale {
-    const _PDCLIB_charcodec_t    _Codec;
-    struct lconv                 _Conv;
+    const struct _PDCLIB_charcodec_t * _Codec;
+    struct lconv                       _Conv;
 
     /* ctype / wctype */
     /* XXX: Maybe re-evaluate constness of these later on? */

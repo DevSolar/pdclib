@@ -86,7 +86,7 @@ static inline _PDCLIB_size_t _PDCLIB_c32rtoc16(
     }
 }
 
-struct _PDCLIB_charcodec {
+struct _PDCLIB_charcodec_t {
     /* Reads at most *_P_insz code units from *_P_inbuf and writes the result 
      * into *_P_outbuf, writing at most *_P_outsz code units. Updates 
      * *_P_outbuf, *_P_outsz, *_P_inbuf, *_P_outsz with the resulting state
