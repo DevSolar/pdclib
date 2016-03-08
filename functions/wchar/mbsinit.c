@@ -9,7 +9,7 @@
 #include <_PDCLIB_encoding.h>
 #include <_PDCLIB_locale.h>
 
-int _PDCLIB_mbsinit_l( const mbstate_t *ps, locale_t l )
+static int _PDCLIB_mbsinit_l( const mbstate_t *ps, locale_t l )
 {
     if( ps ) {
         return ps->_Surrogate == 0

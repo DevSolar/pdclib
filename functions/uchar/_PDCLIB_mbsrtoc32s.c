@@ -16,7 +16,7 @@
 #include <_PDCLIB_encoding.h>
 #include <_PDCLIB_locale.h>
 
-size_t _PDCLIB_mbsrtoc32s_l
+static size_t _PDCLIB_mbsrtoc32s_l
 (
     char32_t        *restrict   dst, 
     const char     **restrict   src, 

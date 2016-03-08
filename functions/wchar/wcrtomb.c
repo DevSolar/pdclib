@@ -16,7 +16,7 @@
 #include <_PDCLIB_encoding.h>
 #include <_PDCLIB_locale.h>
 
-size_t wcrtomb_l(
+static size_t wcrtomb_l(
     char        *restrict   s, 
     wchar_t                 wc,
     mbstate_t   *restrict   ps,

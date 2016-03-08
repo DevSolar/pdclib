@@ -16,7 +16,7 @@
 #include <_PDCLIB_encoding.h>
 #include <_PDCLIB_locale.h>
 
-size_t mbrtowc_l(
+static size_t mbrtowc_l(
     wchar_t    *restrict    pwc, 
     const char *restrict    s, 
     size_t                  n, 

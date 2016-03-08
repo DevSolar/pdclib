@@ -15,7 +15,7 @@
 #include <_PDCLIB_encoding.h>
 #include <_PDCLIB_locale.h>
 
-size_t _PDCLIB_c32srtombs_l(
+static size_t _PDCLIB_c32srtombs_l(
     char                *restrict   dst, 
     const char32_t     **restrict   src, 
     size_t                          len, 
@@ -24,7 +24,7 @@ size_t _PDCLIB_c32srtombs_l(
 {
     char *restrict *restrict dstp = dst ? &dst : NULL;
     len = dst ? len : SIZE_MAX;
-    
+
     size_t srclen = _PDCLIB_c32slen(*src);
     size_t dstlen = len;
 

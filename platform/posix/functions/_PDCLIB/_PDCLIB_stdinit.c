@@ -385,7 +385,7 @@ struct _PDCLIB_locale _PDCLIB_global_locale = {
 };
 
 /* Todo: Better solution than this! */
-__attribute__((constructor)) void init_stdio(void)
+__attribute__((constructor)) static void init_stdio(void)
 {
     _PDCLIB_initclocale( &_PDCLIB_global_locale );
     tss_create(&_PDCLIB_locale_tss, (tss_dtor_t) freelocale);
