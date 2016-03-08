@@ -73,7 +73,7 @@ static bool utf8toc32(
         char32_t      c32;
         switch(state) {
         case DecStart:
-            // 1 byte 
+            // 1 byte
             if(c <= 0x7F) {
                 OUT32(c);
             } else if(c <= 0xDF) {
@@ -156,7 +156,7 @@ static bool utf8toc32(
         }
 
         (*p_inbuf)++;
-        (*p_insz)--; 
+        (*p_insz)--;
     }
     END_CONVERSION;
 }
@@ -178,7 +178,7 @@ static bool c32toutf8(
 {
     START_CONVERSION
     while(*p_outsz) {
-        unsigned char outc;
+        unsigned char outc = 0;
         switch(state) {
         case Enc3R:
             outc = 0x80 | ((accum >> 12) & 0x3F);
@@ -225,9 +225,9 @@ static bool c32toutf8(
 
         if(p_outbuf) {
             **p_outbuf = outc;
-            (*p_outbuf)++; 
+            (*p_outbuf)++;
         }
-        (*p_outsz)--;        
+        (*p_outsz)--;
     }
     END_CONVERSION;
 }
@@ -249,7 +249,7 @@ int main( void )
 #ifndef REGTEST
     // Valid conversion & back
 
-    static const char* input = "abcde" "\xDF\xBF" "\xEF\xBF\xBF" 
+    static const char* input = "abcde" "\xDF\xBF" "\xEF\xBF\xBF"
                                "\xF4\x8F\xBF\xBF";
 
     char32_t c32out[8];
