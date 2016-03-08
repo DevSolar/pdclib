@@ -530,8 +530,6 @@ int _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
                     break;
                 case E_intmax:
                     value = va_arg( status->arg, uintmax_t );
-                default:
-                    _PDCLIB_UNREACHABLE;
             }
             if ( !int2base( value, status ) )
                 return -1;
@@ -568,8 +566,6 @@ int _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
                 case E_intmax:
                     value = va_arg( status->arg, intmax_t );
                     break;
-                default:
-                    _PDCLIB_UNREACHABLE;
             }
 
             if (!int2base( value, status ) )
