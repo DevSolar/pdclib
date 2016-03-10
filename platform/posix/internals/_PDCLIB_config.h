@@ -27,14 +27,6 @@
 /* specific platforms, e.g. by swapping int instead of char.                  */
 #define _PDCLIB_memswp( i, j, size ) char tmp; do { tmp = *i; *i++ = *j; *j++ = tmp; } while ( --size );
 
-/* The maximum value that errno can be set to. This is used to set the size   */
-/* of the array in struct lconv (<locale.h>) holding error messages for the   */
-/* strerror() and perror() functions. (If you change this value because you   */
-/* are using additional errno values, you *HAVE* to provide appropriate error */
-/* messages for *ALL* locales.)                                               */
-/* Default is 4 (0, ERANGE, EDOM, EILSEQ).                                    */
-#define _PDCLIB_ERRNO_MAX 4
-
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -370,5 +362,122 @@ struct _PDCLIB_imaxdiv_t
    this capability dependent on implementation-defined behaviour (not good).
 */
 #define _PDCLIB_UNGETCBUFSIZE 1
+
+/* errno -------------------------------------------------------------------- */
+
+/* These are the values that _PDCLIB_errno can be set to by the library.
+
+   By keeping PDCLib's errno in the _PDCLIB_* namespace, the library is capable
+   to "translate" between errno values used by the hosting operating system and
+   those used and passed out by the library.
+
+   Example: In the example platform, the remove() function uses the unlink()
+   system call as backend. Linux sets its errno to EISDIR if you try to unlink()
+   a directory, but POSIX demands EPERM. Within the remove() function, you can
+   catch the 'errno == EISDIR', and set '_PDCLIB_errno = _PDCLIB_EPERM'. Anyone
+   using PDCLib's <errno.h> will "see" EPERM instead of EISDIR (the _PDCLIB_*
+   prefix removed by <errno.h> mechanics).
+
+   If you do not want that kind of translation, you might want to "match" the
+   values used by PDCLib with those used by the host OS, to avoid confusion.
+
+   The C standard only defines three distinct errno values: ERANGE, EDOM, and
+   EILSEQ. The standard leaves it up to "the implementation" whether there are
+   any more beyond those three.
+
+   However, C++11 introduced the whole list of POSIX errno values into the
+   standard, so PDCLib might as well define those as well.
+
+   Sometimes the standard says to set errno to indicate an error, but does not 
+   prescribe a value. We will use a value from the following list. If POSIX 
+   defines a value, we use that; otherwise, we use as seems suitable.
+*/
+
+/* These values were taken from Linux, gcc 4.8. */
+#define _PDCLIB_E2BIG              7
+#define _PDCLIB_EACCES            13
+#define _PDCLIB_EADDRINUSE        98
+#define _PDCLIB_EADDRNOTAVAIL     99
+#define _PDCLIB_EAFNOSUPPORT      97
+#define _PDCLIB_EAGAIN            11
+#define _PDCLIB_EALREADY         114
+#define _PDCLIB_EBADF              9
+#define _PDCLIB_EBADMSG           74
+#define _PDCLIB_EBUSY             16
+#define _PDCLIB_ECANCELED        125
+#define _PDCLIB_ECHILD            10
+#define _PDCLIB_ECONNABORTED     103
+#define _PDCLIB_ECONNREFUSED     111
+#define _PDCLIB_ECONNRESET       104
+#define _PDCLIB_EDEADLK           35
+#define _PDCLIB_EDESTADDRREQ      89
+#define _PDCLIB_EDOM              33
+#define _PDCLIB_EEXIST            17
+#define _PDCLIB_EFAULT            14
+#define _PDCLIB_EFBIG             27
+#define _PDCLIB_EHOSTUNREACH     113
+#define _PDCLIB_EIDRM             43
+#define _PDCLIB_EILSEQ            84
+#define _PDCLIB_EINPROGRESS      115
+#define _PDCLIB_EINTR              4
+#define _PDCLIB_EINVAL            22
+#define _PDCLIB_EIO                5
+#define _PDCLIB_EISCONN          106
+#define _PDCLIB_EISDIR            21
+#define _PDCLIB_ELOOP             40
+#define _PDCLIB_EMFILE            24
+#define _PDCLIB_EMLINK            31
+#define _PDCLIB_EMSGSIZE          90
+#define _PDCLIB_ENAMETOOLONG      36
+#define _PDCLIB_ENETDOWN         100
+#define _PDCLIB_ENETRESET        102
+#define _PDCLIB_ENETUNREACH      101
+#define _PDCLIB_ENFILE            23
+#define _PDCLIB_ENOBUFS          105
+#define _PDCLIB_ENODATA           61
+#define _PDCLIB_ENODEV            19
+#define _PDCLIB_ENOENT             2
+#define _PDCLIB_ENOEXEC            8
+#define _PDCLIB_ENOLCK            37
+#define _PDCLIB_ENOLINK           67
+#define _PDCLIB_ENOMEM            12
+#define _PDCLIB_ENOMSG            42
+#define _PDCLIB_ENOPROTOOPT       92
+#define _PDCLIB_ENOSPC            28
+#define _PDCLIB_ENOSR             63
+#define _PDCLIB_ENOSTR            60
+#define _PDCLIB_ENOSYS            38
+#define _PDCLIB_ENOTCONN         107
+#define _PDCLIB_ENOTDIR           20
+#define _PDCLIB_ENOTEMPTY         39
+#define _PDCLIB_ENOTRECOVERABLE  131
+#define _PDCLIB_ENOTSOCK          88
+#define _PDCLIB_ENOTSUP           95
+#define _PDCLIB_ENOTTY            25
+#define _PDCLIB_ENXIO              6
+#define _PDCLIB_EOPNOTSUPP        95
+#define _PDCLIB_EOVERFLOW         75
+#define _PDCLIB_EOWNERDEAD       130
+#define _PDCLIB_EPERM              1
+#define _PDCLIB_EPIPE             32
+#define _PDCLIB_EPROTO            71
+#define _PDCLIB_EPROTONOSUPPORT   93
+#define _PDCLIB_EPROTOTYPE        91
+#define _PDCLIB_ERANGE            34
+#define _PDCLIB_EROFS             30
+#define _PDCLIB_ESPIPE            29
+#define _PDCLIB_ESRCH              3
+#define _PDCLIB_ETIME             62
+#define _PDCLIB_ETIMEDOUT        110
+#define _PDCLIB_ETXTBSY           26
+#define _PDCLIB_EWOULDBLOCK       11
+#define _PDCLIB_EXDEV             18
+
+/* This is used to set the size of the array in struct lconv (<locale.h>)     */
+/* holding the error messages for the strerror() and perror() fuctions. If    */
+/* you change this value because you are using additional errno values, you   */
+/* *HAVE* to provide appropriate error messages for *ALL* locales.            */
+/* Needs to be one higher than the highest errno value above.                 */
+#define _PDCLIB_ERRNO_MAX 132
 
 #endif
