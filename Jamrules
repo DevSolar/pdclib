@@ -35,7 +35,7 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
       -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow 
       -Wpointer-arith -Wwrite-strings -Wmissing-declarations -Wno-long-long 
       -Wuninitialized -Wno-deprecated-declarations -Wredundant-decls -Winline
-      -Wcast-align
+      -Wcast-align -Wno-format
       ;
     PDCLIB_CCWARNINGS ?= 
       -Wnested-externs -Wstrict-prototypes -Wmissing-prototypes ;
