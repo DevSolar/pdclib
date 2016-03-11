@@ -40,6 +40,7 @@ char * gets( char * s )
 
 int main( void )
 {
+#ifndef REGTEST
     FILE * fh;
     char buffer[10];
     char const * gets_test = "foo\nbar\0baz\nweenie";
@@ -62,6 +63,7 @@ int main( void )
     TESTCASE( gets( buffer ) == NULL );
     TESTCASE( fclose( fh ) == 0 );
     TESTCASE( remove( testfile ) == 0 );
+#endif
     return TEST_RESULTS;
 }
 
