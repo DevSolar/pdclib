@@ -37,16 +37,16 @@ int main( void )
     const char *teststr2 = "\xFE\x8C\n";
     char *testres, *testres2;
 
-    TESTCASE(testres  = strndup(teststr, 5));
-    TESTCASE(testres2 = strndup(teststr2, 1));
+    TESTCASE((testres  = strndup(teststr, 5)) != NULL);
+    TESTCASE((testres2 = strndup(teststr2, 1)) != NULL);
     TESTCASE(strcmp(testres, teststr) != 0);
     TESTCASE(strncmp(testres, teststr, 5) == 0);
     TESTCASE(strcmp(testres2, teststr2) != 0);
     TESTCASE(strncmp(testres2, teststr2, 1) == 0);
     free(testres);
     free(testres2);
-    TESTCASE(testres  = strndup(teststr, 20));
-    TESTCASE(testres2 = strndup(teststr2, 5));
+    TESTCASE((testres  = strndup(teststr, 20)) != NULL);
+    TESTCASE((testres2 = strndup(teststr2, 5)) != NULL);
     TESTCASE(strcmp(testres, teststr) == 0);
     TESTCASE(strcmp(testres2, teststr2) == 0);
     free(testres);

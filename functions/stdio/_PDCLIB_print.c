@@ -614,7 +614,7 @@ static int testprintf( char * buffer, const char * format, ... )
     status.write = testcb;
     va_start( status.arg, format );
     memset( buffer, '\0', 100 );
-    if ( _PDCLIB_print( format, &status ) != strlen( format ) )
+    if ( _PDCLIB_print( format, &status ) != (int)strlen( format ) )
     {
         printf( "_PDCLIB_print() did not return end-of-specifier on '%s'.\n", format );
         ++TEST_RESULTS;

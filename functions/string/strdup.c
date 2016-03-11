@@ -32,13 +32,13 @@ int main( void )
     const char *teststr2 = "An alternative test string with non-7-bit characters \xFE\x8C\n";
     char *testres, *testres2;
 
-    TESTCASE(testres  = strdup(teststr));
-    TESTCASE(testres2 = strdup(teststr2));
+    TESTCASE((testres  = strdup(teststr)) != NULL);
+    TESTCASE((testres2 = strdup(teststr2)) != NULL);
     TESTCASE(strcmp(testres, teststr) == 0);
     TESTCASE(strcmp(testres2, teststr2) == 0);
     free(testres);
     free(testres2);
-    
+
     return TEST_RESULTS;
 }
 

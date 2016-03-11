@@ -257,7 +257,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         {
             char * c = va_arg( status->arg, char * );
             /* for %c, default width is one */
-            if ( status->width == SIZE_MAX )
+            if ( status->width == UINT_MAX )
             {
                 status->width = 1;
             }
