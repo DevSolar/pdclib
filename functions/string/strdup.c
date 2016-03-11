@@ -4,6 +4,10 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#ifdef REGTEST
+#define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <string.h>
 #include <stdlib.h>
 
