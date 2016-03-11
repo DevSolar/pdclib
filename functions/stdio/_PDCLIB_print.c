@@ -501,7 +501,8 @@ int _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
         /* TODO: Check for invalid flag combinations. */
         if ( status->flags & E_unsigned )
         {
-            uintmax_t value;
+            /* TODO: Marking the default case _PDCLIB_UNREACHABLE breaks %ju test driver? */
+            uintmax_t value = 0;
             switch ( status->flags & E_TYPES )
             {
                 case E_char:
@@ -536,7 +537,7 @@ int _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
         }
         else
         {
-            intmax_t value;
+            intmax_t value = 0;
             switch ( status->flags & E_TYPES )
             {
                 case E_char:
@@ -566,6 +567,8 @@ int _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
                 case E_intmax:
                     value = va_arg( status->arg, intmax_t );
                     break;
+                default:
+                    _PDCLIB_UNREACHABLE;
             }
 
             if (!int2base( value, status ) )
