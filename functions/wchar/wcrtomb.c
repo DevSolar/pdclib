@@ -16,6 +16,11 @@
 #include <_PDCLIB_encoding.h>
 #include <_PDCLIB_locale.h>
 
+#if 0
+/*
+   TODO: Other conversion functions call static ..._l helpers, but this one
+   does not, making this function "defined but not used".
+*/
 static size_t wcrtomb_l(
     char        *restrict   s, 
     wchar_t                 wc,
@@ -25,6 +30,7 @@ static size_t wcrtomb_l(
 {
     return _PDCLIB_cwcrtomb_l(s, wc, ps, l);
 }
+#endif
 
 size_t wcrtomb(
     char        *restrict   s, 
