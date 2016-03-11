@@ -31,15 +31,11 @@ if $(PDCLIB_TOOLCHAIN) = "" {
 }
 
 if $(PDCLIB_TOOLCHAIN) = "gcc" {
-    # No -Wcast-align      : spurious warnings when using char* to do pointer 
-    #                        arithmetic
-    # No -Winline          : when compiling with e.g. -Os causes spurious 
-    #                        warnings that call is unlikely/code size would grow
-    # No -Wredundant-decls : some functions must be multiply defined
     PDCLIB_WARNINGS ?= 
       -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow 
       -Wpointer-arith -Wwrite-strings -Wmissing-declarations -Wno-long-long 
-      -Wuninitialized 
+      -Wuninitialized -Wno-deprecated-declarations -Wredundant-decls -Winline
+      -Wcast-align
       ;
     PDCLIB_CCWARNINGS ?= 
       -Wnested-externs -Wstrict-prototypes -Wmissing-prototypes ;

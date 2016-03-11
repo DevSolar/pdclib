@@ -835,6 +835,8 @@ extern "C" {
 #define dlbulk_free            bulk_free
 #endif /* USE_DL_PREFIX */
 
+#if 0 // Redeclaration warnings as PDCLib already declares these in <stdio.h>
+
 /*
   malloc(size_t n)
   Returns a pointer to a newly allocated chunk of at least n bytes, or
@@ -890,6 +892,8 @@ DLMALLOC_EXPORT void* dlcalloc(size_t, size_t);
   to be used as an argument to realloc is not supported.
 */
 DLMALLOC_EXPORT void* dlrealloc(void*, size_t);
+
+#endif
 
 /*
   realloc_in_place(void* p, size_t n)
