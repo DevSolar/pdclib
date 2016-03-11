@@ -41,7 +41,9 @@ size_t _PDCLIB_strlcpy(
 
 int main( void )
 {
+#ifndef REGTEST
     char destbuf[10];
+#endif
     TESTCASE_NOREG( strlcpy(NULL, "a", 0) == 2 );
     TESTCASE_NOREG( strlcpy(destbuf, "a", 10) == 2 );
     TESTCASE_NOREG( strcmp(destbuf, "a") == 0 );

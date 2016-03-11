@@ -113,8 +113,8 @@ static int testprintf( char * s, const char * format, ... )
 
 int main( void )
 {
-    char target[100];
 #ifndef REGTEST
+    char target[100];
 #include "printf_testcases.h"
 #endif
     return TEST_RESULTS;
