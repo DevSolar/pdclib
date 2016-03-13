@@ -12,7 +12,6 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
 PDCLIB_OPTIONS = 
 	nothread 
 	notime 
-	dlmalloc 
 	tss_errno 
 	basecodecs 
     c_locale 

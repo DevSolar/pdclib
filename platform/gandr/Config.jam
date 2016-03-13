@@ -6,7 +6,6 @@ rule PDCLibTargetHeaders {
 PDCLIB_OPTIONS = 
     nothread
     notime 
-    dlmalloc 
     mincoll 
     tss_errno 
     basecodecs 
