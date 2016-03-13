@@ -1,4 +1,4 @@
-/* 7.19 Input/output <stdio.h>
+/* Input/output <stdio.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -7,7 +7,10 @@
 #ifndef _PDCLIB_STDIO_H
 #define _PDCLIB_STDIO_H _PDCLIB_STDIO_H
 #include <_PDCLIB_int.h>
-_PDCLIB_BEGIN_EXTERN_C
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
@@ -886,7 +889,6 @@ void rewind_unlocked( FILE * stream ) _PDCLIB_nothrow;
 int puts_unlocked( const char * s ) _PDCLIB_nothrow;
 int ungetc_unlocked( int c, FILE * stream ) _PDCLIB_nothrow;
 
-
 int printf_unlocked( const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
 int vprintf_unlocked( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
 int fprintf_unlocked( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
@@ -896,11 +898,13 @@ int vscanf_unlocked( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 int fscanf_unlocked( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... ) _PDCLIB_nothrow;
 int vfscanf_unlocked( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg ) _PDCLIB_nothrow;
 
-
 // Todo: remove prefix?
 _PDCLIB_uint_fast64_t _PDCLIB_ftell64( FILE * stream ) _PDCLIB_nothrow;
 _PDCLIB_uint_fast64_t _PDCLIB_ftell64_unlocked( FILE * stream ) _PDCLIB_nothrow;
 #endif
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
+
 #endif

@@ -1,11 +1,11 @@
-#ifndef __PDCLIB_INT_H
-#define __PDCLIB_INT_H __PDCLIB_INT_H
-
 /* PDCLib internal integer logic <_PDCLIB_int.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
+
+#ifndef __PDCLIB_INT_H
+#define __PDCLIB_INT_H __PDCLIB_INT_H
 
 /* -------------------------------------------------------------------------- */
 /* You should not have to edit anything in this file; if you DO have to, it   */
@@ -111,6 +111,8 @@
 #if     _PDCLIB_CHAR_BIT == 8
 typedef signed char        _PDCLIB_int8_t;
 typedef unsigned char      _PDCLIB_uint8_t;
+typedef signed char        _PDCLIB_int_least8_t;
+typedef unsigned char      _PDCLIB_uint_least8_t;
 #define _PDCLIB_INT8_MAX   _PDCLIB_CHAR_MAX
 #define _PDCLIB_INT8_MIN   _PDCLIB_CHAR_MIN
 #define _PDCLIB_UINT8_MAX  _PDCLIB_UCHAR_MAX
@@ -123,6 +125,8 @@ typedef unsigned char      _PDCLIB_uint8_t;
 #if     _PDCLIB_INT_BYTES  == 2
 typedef signed int         _PDCLIB_int16_t;
 typedef unsigned int       _PDCLIB_uint16_t;
+typedef signed int         _PDCLIB_int_least16_t;
+typedef unsigned int       _PDCLIB_uint_least16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_INT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_INT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_UINT_MAX
@@ -130,6 +134,8 @@ typedef unsigned int       _PDCLIB_uint16_t;
 #elif   _PDCLIB_SHRT_BYTES == 2
 typedef signed short       _PDCLIB_int16_t;
 typedef unsigned short     _PDCLIB_uint16_t;
+typedef signed short       _PDCLIB_int_least16_t;
+typedef unsigned short     _PDCLIB_uint_least16_t;
 #define _PDCLIB_INT16_MAX  _PDCLIB_SHRT_MAX
 #define _PDCLIB_INT16_MIN  _PDCLIB_SHRT_MIN
 #define _PDCLIB_UINT16_MAX _PDCLIB_USHRT_MAX
@@ -142,6 +148,8 @@ typedef unsigned short     _PDCLIB_uint16_t;
 #if     _PDCLIB_INT_BYTES  == 4
 typedef signed int         _PDCLIB_int32_t;
 typedef unsigned int       _PDCLIB_uint32_t;
+typedef signed int         _PDCLIB_int_least32_t;
+typedef unsigned int       _PDCLIB_uint_least32_t;
 #define _PDCLIB_INT32_MAX  _PDCLIB_INT_MAX
 #define _PDCLIB_INT32_MIN  _PDCLIB_INT_MIN
 #define _PDCLIB_UINT32_MAX _PDCLIB_UINT_MAX
@@ -151,6 +159,8 @@ typedef unsigned int       _PDCLIB_uint32_t;
 #elif   _PDCLIB_LONG_BYTES == 4
 typedef signed long        _PDCLIB_int32_t;
 typedef unsigned long      _PDCLIB_uint32_t;
+typedef signed long        _PDCLIB_int_least32_t;
+typedef unsigned long      _PDCLIB_uint_least32_t;
 #define _PDCLIB_INT32_MAX  _PDCLIB_LONG_MAX
 #define _PDCLIB_INT32_MIN  _PDCLIB_LONG_MIN
 #define _PDCLIB_UINT32_MAX _PDCLIB_LONG_MAX
@@ -165,6 +175,8 @@ typedef unsigned long      _PDCLIB_uint32_t;
 #if     _PDCLIB_LONG_BYTES == 8 && !defined(_PDCLIB_INT64_IS_LLONG)
 typedef signed long        _PDCLIB_int64_t;
 typedef unsigned long      _PDCLIB_uint64_t;
+typedef signed long        _PDCLIB_int_least64_t;
+typedef unsigned long      _PDCLIB_uint_least64_t;
 #define _PDCLIB_INT64_MAX  _PDCLIB_LONG_MAX
 #define _PDCLIB_INT64_MIN  _PDCLIB_LONG_MIN
 #define _PDCLIB_UINT64_MAX  _PDCLIB_ULONG_MAX
@@ -174,6 +186,8 @@ typedef unsigned long      _PDCLIB_uint64_t;
 #elif _PDCLIB_LLONG_BYTES  == 8
 typedef signed long long   _PDCLIB_int64_t;
 typedef unsigned long long _PDCLIB_uint64_t;
+typedef signed long long   _PDCLIB_int_least64_t;
+typedef unsigned long long _PDCLIB_uint_least64_t;
 #define _PDCLIB_INT64_MAX  _PDCLIB_LLONG_MAX
 #define _PDCLIB_INT64_MIN  _PDCLIB_LLONG_MIN
 #define _PDCLIB_UINT64_MAX  _PDCLIB_ULLONG_MAX
@@ -224,13 +238,11 @@ typedef _PDCLIB_ptrdiff     _PDCLIB_ptrdiff_t;
 #define _PDCLIB_PTRDIFF_MIN _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_PTRDIFF ), _MIN )
 #define _PDCLIB_PTRDIFF_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_PTRDIFF ), _MAX )
 
-#define _PDCLIB_SIG_ATOMIC_MIN _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_SIG_ATOMIC ), _MIN )
-#define _PDCLIB_SIG_ATOMIC_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_SIG_ATOMIC ), _MAX )
-
 typedef _PDCLIB_size     _PDCLIB_size_t;
 #define _PDCLIB_SIZE_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_SIZE ), _MAX )
 
 typedef _PDCLIB_wint      _PDCLIB_wint_t;
+
 #ifndef __cplusplus
     typedef _PDCLIB_wchar     _PDCLIB_wchar_t;
 #else
@@ -238,6 +250,9 @@ typedef _PDCLIB_wint      _PDCLIB_wint_t;
 #endif
 #define _PDCLIB_WCHAR_MIN _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_WCHAR ), _MIN )
 #define _PDCLIB_WCHAR_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_WCHAR ), _MAX )
+
+#define _PDCLIB_SIG_ATOMIC_MIN _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_SIG_ATOMIC ), _MIN )
+#define _PDCLIB_SIG_ATOMIC_MAX _PDCLIB_concat( _PDCLIB_concat( _PDCLIB_, _PDCLIB_SIG_ATOMIC ), _MAX )
 
 typedef _PDCLIB_intptr          _PDCLIB_intptr_t;
 typedef unsigned _PDCLIB_intptr _PDCLIB_uintptr_t;
@@ -259,29 +274,6 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 
 typedef _PDCLIB_time            _PDCLIB_time_t;
 typedef _PDCLIB_clock           _PDCLIB_clock_t;
-
-#if !defined(_PDCLIB_DEFINE_STRUCT_TIMESPEC)
-#define _PDCLIB_DEFINE_STRUCT_TIMESPEC()    \
-    struct timespec {                       \
-        time_t tv_sec;                      \
-        long tv_nsec;                       \
-    };
-#endif
-
-#if !defined(_PDCLIB_DEFINE_STRUCT_TM)
-#define _PDCLIB_DEFINE_STRUCT_TM()          \
-    struct tm {                             \
-        int tm_sec;                         \
-        int tm_min;                         \
-        int tm_hour;                        \
-        int tm_mday;                        \
-        int tm_mon;                         \
-        int tm_year;                        \
-        int tm_wday;                        \
-        int tm_yday;                        \
-        int tm_isdst;                       \
-    };
-#endif
 
 /* -------------------------------------------------------------------------- */
 /* Internal data types                                                        */
@@ -371,6 +363,9 @@ typedef struct _PDCLIB_locale    *_PDCLIB_locale_t;
 typedef struct lconv              _PDCLIB_lconv_t;
 
 _PDCLIB_size_t _PDCLIB_mb_cur_max( void );
+
+/* wide-character EOF */
+#define _PDCLIB_WEOF ((wint_t) -1
 
 /* -------------------------------------------------------------------------- */
 /* stdio                                                                      */

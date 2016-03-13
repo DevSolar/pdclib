@@ -48,9 +48,9 @@
 #define _PDCLIB_SHRT_BYTES  2
 #define _PDCLIB_INT_BYTES   4
 #if defined(_LP64) || defined(__ILP64__)
-    #define _PDCLIB_LONG_BYTES 8
+#define _PDCLIB_LONG_BYTES 8
 #else
-    #define _PDCLIB_LONG_BYTES 4
+#define _PDCLIB_LONG_BYTES 4
 #endif
 #define _PDCLIB_LLONG_BYTES 8
 
@@ -129,10 +129,19 @@ struct _PDCLIB_lldiv_t
 /* defines here are merely "configuration". See above for details.            */
 /* -------------------------------------------------------------------------- */
 
-/* The result type of substracting two pointers */
+/* The types used for size_t and ptrdiff_t should not have an integer conversion
+   rank greater than that of signed long int unless the implementation supports
+   objects large enough to make this necessary.
+*/
+
+/* Result type of substracting two pointers (must be signed) */
 #define _PDCLIB_ptrdiff long
 #define _PDCLIB_PTRDIFF LONG
 #define _PDCLIB_PTR_CONV l
+
+/* Result type of the 'sizeof' operator (must be unsigned) */
+#define _PDCLIB_size unsigned long
+#define _PDCLIB_SIZE ULONG
 
 /* An integer type that can be accessed as atomic entity (think asynchronous
    interrupts). The type itself is not defined in a freestanding environment,
@@ -141,16 +150,37 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_sig_atomic int
 #define _PDCLIB_SIG_ATOMIC INT
 
-/* Result type of the 'sizeof' operator (must be unsigned) */
-#define _PDCLIB_size unsigned long
-#define _PDCLIB_SIZE ULONG
-
-/* Large enough an integer to hold all character codes of the largest supported
-   locale.
+/* Object type whose alignment is as great as supported by implementation
+   in all contexts.
 */
-#define _PDCLIB_wint  int
+#define _PDCLIB_max_align long double
+
+/* Integer type whose range of values can represent distinct codes for
+   all members of the largest extended character set specified among the
+   supported locales.
+   Note that the definition of this type must agree with the type used
+   by the compiler for L"" string and L'' character literals.
+*/
+#if defined(_LP64) || defined(__ILP64__)
 #define _PDCLIB_wchar int
 #define _PDCLIB_WCHAR INT
+#else
+#define _PDCLIB_wchar long
+#define _PDCLIB_WCHAR LONG
+#endif
+
+/* Each member of the basic character set shall have a code value equal
+   to its value when used as the lone character in an integer character
+   constant. If that is not the case, uncomment the following line.
+#define __STDC_MB_MIGHT_NEQ_WC__
+*/
+
+/* Integer type unchanged by default argument promotions that can hold any
+   value corresponding to characters of the extended character set, as well
+   as at least one value that does not correspond to any member of the
+   extended character set (WEOF).
+*/
+#define _PDCLIB_wint  int
 
 #define _PDCLIB_intptr long
 #define _PDCLIB_INTPTR LONG
@@ -184,7 +214,7 @@ struct _PDCLIB_imaxdiv_t
  * any functions for manipulating more accurate values of time_t, this is
  * probably not useful.
  */
-#define _PDCLIB_time  long
+#define _PDCLIB_time long
 
 /* <time.h>: clock_t
  *
@@ -268,9 +298,9 @@ struct _PDCLIB_imaxdiv_t
    most compilers.
 */
 #ifdef __GNUC__
-  #define _PDCLIB_offsetof( type, member ) __builtin_offsetof( type, member )
+#define _PDCLIB_offsetof( type, member ) __builtin_offsetof( type, member )
 #else
-  #define _PDCLIB_offsetof( type, member ) ( (size_t) &( ( (type *) 0 )->member ) )
+#define _PDCLIB_offsetof( type, member ) ( (size_t) &( ( (type *) 0 )->member ) )
 #endif
 
 /* Variable Length Parameter List Handling (<stdarg.h>)
@@ -280,22 +310,21 @@ struct _PDCLIB_imaxdiv_t
 */
 
 #ifdef __GNUC__
-  typedef __builtin_va_list _PDCLIB_va_list;
-  #define _PDCLIB_va_arg( ap, type ) (__builtin_va_arg( (ap), type ))
-  #define _PDCLIB_va_copy( dest, src ) (__builtin_va_copy( (dest), (src) ))
-  #define _PDCLIB_va_end( ap ) (__builtin_va_end( ap ) )
-  #define _PDCLIB_va_start( ap, parmN ) (__builtin_va_start( (ap), (parmN) ))
+typedef __builtin_va_list _PDCLIB_va_list;
+#define _PDCLIB_va_arg( ap, type ) (__builtin_va_arg( (ap), type ))
+#define _PDCLIB_va_copy( dest, src ) (__builtin_va_copy( (dest), (src) ))
+#define _PDCLIB_va_end( ap ) (__builtin_va_end( ap ) )
+#define _PDCLIB_va_start( ap, parmN ) (__builtin_va_start( (ap), (parmN) ))
 #elif (defined(__i386__) || defined(__i386) || defined(_M_IX86)) && !(defined(__amd64__) || defined(__x86_64__) || defined(_M_AMD64))
-  /* Internal helper macro. va_round is not part of <stdarg.h>. */
-  #define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
-
-  typedef char * _PDCLIB_va_list;
-  #define _PDCLIB_va_arg( ap, type ) ( (ap) += (_PDCLIB_va_round(type)), ( *(type*) ( (ap) - (_PDCLIB_va_round(type)) ) ) )
-  #define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
-  #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
-  #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
+/* Internal helper macro. va_round is not part of <stdarg.h>. */
+#define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
+typedef char * _PDCLIB_va_list;
+#define _PDCLIB_va_arg( ap, type ) ( (ap) += (_PDCLIB_va_round(type)), ( *(type*) ( (ap) - (_PDCLIB_va_round(type)) ) ) )
+#define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
+#define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
+#define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
 #else
-  #error Compiler/Architecture support please
+#error Compiler/Architecture support please
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -322,7 +351,9 @@ struct _PDCLIB_imaxdiv_t
 
 /* Locale --------------------------------------------------------------------*/
 
-/* Locale method. See _PDCLIB_locale.h */
+/* Locale method. See _PDCLIB_locale.h. If undefined, POSIX per-thread locales
+   will be disabled.
+*/
 #define _PDCLIB_LOCALE_METHOD _PDCLIB_LOCALE_METHOD_TSS
 
 /* wchar_t encoding */
@@ -379,7 +410,7 @@ struct _PDCLIB_imaxdiv_t
    prefix removed by <errno.h> mechanics).
 
    If you do not want that kind of translation, you might want to "match" the
-   values used by PDCLib with those used by the host OS, to avoid confusion.
+   values used by PDCLib with those used by the host OS, as to avoid confusion.
 
    The C standard only defines three distinct errno values: ERANGE, EDOM, and
    EILSEQ. The standard leaves it up to "the implementation" whether there are
@@ -388,8 +419,8 @@ struct _PDCLIB_imaxdiv_t
    However, C++11 introduced the whole list of POSIX errno values into the
    standard, so PDCLib might as well define those as well.
 
-   Sometimes the standard says to set errno to indicate an error, but does not 
-   prescribe a value. We will use a value from the following list. If POSIX 
+   Sometimes the standard says to set errno to indicate an error, but does not
+   prescribe a value. We will use a value from the following list. If POSIX
    defines a value, we use that; otherwise, we use as seems suitable.
 */
 

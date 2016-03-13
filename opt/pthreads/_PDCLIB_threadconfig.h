@@ -28,5 +28,7 @@ typedef pthread_once_t _PDCLIB_once_flag;
 
 #endif
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
 #endif

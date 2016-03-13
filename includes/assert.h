@@ -1,4 +1,4 @@
-/* 7.2 Diagnostics <assert.h>
+/* Diagnostics <assert.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -14,21 +14,27 @@
      evaluates to true;
    * print an error message and terminates the program if NDEBUG is not set AND
      the parameter expression evaluates to false.
-  The error message contains the parameter expression, name of the source file
+   The error message contains the parameter expression, name of the source file
   (__FILE__), line number (__LINE__), and (from C99 onward) name of the function
   (__func__).
-   The header can be included MULTIPLE times, and redefines the macro depending
+    The header can be included MULTIPLE times, and redefines the macro depending
    on the current setting of NDEBUG.
 */
-
-_PDCLIB_BEGIN_EXTERN_C
 
 #ifndef _PDCLIB_ASSERT_H
 #define _PDCLIB_ASSERT_H _PDCLIB_ASSERT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Functions _NOT_ tagged noreturn as this hampers debugging */
 void _PDCLIB_assert99( char const * const, char const * const, char const * const );
 void _PDCLIB_assert89( char const * const );
+
+#ifdef __cplusplus
+}
+#endif
 
 #if _PDCLIB_C_VERSION >= 2011
 #define static_assert _Static_assert
@@ -54,7 +60,7 @@ void _PDCLIB_assert89( char const * const );
         _PDCLIB_UNREACHABLE; \
       } \
     } while(0)
-    
+
 #else
 #define assert(expression) \
     do { if(!(expression)) { \
@@ -66,5 +72,3 @@ void _PDCLIB_assert89( char const * const );
       } \
     } while(0)
 #endif
-
-_PDCLIB_END_EXTERN_C

@@ -1,11 +1,11 @@
-#ifndef __PDCLIB_AUX_H
-#define __PDCLIB_AUX_H __PDCLIB_AUX_H
-
 /* Auxiliary PDCLib code <_PDCLIB_aux.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
+
+#ifndef __PDCLIB_AUX_H
+#define __PDCLIB_AUX_H __PDCLIB_AUX_H
 
 /* -------------------------------------------------------------------------- */
 /* You should not have to edit anything in this file; if you DO have to, it   */
@@ -62,12 +62,8 @@
 #endif
 
 #ifdef __cplusplus
-    #define _PDCLIB_BEGIN_EXTERN_C extern "C" {
-    #define _PDCLIB_END_EXTERN_C }
     typedef bool _PDCLIB_bool;
 #else
-    #define _PDCLIB_BEGIN_EXTERN_C
-    #define _PDCLIB_END_EXTERN_C
     typedef _Bool _PDCLIB_bool;
 #endif
 

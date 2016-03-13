@@ -3,7 +3,9 @@
 #include <_PDCLIB_aux.h>
 #include <_PDCLIB_int.h>
 
-_PDCLIB_BEGIN_EXTERN_C
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define _PDCLIB_TSS_DTOR_ITERATIONS 3
 #define _PDCLIB_ONCE_FLAG_INIT { -1, 0 }
 #define _PDCLIB_ONCE_FLAG_IS_DONE( _f ) ((_f)->_State == 0)
@@ -32,5 +34,7 @@ struct _PDCLIB_tss {
     unsigned int _Key;
 };
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
 #endif

@@ -1,13 +1,14 @@
-#ifndef __PDCLIB_IO_H
-#define __PDCLIB_IO_H __PDCLIB_IO_H
-#include "_PDCLIB_int.h"
-#include "_PDCLIB_threadconfig.h"
-
-/* PDCLib internal I/O logic <_PDCLIB_io.h>
+/* PDCLib I/O support <_PDCLIB_io.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
+
+#ifndef __PDCLIB_IO_H
+#define __PDCLIB_IO_H __PDCLIB_IO_H
+
+#include "_PDCLIB_int.h"
+#include "_PDCLIB_threadconfig.h"
 
 /* Flags for representing mode (see fopen()). Note these must fit the same
    status field as the _IO?BF flags in <stdio.h> and the internal flags below.

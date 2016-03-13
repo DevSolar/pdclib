@@ -5,10 +5,9 @@
 */
 
 #include <signal.h>
+#include <errno.h>
 
 #ifndef REGTEST
-#include <stdlib.h>
-#include <errno.h>
 
 void (*_PDCLIB_sigabrt)( int ) = SIG_DFL;
 void (*_PDCLIB_sigfpe)( int )  = SIG_DFL;

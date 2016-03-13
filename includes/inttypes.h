@@ -1,4 +1,4 @@
-/* 7.8 Format conversion of integer types <inttypes.h>
+/* Format conversion of integer types <inttypes.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -7,8 +7,15 @@
 #ifndef _PDCLIB_INTTYPES_H
 #define _PDCLIB_INTTYPES_H _PDCLIB_INTTYPES_H
 #include <stdint.h>
-_PDCLIB_BEGIN_EXTERN_C
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* This structure has a member quot and a member rem, of type intmax_t.
+   The order of the members is platform-defined to allow the imaxdiv()
+   function below to be implemented efficiently.
+*/
 typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 
 #define PRId8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, d ) )
@@ -209,7 +216,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define SCNxMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, x ) )
 #define SCNxPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, x ) )
 
-/* 7.8.2 Functions for greatest-width integer types */
+/* Functions for greatest-width integer types */
 
 /* Calculate the absolute value of j */
 intmax_t imaxabs( intmax_t j ) _PDCLIB_nothrow;
@@ -238,14 +245,24 @@ imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom ) _PDCLIB_nothrow;
    respectively, depending on the sign of the integer representation and the
    return type, and errno is set to ERANGE.
 */
-/* This function is equivalent to strtol() / strtoul() in <stdlib.h>, but on
+
+/* These functions are equivalent to strtol() / strtoul() in <stdlib.h>, but on
    the potentially larger type.
 */
 intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base ) _PDCLIB_nothrow;
 uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base ) _PDCLIB_nothrow;
 
-/* TODO: wcstoimax(), wcstoumax() */
+/* These functions are equivalent to wcstol() / wcstoul() in <wchar.h>, but on
+   the potentially larger type.
+*/
+/* TODO: Not _PDCLIB_nothrow? */
+/*
+intmax_t wcstoimax( const _PDCLIB_wchar_t * _PDCLIB_restrict nptr, _PDCLIB_wchar_t * * _PDCLIB_restrict endptr, int base );
+uintmax_t wcstoumax( const _PDCLIB_wchar_t * _PDCLIB_restrict nptr, _PDCLIB_wchar_t * * _PDCLIB_restrict endptr, int base );
+*/
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
 #endif
 
+#endif

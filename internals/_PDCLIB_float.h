@@ -1,11 +1,11 @@
-#ifndef __PDCLIB_PDCLIB_FLOAT_H
-#define __PDCLIB_PDCLIB_FLOAT_H __PDCLIB_PDCLIB_FLOAT_H
-
 /* PDCLib internal floating point logic <_PDCLIB_float.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
+
+#ifndef __PDCLIB_PDCLIB_FLOAT_H
+#define __PDCLIB_PDCLIB_FLOAT_H __PDCLIB_PDCLIB_FLOAT_H
 
 /* IEEE 754 single precision */
 #define _PDCLIB_FP_SINGLE_MIN 1.17549435082228750797e-38

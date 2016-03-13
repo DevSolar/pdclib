@@ -1,4 +1,4 @@
-/* 7.21 String handling <string.h>
+/* String handling <string.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -7,7 +7,10 @@
 #ifndef _PDCLIB_STRING_H
 #define _PDCLIB_STRING_H _PDCLIB_STRING_H
 #include <_PDCLIB_int.h>
-_PDCLIB_BEGIN_EXTERN_C
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
@@ -206,5 +209,8 @@ size_t strlcat(
    size_t _DstSize) _PDCLIB_nothrow;
 #endif
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
+
 #endif

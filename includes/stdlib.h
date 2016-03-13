@@ -1,4 +1,4 @@
-/* 7.20 General utilities <stdlib.h>
+/* General utilities <stdlib.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -7,7 +7,10 @@
 #ifndef _PDCLIB_STDLIB_H
 #define _PDCLIB_STDLIB_H _PDCLIB_STDLIB_H
 #include <_PDCLIB_int.h>
-_PDCLIB_BEGIN_EXTERN_C
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED
@@ -148,7 +151,7 @@ _PDCLIB_noreturn void abort( void ) _PDCLIB_nothrow;
    reverse order of registration (last-in, first-out).
    Returns zero if registration is successfull, nonzero if it failed.
 */
-int atexit( void (*func)( void ) ) _PDCLIB_nothrow; 
+int atexit( void (*func)( void ) ) _PDCLIB_nothrow;
 
 /* Normal process termination. Functions registered by atexit() (see above) are
    called, streams flushed, files closed and temporary files removed before the
@@ -248,5 +251,8 @@ size_t mbstowcs( wchar_t * _PDCLIB_restrict pwcs, const char * _PDCLIB_restrict 
 size_t wcstombs( char * _PDCLIB_restrict s, const wchar_t * _PDCLIB_restrict pwcs, size_t n );
 */
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
+
 #endif

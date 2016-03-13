@@ -3,7 +3,9 @@
 #include <_PDCLIB_aux.h>
 #include <_PDCLIB_config.h>
 
-_PDCLIB_BEGIN_EXTERN_C
+#ifdef __cplusplus
+extern "C" {
+#endif
 #define _PDCLIB_ONCE_FLAG_INIT 0
 #define _PDCLIB_ONCE_FLAG_IS_DONE(_f) (*(_f) == 1)
 typedef char _PDCLIB_once_flag;
@@ -20,5 +22,7 @@ struct _PDCLIB_tss {
 	void *value;
 };
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
 #endif

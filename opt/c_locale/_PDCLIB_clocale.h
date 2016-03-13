@@ -7,9 +7,13 @@
 #ifndef _PDCLIB_CLOCALE_H
 #define _PDCLIB_CLOCALE_H _PDCLIB_CLOCALE_H
 #include <locale.h>
-_PDCLIB_BEGIN_EXTERN_C
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void _PDCLIB_initclocale( locale_t l );
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
 #endif // _PDCLIB_CLOCALE_H

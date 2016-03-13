@@ -1,4 +1,4 @@
-/* 7.11 Localization <locale.h>
+/* Localization <locale.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -7,7 +7,10 @@
 #ifndef _PDCLIB_LOCALE_H
 #define _PDCLIB_LOCALE_H _PDCLIB_LOCALE_H
 #include <_PDCLIB_int.h>
-_PDCLIB_BEGIN_EXTERN_C
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef _PDCLIB_NULL_DEFINED
 #define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED
@@ -95,7 +98,7 @@ struct lconv * localeconv( void ) _PDCLIB_nothrow;
 #define LC_CTYPE_MASK    (1 << LC_CTYPE)
 #define LC_MONETARY_MASK (1 << LC_MONETARY)
 #define LC_NUMERIC_MASK  (1 << LC_NUMERIC)
-#define LC_TIME_MASK     (1 << LC_TIME) 
+#define LC_TIME_MASK     (1 << LC_TIME)
 #define LC_ALL_MASK      (LC_COLLATE_MASK | LC_CTYPE_MASK | LC_MONETARY_MASK | \
                           LC_NUMERIC_MASK | LC_TIME_MASK)
 
@@ -109,30 +112,32 @@ extern struct _PDCLIB_locale _PDCLIB_global_locale;
 
 #ifdef _PDCLIB_LOCALE_METHOD
 
-locale_t newlocale(int category_mask, const char *locale, locale_t base); 
+locale_t newlocale(int category_mask, const char *locale, locale_t base);
 
 /* Set the thread locale to newlocale
  *
  * If newlocale is (locale_t)0, then doesn't change the locale and just returns
  * the existing locale.
  *
- * If newlocale is LC_GLOBAL_LOCALE, resets the thread's locale to use the 
+ * If newlocale is LC_GLOBAL_LOCALE, resets the thread's locale to use the
  * global locale.
  *
- * Returns the previous thread locale. If the thread had no previous locale, 
+ * Returns the previous thread locale. If the thread had no previous locale,
  * returns the global locale.
  */
-locale_t uselocale(locale_t newlocale);
+locale_t uselocale( locale_t newlocale );
 
 /* Returns a copy of loc */
-locale_t duplocale(locale_t loc);
+locale_t duplocale( locale_t loc );
 
 /* Frees the passed locale object */
-void freelocale(locale_t loc);
+void freelocale( locale_t loc );
 #endif
 
 #endif
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
 #endif
 
+#endif

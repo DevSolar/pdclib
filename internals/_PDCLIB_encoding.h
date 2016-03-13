@@ -6,6 +6,7 @@
 
 #ifndef __PDCLIB_ENCODING_H
 #define __PDCLIB_ENCODING_H __PDCLIB_ENCODING_H
+
 #include <uchar.h>
 
 /* Must be cauued with bufsize >= 1, in != NULL, out != NULL, ps != NULL

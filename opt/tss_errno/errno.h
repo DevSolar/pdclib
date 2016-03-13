@@ -1,4 +1,4 @@
-/* 7.5 Errors <errno.h>
+/* Errors <errno.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -9,7 +9,9 @@
 
 #include <_PDCLIB_int.h>
 
-_PDCLIB_BEGIN_EXTERN_C
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern int * _PDCLIB_errno_func( void );
 #define errno (*_PDCLIB_errno_func())
@@ -96,6 +98,8 @@ extern int * _PDCLIB_errno_func( void );
 #define EWOULDBLOCK     _PDCLIB_EWOULDBLOCK
 #define EXDEV           _PDCLIB_EXDEV
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,4 +1,4 @@
-/* 7.17 Common definitions <stddef.h>
+/* Common definitions <stddef.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -8,7 +8,10 @@
 #define _PDCLIB_STDDEF_H _PDCLIB_STDDEF_H
 #include <_PDCLIB_config.h>
 #include <_PDCLIB_int.h>
-_PDCLIB_BEGIN_EXTERN_C
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef _PDCLIB_ptrdiff_t ptrdiff_t;
 
@@ -31,6 +34,8 @@ typedef _PDCLIB_wchar_t   wchar_t;
 
 #define offsetof( type, member ) _PDCLIB_offsetof( type, member )
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
 #endif
 
+#endif

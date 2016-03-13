@@ -1,16 +1,21 @@
-#ifndef __PDCLIB_GLUE_H
-#define __PDCLIB_GLUE_H __PDCLIB_GLUE_H
 /* OS glue functions declaration <_PDCLIB_glue.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_int.h>
-#include <_PDCLIB_io.h>
+#ifndef __PDCLIB_GLUE_H
+#define __PDCLIB_GLUE_H __PDCLIB_GLUE_H
+
+#include "_PDCLIB_int.h"
+#include "_PDCLIB_io.h"
+
 #include <stdbool.h>
 #include <stddef.h>
-_PDCLIB_BEGIN_EXTERN_C
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* OS "glue", part 2                                                          */
@@ -69,5 +74,8 @@ int _PDCLIB_remove( const char * filename );
 */
 int _PDCLIB_rename( const char * old, const char * newn);
 
-_PDCLIB_END_EXTERN_C
+#ifdef __cplusplus
+}
+#endif
+
 #endif

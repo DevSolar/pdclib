@@ -1,6 +1,14 @@
+/* PDCLib locale support <_PDCLIB_locale.h>
+
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
+
 #ifndef __PDCLIB_LOCALE_H
 #define __PDCLIB_LOCALE_H __PDCLIB_LOCALE_H
-#include <_PDCLIB_int.h>
+
+#include "_PDCLIB_int.h"
+
 #include <locale.h>
 #include <wctype.h>
 #include <threads.h>

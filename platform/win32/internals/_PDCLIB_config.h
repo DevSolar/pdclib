@@ -116,15 +116,29 @@ struct _PDCLIB_lldiv_t
 /* defines here are merely "configuration". See above for details.            */
 /* -------------------------------------------------------------------------- */
 
-/* The result type of substracting two pointers */
+/* The types used for size_t and ptrdiff_t should not have an integer conversion
+   rank greater than that of signed long int unless the implementation supports
+   objects large enough to make this necessary.
+*/
+
+/* Result type of substracting two pointers (must be signed) */
 #if defined(__amd64__) || defined(_M_AMD64)
-  #define _PDCLIB_ptrdiff long long
-  #define _PDCLIB_PTRDIFF LLONG
-  #define _PDCLIB_PTR_CONV ll
+#define _PDCLIB_ptrdiff long long
+#define _PDCLIB_PTRDIFF LLONG
+#define _PDCLIB_PTR_CONV ll
 #else
-  #define _PDCLIB_ptrdiff int
-  #define _PDCLIB_PTRDIFF INT
-  #define _PDCLIB_PTR_CONV
+#define _PDCLIB_ptrdiff int
+#define _PDCLIB_PTRDIFF INT
+#define _PDCLIB_PTR_CONV
+#endif
+
+/* Result type of the 'sizeof' operator (must be unsigned) */
+#if defined(__amd64__) || defined(_M_AMD64)
+#define _PDCLIB_size unsigned long long
+#define _PDCLIB_SIZE ULLONG
+#else
+#define _PDCLIB_size unsigned int
+#define _PDCLIB_SIZE UINT
 #endif
 
 /* An integer type that can be accessed as atomic entity (think asynchronous
@@ -134,30 +148,39 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_sig_atomic int
 #define _PDCLIB_SIG_ATOMIC INT
 
-/* Result type of the 'sizeof' operator (must be unsigned) */
-#if defined(__amd64__) || defined(_M_AMD64)
-  #define _PDCLIB_size unsigned long long
-  #define _PDCLIB_SIZE ULLONG
-#else
-  #define _PDCLIB_size unsigned int
-  #define _PDCLIB_SIZE UINT
-#endif
-
-/* Large enough an integer to hold all character codes of the largest supported
-   locale.
-
-   XX: Windows requires wchar_t be an unsigned short, but this is not compliant.
+/* Object type whose alignment is as great as supported by implementation
+   in all contexts.
 */
-#define _PDCLIB_wint  signed int
-#define _PDCLIB_wchar unsigned short 
+#define _PDCLIB_max_align long double
+
+/* Integer type whose range of values can represent distinct codes for
+   all members of the largest extended character set specified among the
+   supported locales.
+   Note that the definition of this type must agree with the type used
+   by the compiler for L"" string and L'' character literals.
+*/
+#define _PDCLIB_wchar unsigned short
 #define _PDCLIB_WCHAR USHRT
 
+/* Each member of the basic character set shall have a code value equal
+   to its value when used as the lone character in an integer character
+   constant. If that is not the case, uncomment the following line.
+#define __STDC_MB_MIGHT_NEQ_WC__
+*/
+
+/* Integer type unchanged by default argument promotions that can hold any
+   value corresponding to characters of the extended character set, as well
+   as at least one value that does not correspond to any member of the
+   extended character set (WEOF).
+*/
+#define _PDCLIB_wint  signed int
+
 #if defined(__amd64__) || defined(_M_AMD64)
-  #define _PDCLIB_intptr long long
-  #define _PDCLIB_INTPTR LLONG
+#define _PDCLIB_intptr long long
+#define _PDCLIB_INTPTR LLONG
 #else
-  #define _PDCLIB_intptr int
-  #define _PDCLIB_INTPTR INT
+#define _PDCLIB_intptr int
+#define _PDCLIB_INTPTR INT
 #endif
 
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
@@ -176,30 +199,30 @@ struct _PDCLIB_imaxdiv_t
     _PDCLIB_intmax rem;
 };
 
-/* <time.h>: time_t 
- * The C standard doesn't define what representation of time is stored in 
+/* <time.h>: time_t
+ * The C standard doesn't define what representation of time is stored in
  * time_t when returned by time() , but POSIX defines it to be seconds since the
- * UNIX epoch and most appplications expect that. 
+ * UNIX epoch and most appplications expect that.
  *
- * time_t is also used as the tv_sec member of struct timespec, which *is* 
+ * time_t is also used as the tv_sec member of struct timespec, which *is*
  * defined as a linear count of seconds.
  *
  * time_t is defined as a "real type", so may be a floating point type, but with
  * the presence of the nanosecond accurate struct timespec, and with the lack of
- * any functions for manipulating more accurate values of time_t, this is 
+ * any functions for manipulating more accurate values of time_t, this is
  * probably not useful.
  */
-#define _PDCLIB_time  unsigned long long
+#define _PDCLIB_time unsigned long long
 
 /* <time.h>: clock_t
  *
  * A count of "clock ticks", where the length of a clock tick is unspecified by
- * the standard. The implementation is required to provide a macro, 
+ * the standard. The implementation is required to provide a macro,
  * CLOCKS_PER_SEC, which is the number of "clock ticks" which corresponds to one
  * second.
  *
  * clock_t may be any real type (i.e. integral or floating), and its type on
- * various systems differs. 
+ * various systems differs.
  *
  * On XSI systems, CLOCKS_PER_SEC must be defined to 1000000
  */
@@ -210,8 +233,8 @@ struct _PDCLIB_imaxdiv_t
  *
  * The TIME_UTC parameter is passed to the timespec_get function in order to get
  * the system time in UTC since an implementation defined epoch (not necessarily
- * the same as that used for time_t). That said, on POSIX the obvious 
- * implementation of timespec_get for TIME_UTC is to wrap 
+ * the same as that used for time_t). That said, on POSIX the obvious
+ * implementation of timespec_get for TIME_UTC is to wrap
  * clock_gettime(CLOCK_REALTIME, ...), which is defined as time in UTC since the
  * same epoch.
  *
@@ -273,9 +296,9 @@ struct _PDCLIB_imaxdiv_t
    most compilers.
 */
 #ifdef __GNUC__
-  #define _PDCLIB_offsetof( type, member ) __builtin_offsetof( type, member )
+#define _PDCLIB_offsetof( type, member ) __builtin_offsetof( type, member )
 #else
-  #define _PDCLIB_offsetof( type, member ) ( (size_t) &( ( (type *) 0 )->member ) )
+#define _PDCLIB_offsetof( type, member ) ( (size_t) &( ( (type *) 0 )->member ) )
 #endif
 
 /* Variable Length Parameter List Handling (<stdarg.h>)
@@ -285,22 +308,21 @@ struct _PDCLIB_imaxdiv_t
 */
 
 #ifdef __GNUC__
-  typedef __builtin_va_list _PDCLIB_va_list;
-  #define _PDCLIB_va_arg( ap, type ) (__builtin_va_arg( (ap), type ))
-  #define _PDCLIB_va_copy( dest, src ) (__builtin_va_copy( (dest), (src) ))
-  #define _PDCLIB_va_end( ap ) (__builtin_va_end( ap ) )
-  #define _PDCLIB_va_start( ap, parmN ) (__builtin_va_start( (ap), (parmN) ))
+typedef __builtin_va_list _PDCLIB_va_list;
+#define _PDCLIB_va_arg( ap, type ) (__builtin_va_arg( (ap), type ))
+#define _PDCLIB_va_copy( dest, src ) (__builtin_va_copy( (dest), (src) ))
+#define _PDCLIB_va_end( ap ) (__builtin_va_end( ap ) )
+#define _PDCLIB_va_start( ap, parmN ) (__builtin_va_start( (ap), (parmN) ))
 #elif (defined(__i386__) || defined(__i386) || defined(_M_IX86)) && !(defined(__amd64__) || defined(__x86_64__) || defined(_M_AMD64))
-  /* Internal helper macro. va_round is not part of <stdarg.h>. */
-  #define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
-
-  typedef char * _PDCLIB_va_list;
-  #define _PDCLIB_va_arg( ap, type ) ( (ap) += (_PDCLIB_va_round(type)), ( *(type*) ( (ap) - (_PDCLIB_va_round(type)) ) ) )
-  #define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
-  #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
-  #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
+/* Internal helper macro. va_round is not part of <stdarg.h>. */
+#define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
+typedef char * _PDCLIB_va_list;
+#define _PDCLIB_va_arg( ap, type ) ( (ap) += (_PDCLIB_va_round(type)), ( *(type*) ( (ap) - (_PDCLIB_va_round(type)) ) ) )
+#define _PDCLIB_va_copy( dest, src ) ( (dest) = (src), (void)0 )
+#define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
+#define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
 #else
-  #error Compiler/Architecture support please
+#error Compiler/Architecture support please
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -328,8 +350,8 @@ struct _PDCLIB_imaxdiv_t
 /* Locale --------------------------------------------------------------------*/
 
 /* Locale method. See _PDCLIB_locale.h. If undefined, POSIX per-thread locales
- * will be disabled
- */
+   will be disabled.
+*/
 #define _PDCLIB_LOCALE_METHOD _PDCLIB_LOCALE_METHOD_TSS
 
 /* wchar_t encoding */
@@ -397,8 +419,8 @@ struct _PDCLIB_imaxdiv_t
    However, C++11 introduced the whole list of POSIX errno values into the
    standard, so PDCLib might as well define those as well.
 
-   Sometimes the standard says to set errno to indicate an error, but does not 
-   prescribe a value. We will use a value from the following list. If POSIX 
+   Sometimes the standard says to set errno to indicate an error, but does not
+   prescribe a value. We will use a value from the following list. If POSIX
    defines a value, we use that; otherwise, we use as seems suitable.
 */
 
