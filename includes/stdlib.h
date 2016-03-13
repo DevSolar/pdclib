@@ -22,6 +22,15 @@ typedef _PDCLIB_size_t size_t;
 #define NULL _PDCLIB_NULL
 #endif
 
+#ifndef __cplusplus
+
+#ifndef _PDCLIB_WCHAR_T_DEFINED
+#define _PDCLIB_WCHAR_T_DEFINED _PDCLIB_WCHAR_T_DEFINED
+typedef _PDCLIB_wchar_t wchar_t;
+#endif
+
+#endif
+
 #ifndef _PDCLIB_MB_CUR_MAX_DEFINED
 #define _PDCLIB_MB_CUR_MAX_DEFINED
 #define MB_CUR_MAX (_PDCLIB_mb_cur_max())
@@ -182,6 +191,13 @@ _PDCLIB_noreturn void exit( int status ) _PDCLIB_nothrow;
    _Exit() does not return.
 */
 _PDCLIB_noreturn void _Exit( int status ) _PDCLIB_nothrow;
+
+/* Quick process termination. Functions registered by at_quick_exit() (see
+   above) are called, and the process terminated. No functions registered
+   with atexit() (see above) or signal handlers are called.
+   quick_exit() does not return.
+*/
+_PDCLIB_noreturn void quick_exit( int status );
 
 /* Search an environment-provided key-value map for the given key name, and
    return a pointer to the associated value string (or NULL if key name cannot
