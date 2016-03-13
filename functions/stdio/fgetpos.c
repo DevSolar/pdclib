@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 int _PDCLIB_fgetpos_unlocked( FILE * _PDCLIB_restrict stream, _PDCLIB_fpos_t * _PDCLIB_restrict pos )
 {
@@ -28,7 +28,7 @@ int fgetpos( FILE * _PDCLIB_restrict stream, _PDCLIB_fpos_t * _PDCLIB_restrict p
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <string.h>
 
 int main( void )

@@ -9,7 +9,7 @@ void call_once(once_flag *flag, void (*func)(void))
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #ifndef REGTEST
 static int count = 0;

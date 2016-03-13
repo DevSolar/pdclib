@@ -20,7 +20,7 @@ int * _PDCLIB_errno_func()
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

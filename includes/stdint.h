@@ -6,7 +6,7 @@
 
 #ifndef _PDCLIB_STDINT_H
 #define _PDCLIB_STDINT_H _PDCLIB_STDINT_H
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 /* Exact-width integer types. */
 

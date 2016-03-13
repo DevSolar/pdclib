@@ -11,7 +11,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 #include <unistd.h>
 #ifdef __linux__
 /* get O_CLOEXEC without sys/types.h being awful */
@@ -75,7 +75,7 @@ FILE* _PDCLIB_nothrow tmpfile( void )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <string.h>
 
 int main( void )

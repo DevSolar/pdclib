@@ -6,8 +6,8 @@
 
 #ifndef _PDCLIB_STDDEF_H
 #define _PDCLIB_STDDEF_H _PDCLIB_STDDEF_H
-#include <_PDCLIB_config.h>
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_config.h"
+#include "_PDCLIB_int.h"
 
 #ifdef __cplusplus
 extern "C" {

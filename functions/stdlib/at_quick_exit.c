@@ -27,7 +27,7 @@ int at_quick_exit( void (*func)( void ) )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <assert.h>
 
 static int flags[ 32 ];

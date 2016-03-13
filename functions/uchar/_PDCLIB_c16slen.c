@@ -18,7 +18,7 @@ size_t _PDCLIB_c16slen( const char16_t * str )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

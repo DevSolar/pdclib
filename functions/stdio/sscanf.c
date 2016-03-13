@@ -25,7 +25,7 @@ int sscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict forma
 #define _PDCLIB_FILEID "stdio/sscanf.c"
 #define _PDCLIB_STRINGIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #define testscanf( s, format, ... ) sscanf( s, format, __VA_ARGS__ )
 

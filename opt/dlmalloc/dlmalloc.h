@@ -1,6 +1,6 @@
-#include <_PDCLIB_aux.h>
-#include <_PDCLIB_config.h>
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_aux.h"
+#include "_PDCLIB_config.h"
+#include "_PDCLIB_glue.h"
 #include <threads.h>
 
 typedef mtx_t MLOCK_T;

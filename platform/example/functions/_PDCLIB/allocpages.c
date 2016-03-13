@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 #include <errno.h>
 
 void * _PDCLIB_allocpages( size_t n )
@@ -19,7 +19,7 @@ void * _PDCLIB_allocpages( size_t n )
 }
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

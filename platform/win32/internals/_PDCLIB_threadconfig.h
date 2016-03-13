@@ -1,7 +1,7 @@
 #ifndef _PDCLIB_THREADCONFIG_H
 #define _PDCLIB_THREADCONFIG_H
-#include <_PDCLIB_aux.h>
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_aux.h"
+#include "_PDCLIB_int.h"
 
 #ifdef __cplusplus
 extern "C" {

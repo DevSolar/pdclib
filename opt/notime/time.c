@@ -9,7 +9,7 @@ time_t time(time_t* t)
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

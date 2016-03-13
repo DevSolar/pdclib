@@ -6,7 +6,7 @@
 
 #include <wctype.h>
 #ifndef REGTEST
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_locale.h"
 
 int _PDCLIB_iswctype_l( wint_t wc, wctype_t desc, locale_t l )
 {
@@ -27,7 +27,7 @@ int iswctype( wint_t wc, wctype_t desc )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

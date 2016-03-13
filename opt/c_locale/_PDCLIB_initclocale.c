@@ -19,7 +19,7 @@ void _PDCLIB_initclocale( locale_t l )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main()
 {

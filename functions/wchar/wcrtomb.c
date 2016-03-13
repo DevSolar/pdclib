@@ -10,8 +10,8 @@
 #include <stdint.h>
 #include <assert.h>
 #include <stdlib.h>
-#include <_PDCLIB_encoding.h>
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_encoding.h"
+#include "_PDCLIB_locale.h"
 
 #if 0
 /*
@@ -42,7 +42,7 @@ size_t wcrtomb(
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

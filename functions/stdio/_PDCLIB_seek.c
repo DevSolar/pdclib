@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <errno.h>
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 int_fast64_t _PDCLIB_seek( FILE * stream, 
                            int_fast64_t offset, 
@@ -29,7 +29,7 @@ int_fast64_t _PDCLIB_seek( FILE * stream,
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

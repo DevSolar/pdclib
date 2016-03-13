@@ -10,7 +10,7 @@
 
 #ifndef REGTEST
 
-#include <_PDCLIB_aux.h>
+#include "_PDCLIB_aux.h"
 
 void _PDCLIB_assert99( char const * const message1, char const * const function, char const * const message2 )
 {
@@ -29,7 +29,7 @@ void _PDCLIB_assert89( char const * const message )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <signal.h>
 
 static int EXPECTED_ABORT = 0;

@@ -39,7 +39,7 @@ size_t _PDCLIB_strlcat(
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

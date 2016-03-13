@@ -11,7 +11,7 @@
 #include <errno.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 bool _PDCLIB_open( _PDCLIB_fd_t * pFd, const _PDCLIB_fileops_t ** pOps,
                    char const * const filename, unsigned int mode )
@@ -23,7 +23,7 @@ bool _PDCLIB_open( _PDCLIB_fd_t * pFd, const _PDCLIB_fileops_t ** pOps,
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <stdlib.h>
 #include <string.h>

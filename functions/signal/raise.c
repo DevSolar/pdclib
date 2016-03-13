@@ -68,7 +68,7 @@ int raise( int sig )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <stdlib.h>
 

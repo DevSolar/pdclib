@@ -19,7 +19,7 @@ size_t wcslen( const wchar_t * str )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

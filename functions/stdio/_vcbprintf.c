@@ -9,7 +9,7 @@
 #include <stdbool.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 /* returns true if callback-based output succeeded; else false */
 static inline bool cbout(
@@ -86,7 +86,7 @@ int _vcbprintf(
 #define _PDCLIB_STRINGIO
 #include <stdint.h>
 #include <stddef.h>
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #ifndef REGTEST
 

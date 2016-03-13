@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 #include <errno.h>
 #include <windows.h>
 
@@ -25,7 +25,7 @@ int _PDCLIB_rename( const char * old, const char * new )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <stdlib.h>
 

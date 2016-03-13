@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <uchar.h>
 #include <assert.h>
-#include <_PDCLIB_encoding.h>
+#include "_PDCLIB_encoding.h"
 
 /* Use of the mbstate:
  *
@@ -242,7 +242,7 @@ const struct _PDCLIB_charcodec_t _PDCLIB_utf8_codec = {
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

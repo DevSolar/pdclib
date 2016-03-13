@@ -25,7 +25,7 @@ uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restric
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <errno.h>
 
 int main( void )

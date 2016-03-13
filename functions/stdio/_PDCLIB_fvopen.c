@@ -8,8 +8,8 @@
 #include <stdlib.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_glue.h"
+#include "_PDCLIB_io.h"
 #include <string.h>
 #include <threads.h>
 
@@ -79,7 +79,7 @@ FILE * _PDCLIB_fvopen(
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

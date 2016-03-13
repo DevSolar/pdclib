@@ -9,7 +9,7 @@
 #include <limits.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 #include <threads.h>
 
 static char _PDCLIB_sin_buffer[BUFSIZ];
@@ -80,7 +80,7 @@ __attribute__((constructor)) static void init_stdio(void)
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

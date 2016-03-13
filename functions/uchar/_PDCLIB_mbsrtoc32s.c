@@ -9,8 +9,8 @@
 #include <errno.h>
 #include <stdint.h>
 #include <string.h>
-#include <_PDCLIB_encoding.h>
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_encoding.h"
+#include "_PDCLIB_locale.h"
 
 static size_t _PDCLIB_mbsrtoc32s_l
 (
@@ -46,7 +46,7 @@ size_t _PDCLIB_mbsrtoc32s(
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

@@ -6,7 +6,7 @@
 
 #include <locale.h>
 #ifndef REGTEST
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_locale.h"
 #include <assert.h>
 
 void freelocale( locale_t newloc )
@@ -19,7 +19,7 @@ void freelocale( locale_t newloc )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

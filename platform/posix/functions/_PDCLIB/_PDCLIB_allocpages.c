@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/mman.h>
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 #ifndef MAP_ANON
 #define MAP_ANON MAP_ANOYNMOUS
@@ -37,7 +37,7 @@ void * _PDCLIB_allocpages( size_t n )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

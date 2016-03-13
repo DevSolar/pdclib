@@ -8,7 +8,7 @@
 #include <stdarg.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 int _PDCLIB_scanf_unlocked( const char * _PDCLIB_restrict format, ... )
 {
@@ -30,7 +30,7 @@ int scanf( const char * _PDCLIB_restrict format, ... )
 #define _PDCLIB_FILEID "stdio/scanf.c"
 #define _PDCLIB_FILEIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #define testscanf( stream, format, ... ) scanf( format, __VA_ARGS__ )
 

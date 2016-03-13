@@ -6,7 +6,7 @@
 
 #ifndef _PDCLIB_LOCALE_H
 #define _PDCLIB_LOCALE_H _PDCLIB_LOCALE_H
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 #ifdef __cplusplus
 extern "C" {

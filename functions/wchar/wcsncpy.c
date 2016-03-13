@@ -33,7 +33,7 @@ wchar_t *wcsncpy( wchar_t * _PDCLIB_restrict s1,
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

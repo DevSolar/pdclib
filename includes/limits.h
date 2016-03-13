@@ -6,7 +6,7 @@
 
 #ifndef _PDCLIB_LIMITS_H
 #define _PDCLIB_LIMITS_H _PDCLIB_LIMITS_H
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 /* MSVC 2010 defines this to 5, which is enough for UTF-8 but might rule out
    stateful encodings (like ISO/IEC 2022). GCC 5.3 defines this to 16, which

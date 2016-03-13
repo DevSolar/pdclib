@@ -24,7 +24,7 @@ int vsprintf( char * _PDCLIB_restrict s,
 #define _PDCLIB_STRINGIO
 #include <stdint.h>
 #include <stddef.h>
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 static int testprintf( char * s, const char * format, ... )
 {

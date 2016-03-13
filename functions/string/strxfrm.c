@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_locale.h"
 
 size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, size_t n )
 {
@@ -27,7 +27,7 @@ size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

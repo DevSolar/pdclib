@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 int _PDCLIB_fsetpos_unlocked( FILE * stream, 
                       const _PDCLIB_fpos_t * pos )
@@ -40,7 +40,7 @@ int fsetpos( FILE * stream,
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

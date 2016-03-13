@@ -9,8 +9,8 @@
 #include <errno.h>
 #include <stdint.h>
 #include <assert.h>
-#include <_PDCLIB_encoding.h>
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_encoding.h"
+#include "_PDCLIB_locale.h"
 
 size_t mbrtoc16_l(
     char16_t    *restrict   pc16,
@@ -85,7 +85,7 @@ size_t mbrtoc16(
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

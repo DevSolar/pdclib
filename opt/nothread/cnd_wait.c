@@ -8,7 +8,7 @@ int cnd_wait(cnd_t *cond, mtx_t *mtx)
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

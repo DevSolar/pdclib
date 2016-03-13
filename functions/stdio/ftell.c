@@ -10,7 +10,7 @@
 #include <errno.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 long int _PDCLIB_ftell_unlocked( FILE * stream )
 {
@@ -36,10 +36,10 @@ long int ftell( FILE * stream )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <stdlib.h>
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 #endif
 
 int main( void )

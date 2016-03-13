@@ -16,7 +16,7 @@ int abs( int j )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <limits.h>
 
 int main( void )

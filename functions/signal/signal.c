@@ -59,7 +59,7 @@ void (*signal( int sig, void (*func)( int ) ) )( int )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

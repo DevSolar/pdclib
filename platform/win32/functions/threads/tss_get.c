@@ -9,7 +9,7 @@ void *tss_get(tss_t key)
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #ifndef REGTEST
 static tss_t key;

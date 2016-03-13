@@ -7,8 +7,8 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_glue.h"
+#include "_PDCLIB_io.h"
 
 int _PDCLIB_fillbuffer( FILE * stream )
 {
@@ -34,7 +34,7 @@ int _PDCLIB_fillbuffer( FILE * stream )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

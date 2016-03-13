@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 int _PDCLIB_fputs_unlocked( const char * _PDCLIB_restrict s, 
                     FILE * _PDCLIB_restrict stream )
@@ -55,7 +55,7 @@ int fputs( const char * _PDCLIB_restrict s,
 
 #endif
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

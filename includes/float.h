@@ -6,7 +6,7 @@
 
 #ifndef _PDCLIB_FLOAT_H
 #define _PDCLIB_FLOAT_H _PDCLIB_FLOAT_H
-#include <_PDCLIB_float.h>
+#include "_PDCLIB_float.h"
 
 #define FLT_ROUNDS      _PDCLIB_FLT_ROUNDS
 #define FLT_EVAL_METHOD _PDCLIB_FLT_EVAL_METHOD

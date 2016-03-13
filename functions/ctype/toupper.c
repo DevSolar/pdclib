@@ -7,7 +7,7 @@
 #include <ctype.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_locale.h"
 
 int toupper( int c )
 {
@@ -17,7 +17,7 @@ int toupper( int c )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

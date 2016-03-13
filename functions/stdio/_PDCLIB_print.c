@@ -14,7 +14,7 @@
 #include <limits.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
@@ -591,7 +591,7 @@ int _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
 #define _PDCLIB_FILEID "_PDCLIB/print.c"
 #define _PDCLIB_STRINGIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #ifndef REGTEST
 static size_t testcb( void *p, const char *buf, size_t size )

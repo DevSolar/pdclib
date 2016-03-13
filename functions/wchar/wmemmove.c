@@ -33,7 +33,7 @@ wchar_t * wmemmove( wchar_t * dest, const wchar_t * src, size_t n )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

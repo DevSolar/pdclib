@@ -21,7 +21,7 @@ int wcscmp( const wchar_t * s1, const wchar_t * s2 )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

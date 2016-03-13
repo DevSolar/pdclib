@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 char * _PDCLIB_fgets_unlocked( char * _PDCLIB_restrict s, int size, FILE * _PDCLIB_restrict stream )
 {
@@ -44,7 +44,7 @@ char * fgets( char * _PDCLIB_restrict s, int size,
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <string.h>
 
 int main( void )

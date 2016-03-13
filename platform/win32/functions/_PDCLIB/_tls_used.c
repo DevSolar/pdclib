@@ -44,7 +44,7 @@ const IMAGE_TLS_DIRECTORY _tls_used = {
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 /* Tested in tss_get.c */
 int main( void )

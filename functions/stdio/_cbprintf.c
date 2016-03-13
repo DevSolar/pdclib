@@ -31,7 +31,7 @@ int _cbprintf(
 #define _PDCLIB_STRINGIO
 #include <stddef.h>
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 static char * bufptr;
 static size_t testcb( void *p, const char *buf, size_t size )

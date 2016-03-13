@@ -48,7 +48,7 @@ int mtx_timedlock(mtx_t *_PDCLIB_restrict mtx,
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

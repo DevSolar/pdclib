@@ -6,7 +6,7 @@
 
 #ifndef _PDCLIB_WCTYPE_H
 #define _PDCLIB_WCTYPE_H _PDCLIB_WCTYPE_H
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 #ifdef __cplusplus
 extern "C" {

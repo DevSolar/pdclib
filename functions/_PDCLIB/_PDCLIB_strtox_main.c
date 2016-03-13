@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintmax_t error, uintmax_t limval, int limdigit, char * sign )
 {
     _PDCLIB_uintmax_t rc = 0;
@@ -45,7 +45,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <errno.h>
 
 int main( void )

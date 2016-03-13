@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 #include <errno.h>
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 #include <windows.h>
 #include <string.h>
 
@@ -77,7 +77,7 @@ FILE* tmpfile( void )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <string.h>
 
 int main( void )

@@ -7,8 +7,8 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_io.h"
+#include "_PDCLIB_glue.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -66,7 +66,7 @@ size_t fwrite( const void * _PDCLIB_restrict ptr,
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

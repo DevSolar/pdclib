@@ -9,7 +9,7 @@ int mtx_init(mtx_t *mtx, int type)
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

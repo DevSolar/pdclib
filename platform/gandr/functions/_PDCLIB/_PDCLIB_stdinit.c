@@ -9,8 +9,8 @@
 #include <limits.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_locale.h>
-#include <_PDCLIB_clocale.h>
+#include "_PDCLIB_locale.h"
+#include "_PDCLIB_clocale.h"
 #include <threads.h>
 
 tss_t _PDCLIB_locale_tss;
@@ -394,7 +394,7 @@ struct _PDCLIB_locale _PDCLIB_global_locale = {
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

@@ -8,7 +8,7 @@ int cnd_signal(cnd_t *cond)
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

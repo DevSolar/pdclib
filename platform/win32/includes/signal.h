@@ -6,7 +6,7 @@
 
 #ifndef _PDCLIB_SIGNAL_H
 #define _PDCLIB_SIGNAL_H _PDCLIB_SIGNAL_H
-#include <_PDCLIB_config.h>
+#include "_PDCLIB_config.h"
 
 /* Signals ------------------------------------------------------------------ */
 

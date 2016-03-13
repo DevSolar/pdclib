@@ -8,7 +8,7 @@ int timespec_get( struct timespec *ts, int base )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

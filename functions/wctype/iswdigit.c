@@ -6,7 +6,7 @@
 
 #include <wctype.h>
 #ifndef REGTEST
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_locale.h"
 
 int iswdigit( wint_t wc )
 {
@@ -16,7 +16,7 @@ int iswdigit( wint_t wc )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

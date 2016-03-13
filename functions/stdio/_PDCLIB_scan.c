@@ -597,7 +597,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 #define _PDCLIB_FILEID "_PDCLIB/scan.c"
 #define _PDCLIB_STRINGIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #ifndef REGTEST
 static int testscanf( char const * s, char const * format, ... )

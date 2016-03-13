@@ -5,7 +5,7 @@
 */
 
 #ifndef REGTEST
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 #endif
 
 char _PDCLIB_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
@@ -14,7 +14,7 @@ char _PDCLIB_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 char _PDCLIB_Xdigits[] = "0123456789ABCDEF";
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <string.h>
 

@@ -25,7 +25,7 @@ unsigned long int strtoul( const char * s, char ** endptr, int base )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <errno.h>
 
 int main( void )

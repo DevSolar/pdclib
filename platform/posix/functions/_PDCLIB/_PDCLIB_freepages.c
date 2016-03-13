@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/mman.h>
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 void _PDCLIB_freepages( void * p, size_t n )
 {
@@ -22,7 +22,7 @@ void _PDCLIB_freepages( void * p, size_t n )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

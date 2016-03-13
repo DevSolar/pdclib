@@ -7,7 +7,7 @@
 #ifndef REGTEST
 #include <stdio.h>
 #include <stdint.h>
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 #include <errno.h>
 #include <windows.h>
 
@@ -76,7 +76,7 @@ const _PDCLIB_fileops_t _PDCLIB_fileops = {
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

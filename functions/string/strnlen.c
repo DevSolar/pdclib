@@ -22,7 +22,7 @@ size_t strnlen( const char * s, size_t maxlen )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

@@ -10,7 +10,7 @@
 #include <limits.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 static size_t filecb(void *p, const char *buf, size_t size)
 {
@@ -40,7 +40,7 @@ int vfprintf( FILE * _PDCLIB_restrict stream,
 #define _PDCLIB_FILEID "stdio/vfprintf.c"
 #define _PDCLIB_FILEIO
 #include <stddef.h>
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 static int testprintf( FILE * stream, const char * format, ... )
 {

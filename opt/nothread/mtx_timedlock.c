@@ -8,7 +8,7 @@ int mtx_timedlock(mtx_t *restrict mtx, const struct timespec *restrict ts)
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

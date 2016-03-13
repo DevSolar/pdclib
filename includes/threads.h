@@ -6,8 +6,8 @@
 
 #ifndef _PDCLIB_THREADS_H
 #define _PDCLIB_THREADS_H _PDCLIB_THREADS_H
-#include <_PDCLIB_int.h>
-#include <_PDCLIB_threadconfig.h>
+#include "_PDCLIB_int.h"
+#include "_PDCLIB_threadconfig.h"
 
 #include <time.h>
 

@@ -9,7 +9,7 @@
 #include <limits.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 uint_fast64_t _PDCLIB_ftell64_unlocked( FILE * stream )
 {
@@ -48,7 +48,7 @@ uint_fast64_t _PDCLIB_ftell64( FILE * stream )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <stdlib.h>
 

@@ -23,7 +23,7 @@ wchar_t * wmemcpy( wchar_t * _PDCLIB_restrict dest,
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

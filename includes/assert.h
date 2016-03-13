@@ -4,8 +4,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_aux.h>
-#include <_PDCLIB_config.h>
+#include "_PDCLIB_aux.h"
+#include "_PDCLIB_config.h"
 
 /*
    Defines a macro assert() that, depending on the value of the preprocessor

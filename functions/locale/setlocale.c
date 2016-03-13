@@ -6,7 +6,7 @@
 
 #include <locale.h>
 #ifndef REGTEST
-#include <_PDCLIB_locale.h>
+#include "_PDCLIB_locale.h"
 
 char * setlocale( int category, const char * locale )
 {
@@ -16,7 +16,7 @@ char * setlocale( int category, const char * locale )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

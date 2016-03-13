@@ -62,7 +62,7 @@ PIMAGE_TLS_CALLBACK _PDCLIB_runTlsDestructors = runTlsDestructors;
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 /* Tested in tss_get.c */
 int main( void )

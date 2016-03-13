@@ -9,7 +9,7 @@
 #ifndef REGTEST
 
 #include <string.h>
-#include <_PDCLIB_io.h>
+#include "_PDCLIB_io.h"
 
 char * tmpnam( char * s )
 {
@@ -27,7 +27,7 @@ char * tmpnam( char * s )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <string.h>
 
