@@ -1,7 +1,4 @@
-/* wcrtomb(
-    char        *restrict   s, 
-    wchar_t                 wc,
-    mbstate_t   *restrict   ps);
+/* wcrtomb( char * s, wchar_t wc, mbstate_t * ps )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

@@ -1,4 +1,4 @@
-/* wchar_t * wcsncpy( wchar_t restrict *, const wchar_t restrict * , size_t );
+/* wchar_t * wcsncpy( wchar_t *, const wchar_t * , size_t );
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

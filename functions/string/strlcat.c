@@ -1,7 +1,4 @@
-/* strlcat(
-   char *_PDCLIB_restrict _Dst,
-   const char *_PDCLIB_restict _Src,
-   size_t _DstSize)
+/* strlcat( char *, const char *, size_t )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

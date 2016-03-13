@@ -1,7 +1,4 @@
-/* c32rtomb(
-    char        *restrict   s, 
-    char32_t                c32,
-    mbstate_t   *restrict   ps);
+/* c32rtomb( char *, char32_t, mbstate_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

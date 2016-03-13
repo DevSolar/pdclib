@@ -1,8 +1,4 @@
-/* size_t mbrtoc16(
-    char16_t    *restrict   pc16,
-    const char  *restrict   s, 
-    size_t                  n,
-    mbstate_t   *restrict   ps);
+/* size_t mbrtoc16( char16_t *, const char *, size_t, mbstate_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

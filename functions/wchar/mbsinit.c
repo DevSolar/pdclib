@@ -1,4 +1,4 @@
-/* mbsinit(mbstate_t *ps);
+/* mbsinit( mbstate_t * ps )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

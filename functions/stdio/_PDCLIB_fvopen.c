@@ -1,4 +1,4 @@
-/* _PDCLIB_fvopen( _PDCLIB_fd_t fd, _PDCLIB_fileops_t *  )
+/* _PDCLIB_fvopen( _PDCLIB_fd_t, _PDCLIB_fileops_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

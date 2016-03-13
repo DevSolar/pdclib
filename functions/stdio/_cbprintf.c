@@ -1,4 +1,4 @@
-/* _cbprintf( void *, size_t (*)( void*, const char *, size_t ), const char *, ... )
+/* _cbprintf( void *, size_t (*)( void *, const char *, size_t ), const char *, ... )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

@@ -1,7 +1,4 @@
-/* c16rtomb(
-    char        *restrict   s, 
-    char16_t                c16,
-    mbstate_t   *restrict   ps);
+/* c16rtomb( char *, char16_t, mbstate_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

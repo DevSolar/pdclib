@@ -1,7 +1,4 @@
-/* strlcpy(
-   char *_PDCLIB_restrict _Dst,
-   const char *_PDCLIB_restrict _Src,
-   size_t _DstSize)
+/* strlcpy( char *, const char *, size_t )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
