@@ -1,16 +1,12 @@
+/* _Noreturn <stdnoreturn.h>
+
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
+
 #ifndef _PDCLIB_STDNORETURN_H
-#define _PDCLIB_STDNORETURN_H
-#include <_PDCLIB_aux.h>
+#define _PDCLIB_STDNORETURN_H _PDCLIB_STDNORETURN_H
 
-#ifndef __cplusplus
-/* This is problematic - if we don't define it, then C code can't be compiled
- * on a C++ compiler. If we do define it, then we break all instances of C++
- * [[noreturn]]
- *
- * This does not appear well thought out...
- */
-#define noreturn _PDCLIB_noreturn
-#endif
-
+#define noreturn _Noreturn
 
 #endif
