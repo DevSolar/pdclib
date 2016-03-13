@@ -95,18 +95,25 @@ void srand( unsigned int seed ) _PDCLIB_nothrow;
 
 /* Memory management functions */
 
-/* Allocate a chunk of heap memory of given size. If request could not be
+/* Allocate a chunk of memory of given size. If request could not be
    satisfied, return NULL. Otherwise, return a pointer to the allocated
    memory. Memory contents are undefined.
 */
 void * malloc( size_t size ) _PDCLIB_nothrow;
 
-/* Allocate a chunk of heap memory that is large enough to hold nmemb elements
-   of the given size, and zero-initialize that memory. If request could not be
+/* Allocate a chunk of memory that is large enough to hold nmemb elements of
+   the given size, and zero-initialize that memory. If request could not be
    satisfied, return NULL. Otherwise, return a pointer to the allocated
    memory.
 */
 void * calloc( size_t nmemb, size_t size ) _PDCLIB_nothrow;
+
+/* Allocate a chunk of memory of given size, with specified alignment (which
+   must be a power of two; if it is not, the next greater power of two is
+   used). If request could not be satisfied, return NULL. Otherwise, return
+   a pointer to the allocated memory.
+*/
+void * aligned_alloc( size_t alignment, size_t size ) _PDCLIB_nothrow;
 
 /* De-allocate a chunk of heap memory previously allocated using malloc(),
    calloc(), or realloc(), and pointed to by ptr. If ptr does not match a
