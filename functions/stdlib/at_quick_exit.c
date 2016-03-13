@@ -8,18 +8,18 @@
 
 #ifndef REGTEST
 
-extern void (*_PDCLIB_exitstack[])( void );
-extern size_t _PDCLIB_exitptr;
+extern void (*_PDCLIB_quickexitstack[])( void );
+extern size_t _PDCLIB_quickexitptr;
 
-int atexit( void (*func)( void ) )
+int at_quick_exit( void (*func)( void ) )
 {
-    if ( _PDCLIB_exitptr == 0 )
+    if ( _PDCLIB_quickexitptr == 0 )
     {
         return -1;
     }
     else
     {
-        _PDCLIB_exitstack[ --_PDCLIB_exitptr ] = func;
+        _PDCLIB_quickexitstack[ --_PDCLIB_quickexitptr ] = func;
         return 0;
     }
 }
@@ -49,10 +49,10 @@ static void checkhandler( void )
 
 int main( void )
 {
-    TESTCASE( atexit( &checkhandler ) == 0 );
+    TESTCASE( at_quick_exit( &checkhandler ) == 0 );
     for ( int i = 0; i < 31; ++i )
     {
-        TESTCASE( atexit( &counthandler ) == 0 );
+        TESTCASE( at_quick_exit( &counthandler ) == 0 );
     }
     return TEST_RESULTS;
 }

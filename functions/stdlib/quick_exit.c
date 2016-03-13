@@ -1,4 +1,4 @@
-/* exit( int )
+/* quick_exit( int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -18,14 +18,14 @@
 */
 #define NUMBER_OF_SLOTS 40
 
-void (*_PDCLIB_exitstack[ NUMBER_OF_SLOTS ])( void ) = { _PDCLIB_closeall };
-size_t _PDCLIB_exitptr = NUMBER_OF_SLOTS;
+void (*_PDCLIB_quickexitstack[ NUMBER_OF_SLOTS ])( void ) = { 0 };
+size_t _PDCLIB_quickexitptr = NUMBER_OF_SLOTS;
 
-void exit( int status )
+void quick_exit( int status )
 {
-    while ( _PDCLIB_exitptr < NUMBER_OF_SLOTS )
+    while ( _PDCLIB_quickexitptr < NUMBER_OF_SLOTS )
     {
-        _PDCLIB_exitstack[ _PDCLIB_exitptr++ ]();
+        _PDCLIB_quickexitstack[ _PDCLIB_quickexitptr++ ]();
     }
     _Exit( status );
 }
@@ -37,7 +37,7 @@ void exit( int status )
 
 int main( void )
 {
-    /* Unwinding of regstack tested in atexit(). */
+    /* Unwinding of regstack tested in at_quick_exit(). */
     return TEST_RESULTS;
 }
 

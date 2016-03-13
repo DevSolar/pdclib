@@ -160,6 +160,13 @@ _PDCLIB_noreturn void abort( void ) _PDCLIB_nothrow;
 */
 int atexit( void (*func)( void ) ) _PDCLIB_nothrow;
 
+/* Register a function that will be called on quick_exit(), or when main() returns.
+   At least 32 functions can be registered this way, and will be called in
+   reverse order of registration (last-in, first-out).
+   Returns zero if registration is successfull, nonzero if it failed.
+*/
+int at_quick_exit( void (*func)( void ) ) _PDCLIB_nothrow;
+
 /* Normal process termination. Functions registered by atexit() (see above) are
    called, streams flushed, files closed and temporary files removed before the
    program is terminated with the given status. (See comment for EXIT_SUCCESS
@@ -246,17 +253,80 @@ div_t div( int numer, int denom ) _PDCLIB_nothrow;
 ldiv_t ldiv( long int numer, long int denom ) _PDCLIB_nothrow;
 lldiv_t lldiv( long long int numer, long long int denom ) _PDCLIB_nothrow;
 
-/* TODO: Multibyte / wide character conversion functions */
+/* Multibyte / wide character conversion functions */
 
-/* TODO: Macro MB_CUR_MAX */
-
-/*
-int mblen( const char * s, size_t n );
-int mbtowc( wchar_t * _PDCLIB_restrict pwc, const char * _PDCLIB_restrict s, size_t n );
-int wctomb( char * s, wchar_t wc );
-size_t mbstowcs( wchar_t * _PDCLIB_restrict pwcs, const char * _PDCLIB_restrict s, size_t n );
-size_t wcstombs( char * _PDCLIB_restrict s, const wchar_t * _PDCLIB_restrict pwcs, size_t n );
+/* Affected by LC_CTYPE of the current locale. For state-dependent encoding,
+   each function is placed into its initial conversion state at program
+   startup, and can be returned to that state by a call with its character
+   pointer argument s being a null pointer.
+   Changing LC_CTYPE causes the conversion state to become indeterminate.
 */
+
+/* If s is not a null pointer, returns the number of bytes contained in the
+   multibyte character pointed to by s (if the next n or fewer bytes form a
+   valid multibyte character); -1, if they don't; or 0, if s points to the
+   null character.
+   If s is a null pointer, returns nonzero if multibyte encodings in the
+   current locale are stateful, and zero otherwise.
+*/
+int mblen( const char * s, size_t n );
+
+/* If s is not a null pointer, and the next n bytes (maximum) form a valid
+   multibyte character sequence (possibly including shift sequences), the
+   corresponding wide character is stored in pwc (unless that is a null
+   pointer). If the wide character is the null character, the function is
+   left in the initial conversion state.
+   Returns the number of bytes in the consumed multibyte character sequence;
+   or 0, if the resulting wide character is the null character. If the next
+   n bytes do not form a valid sequence, returns -1.
+   In no case will the returned value be greater than n or MB_CUR_MAX.
+   If s is a null pointer, returns nonzero if multibyte encodings in the
+   current locale are stateful, and zero otherwise.
+*/
+int mbtowc( wchar_t * _PDCLIB_restrict pwc, const char * _PDCLIB_restrict s, size_t n );
+
+/* Converts the wide character wc into the corresponding multibyte character
+   sequence (including shift sequences). If s is not a null pointer, the
+   multibyte sequence (at most MB_CUR_MAX characters) is stored at that
+   location. If wc is a null character, a null byte is stored, preceded by
+   any shift sequence needed to restore the initial shift state, and the
+   function is left in the initial conversion state.
+   Returns the number of bytes in the generated multibyte character sequence.
+   If wc does not correspond to a valid multibyte character, returns -1.
+   In no case will the returned value be greater than MB_CUR_MAX.
+   If s is a null pointer, returns nonzero if multibyte encodings in the
+   current locale are stateful, and zero otherwise.
+*/
+int wctomb( char * s, wchar_t wc );
+
+/* Convert a sequence of multibyte characters beginning in the initial shift
+   state from the array pointed to by s into the corresponding wide character
+   sequence, storing no more than n wide characters into pwcs. A null
+   character is converted into a null wide character, and marks the end of
+   the multibyte character sequence.
+   If copying takes place between objects that overlap, behaviour is
+   undefined.
+   Returns (size_t)-1 if an invalid multibyte sequence is encountered.
+   Otherwise, returns the number of array elements modified, not including
+   a terminating null wide character, if any. (Target string will not be
+   null terminated if the return value equals n.)
+*/
+size_t mbstowcs( wchar_t * _PDCLIB_restrict pwcs, const char * _PDCLIB_restrict s, size_t n );
+
+/* Convert a sequence of wide characters from the array pointed to by pwcs
+   into a sequence of corresponding multibyte characters, beginning in the
+   initial shift state, storing them in the array pointed to by s, stopping
+   if the next multibyte character would exceed the limit of n total bytes
+   or a null character is stored.
+   If copying takes place between objects that overlap, behaviour is
+   undefined.
+   Returns (size_t)-1 if a wide character is encountered that does not
+   correspond to a valid multibyte character. Otherwise, returns the number
+   of array elements modified, not including a terminating null character,
+   if any. (Target string will not be null terminated if the return value
+   equals n.)
+*/
+size_t wcstombs( char * _PDCLIB_restrict s, const wchar_t * _PDCLIB_restrict pwcs, size_t n );
 
 #ifdef __cplusplus
 }
