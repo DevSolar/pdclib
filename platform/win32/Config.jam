@@ -24,7 +24,6 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
 }
 
 PDCLIB_OPTIONS =
-    basecodecs
     ;
 
 CRT0 = [ FDirName platform win32 crt0$(SUFOBJ) ] ;

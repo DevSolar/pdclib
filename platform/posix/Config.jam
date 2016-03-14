@@ -13,5 +13,4 @@ if $(OS) = "MACOSX" {
 
 PDCLIB_OPTIONS =
     pthreads
-    basecodecs
     ;

@@ -11,5 +11,4 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
 
 PDCLIB_OPTIONS =
     nothread
-    basecodecs
     ;

@@ -5,5 +5,4 @@ rule PDCLibTargetHeaders {
 
 PDCLIB_OPTIONS =
     nothread
-    basecodecs
     ;
