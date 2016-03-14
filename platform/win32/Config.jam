@@ -13,8 +13,8 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
     PDCLIB_TEST_LINKLIBS += -lgcc -lkernel32 -lshell32 ;
 } else if $(PDCLIB_TOOLCHAIN) = "WATCOM" {
     PDCLIB_TEST_LINKFLAGS = "-\"option start=_mainCRTStartup\"" ;
-    PDCLIB_TEST_LINKLIBS = 
-        $(WATCOM)\\lib386\\nt\\kernel32.lib 
+    PDCLIB_TEST_LINKLIBS =
+        $(WATCOM)\\lib386\\nt\\kernel32.lib
         $(WATCOM)\\lib386\\nt\\shell32.lib
         $(WATCOM)\\lib386\\nt\\clib3r.lib ;
     PDCLIB_REGTEST_CCHDRS = [ FIncludes $(WATCOM)\\h ] ;
@@ -23,9 +23,8 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
     EXIT ;
 }
 
-PDCLIB_OPTIONS = 
-    tss_errno 
-    basecodecs 
+PDCLIB_OPTIONS =
+    basecodecs
     ;
 
 CRT0 = [ FDirName platform win32 crt0$(SUFOBJ) ] ;

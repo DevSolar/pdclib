@@ -9,8 +9,7 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
     PDCLIB_TEST_LINKLIBS += -lgcc ;
 }
 
-PDCLIB_OPTIONS = 
-	nothread 
-	tss_errno 
-	basecodecs 
+PDCLIB_OPTIONS =
+    nothread
+    basecodecs
     ;
