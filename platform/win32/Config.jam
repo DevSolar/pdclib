@@ -24,8 +24,6 @@ if $(PDCLIB_TOOLCHAIN) = "gcc" {
 }
 
 PDCLIB_OPTIONS = 
-    notime 
-    mincoll 
     tss_errno 
     basecodecs 
     c_locale 

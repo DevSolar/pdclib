@@ -13,6 +13,5 @@ if $(OS) = "MACOSX" {
 
 PDCLIB_OPTIONS =
     pthreads
-    notime
     basecodecs
     c_locale ;
