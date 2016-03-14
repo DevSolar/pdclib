@@ -13,5 +13,4 @@ PDCLIB_OPTIONS =
 	nothread 
 	tss_errno 
 	basecodecs 
-    c_locale 
     ;
