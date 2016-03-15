@@ -87,11 +87,13 @@ find:
 
 links:
 	@echo "Linking platform/$(PLATFORM)..."
+	@if [ ! -d functions/signal ]; then mkdir functions/signal; fi
 	@for file in $$(find platform/$(PLATFORM) -mindepth 2 -type f ! -path *.svn* -printf "%P\n"); do ln -s $$(dirname $$file | sed "s@[^/]*@..@g")/platform/$(PLATFORM)/$$file $$file; done
 
 unlink:
 	@echo "Unlinking platform files..."
 	@for dir in $(PROJDIRS); do find $$dir -type l -exec rm {} +; done
+	@rmdir functions/signal
 
 help:
 	@echo "Available make targets:"
@@ -127,5 +129,4 @@ help:
 
 %_r: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -MMD -MP -DTEST -DREGTEST $< -o $@
-
+	@$(CC) $(CFLAGS) -Wno-deprecated-declarations -Wno-format -MMD -MP -DTEST -DREGTEST $< -o $@
