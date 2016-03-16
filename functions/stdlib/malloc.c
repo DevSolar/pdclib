@@ -12,10 +12,7 @@
 
 #ifndef REGTEST
 
-#ifndef _PDCLIB_GLUE_H
-#define _PDCLIB_GLUE_H _PDLIB_GLUE_H
 #include <_PDCLIB_glue.h>
-#endif
 
 /* TODO: Primitive placeholder. Much room for improvement. */
 

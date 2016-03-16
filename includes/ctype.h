@@ -9,10 +9,7 @@
 #ifndef _PDCLIB_CTYPE_H
 #define _PDCLIB_CTYPE_H _PDCLIB_CTYPE_H
 
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
 
 /* Character classification functions */
 

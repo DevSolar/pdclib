@@ -7,6 +7,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#ifndef _PDCLIB_CONFIG_H
+#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
+
 /* -------------------------------------------------------------------------- */
 /* Misc                                                                       */
 /* -------------------------------------------------------------------------- */
@@ -287,3 +290,5 @@ typedef int _PDCLIB_fd_t;
 #define _PDCLIB_UNGETCBUFSIZE 1
 
 typedef long wint_t;
+
+#endif

@@ -9,10 +9,7 @@
 #ifndef _PDCLIB_LOCALE_H
 #define _PDCLIB_LOCALE_H _PDCLIB_LOCALE_H
 
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
 
 #ifndef _PDCLIB_NULL_DEFINED
 #define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED

@@ -6,15 +6,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_AUX_H
-#define _PDCLIB_AUX_H _PDCLIB_AUX_H
 #include <_PDCLIB_aux.h>
-#endif
-
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
 #include <_PDCLIB_config.h>
-#endif
 
 #ifndef _PDCLIB_ASSERT_H
 #define _PDCLIB_ASSERT_H _PDCLIB_ASSERT_H

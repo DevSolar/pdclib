@@ -9,10 +9,7 @@
 #ifndef _PDCLIB_STDARG_H
 #define _PDCLIB_STDARG_H _PDCLIB_STDARG_H
 
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
 #include <_PDCLIB_config.h>
-#endif
 
 typedef _PDCLIB_va_list va_list;
 
