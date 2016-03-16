@@ -1,6 +1,4 @@
-/* $Id$ */
-
-/* 7.5 Errors <errno.h>
+/* Errors <errno.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

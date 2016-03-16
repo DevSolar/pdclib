@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* _PDCLIB_exit( int )
 
    This file is part of the Public Domain C Library (PDCLib).

@@ -1,5 +1,3 @@
-$Id$
-
 This directory holds various "internals" of PDCLib:
 
 - definitions of helper functions not specified by the standard (hidden in the

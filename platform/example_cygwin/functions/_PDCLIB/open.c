@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* _PDCLIB_open( char const * const, int )
 
    This file is part of the Public Domain C Library (PDCLib).

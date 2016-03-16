@@ -1,6 +1,4 @@
-/* $Id$ */
-
-/* _PDCLIB_close( _PDCLIB_fd_t fd )
+/* _PDCLIB_close( _PDCLIB_fd_t )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

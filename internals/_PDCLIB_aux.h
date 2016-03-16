@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* Auxiliary PDCLib code <_PDCLIB_aux.h>
 
    This file is part of the Public Domain C Library (PDCLib).

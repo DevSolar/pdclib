@@ -1,6 +1,4 @@
-/* $Id$ */
-
-/* 7.17 Common definitions <stddef.h>
+/* Common definitions <stddef.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

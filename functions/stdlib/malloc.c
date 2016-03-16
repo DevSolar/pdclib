@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* void * malloc( size_t )
 
    This file is part of the Public Domain C Library (PDCLib).

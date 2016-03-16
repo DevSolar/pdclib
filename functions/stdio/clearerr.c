@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* clearerr( FILE * )
 
    This file is part of the Public Domain C Library (PDCLib).

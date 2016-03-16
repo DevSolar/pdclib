@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* abort( void )
 
    This file is part of the Public Domain C Library (PDCLib).

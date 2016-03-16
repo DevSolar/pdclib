@@ -1,6 +1,4 @@
-/* $Id$ */
-
-/* 7.15 Variable arguments <stdarg.h> 
+/* Variable arguments <stdarg.h> 
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* _PDCLIB_seed
 
    This file is part of the Public Domain C Library (PDCLib).
