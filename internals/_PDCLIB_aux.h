@@ -22,20 +22,13 @@
 #error Compiler does not define _ _STDC_ _ to 1 (not standard-compliant)!
 #endif
 
-#ifndef __STDC_VERSION__
-#define _PDCLIB_C_VERSION 90
+#if __STDC_VERSION__ < 199901L
 #define _PDCLIB_restrict
 #define _PDCLIB_inline
-#elif __STDC_VERSION__ == 199409L
-#define _PDCLIB_C_VERSION 95
-#define _PDCLIB_restrict
-#define _PDCLIB_inline
-#elif __STDC_VERSION__ == 199901L
-#define _PDCLIB_C_VERSION 99
+#error PDCLib might not be fully conforming to either C89 or C95 prior to v2.x.
+#else
 #define _PDCLIB_restrict restrict
 #define _PDCLIB_inline inline
-#else
-#error Unsupported _ _STDC_VERSION_ _ (__STDC_VERSION__) (supported: ISO/IEC 9899:1990, 9899/AMD1:1995, and 9899:1999).
 #endif
 
 #ifndef __STDC_HOSTED__
@@ -48,18 +41,18 @@
 #error Compiler does not define _ _STDC_HOSTED_ _ to 0 or 1 (not standard-compliant)!
 #endif
 
-#if _PDCLIB_C_VERSION != 99
-#error PDCLib might not be fully conforming to either C89 or C95 prior to v2.x.
-#endif
-
 /* -------------------------------------------------------------------------- */
 /* Helper macros:                                                             */
 /* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending  */
 /* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
+/* _PDCLIB_static_assert( e, m ) does a compile-time assertion of expression  */
+/*                               e, with m as the failure message.            */
 /* -------------------------------------------------------------------------- */
 
 #define _PDCLIB_cc( x, y )     x ## y
 #define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
+
+#define _PDCLIB_static_assert( e, m ) enum { _PDCLIB_concat( _PDCLIB_assert_, __LINE__ ) = 1 / ( !!(e) ) }
 
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )

@@ -657,14 +657,6 @@ int getc( FILE * stream );
 /* Equivalent to fgetc( stdin ). */
 int getchar( void );
 
-/* Read characters from given stream into the array s, stopping at \n or EOF.
-   The string read is terminated with \0. Returns s if successful. If EOF is
-   encountered before any characters are read, the contents of s are unchanged,
-   and NULL is returned. If a read error occurs, the contents of s are indeter-
-   minate, and NULL is returned.
-*/
-char * gets( char * s );
-
 /* Equivalent to fputc( c, stream ), but may be overloaded by a macro that
    evaluates its parameter more than once.
 */

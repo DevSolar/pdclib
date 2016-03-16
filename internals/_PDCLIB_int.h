@@ -436,4 +436,22 @@ struct _PDCLIB_ctype_t
     unsigned char collation;
 };
 
+/* -------------------------------------------------------------------------- */
+/* Configuration asserts                                                      */
+/* -------------------------------------------------------------------------- */
+
+_PDCLIB_static_assert( _PDCLIB_CHAR_BIT == 8, "CHAR_BIT != 8 not supported." );
+
+_PDCLIB_static_assert( sizeof( short ) == _PDCLIB_SHRT_BYTES, "Compiler disagrees on _PDCLIB_SHRT_BYTES." );
+_PDCLIB_static_assert( sizeof( int ) == _PDCLIB_INT_BYTES, "Compiler disagrees on _PDCLIB_INT_BYTES." );
+_PDCLIB_static_assert( sizeof( long ) == _PDCLIB_LONG_BYTES, "Compiler disagrees on _PDCLIB_LONG_BYTES." );
+_PDCLIB_static_assert( sizeof( long long ) == _PDCLIB_LLONG_BYTES, "Compiler disagrees on _PDCLIB_LLONG_BYTES." );
+
+_PDCLIB_static_assert( ( (char)-1 < 0 ) == _PDCLIB_CHAR_SIGNED, "Compiler disagrees on _PDCLIB_CHAR_SIGNED." );
+_PDCLIB_static_assert( sizeof( sizeof( int ) ) == sizeof( _PDCLIB_size ), "Compiler disagrees on _PDCLIB_size." );
+
+int _PDCLIB_assert_array[2];
+
+_PDCLIB_static_assert( sizeof( &_PDCLIB_assert_array[1] - &_PDCLIB_assert_array[0] ) == sizeof( _PDCLIB_ptrdiff ), "Compiler disagrees on _PDCLIB_ptrdiff." );
+
 #endif

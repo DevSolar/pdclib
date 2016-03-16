@@ -33,14 +33,6 @@
 /* to nothing. (This is to avoid warnings with the exit functions under GCC.) */
 #define _PDCLIB_NORETURN __attribute__(( noreturn ))
 
-/* The maximum value that errno can be set to. This is used to set the size   */
-/* of the array in struct lconv (<locale.h>) holding error messages for the   */
-/* strerror() and perror() functions. (If you change this value because you   */
-/* are using additional errno values, you *HAVE* to provide appropriate error */
-/* messages for *ALL* locales.)                                               */
-/* Default is 4 (0, ERANGE, EDOM, EILSEQ).                                    */
-#define _PDCLIB_ERRNO_MAX 4
-
 /* -------------------------------------------------------------------------- */
 /* Integers                                                                   */
 /* -------------------------------------------------------------------------- */
@@ -354,5 +346,13 @@ typedef int _PDCLIB_fd_t;
    (and fully portable).
 */
 #define _PDCLIB_ERROR  4
+
+/* The maximum value that errno can be set to. This is used to set the size   */
+/* of the array in struct lconv (<locale.h>) holding error messages for the   */
+/* strerror() and perror() functions. (If you change this value because you   */
+/* are using additional errno values, you *HAVE* to provide appropriate error */
+/* messages for *ALL* locales.)                                               */
+/* Default is 4 (0, ERANGE, EDOM, EILSEQ).                                    */
+#define _PDCLIB_ERRNO_MAX 4
 
 #endif
