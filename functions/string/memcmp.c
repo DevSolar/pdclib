@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* memcmp( const void *, const void *, size_t )
 
    This file is part of the Public Domain C Library (PDCLib).

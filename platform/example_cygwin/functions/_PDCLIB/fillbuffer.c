@@ -1,6 +1,4 @@
-/* $Id$ */
-
-/* _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream )
+/* _PDCLIB_fillbuffer( struct _PDCLIB_file_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

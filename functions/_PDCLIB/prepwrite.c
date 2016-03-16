@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* _PDCLIB_prepwrite( struct _PDCLIB_file_t * )
 
    This file is part of the Public Domain C Library (PDCLib).

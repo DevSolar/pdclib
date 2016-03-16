@@ -1,6 +1,4 @@
-/* $Id$ */
-
-/* 7.9 Alternative spellings <iso646.h>
+/* Alternative spellings <iso646.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

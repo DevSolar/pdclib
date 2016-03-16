@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* fgets( char *, int, FILE * )
 
    This file is part of the Public Domain C Library (PDCLib).

@@ -1,5 +1,3 @@
-# $Id$
-
 # This is where you chose which platform to compile for (see 'make links' / './platform')
 PLATFORM := example
 

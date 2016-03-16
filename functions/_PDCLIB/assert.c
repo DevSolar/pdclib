@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* _PDCLIB_assert( char const * )
 
    This file is part of the Public Domain C Library (PDCLib).

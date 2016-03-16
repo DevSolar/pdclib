@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* int64_t _PDCLIB_seek( FILE *, int64_t, int )
 
    This file is part of the Public Domain C Library (PDCLib).

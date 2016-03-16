@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* Internal PDCLib configuration <_PDCLIB_config.h>
    (Generic Template)
 

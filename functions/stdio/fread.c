@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /* fwrite( void *, size_t, size_t, FILE * )
 
    This file is part of the Public Domain C Library (PDCLib).
