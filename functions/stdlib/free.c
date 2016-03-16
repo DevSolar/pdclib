@@ -10,10 +10,7 @@
 
 #ifndef REGTEST
 
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
 
 /* TODO: Primitive placeholder. Much room for improvement. */
 

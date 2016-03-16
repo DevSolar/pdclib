@@ -10,7 +10,6 @@
 
 #ifndef REGTEST
 
-#define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
 #include <_PDCLIB_glue.h>
 
 char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCLIB_restrict stream )

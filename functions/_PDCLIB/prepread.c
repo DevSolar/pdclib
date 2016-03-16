@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 
-#define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
 #include <_PDCLIB_glue.h>
 
 int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )

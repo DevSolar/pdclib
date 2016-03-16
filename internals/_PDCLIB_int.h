@@ -6,20 +6,16 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#ifndef _PDCLIB_INT_H
+#define _PDCLIB_INT_H _PDCLIB_INT_H
+
 /* -------------------------------------------------------------------------- */
 /* You should not have to edit anything in this file; if you DO have to, it   */
 /* would be considered a bug / missing feature: notify the author(s).         */
 /* -------------------------------------------------------------------------- */
 
-#ifndef _PDCLIB_CONFIG_H
-#define _PDCLIB_CONFIG_H _PDCLIB_CONFIG_H
 #include <_PDCLIB_config.h>
-#endif
-
-#ifndef _PDCLIB_AUX_H
-#define _PDCLIB_AUX_H _PDCLIB_AUX_H
 #include <_PDCLIB_aux.h>
-#endif
 
 /* null pointer constant */
 #define _PDCLIB_NULL 0
@@ -442,3 +438,4 @@ struct _PDCLIB_ctype_t
     unsigned char collation;
 };
 
+#endif

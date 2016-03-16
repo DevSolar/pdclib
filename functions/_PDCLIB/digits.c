@@ -6,10 +6,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
 #include <_PDCLIB_int.h>
-#endif
 
 char _PDCLIB_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 

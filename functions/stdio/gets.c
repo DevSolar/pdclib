@@ -10,7 +10,6 @@
 
 #ifndef REGTEST
 
-#define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
 #include <_PDCLIB_glue.h>
 
 char * gets( char * s )

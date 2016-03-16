@@ -6,10 +6,10 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
+#ifndef _PDCLIB_GLUE_H
+#define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
+
 #include <_PDCLIB_int.h>
-#endif
 
 /* -------------------------------------------------------------------------- */
 /* OS "glue", part 2                                                          */
@@ -75,3 +75,4 @@ int _PDCLIB_remove( const char * filename );
 */
 int _PDCLIB_rename( const char * old, const char * new );
 
+#endif
