@@ -25,20 +25,21 @@ int main( void )
     /* Flags should be clear */
     TESTCASE( ! ferror( fh ) );
     TESTCASE( ! feof( fh ) );
-    /* Reading from input stream - should provoke error */
-    /* FIXME: Apparently glibc disagrees on this assumption. How to provoke error on glibc? */
-    TESTCASE( fgetc( fh ) == EOF );
-    TESTCASE( ferror( fh ) );
-    TESTCASE( ! feof( fh ) );
-    /* clearerr() should clear flags */
-    clearerr( fh );
-    TESTCASE( ! ferror( fh ) );
-    TESTCASE( ! feof( fh ) );
     /* Reading from empty stream - should provoke EOF */
     rewind( fh );
     TESTCASE( fgetc( fh ) == EOF );
     TESTCASE( ! ferror( fh ) );
     TESTCASE( feof( fh ) );
+    /* clearerr() should clear flags */
+    clearerr( fh );
+    TESTCASE( ! ferror( fh ) );
+    TESTCASE( ! feof( fh ) );
+    /* reopen() the file write-only */
+    TESTCASE( ( fh = freopen( NULL, "w", fh ) ) != NULL );
+    /* Reading from write-only stream - should provoke error */
+    TESTCASE( fgetc( fh ) == EOF );
+    TESTCASE( ferror( fh ) );
+    TESTCASE( ! feof( fh ) );
     /* clearerr() should clear flags */
     clearerr( fh );
     TESTCASE( ! ferror( fh ) );
