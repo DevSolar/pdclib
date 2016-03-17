@@ -4,7 +4,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 #include <string.h>
 #include <ctype.h>
 
@@ -26,7 +26,7 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s )
 }
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

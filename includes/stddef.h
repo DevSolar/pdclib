@@ -7,7 +7,7 @@
 #ifndef _PDCLIB_STDDEF_H
 #define _PDCLIB_STDDEF_H _PDCLIB_STDDEF_H
 
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 typedef _PDCLIB_ptrdiff_t ptrdiff_t;
 

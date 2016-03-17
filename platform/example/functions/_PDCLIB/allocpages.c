@@ -14,7 +14,7 @@
 int brk( void * );
 void * sbrk( intptr_t );
 
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 static void * membreak = NULL;
 
@@ -54,7 +54,7 @@ void * _PDCLIB_allocpages( int const n )
 }
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

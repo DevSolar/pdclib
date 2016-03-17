@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
@@ -47,7 +47,7 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <string.h>
 
 int main( void )

@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 /* Write the value c (cast to unsigned char) to the given stream.
    Returns c if successful, EOF otherwise.
@@ -35,7 +35,7 @@ int fputc( int c, struct _PDCLIB_file_t * stream )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

@@ -7,7 +7,7 @@
 unsigned long int _PDCLIB_seed = 1;
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

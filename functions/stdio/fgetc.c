@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 int fgetc( struct _PDCLIB_file_t * stream )
 {
@@ -26,7 +26,7 @@ int fgetc( struct _PDCLIB_file_t * stream )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

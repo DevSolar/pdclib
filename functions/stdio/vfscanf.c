@@ -89,7 +89,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
 #define _PDCLIB_FILEID "stdio/vfscanf.c"
 #define _PDCLIB_FILEIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 static int testscanf( FILE * stream, char const * format, ... )
 {

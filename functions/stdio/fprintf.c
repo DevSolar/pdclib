@@ -25,7 +25,7 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
 #define _PDCLIB_FILEID "stdio/fprintf.c"
 #define _PDCLIB_FILEIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #define testprintf( stream, format, ... ) fprintf( stream, format, __VA_ARGS__ )
 

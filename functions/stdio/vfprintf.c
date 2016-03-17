@@ -50,7 +50,7 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
 #define _PDCLIB_FILEID "stdio/vfprintf.c"
 #define _PDCLIB_FILEIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 static int testprintf( FILE * stream, const char * format, ... )
 {

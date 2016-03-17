@@ -340,7 +340,7 @@ struct lconv _PDCLIB_lconv = {
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

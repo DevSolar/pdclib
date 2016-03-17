@@ -30,7 +30,7 @@ char * strncpy( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

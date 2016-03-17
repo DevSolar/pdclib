@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -95,7 +95,7 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <stdlib.h>
 #include <string.h>

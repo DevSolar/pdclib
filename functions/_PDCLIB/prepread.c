@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
 {
@@ -34,7 +34,7 @@ int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
 }
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

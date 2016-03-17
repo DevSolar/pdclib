@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
@@ -66,7 +66,7 @@ int fclose( struct _PDCLIB_file_t * stream )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

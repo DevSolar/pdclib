@@ -25,7 +25,7 @@ int snprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict
 #define _PDCLIB_FILEID "stdio/snprintf.c"
 #define _PDCLIB_STRINGIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #define testprintf( s, format, ... ) snprintf( s, 100, format, __VA_ARGS__ )
 

@@ -24,7 +24,7 @@ void * calloc( size_t nmemb, size_t size )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

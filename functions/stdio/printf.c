@@ -25,7 +25,7 @@ int printf( const char * _PDCLIB_restrict format, ... )
 #define _PDCLIB_FILEID "stdio/printf.c"
 #define _PDCLIB_FILEIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #define testprintf( stream, format, ... ) printf( format, __VA_ARGS__ )
 

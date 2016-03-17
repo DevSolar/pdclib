@@ -19,7 +19,7 @@ imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

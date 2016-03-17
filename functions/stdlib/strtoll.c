@@ -32,7 +32,7 @@ long long int strtoll( const char * s, char ** endptr, int base )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <errno.h>
 

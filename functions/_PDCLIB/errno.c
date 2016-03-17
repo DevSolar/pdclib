@@ -4,7 +4,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 #ifndef REGTEST
 
@@ -18,7 +18,7 @@ int * _PDCLIB_errno_func()
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <errno.h>
 

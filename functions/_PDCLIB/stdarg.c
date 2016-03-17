@@ -8,7 +8,7 @@
 #include <limits.h>
 #include <float.h>
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 typedef int (*intfunc_t)( void );
 
