@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+#ifndef REGTEST
 #include "_PDCLIB_glue.h"
 
 int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
@@ -32,6 +33,8 @@ int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
         return 0;
     }
 }
+
+#endif
 
 #ifdef TEST
 #include "_PDCLIB_test.h"

@@ -4,9 +4,10 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include "_PDCLIB_int.h"
 #include <string.h>
 #include <ctype.h>
+
+#ifndef REGTEST
 
 _PDCLIB_intmax_t _PDCLIB_atomax( const char * s )
 {
@@ -25,15 +26,19 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s )
     return ( sign == '+' ) ? rc : -rc;
 }
 
+#endif
+
 #ifdef TEST
 #include "_PDCLIB_test.h"
 
 int main( void )
 {
+#ifndef REGTEST
     /* basic functionality */
     TESTCASE( _PDCLIB_atomax( "123" ) == 123 );
     /* testing skipping of leading whitespace and trailing garbage */
     TESTCASE( _PDCLIB_atomax( " \n\v\t\f123xyz" ) == 123 );
+#endif
     return TEST_RESULTS;
 }
 
