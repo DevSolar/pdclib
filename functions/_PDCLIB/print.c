@@ -29,7 +29,7 @@
 #define E_intmax   1<<10
 #define E_size     1<<11
 #define E_ptrdiff  1<<12
-#define E_intptr   1<<13
+#define E_pointer  1<<13
 #define E_ldouble  1<<14
 #define E_lower    1<<15
 #define E_unsigned 1<<16
@@ -394,7 +394,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         case 'p':
             /* TODO: E_long -> E_intptr */
             status->base = 16;
-            status->flags |= ( E_lower | E_unsigned | E_alt | E_long );
+            status->flags |= ( E_lower | E_unsigned | E_alt | E_pointer );
             break;
         case 'n':
            {
@@ -415,7 +415,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         if ( status->flags & E_unsigned )
         {
             uintmax_t value;
-            switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_size ) )
+            switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_size | E_pointer ) )
             {
                 case E_char:
                     value = (uintmax_t)(unsigned char)va_arg( status->arg, int );
@@ -435,6 +435,12 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 case E_size:
                     value = (uintmax_t)va_arg( status->arg, size_t );
                     break;
+                case E_pointer:
+                    value = (uintmax_t)(uintptr_t)va_arg( status->arg, void * );
+                    break;
+                default:
+                    puts( "UNSUPPORTED PRINTF FLAG COMBINATION" );
+                    return NULL;
             }
             ++(status->current);
             /* FIXME: The if clause means one-digit values do not get formatted */
@@ -486,6 +492,9 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 case E_intmax:
                     int2base( va_arg( status->arg, intmax_t ), status );
                     break;
+                default:
+                    puts( "UNSUPPORTED PRINTF FLAG COMBINATION" );
+                    return NULL;
             }
         }
         if ( status->flags & E_minus )

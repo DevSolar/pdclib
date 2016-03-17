@@ -25,7 +25,7 @@
 #define E_intmax     1<<10
 #define E_size       1<<11
 #define E_ptrdiff    1<<12
-#define E_intptr     1<<13
+#define E_pointer    1<<13
 #define E_ldouble    1<<14
 #define E_unsigned   1<<16
 
@@ -283,7 +283,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         case 's':
         {
             char * c = va_arg( status->arg, char * );
-            while ( ( status->current < status->width ) && 
+            while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 if ( isspace( rc ) )
@@ -343,7 +343,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             } while ( *endspec != ']' );
             // read according to scanlist, equiv. to %s above
             char * c = va_arg( status->arg, char * );
-            while ( ( status->current < status->width ) && 
+            while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 if ( negative_scanlist )
@@ -382,8 +382,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         }
         case 'p':
             status->base = 16;
-            /* TODO: Assuming 'long' for pointers, this should be handled differently. */
-            status->flags |= E_unsigned | E_long;
+            status->flags |= E_pointer;
             break;
         case 'n':
         {
@@ -521,7 +520,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         if ( ! ( status->flags & E_suppressed ) )
         {
             switch ( status->flags & ( E_char | E_short | E_long | E_llong |
-                                       E_intmax | E_size | E_ptrdiff |
+                                       E_intmax | E_size | E_ptrdiff | E_pointer |
                                        E_unsigned ) )
             {
                 case E_char:
@@ -574,6 +573,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 case E_ptrdiff:
                     /* E_ptrdiff always implies signed */
                     *( va_arg( status->arg,          ptrdiff_t * ) ) =          (ptrdiff_t)( value * sign );
+                    break;
+
+                case E_pointer:
+                    /* E_pointer always implies unsigned */
+                    *( uintptr_t* )( va_arg( status->arg, void * ) ) =          (uintptr_t)( value * sign );
                     break;
 
                 default:
