@@ -1,11 +1,8 @@
-# This is where you chose which platform to compile for (see 'make links' / './platform')
-PLATFORM := example
-
 # This is a list of all non-source files that are part of the distribution.
 AUXFILES := Makefile Readme.txt
 
 # Directories belonging to the project
-PROJDIRS := functions includes internals
+PROJDIRS := functions includes internals platform/example
 # All source files of the project
 SRCFILES := $(shell find -L $(PROJDIRS) -type f -name "*.c")
 # All header files of the project
@@ -28,7 +25,7 @@ REGDEPFILES := $(patsubst %,%.d,$(REGFILES))
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
 WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes 
-CFLAGS := -fno-builtin -g -std=c99 -I./internals -I./testing $(WARNINGS) $(USERFLAGS)
+CFLAGS := -fno-builtin -g -std=c99 -I./internals -I./testing -I./platform/example/include -I./platform/example/internals $(WARNINGS) $(USERFLAGS)
 
 .PHONY: all clean srcdist bindist test tests testdrivers regtests regtestdrivers todos fixmes find links unlink help
 
@@ -45,14 +42,24 @@ all: pdclib.a testdrivers regtestdrivers
 	@echo "==========================="
 	@echo
 	@$(MAKE) regtests | grep -v "^ RTST" | grep -v "^Failed"
+	@echo
+	@echo "========"
+	@echo "FIXME's:"
+	@echo "========"
+	@echo
+	@$(MAKE) fixmes
+	@echo
+	@echo "======="
+	@echo "TODO's:"
+	@echo "======="
+	@echo
+	@$(MAKE) todos | head
+	@echo "..."
 
 pdclib.a: $(OBJFILES)
 	@echo " AR	$@"
 	@ar rc pdclib.a $?
 	@echo
-
-test: functions/$(FILE)
-	functions/$(FILE)
 
 tests: testdrivers
 	-@rc=0; count=0; failed=""; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done; echo
@@ -80,35 +87,18 @@ todos:
 fixmes:
 	-@for file in $(ALLFILES:Makefile=); do grep -H FIXME $$file; done; true
 
-find:
-	@find functions/ includes/ internals/ platform/ -name "*\.[ch]" -type f | xargs grep $$FIND
-
-links:
-	@echo "Linking platform/$(PLATFORM)..."
-	@if [ ! -d functions/signal ]; then mkdir functions/signal; fi
-	@for file in $$(find platform/$(PLATFORM) -mindepth 2 -type f ! -path *.svn* -printf "%P\n"); do ln -s $$(dirname $$file | sed "s@[^/]*@..@g")/platform/$(PLATFORM)/$$file $$file; done
-
-unlink:
-	@echo "Unlinking platform files..."
-	@for dir in $(PROJDIRS); do find $$dir -type l -exec rm {} +; done
-	@rmdir functions/signal
-
 help:
 	@echo "Available make targets:"
 	@echo
 	@echo "all              - build pdclib.a"
 	@echo "clean            - remove all object files, dependency files and test drivers"
 	@echo "srcdist          - build pdclib.tgz (source tarball)"
-	@echo "test             - test a single testdriver (Usage: FILE=\"test.[rt]\" make test)"
 	@echo "tests            - build and run test drivers (link pdclib.a)"
 	@echo "  testdrivers    - build but do not run test drivers"
 	@echo "regtests         - build and run regression test drivers (link system clib)"
 	@echo "  regtestdrivers - build but do not run regression test drivers"
 	@echo "todos            - list all TODO comments in the sources"
 	@echo "fixmes           - list all FIXME comments in the sources"
-	@echo "find             - find a phrase in the sources (Usage: FIND=\"phrase\" make find)"
-	@echo "links            - link platform files (development only)"
-	@echo "unlink           - remove links to platform files (development only)"
 	@echo "%.o              - build an individual object file"
 	@echo "%.t              - build an individual test driver"
 	@echo "%.r              - build an individual regression test driver"

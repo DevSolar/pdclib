@@ -102,6 +102,7 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
 
 int main( void )
 {
+#ifndef REGTEST
     /* This testdriver assumes POSIX, i.e. _PDCLIB_fd_t being int and being
        incremented by one on each successful open.
     */
@@ -157,6 +158,7 @@ int main( void )
     TESTCASE( _PDCLIB_close( fh ) == 0 );
     /* Cleaning up. */
     TESTCASE( remove( testfile ) == 0 );
+#endif
     return TEST_RESULTS;
 }
 
