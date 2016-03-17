@@ -4,7 +4,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 char _PDCLIB_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -12,7 +12,7 @@ char _PDCLIB_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 char _PDCLIB_Xdigits[] = "0123456789ABCDEF";
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <string.h>
 

@@ -50,7 +50,7 @@ const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
 }
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

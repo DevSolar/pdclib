@@ -23,7 +23,7 @@ void setbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <stdlib.h>
 
 int main( void )

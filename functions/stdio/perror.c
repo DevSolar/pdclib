@@ -32,7 +32,7 @@ void perror( const char * s )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>

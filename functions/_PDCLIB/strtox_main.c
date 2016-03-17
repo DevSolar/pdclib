@@ -4,7 +4,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
@@ -43,7 +43,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
 }
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <errno.h>
 
 int main( void )

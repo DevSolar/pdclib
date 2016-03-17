@@ -7,7 +7,7 @@
 #ifndef _PDCLIB_ERRNO_H
 #define _PDCLIB_ERRNO_H _PDCLIB_ERRNO_H
 
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 #define errno (*_PDCLIB_errno_func())
 

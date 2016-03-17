@@ -4,7 +4,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <_PDCLIB_aux.h>
+#include "_PDCLIB_aux.h"
 
 #ifndef _PDCLIB_ASSERT_H
 #define _PDCLIB_ASSERT_H _PDCLIB_ASSERT_H

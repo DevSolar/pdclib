@@ -7,7 +7,7 @@
 #ifndef _PDCLIB_LIMITS_H
 #define _PDCLIB_LIMITS_H _PDCLIB_LIMITS_H
 
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 /* TODO: Defined to 1 as multibyte characters are not supported yet. */
 #define MB_LEN_MAX 1

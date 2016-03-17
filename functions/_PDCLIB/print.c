@@ -517,7 +517,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 #define _PDCLIB_FILEID "_PDCLIB/print.c"
 #define _PDCLIB_STRINGIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 static int testprintf( char * buffer, const char * format, ... )
 {

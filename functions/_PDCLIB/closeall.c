@@ -21,7 +21,7 @@ void _PDCLIB_closeall( void )
 }
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {

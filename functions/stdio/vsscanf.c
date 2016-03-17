@@ -87,7 +87,7 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
 #define _PDCLIB_FILEID "stdio/vsscanf.c"
 #define _PDCLIB_STRINGIO
 
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 static int testscanf( char const * stream, char const * format, ... )
 {

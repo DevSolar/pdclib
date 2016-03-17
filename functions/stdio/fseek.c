@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 int fseek( struct _PDCLIB_file_t * stream, long offset, int whence )
 {
@@ -30,7 +30,7 @@ int fseek( struct _PDCLIB_file_t * stream, long offset, int whence )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <string.h>
 
 int main( void )

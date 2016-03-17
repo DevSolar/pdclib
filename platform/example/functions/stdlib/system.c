@@ -32,7 +32,7 @@ int system( const char * string )
 }
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #define SHELLCOMMAND "echo 'SUCCESS testing system()'"
 

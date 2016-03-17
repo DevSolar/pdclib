@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -86,7 +86,7 @@ struct _PDCLIB_file_t * tmpfile( void )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <string.h>
 
 int main( void )

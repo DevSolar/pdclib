@@ -10,7 +10,7 @@
 
 #ifndef REGTEST
 
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 
 /* TODO: Primitive placeholder. Much room for improvement. */
 
@@ -145,7 +145,7 @@ void * malloc( size_t size )
 
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>

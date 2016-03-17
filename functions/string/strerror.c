@@ -26,7 +26,7 @@ char * strerror( int errnum )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 #include <stdio.h>
 #include <errno.h>

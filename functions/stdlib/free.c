@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include <_PDCLIB_int.h>
+#include "_PDCLIB_int.h"
 
 /* TODO: Primitive placeholder. Much room for improvement. */
 
@@ -37,7 +37,7 @@ void free( void * ptr )
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 #include <stdbool.h>
 
 int main( void )

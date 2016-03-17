@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 #ifndef REGTEST
-#include <_PDCLIB_glue.h>
+#include "_PDCLIB_glue.h"
 #include <string.h>
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
@@ -73,7 +73,7 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
 #endif
 
 #ifdef TEST
-#include <_PDCLIB_test.h>
+#include "_PDCLIB_test.h"
 
 int main( void )
 {
