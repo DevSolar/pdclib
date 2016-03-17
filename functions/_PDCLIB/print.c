@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+#ifndef REGTEST
+
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
 */
@@ -513,11 +515,15 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
     return ++spec;
 }
 
+#endif
+
 #ifdef TEST
 #define _PDCLIB_FILEID "_PDCLIB/print.c"
 #define _PDCLIB_STRINGIO
 
 #include "_PDCLIB_test.h"
+
+#ifndef REGTEST
 
 static int testprintf( char * buffer, const char * format, ... )
 {
@@ -542,13 +548,16 @@ static int testprintf( char * buffer, const char * format, ... )
     va_end( status.arg );
     return status.i;
 }
+#endif
 
 #define TEST_CONVERSION_ONLY
 
 int main( void )
 {
+#ifndef REGTEST
     char target[100];
 #include "printf_testcases.h"
+#endif
     return TEST_RESULTS;
 }
 

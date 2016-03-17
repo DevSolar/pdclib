@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef REGTEST
+
 int brk( void * );
 void * sbrk( intptr_t );
 
@@ -53,13 +55,14 @@ void * _PDCLIB_allocpages( int const n )
     }
 }
 
+#endif
+
 #ifdef TEST
 #include "_PDCLIB_test.h"
 
 int main( void )
 {
 #ifndef REGTEST
-    {
     char * startbreak = sbrk( 0 );
     TESTCASE( _PDCLIB_allocpages( 0 ) );
     TESTCASE( ( (char *)sbrk( 0 ) - startbreak ) <= _PDCLIB_PAGESIZE );
@@ -70,7 +73,6 @@ int main( void )
     TESTCASE( sbrk( 0 ) == startbreak + ( 6 * _PDCLIB_PAGESIZE ) );
     TESTCASE( _PDCLIB_allocpages( -3 ) );
     TESTCASE( sbrk( 0 ) == startbreak + ( 3 * _PDCLIB_PAGESIZE ) );
-    }
 #endif
     return TEST_RESULTS;
 }
