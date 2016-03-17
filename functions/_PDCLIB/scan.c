@@ -382,7 +382,8 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         }
         case 'p':
             status->base = 16;
-            status->flags |= E_unsigned;
+            /* TODO: Assuming 'long' for pointers, this should be handled differently. */
+            status->flags |= E_unsigned | E_long;
             break;
         case 'n':
         {
