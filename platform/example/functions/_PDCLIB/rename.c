@@ -96,6 +96,7 @@ int _PDCLIB_rename( const char * old, const char * new )
 
 int main( void )
 {
+#ifndef REGTEST
     FILE * file;
     remove( testfile1 );
     remove( testfile2 );
@@ -131,6 +132,7 @@ int main( void )
     /* remove both files */
     remove( testfile1 );
     remove( testfile2 );
+#endif
     return TEST_RESULTS;
 }
 

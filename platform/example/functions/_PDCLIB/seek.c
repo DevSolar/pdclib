@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 
+#ifndef REGTEST
+
 #include <_PDCLIB_glue.h>
 
 #include "/usr/include/errno.h"
@@ -54,6 +56,8 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
     }
     return EOF;
 }
+
+#endif
 
 #ifdef TEST
 #include <_PDCLIB_test.h>
