@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+
 #include "_PDCLIB_glue.h"
 
 extern char * _PDCLIB_eol;
@@ -43,6 +44,7 @@ int puts( const char * s )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -63,4 +65,3 @@ int main( void )
 }
 
 #endif
-

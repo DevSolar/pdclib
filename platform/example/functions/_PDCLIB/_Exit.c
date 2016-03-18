@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #ifndef REGTEST
+
 #include "_PDCLIB_glue.h"
 
 extern void _exit( int status ) _PDCLIB_NORETURN;
@@ -23,6 +24,7 @@ void _PDCLIB_Exit( int status )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )

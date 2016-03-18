@@ -36,7 +36,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                 */
                 /* If current buffer is big enough for requested size, but not
                    over twice as big (and wasting memory space), we use the
-                   current buffer (i.e., do nothing), to save the malloc() / 
+                   current buffer (i.e., do nothing), to save the malloc() /
                    free() overhead.
                 */
                 if ( ( stream->bufsize < size ) || ( stream->bufsize > ( size << 1 ) ) )
@@ -68,6 +68,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 #include <errno.h>
@@ -105,4 +106,3 @@ int main( void )
 }
 
 #endif
-

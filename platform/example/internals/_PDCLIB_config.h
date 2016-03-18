@@ -145,7 +145,7 @@ struct _PDCLIB_lldiv_t
 /* Large enough an integer to hold all character codes of the largest supported
    locale.
 */
-#define _PDCLIB_wchar unsigned short 
+#define _PDCLIB_wchar unsigned short
 #define _PDCLIB_WCHAR USHRT
 
 /* (Signed) integer type capable of taking the (cast) value of a void *, and

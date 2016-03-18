@@ -29,7 +29,9 @@ void _PDCLIB_assert89( char const * const message )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
+
 #include <signal.h>
 
 static int EXPECTED_ABORT = 0;
@@ -42,6 +44,7 @@ static void aborthandler( int sig )
 }
 
 #define NDEBUG
+
 #include <assert.h>
 
 static int disabled_test( void )
@@ -53,6 +56,7 @@ static int disabled_test( void )
 }
 
 #undef NDEBUG
+
 #include <assert.h>
 
 int main( void )

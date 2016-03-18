@@ -6,9 +6,9 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 #ifndef REGTEST
-#include <ctype.h>
 
 int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, va_list arg )
 {

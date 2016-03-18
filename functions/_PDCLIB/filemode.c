@@ -57,6 +57,7 @@ unsigned int _PDCLIB_filemode( char const * const mode )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -86,4 +87,3 @@ int main( void )
 }
 
 #endif
-

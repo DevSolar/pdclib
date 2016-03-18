@@ -35,6 +35,7 @@ size_t strspn( const char * s1, const char * s2 )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -44,4 +45,5 @@ int main( void )
     TESTCASE( strspn( abcde, abcde ) == 5 );
     return TEST_RESULTS;
 }
+
 #endif

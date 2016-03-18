@@ -302,7 +302,7 @@ static struct _PDCLIB_ctype_t _ctype[] = {
     { 0x00, 0xFF, 0xFF, 0xFF }
 };
 
-struct lconv _PDCLIB_lconv = { 
+struct lconv _PDCLIB_lconv = {
     /* _PDCLIB_ctype      */ _ctype + 1,
     /* _PDCLIB_errno_texts */
     {
@@ -340,11 +340,12 @@ struct lconv _PDCLIB_lconv = {
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
 {
-    /* Testing covered by several other testdrivers using stdin / stdout / 
+    /* Testing covered by several other testdrivers using stdin / stdout /
        stderr.
     */
     return TEST_RESULTS;

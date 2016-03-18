@@ -54,7 +54,7 @@ extern FILE * stderr;
 int remove( const char * filename );
 
 /* Rename the given old file to the given new name.
-   Returns zero if successful, non-zero otherwise. 
+   Returns zero if successful, non-zero otherwise.
    This implementation does detect if the old filename corresponds to an open
    file, and fails the rename in this case.
    If there already is a file with the new filename, behaviour is defined by

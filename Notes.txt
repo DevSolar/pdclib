@@ -107,4 +107,3 @@ obsessive when it comes to coding style. ;-)
   hopefully keeping overly ambitious editors from repeating my mistakes. The
   header files especially should be self-documenting to the point of being a
   suitable replacement for any library reference book you might be using.
-

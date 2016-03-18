@@ -23,6 +23,7 @@ int strcoll( const char * s1, const char * s2 )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -36,4 +37,5 @@ int main( void )
     TESTCASE( strcmp( abcde, empty ) > 0 );
     return TEST_RESULTS;
 }
+
 #endif

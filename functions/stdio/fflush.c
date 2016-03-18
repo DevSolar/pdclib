@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+
 #include "_PDCLIB_glue.h"
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
@@ -36,10 +37,11 @@ int fflush( struct _PDCLIB_file_t * stream )
         return _PDCLIB_flushbuffer( stream );
     }
 }
-                
+
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -49,4 +51,3 @@ int main( void )
 }
 
 #endif
-

@@ -22,6 +22,7 @@ void * memcpy( void * _PDCLIB_restrict s1, const void * _PDCLIB_restrict s2, siz
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -35,4 +36,5 @@ int main( void )
     TESTCASE( s[10] == 'x' );
     return TEST_RESULTS;
 }
+
 #endif

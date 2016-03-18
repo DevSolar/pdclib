@@ -8,6 +8,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+
 #include "_PDCLIB_glue.h"
 
 void _Exit( int status )
@@ -21,6 +22,7 @@ void _Exit( int status )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )

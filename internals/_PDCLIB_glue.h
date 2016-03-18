@@ -33,7 +33,7 @@ void * _PDCLIB_allocpages( int n );
 
 /* stdio.h */
 
-/* A system call that opens a file identified by name in a given mode. Return 
+/* A system call that opens a file identified by name in a given mode. Return
    a file descriptor uniquely identifying that file.
    (The mode is the return value of the _PDCLIB_filemode() function.)
 */

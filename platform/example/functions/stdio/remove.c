@@ -63,6 +63,7 @@ int remove( const char * pathname )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -72,4 +73,3 @@ int main( void )
 }
 
 #endif
-

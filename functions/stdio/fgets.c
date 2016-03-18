@@ -47,7 +47,9 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
+
 #include <string.h>
 
 int main( void )
@@ -84,4 +86,3 @@ int main( void )
 }
 
 #endif
-

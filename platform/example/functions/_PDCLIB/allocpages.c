@@ -58,6 +58,7 @@ void * _PDCLIB_allocpages( int const n )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )

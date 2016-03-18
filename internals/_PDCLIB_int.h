@@ -257,7 +257,7 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 */
 #define _PDCLIB_FREAD     8u
 #define _PDCLIB_FWRITE   16u
-#define _PDCLIB_FAPPEND  32u 
+#define _PDCLIB_FAPPEND  32u
 #define _PDCLIB_FRW      64u
 #define _PDCLIB_FBIN    128u
 
@@ -380,7 +380,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 /* Parsing any fopen() style filemode string into a number of flags. */
 unsigned int _PDCLIB_filemode( const char * mode );
 
-/* Sanity checking and preparing of read buffer, should be called first thing 
+/* Sanity checking and preparing of read buffer, should be called first thing
    by any stdio read-data function.
    Returns 0 on success, EOF on error.
    On error, EOF / error flags and errno are set appropriately.

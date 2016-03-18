@@ -64,7 +64,7 @@ int ispunct( int c );
 /* Returns true for every standard whitespace character (' ', '\f', '\n', '\r',
    '\t', '\v') in the "C" locale. In any other locale, also returns true for a
    locale-specific set of characters for which isalnum() is false.
-*/ 
+*/
 int isspace( int c );
 
 /* Returns true for uppercase letters in the "C" locale.

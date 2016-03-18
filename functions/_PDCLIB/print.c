@@ -16,8 +16,7 @@
    modifiers.
 */
 /* FIXME: one too many flags to work on a 16-bit machine, join some (e.g. the
-          width flags) into a combined field.
-*/
+          width flags) into a combined field.  */
 #define E_minus    1<<0
 #define E_plus     1<<1
 #define E_alt      1<<2
@@ -548,6 +547,7 @@ static int testprintf( char * buffer, const char * format, ... )
     va_end( status.arg );
     return status.i;
 }
+
 #endif
 
 #define TEST_CONVERSION_ONLY

@@ -240,7 +240,7 @@ int test_nodes( char const * const action, int expected_pages, ... )
     PRINT( "   - memlist first: %#.4x - last: %#.4x",
             ( _PDCLIB_memlist.first == NULL ) ? NULL : (char *)_PDCLIB_memlist.first - (char *)pages_start,
             ( _PDCLIB_memlist.last == NULL ) ? NULL : (char *)_PDCLIB_memlist.last - (char *)pages_start );
-    if ( ( firstnode != 0 ) && 
+    if ( ( firstnode != 0 ) &&
          ( ( ( (char *)_PDCLIB_memlist.first - (char *)pages_start ) != firstnode )
          || ( ( (char *)_PDCLIB_memlist.last  - (char *)pages_start ) != lastnode ) ) )
     {
@@ -255,7 +255,7 @@ int test_nodes( char const * const action, int expected_pages, ... )
     return result;
 }
 
-#endif 
+#endif
 
 /* Note that this test driver heavily tests *internals* of the implementation
    above (and of free() and realloc(), too). That means that changes in the
@@ -270,7 +270,7 @@ int main( void )
     void * ptr1, * ptr2, * ptr3, * ptr4, * ptr5, * ptr6, * ptr7, * ptr8, * ptr9, * ptrA, * ptrB, * ptrC;
 
     pages_start = _PDCLIB_allocpages( 0 );
-    PRINT( "\nEffective is: %#.4x\nsizeof( memnode ) is: %#.2x\n\n", EFFECTIVE, sizeof( struct _PDCLIB_memnode_t ) ); 
+    PRINT( "\nEffective is: %#.4x\nsizeof( memnode ) is: %#.2x\n\n", EFFECTIVE, sizeof( struct _PDCLIB_memnode_t ) );
 
     /* Allocating 10 bytes; expecting one page allocation and a node split */
     TESTCASE( MEMTEST( ptr1, 10 ) );

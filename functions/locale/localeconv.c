@@ -16,6 +16,7 @@ struct lconv * localeconv( void )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -23,4 +24,5 @@ int main( void )
     TESTCASE( NO_TESTDRIVER );
     return TEST_RESULTS;
 }
+
 #endif

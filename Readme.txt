@@ -212,4 +212,3 @@ I want this released, and I want to think about something else but
 So, expect significant change to how stdio is done in upcoming releases.
 Everything *WILL* be stable by the time v1.0 comes around, but until then
 you will have to accept that I can only deliver "hobby quality" for now.
-

@@ -15,4 +15,3 @@
 #define EDOM _PDCLIB_EDOM
 
 #endif
-

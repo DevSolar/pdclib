@@ -143,7 +143,7 @@ void abort( void );
    reverse order of registration (last-in, first-out).
    Returns zero if registration is successfull, nonzero if it failed.
 */
-int atexit( void (*func)( void ) ); 
+int atexit( void (*func)( void ) );
 
 /* Normal process termination. Functions registered by atexit() (see above) are
    called, streams flushed, files closed and temporary files removed before the

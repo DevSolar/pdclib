@@ -27,6 +27,7 @@ int memcmp( const void * s1, const void * s2, size_t n )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -38,4 +39,5 @@ int main( void )
     TESTCASE( memcmp( xxxxx, abcde, 1 ) > 0 );
     return 0;
 }
+
 #endif

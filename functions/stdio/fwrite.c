@@ -5,13 +5,12 @@
 */
 
 #include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
 
 #ifndef REGTEST
 
 #include "_PDCLIB_glue.h"
-
-#include <stdbool.h>
-#include <string.h>
 
 size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
@@ -82,6 +81,7 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -91,4 +91,3 @@ int main( void )
 }
 
 #endif
-
