@@ -19,4 +19,3 @@ order to experience anything but abysmal performance:
   platform of choice, it is also highly inefficient and should be replaced by
   inline assembly. Just make sure that your assembly keeps all the promises
   the C library makes.
-

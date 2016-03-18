@@ -18,6 +18,7 @@ int tolower( int c )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -30,4 +31,5 @@ int main( void )
     TESTCASE( tolower( '[' ) == '[' );
     return TEST_RESULTS;
 }
+
 #endif

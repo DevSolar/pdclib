@@ -34,6 +34,7 @@ void * memmove( void * s1, const void * s2, size_t n )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -47,4 +48,5 @@ int main( void )
     TESTCASE( s[4] == 'a' );
     return TEST_RESULTS;
 }
+
 #endif

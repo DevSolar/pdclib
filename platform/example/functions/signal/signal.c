@@ -63,6 +63,7 @@ void (*signal( int sig, void (*func)( int ) ) )( int )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -70,4 +71,5 @@ int main( void )
     /* Testing covered by raise.c */
     return TEST_RESULTS;
 }
+
 #endif

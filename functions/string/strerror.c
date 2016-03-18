@@ -26,6 +26,7 @@ char * strerror( int errnum )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 #include <stdio.h>
@@ -36,4 +37,5 @@ int main( void )
     TESTCASE( strerror( ERANGE ) != strerror( EDOM ) );
     return TEST_RESULTS;
 }
+
 #endif

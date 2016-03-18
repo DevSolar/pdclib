@@ -12,6 +12,7 @@
 #include <string.h>
 
 #ifndef REGTEST
+
 #include "_PDCLIB_glue.h"
 
 #include </usr/include/errno.h>
@@ -95,8 +96,8 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
 
 #endif
 
-
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -106,4 +107,3 @@ int main( void )
 }
 
 #endif
-

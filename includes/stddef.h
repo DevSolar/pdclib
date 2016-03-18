@@ -26,4 +26,3 @@ typedef _PDCLIB_wchar_t   wchar_t;
 #define offsetof( type, member ) _PDCLIB_offsetof( type, member )
 
 #endif
-

@@ -19,7 +19,9 @@ int fgetpos( struct _PDCLIB_file_t * _PDCLIB_restrict stream, struct _PDCLIB_fpo
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
+
 #include <string.h>
 
 int main( void )

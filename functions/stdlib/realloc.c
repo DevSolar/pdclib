@@ -44,6 +44,7 @@ void * realloc( void * ptr, size_t size )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -53,4 +54,3 @@ int main( void )
 }
 
 #endif
-

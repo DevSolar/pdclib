@@ -1,4 +1,4 @@
-/* Variable arguments <stdarg.h> 
+/* Variable arguments <stdarg.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -17,4 +17,3 @@ typedef _PDCLIB_va_list va_list;
 #define va_start( ap, parmN ) _PDCLIB_va_start( ap, parmN )
 
 #endif
-

@@ -37,7 +37,9 @@ void free( void * ptr )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
+
 #include <stdbool.h>
 
 int main( void )

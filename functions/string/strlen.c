@@ -21,6 +21,7 @@ size_t strlen( const char * s )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -29,4 +30,5 @@ int main( void )
     TESTCASE( strlen( "" ) == 0 );
     return TEST_RESULTS;
 }
+
 #endif

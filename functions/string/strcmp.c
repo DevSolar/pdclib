@@ -21,6 +21,7 @@ int strcmp( const char * s1, const char * s2 )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -36,4 +37,5 @@ int main( void )
     TESTCASE( strcmp( abcde, cmpabcd_ ) < 0 );
     return TEST_RESULTS;
 }
+
 #endif

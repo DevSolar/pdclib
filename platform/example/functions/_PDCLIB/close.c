@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 #ifndef REGTEST
+
 #include "_PDCLIB_glue.h"
 
 extern int close( int fd );
@@ -23,6 +24,7 @@ int _PDCLIB_close( int fd )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )

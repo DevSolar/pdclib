@@ -8,4 +8,3 @@ This directory holds various "internals" of PDCLib:
 
 - test drivers for functionality that does not have its own implementation
   file to put the test driver in.
-

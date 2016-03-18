@@ -18,6 +18,7 @@ int * _PDCLIB_errno_func()
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 #include <errno.h>
@@ -34,4 +35,3 @@ int main( void )
 }
 
 #endif
-

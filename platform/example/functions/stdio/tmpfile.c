@@ -8,11 +8,11 @@
 
 #ifndef REGTEST
 
+#include "_PDCLIB_glue.h"
+
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "_PDCLIB_glue.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -47,7 +47,7 @@ struct _PDCLIB_file_t * tmpfile( void )
            generate the filename candidate, which is *also* platform-dependent.
         */
         unsigned int random;
-        fscanf( randomsource, "%u", &random ); 
+        fscanf( randomsource, "%u", &random );
         sprintf( filename, "/tmp/%u.tmp", random );
         /* Check if file of this name exists. Note that fopen() is a very weak
            check, which does not take e.g. access permissions into account
@@ -86,7 +86,9 @@ struct _PDCLIB_file_t * tmpfile( void )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
+
 #include <string.h>
 
 int main( void )
@@ -110,4 +112,3 @@ int main( void )
 }
 
 #endif
-

@@ -20,4 +20,3 @@
 #define xor_eq ^=
 
 #endif
-

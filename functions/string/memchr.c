@@ -25,6 +25,7 @@ void * memchr( const void * s, int c, size_t n )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )

@@ -247,4 +247,3 @@ uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restri
 /* TODO: wcstoimax(), wcstoumax() */
 
 #endif
-

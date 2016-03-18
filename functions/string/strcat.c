@@ -22,6 +22,7 @@ char * strcat( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -41,4 +42,5 @@ int main( void )
     TESTCASE( s[6] == 'e' );
     return TEST_RESULTS;
 }
+
 #endif

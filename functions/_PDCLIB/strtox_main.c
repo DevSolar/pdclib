@@ -46,7 +46,9 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
+
 #include <errno.h>
 
 int main( void )

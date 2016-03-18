@@ -68,6 +68,7 @@ int raise( int sig )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 #include <stdlib.h>
@@ -109,4 +110,5 @@ int main( void )
     TESTCASE( flag == 1 );
     return TEST_RESULTS;
 }
+
 #endif

@@ -26,6 +26,7 @@ size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
@@ -43,5 +44,5 @@ int main( void )
     TESTCASE( s[10] == '\0' );
     return TEST_RESULTS;
 }
-#endif
 
+#endif

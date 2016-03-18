@@ -42,4 +42,3 @@ static int TEST_RESULTS = 0;
 #if defined( _PDCLIB_FILEIO ) || defined( _PDCLIB_STRINGIO )
 #include "_PDCLIB_iotest.h"
 #endif
-

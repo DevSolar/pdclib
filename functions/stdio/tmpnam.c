@@ -8,8 +8,9 @@
 
 #ifndef REGTEST
 
-#include <string.h>
 #include "_PDCLIB_glue.h"
+
+#include <string.h>
 
 char * tmpnam( char * s )
 {
@@ -27,6 +28,7 @@ char * tmpnam( char * s )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 #include <string.h>
@@ -38,4 +40,3 @@ int main( void )
 }
 
 #endif
-

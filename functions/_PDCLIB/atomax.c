@@ -29,6 +29,7 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 int main( void )
