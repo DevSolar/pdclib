@@ -13,7 +13,7 @@
 /* TODO: Doing this via a static array is not the way to do it. */
 char * strerror( int errnum )
 {
-    if ( errnum == 0 || errnum >= _PDCLIB_ERRNO_MAX )
+    if ( errnum >= _PDCLIB_ERRNO_MAX )
     {
         return (char *)"Unknown error";
     }
