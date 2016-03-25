@@ -219,7 +219,7 @@ struct _PDCLIB_imaxdiv_t
    your compiler.
 */
 
-#ifdef __i386
+#if defined( __i386 )
 
 /* The following generic implementation works only for pure
    stack-based architectures, and only if arguments are aligned to pointer
@@ -235,7 +235,7 @@ typedef char * _PDCLIB_va_list;
 #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
 #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
 
-#elif __x86_64
+#elif defined( __x86_64 )
 
 /* No way to cover x86_64 with a generic implementation, as it uses register-
    based parameter passing. Using the GCC builtins here.
@@ -383,5 +383,10 @@ typedef int _PDCLIB_fd_t;
 /* messages for *ALL* locales.)                                               */
 /* Default is 4 (0, ERANGE, EDOM, EILSEQ).                                    */
 #define _PDCLIB_ERRNO_MAX 4
+
+#ifdef __CYGWIN__
+typedef unsigned int wint_t;
+#endif
+
 
 #endif
