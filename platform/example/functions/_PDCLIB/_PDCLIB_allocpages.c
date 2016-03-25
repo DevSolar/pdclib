@@ -42,7 +42,11 @@ void * _PDCLIB_allocpages( int const n )
     /* increasing or decreasing heap - standard operation */
     void * oldbreak = membreak;
     membreak = (void *)( (char *)membreak + ( n * _PDCLIB_PAGESIZE ) );
+#ifdef __CYGWIN__
+    if ( sbrk( (char*)membreak - (char*)oldbreak ) == membreak )
+#else
     if ( brk( membreak ) == 0 )
+#endif
     {
         /* successful */
         return oldbreak;

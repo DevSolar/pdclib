@@ -13,6 +13,7 @@
 #include "/usr/include/errno.h"
 
 extern _PDCLIB_int64_t lseek64( int fd, _PDCLIB_int64_t offset, int whence );
+extern long lseek( int fd, long offset, int whence );
 
 _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t offset, int whence )
 {
@@ -31,7 +32,11 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
             return EOF;
             break;
     }
+#ifdef __CYGWIN__
+    _PDCLIB_int64_t rc = lseek( stream->handle, offset, whence );
+#else
     _PDCLIB_int64_t rc = lseek64( stream->handle, offset, whence );
+#endif
     if ( rc != EOF )
     {
         stream->ungetidx = 0;
