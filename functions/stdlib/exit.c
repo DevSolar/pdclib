@@ -17,14 +17,14 @@
 */
 #define NUMBER_OF_SLOTS 40
 
-void (*_PDCLIB_regstack[ NUMBER_OF_SLOTS ])( void ) = { _PDCLIB_closeall };
-size_t _PDCLIB_regptr = NUMBER_OF_SLOTS;
+void (*_PDCLIB_exitstack[ NUMBER_OF_SLOTS ])( void ) = { _PDCLIB_closeall };
+size_t _PDCLIB_exitptr = NUMBER_OF_SLOTS;
 
 void exit( int status )
 {
-    while ( _PDCLIB_regptr < NUMBER_OF_SLOTS )
+    while ( _PDCLIB_exitptr < NUMBER_OF_SLOTS )
     {
-        _PDCLIB_regstack[ _PDCLIB_regptr++ ]();
+        _PDCLIB_exitstack[ _PDCLIB_exitptr++ ]();
     }
     _Exit( status );
 }

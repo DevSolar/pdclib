@@ -8,18 +8,18 @@
 
 #ifndef REGTEST
 
-extern void (*_PDCLIB_regstack[])( void );
-extern size_t _PDCLIB_regptr;
+extern void (*_PDCLIB_exitstack[])( void );
+extern size_t _PDCLIB_exitptr;
 
 int atexit( void (*func)( void ) )
 {
-    if ( _PDCLIB_regptr == 0 )
+    if ( _PDCLIB_exitptr == 0 )
     {
         return -1;
     }
     else
     {
-        _PDCLIB_regstack[ --_PDCLIB_regptr ] = func;
+        _PDCLIB_exitstack[ --_PDCLIB_exitptr ] = func;
         return 0;
     }
 }
