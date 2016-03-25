@@ -94,7 +94,7 @@
     PRINTF_TEST( (int)strlen( INT_HEXDIG ) + 3, "0xf" INT_hexdig, "%#3.6x", UINT_MAX );
     PRINTF_TEST( INT_DIG + 1, "-" INT_MIN_DEZ_STR, "%.6d", INT_MIN );
     PRINTF_TEST( INT_DIG + 1, "-" INT_MIN_DEZ_STR, "%6.3d", INT_MIN );
-    PRINTF_TEST( INT_DIG + 1., "-" INT_MIN_DEZ_STR, "%3.6d", INT_MIN );
+    PRINTF_TEST( INT_DIG + 1, "-" INT_MIN_DEZ_STR, "%3.6d", INT_MIN );
     PRINTF_TEST( UINT_DIG, "0xf" INT_hexdig, "%#0.6x", UINT_MAX );
     PRINTF_TEST( UINT_DIG, "0xf" INT_hexdig, "%#06.3x", UINT_MAX );
     PRINTF_TEST( UINT_DIG, "0xf" INT_hexdig, "%#03.6x", UINT_MAX );
