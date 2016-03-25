@@ -4,45 +4,38 @@ PDCLib - Public Domain C Library
 License
 -------
 
-Permission is granted to use, modify, and / or redistribute at will.
+PDCLib is distributed unter the Creative Commons CC0 License. You
+should have received a copy of the full legal text of this license
+as part of this distribution (COPYING.CC0). It is also available at
 
-This includes removing authorship notices, re-use of code parts in
-other software (with or without giving credit), and / or creating a
-commercial product based on it.
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
 
-This permission is not revocable by the author.
+The following is a human-readable summary of that license.
 
-This software is provided as-is. Use it at your own risk. There is
-no warranty whatsoever, neither expressed nor implied, and by using
-this software you accept that the author(s) shall not be held liable
-for any loss of data, loss of service, or other damages, be they
-incidental or consequential. Your only option other than accepting
-this is not to use the software at all.
+                       No Copyright
 
-A case for Public Domain
-------------------------
+The person who associated a work with this deed has dedicated the
+work to the public domain by waiving all of his or her rights to
+the work worldwide under copyright law, including all related and
+neighboring rights, to the extent allowed by law.
 
-There was a time when you could just post a piece of code to usenet
-and say, "I give it away for free; perhaps it's useful for you."
+You can copy, modify, distribute and perform the work, even for
+commercial purposes, all without asking permission. See Other
+Information below.
 
-Then came the lawyers.
+                    Other Information
 
-There are building blocks in software engineering that are so basic
-that everyone should have free access to them without having to
-employ a complete legal department for advice. They should be FREE.
-Available for free, free of licensing implications, free of attached
-propaganda, free of everything but their useful self.
+In no way are the patent or trademark rights of any person affected
+by CC0, nor are the rights that other persons may have in the work
+or in how the work is used, such as publicity or privacy rights.
 
-Today, even the term "free" has to be defined by several paragraphs
-of legal blah-blah.
+Unless expressly stated otherwise, the person who associated a work
+with this deed makes no warranties about the work, and disclaims
+liability for all uses of the work, to the fullest extent permitted
+by applicable law.
 
-Sick and tired of it, the author brought you this piece of software
-under a "license" that should not be neccessary in the first place:
-"Free" should have been enough.
-
-Unfortunately, German law does not even *allow* to declare a work to
-be "in the Public Domain", so the "free for all" license I intended
-had to be made expressively.
+When using or citing the work, you should not imply endorsement by
+the author or the affirmer.
 
 What is it
 ----------

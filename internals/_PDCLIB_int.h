@@ -354,8 +354,8 @@ const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
 _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, int limdigit, char * sign );
 
 /* Digits arrays used by various integer conversion functions */
-extern char _PDCLIB_digits[];
-extern char _PDCLIB_Xdigits[];
+extern const char _PDCLIB_digits[];
+extern const char _PDCLIB_Xdigits[];
 
 /* The worker for all printf() type of functions. The pointer spec should point
    to the introducing '%' of a conversion specifier. The status structure is to
@@ -453,5 +453,7 @@ _PDCLIB_static_assert( sizeof( sizeof( int ) ) == sizeof( _PDCLIB_size ), "Compi
 int _PDCLIB_assert_array[2];
 
 _PDCLIB_static_assert( sizeof( &_PDCLIB_assert_array[1] - &_PDCLIB_assert_array[0] ) == sizeof( _PDCLIB_ptrdiff ), "Compiler disagrees on _PDCLIB_ptrdiff." );
+_PDCLIB_static_assert( sizeof( void * ) == sizeof( _PDCLIB_intmax_t ), "Compiler disagrees on _PDCLIB_intmax_t." );
+_PDCLIB_static_assert( sizeof( void * ) == sizeof( _PDCLIB_uintmax_t ), "Compiler disagrees on _PDCLIB_uintmax_t." );
 
 #endif
