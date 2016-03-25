@@ -4,9 +4,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include "_PDCLIB_int.h"
-
 #ifndef REGTEST
+
+#include "_PDCLIB_int.h"
 
 int _PDCLIB_errno = 0;
 
