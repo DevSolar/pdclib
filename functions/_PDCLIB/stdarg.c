@@ -8,6 +8,8 @@
 #include <limits.h>
 #include <float.h>
 
+#ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 typedef int (*intfunc_t)( void );
@@ -109,3 +111,5 @@ int main( void )
     test( TAG_INTPTR, &x, TAG_LDBLPTR, &d, TAG_FUNCPTR, dummy, TAG_END );
     return TEST_RESULTS;
 }
+
+#endif
