@@ -47,6 +47,11 @@ int fclose( struct _PDCLIB_file_t * stream )
             {
                 remove( stream->filename );
             }
+            /* Free user buffer (SetVBuf allocated) */
+            if ( stream->status & _PDCLIB_FREEBUFFER )
+            {
+                free( stream->buffer );
+            }
             /* Free stream */
             if ( ! ( stream->status & _PDCLIB_STATIC ) )
             {
@@ -84,7 +89,7 @@ int main( void )
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file2 ) == 0 );
     TESTCASE( _PDCLIB_filelist == file1 );
-    TESTCASE( ( file2 = fopen( testfile1, "w" ) ) != NULL );
+    TESTCASE( ( file2 = fopen( testfile2, "w" ) ) != NULL );
     TESTCASE( _PDCLIB_filelist == file2 );
     TESTCASE( fclose( file1 ) == 0 );
     TESTCASE( _PDCLIB_filelist == file2 );
