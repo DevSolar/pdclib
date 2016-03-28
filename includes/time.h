@@ -49,48 +49,48 @@ struct tm
    Returns -1 if the value cannot be represented in the return type or is
    not available.
 */
-clock_t clock( void ) _PDCLIB_nothrow;
+clock_t clock( void );
 
 /* Returns the difference between two calendar times in seconds. */
-double difftime( time_t time1, time_t time0 ) _PDCLIB_nothrow;
+double difftime( time_t time1, time_t time0 );
 
 /* Normalizes the values in the broken-down time pointed to by timeptr.
    Returns the calender time specified by the broken-down time.
 */
-time_t mktime( struct tm * timeptr ) _PDCLIB_nothrow;
+time_t mktime( struct tm * timeptr );
 
 /* Returns the current calender time. If timer is not a NULL pointer, stores
    the current calender time at that address as well.
 */
-time_t time( time_t * timer ) _PDCLIB_nothrow;
+time_t time( time_t * timer );
 
 /* Sets the interval pointed to by ts to the current calender time, based
    on the specified base.
    Returns base, if successful, otherwise zero.
 */
-int timespec_get( struct timespec * ts, int base ) _PDCLIB_nothrow;
+int timespec_get( struct timespec * ts, int base );
 
 /* Converts the broken-down time pointed to by timeptr into a string in the
    form "Sun Sep 16 01:03:52 1973\n\0".
 */
-char * asctime( const struct tm * timeptr ) _PDCLIB_nothrow;
+char * asctime( const struct tm * timeptr );
 
 /* Equivalent to asctime( localtime( timer ) ). */
-char * ctime( const time_t * timer ) _PDCLIB_nothrow;
+char * ctime( const time_t * timer );
 
 /* Converts the calender time pointed to by timer into a broken-down time
    expressed as UTC.
    Returns a pointer to the broken-down time, or a NULL pointer if it
    cannot be represented.
 */
-struct tm * gmtime( const time_t * timer ) _PDCLIB_nothrow;
+struct tm * gmtime( const time_t * timer );
 
 /* Converts the calender time pointed to by timer into a broken-down time
    expressed as local time.
    Returns a pointer to the broken-down time, or a NULL pointer if if
    cannot be represented.
 */
-struct tm * localtime( const time_t * timer ) _PDCLIB_nothrow;
+struct tm * localtime( const time_t * timer );
 
 /* Writes the broken-down time pointed to by timeptr into the character
    array pointed to by s. The string pointed to by format controls the
