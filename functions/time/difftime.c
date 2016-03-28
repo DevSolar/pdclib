@@ -21,7 +21,8 @@ double difftime( time_t time1, time_t time0 )
 
 int main( void )
 {
-    return NO_TESTDRIVER;
+    TESTCASE( NO_TESTDRIVER );
+    return TEST_RESULTS;
 }
 
 #endif

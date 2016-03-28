@@ -21,7 +21,8 @@ int timespec_get( struct timespec * ts, int base )
 
 int main( void )
 {
-    return NO_TESTDRIVER;
+    TESTCASE( NO_TESTDRIVER );
+    return TEST_RESULTS;
 }
 
 #endif

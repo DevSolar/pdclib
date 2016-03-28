@@ -311,6 +311,56 @@ struct lconv _PDCLIB_lconv = {
         /* EDOM     */ (char *)"EDOM (Domain error)",
         /* EILSEQ   */ (char *)"EILSEQ (Illegal sequence)"
     },
+    /* _PDCLIB_month_name_abbr */
+    {
+        (char *)"Jan",
+        (char *)"Feb",
+        (char *)"Mar",
+        (char *)"Apr",
+        (char *)"May",
+        (char *)"Jun",
+        (char *)"Jul",
+        (char *)"Aug",
+        (char *)"Sep",
+        (char *)"Oct",
+        (char *)"Now",
+        (char *)"Dec"
+    },
+    /* _PDCLIB_month_name_full */
+    {
+        (char *)"January",
+        (char *)"February",
+        (char *)"March",
+        (char *)"April",
+        (char *)"May",
+        (char *)"June",
+        (char *)"July",
+        (char *)"August",
+        (char *)"September",
+        (char *)"October",
+        (char *)"November",
+        (char *)"December"
+    },
+    /* _PDCLIB_day_name_abbr */
+    {
+        (char *)"Sun",
+        (char *)"Mon",
+        (char *)"Tue",
+        (char *)"Wed",
+        (char *)"Thu",
+        (char *)"Fri",
+        (char *)"Sat"
+    },
+    /* _PDCLIB_day_name_full */
+    {
+        (char *)"Sunday",
+        (char *)"Monday",
+        (char *)"Tuesday",
+        (char *)"Wednesday",
+        (char *)"Thursday",
+        (char *)"Friday",
+        (char *)"Saturday"
+    },
     /* decimal_point      */ (char *)".",
     /* thousands_sep      */ (char *)"",
     /* grouping           */ (char *)"",

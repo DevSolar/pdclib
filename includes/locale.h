@@ -34,6 +34,10 @@ struct lconv
 {
     struct _PDCLIB_ctype_t * ctype;  /* internal <ctype.h> information        */
     char * _PDCLIB_errno_texts[_PDCLIB_ERRNO_MAX]; /* strerror() / perror()   */
+    char * _PDCLIB_month_name_abbr[12]; /* month names, abbreviated           */
+    char * _PDCLIB_month_name_full[12]; /* month names, full                  */
+    char * _PDCLIB_day_name_abbr[7];    /* weekday names, abbreviated         */
+    char * _PDCLIB_day_name_full[7];    /* weekday names, full                */
     char * decimal_point;      /* decimal point character                     */
     char * thousands_sep;      /* character for seperating groups of digits   */
     char * grouping;           /* string indicating the size of digit groups  */

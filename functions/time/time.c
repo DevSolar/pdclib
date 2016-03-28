@@ -21,7 +21,8 @@ time_t time( time_t * timer )
 
 int main( void )
 {
-    return NO_TESTDRIVER;
+    TESTCASE( NO_TESTDRIVER );
+    return TEST_RESULTS;
 }
 
 #endif
