@@ -306,15 +306,19 @@ extern char _PDCLIB_Xdigits[];
 /* -------------------------------------------------------------------------- */
 
 #if _PDCLIB_C_VERSION >= 2011
-_Static_assert( sizeof( short ) == _PDCLIB_SHRT_BYTES, "_PDCLIB_SHRT_BYTES incorrectly defined, check _PDCLIB_config.h" );
-_Static_assert( sizeof( int ) == _PDCLIB_INT_BYTES, "_PDCLIB_INT_BYTES incorrectly defined, check _PDCLIB_config.h" );
-_Static_assert( sizeof( long ) == _PDCLIB_LONG_BYTES, "_PDCLIB_LONG_BYTES incorrectly defined, check _PDCLIB_config.h" );
-_Static_assert( sizeof( long long ) == _PDCLIB_LLONG_BYTES, "_PDCLIB_LLONG_BYTES incorrectly defined, check _PDCLIB_config.h" );
-_Static_assert( ( (char)-1 < 0 ) == _PDCLIB_CHAR_SIGNED, "_PDCLIB_CHAR_SIGNED incorrectly defined, check _PDCLIB_config.h" );
-_Static_assert( sizeof( _PDCLIB_wchar ) == sizeof( L'x' ), "_PDCLIB_wchar incorrectly defined, check _PDCLIB_config.h" );
-_Static_assert( sizeof( void * ) == sizeof( _PDCLIB_intptr ), "_PDCLIB_intptr incorrectly defined, check _PDCLIB_config.h" );
-_Static_assert( sizeof( sizeof( 1 ) ) == sizeof( _PDCLIB_size ), "_PDCLIB_size incorrectly defined, check _PDCLIB_config.h" );
-_Static_assert( sizeof( &_PDCLIB_digits[1] - &_PDCLIB_digits[0] ) == sizeof( _PDCLIB_ptrdiff ), "_PDCLIB_ptrdiff incorrectly defined, check _PDCLIB_config.h" );
+_Static_assert( sizeof( short ) == _PDCLIB_SHRT_BYTES, "Compiler disagrees on _PDCLIB_SHRT_BYTES." );
+_Static_assert( sizeof( int ) == _PDCLIB_INT_BYTES, "Compiler disagrees on _PDCLIB_INT_BYTES." );
+_Static_assert( sizeof( long ) == _PDCLIB_LONG_BYTES, "Compiler disagrees on _PDCLIB_LONG_BYTES." );
+_Static_assert( sizeof( long long ) == _PDCLIB_LLONG_BYTES, "Compiler disagrees on _PDCLIB_LLONG_BYTES." );
+
+_Static_assert( ( (char)-1 < 0 ) == _PDCLIB_CHAR_SIGNED, "Compiler disagrees on _PDCLIB_CHAR_SIGNED." );
+_Static_assert( sizeof( sizeof( int ) ) == sizeof( _PDCLIB_size ), "Compiler disagrees on _PDCLIB_size." );
+
+_Static_assert( sizeof( _PDCLIB_wchar ) == sizeof( L'x' ), "Compiler disagrees on _PDCLIB_wchar." );
+
+_Static_assert( sizeof( void * ) == sizeof( _PDCLIB_intptr ), "Compiler disagrees on _PDCLIB_intptr." );
+
+_Static_assert( sizeof( &_PDCLIB_digits[1] - &_PDCLIB_digits[0] ) == sizeof( _PDCLIB_ptrdiff ), "Compiler disagrees on _PDCLIB_ptrdiff." );
 #endif
 
 /* -------------------------------------------------------------------------- */
