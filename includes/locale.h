@@ -34,10 +34,15 @@ struct lconv
 {
     struct _PDCLIB_ctype_t * ctype;  /* internal <ctype.h> information        */
     char * _PDCLIB_errno_texts[_PDCLIB_ERRNO_MAX]; /* strerror() / perror()   */
-    char * _PDCLIB_month_name_abbr[12]; /* month names, abbreviated           */
-    char * _PDCLIB_month_name_full[12]; /* month names, full                  */
-    char * _PDCLIB_day_name_abbr[7];    /* weekday names, abbreviated         */
-    char * _PDCLIB_day_name_full[7];    /* weekday names, full                */
+    char * month_name_abbr[12]; /* month names, abbreviated                   */
+    char * month_name_full[12]; /* month names, full                          */
+    char * day_name_abbr[7];    /* weekday names, abbreviated                 */
+    char * day_name_full[7];    /* weekday names, full                        */
+    char * date_time_format;    /* date / time format for strftime( "%c" )    */
+    char * time_format_12h;     /* 12-hour time format for strftime( "%r" )   */
+    char * date_format;         /* date format for strftime( "%x" )           */
+    char * time_format;         /* time format for strftime( "%X" )           */
+    char * am_pm[2];            /* AM / PM designation                        */
     char * decimal_point;      /* decimal point character                     */
     char * thousands_sep;      /* character for seperating groups of digits   */
     char * grouping;           /* string indicating the size of digit groups  */
