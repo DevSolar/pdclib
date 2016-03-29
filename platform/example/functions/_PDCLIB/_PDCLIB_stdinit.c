@@ -361,6 +361,15 @@ struct lconv _PDCLIB_lconv = {
         (char *)"Friday",
         (char *)"Saturday"
     },
+    /* date / time format */ (char *)"%a %b %e %T %Y",
+    /* 12h time format    */ (char *)"%I:%M:%S %p",
+    /* date format        */ (char *)"%m/%d/%y",
+    /* time format        */ (char *)"%T",
+    /* AM / PM designation */
+    {
+        (char *)"AM",
+        (char *)"PM"
+    },
     /* decimal_point      */ (char *)".",
     /* thousands_sep      */ (char *)"",
     /* grouping           */ (char *)"",
