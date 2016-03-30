@@ -11,7 +11,7 @@
 
 #ifndef REGTEST
 
-/* TODO: Alternative representations / numerals not supported. */
+/* TODO: Alternative representations / numerals not supported. Multibyte support missing. */
 
 /* This implementation's code is highly repetitive, but I did not really
    care for putting it into a number of macros / helper functions.
@@ -25,7 +25,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
     {
         if ( *format != '%' )
         {
-            if ( ( *s++ = *format++ ) == '\0' )
+            if ( ( s[rc] = *format++ ) == '\0' )
             {
                 return rc;
             }
@@ -56,7 +56,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         size_t len = strlen( day );
                         if ( rc < ( maxsize - len ) )
                         {
-                            strcpy( s, day );
+                            strcpy( s + rc, day );
                             rc += len;
                         }
                         else
@@ -72,7 +72,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         size_t len = strlen( day );
                         if ( rc < ( maxsize - len ) )
                         {
-                            strcpy( s, day );
+                            strcpy( s + rc, day );
                             rc += len;
                         }
                         else
@@ -89,7 +89,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         size_t len = strlen( month );
                         if ( rc < ( maxsize - len ) )
                         {
-                            strcpy( s, month );
+                            strcpy( s + rc, month );
                             rc += len;
                         }
                         else
@@ -105,7 +105,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         size_t len = strlen( month );
                         if ( rc < ( maxsize - len ) )
                         {
-                            strcpy( s, month );
+                            strcpy( s + rc, month );
                             rc += len;
                         }
                         else
@@ -118,7 +118,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* locale's date / time representation, %a %b %e %T %Y for C locale */
                         /* 'E' for locale's alternative representation */
-                        size_t count = strftime( s, maxsize - rc, _PDCLIB_lconv.date_time_format, timeptr );
+                        size_t count = strftime( s + rc, maxsize - rc, _PDCLIB_lconv.date_time_format, timeptr );
                         if ( count == 0 )
                         {
                             return 0;
@@ -135,10 +135,9 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* 'E' for base year (period) in locale's alternative representation */
                         if ( rc < ( maxsize - 2 ) )
                         {
-                            div_t period = div( ( timeptr->tm_year / 100 ), 10 );
-                            *s++ = '0' + period.quot;
-                            *s++ = '0' + period.rem;
-                            rc += 2;
+                            div_t period = div( ( ( timeptr->tm_year + 1900 ) / 100 ), 10 );
+                            s[rc++] = '0' + period.quot;
+                            s[rc++] = '0' + period.rem;
                         }
                         else
                         {
@@ -153,9 +152,8 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 2 ) )
                         {
                             div_t day = div( timeptr->tm_mday, 10 );
-                            *s++ = '0' + day.quot;
-                            *s++ = '0' + day.rem;
-                            rc += 2;
+                            s[rc++] = '0' + day.quot;
+                            s[rc++] = '0' + day.rem;
                         }
                         else
                         {
@@ -166,7 +164,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'D':
                     {
                         /* %m/%d/%y */
-                        size_t count = strftime( s, maxsize - rc, "%m/%d/%y", timeptr );
+                        size_t count = strftime( s + rc, maxsize - rc, "%m/%d/%y", timeptr );
                         if ( count == 0 )
                         {
                             return 0;
@@ -184,9 +182,8 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 2 ) )
                         {
                             div_t day = div( timeptr->tm_mday, 10 );
-                            *s++ = ( day.quot > 0 ) ? '0' + day.quot : ' ';
-                            *s++ = '0' + day.rem;
-                            rc += 2;
+                            s[rc++] = ( day.quot > 0 ) ? '0' + day.quot : ' ';
+                            s[rc++] = '0' + day.rem;
                         }
                         else
                         {
@@ -197,7 +194,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'F':
                     {
                         /* %Y-%m-%d */
-                        size_t count = strftime( s, maxsize - rc, "%Y-%m-%d", timeptr );
+                        size_t count = strftime( s + rc, maxsize - rc, "%Y-%m-%d", timeptr );
                         if ( count == 0 )
                         {
                             return 0;
@@ -227,9 +224,8 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 2 ) )
                         {
                             div_t hour = div( timeptr->tm_hour, 10 );
-                            *s++ = '0' + hour.quot;
-                            *s++ = '0' + hour.rem;
-                            rc += 2;
+                            s[rc++] = '0' + hour.quot;
+                            s[rc++] = '0' + hour.rem;
                         }
                         else
                         {
@@ -244,9 +240,8 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 2 ) )
                         {
                             div_t hour = div( ( timeptr->tm_hour + 1 ) % 12, 10 );
-                            *s++ = '0' + hour.quot;
-                            *s++ = '0' + hour.rem;
-                            rc += 2;
+                            s[rc++] = '0' + hour.quot;
+                            s[rc++] = '0' + hour.rem;
                         }
                         else
                         {
@@ -260,10 +255,9 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 3 ) )
                         {
                             div_t yday = div( timeptr->tm_yday, 100 );
-                            *s++ = '0' + yday.quot;
-                            *s++ = '0' + yday.rem / 10;
-                            *s++ = '0' + yday.rem % 10;
-                            rc += 3;
+                            s[rc++] = '0' + yday.quot;
+                            s[rc++] = '0' + yday.rem / 10;
+                            s[rc++] = '0' + yday.rem % 10;
                         }
                         else
                         {
@@ -278,9 +272,8 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 2 ) )
                         {
                             div_t mon = div( timeptr->tm_mon + 1, 10 );
-                            *s++ = '0' + mon.quot;
-                            *s++ = '0' + mon.rem;
-                            rc += 2;
+                            s[rc++] = '0' + mon.quot;
+                            s[rc++] = '0' + mon.rem;
                         }
                         else
                         {
@@ -294,10 +287,9 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* 'O' for locale's alternative numeric symbols */
                         if ( rc < ( maxsize - 2 ) )
                         {
-                            div_t min = div( timeptr->tm_min + 1, 10 );
-                            *s++ = '0' + min.quot;
-                            *s++ = '0' + min.rem;
-                            rc += 2;
+                            div_t min = div( timeptr->tm_min, 10 );
+                            s[rc++] = '0' + min.quot;
+                            s[rc++] = '0' + min.rem;
                         }
                         else
                         {
@@ -308,8 +300,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'n':
                     {
                         /* newline */
-                        *s++ = '\n';
-                        ++rc;
+                        s[rc++] = '\n';
                         break;
                     }
                 case 'p':
@@ -319,7 +310,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         size_t len = strlen( designation );
                         if ( rc < ( maxsize - len ) )
                         {
-                            strcpy( s, designation );
+                            strcpy( s + rc, designation );
                             rc += len;
                         }
                         else
@@ -331,7 +322,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'r':
                     {
                         /* tm_hour / tm_min / tm_sec as locale's 12-hour clock time, %I:%M:%S %p for C locale */
-                        size_t count = strftime( s, maxsize - rc, _PDCLIB_lconv.time_format_12h, timeptr );
+                        size_t count = strftime( s + rc, maxsize - rc, _PDCLIB_lconv.time_format_12h, timeptr );
                         if ( count == 0 )
                         {
                             return 0;
@@ -345,7 +336,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'R':
                     {
                         /* %H:%M */
-                        size_t count = strftime( s, maxsize - rc, "%H:%M", timeptr );
+                        size_t count = strftime( s + rc, maxsize - rc, "%H:%M", timeptr );
                         if ( count == 0 )
                         {
                             return 0;
@@ -362,10 +353,9 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* 'O' for locale's alternative numeric symbols */
                         if ( rc < ( maxsize - 2 ) )
                         {
-                            div_t sec = div( timeptr->tm_sec + 1, 10 );
-                            *s++ = '0' + sec.quot;
-                            *s++ = '0' + sec.rem;
-                            rc += 2;
+                            div_t sec = div( timeptr->tm_sec, 10 );
+                            s[rc++] = '0' + sec.quot;
+                            s[rc++] = '0' + sec.rem;
                         }
                         else
                         {
@@ -376,14 +366,13 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 't':
                     {
                         /* tabulator */
-                        *s++ = '\t';
-                        ++rc;
+                        s[rc++] = '\t';
                         break;
                     }
                 case 'T':
                     {
                         /* %H:%M:%S */
-                        size_t count = strftime( s, maxsize - rc, "%H:%M:%S", timeptr );
+                        size_t count = strftime( s + rc, maxsize - rc, "%H:%M:%S", timeptr );
                         if ( count == 0 )
                         {
                             return 0;
@@ -398,8 +387,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* tm_wday as decimal (1-7) with Monday == 1 */
                         /* 'O' for locale's alternative numeric symbols */
-                        *s++ = ( timeptr->tm_wday == 0 ) ? '7' : '0' + timeptr->tm_wday;
-                        ++rc;
+                        s[rc++] = ( timeptr->tm_wday == 0 ) ? '7' : '0' + timeptr->tm_wday;
                         break;
                     }
                 case 'U':
@@ -420,8 +408,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* tm_wday as decimal number (0-6) with Sunday == 0 */
                         /* 'O' for locale's alternative numeric symbols */
-                        *s++ = '0' + timeptr->tm_wday;
-                        ++rc;
+                        s[rc++] = '0' + timeptr->tm_wday;
                         break;
                     }
                 case 'W':
@@ -435,7 +422,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* locale's date representation, %m/%d/%y for C locale */
                         /* 'E' for locale's alternative representation */
-                        size_t count = strftime( s, maxsize - rc, _PDCLIB_lconv.date_format, timeptr );
+                        size_t count = strftime( s + rc, maxsize - rc, _PDCLIB_lconv.date_format, timeptr );
                         if ( count == 0 )
                         {
                             return 0;
@@ -450,7 +437,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* locale's time representation, %T for C locale */
                         /* 'E' for locale's alternative representation */
-                        size_t count = strftime( s, maxsize - rc, _PDCLIB_lconv.time_format, timeptr );
+                        size_t count = strftime( s + rc, maxsize - rc, _PDCLIB_lconv.time_format, timeptr );
                         if ( count == 0 )
                         {
                             return 0;
@@ -469,9 +456,8 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 2 ) )
                         {
                             div_t year = div( ( timeptr->tm_year % 100 ), 10 );
-                            *s++ = '0' + year.quot;
-                            *s++ = '0' + year.rem;
-                            rc += 2;
+                            s[rc++] = '0' + year.quot;
+                            s[rc++] = '0' + year.rem;
                         }
                         else
                         {
@@ -485,12 +471,12 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* 'E' for locale's alternative representation */
                         if ( rc < ( maxsize - 4 ) )
                         {
-                            int year = timeptr->tm_year;
+                            int year = timeptr->tm_year + 1900;
 
                             for ( int i = 3; i >= 0; --i )
                             {
                                 div_t digit = div( year, 10 );
-                                s[i] = '0' + digit.rem;
+                                s[ rc + i ] = '0' + digit.rem;
                                 year = digit.quot;
                             }
 
@@ -517,8 +503,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case '%':
                     {
                         /* '%' character */
-                        *s++ = '%';
-                        ++rc;
+                        s[rc++] = '%';
                         break;
                     }
             }
@@ -536,7 +521,71 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+#ifndef REGTEST
+    /* Replace with a call to mktime() once that is implemented. */
+    struct tm timeptr = { 59, 30, 12, 1, 9, 72, 0, 274, -1 };
+    char buffer[100];
+    TESTCASE( strftime( buffer, 100, "%a ", &timeptr ) == 4 );
+    TESTCASE( strcmp( buffer, "Sun " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%A ", &timeptr ) == 7 );
+    TESTCASE( strcmp( buffer, "Sunday " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%b ", &timeptr ) == 4 );
+    TESTCASE( strcmp( buffer, "Oct " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%h ", &timeptr ) == 4 );
+    TESTCASE( strcmp( buffer, "Oct " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%B ", &timeptr ) == 8 );
+    TESTCASE( strcmp( buffer, "October " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%c ", &timeptr ) == 25 );
+    TESTCASE( strcmp( buffer, "Sun Oct  1 12:30:59 1972 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%C ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "19 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%d ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%D ", &timeptr ) == 9 );
+    TESTCASE( strcmp( buffer, "10/01/72 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%e ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, " 1 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%F ", &timeptr ) == 11 );
+    TESTCASE( strcmp( buffer, "1972-10-01 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%H ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "12 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%I ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%j ", &timeptr ) == 4 );
+    TESTCASE( strcmp( buffer, "274 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%m ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "10 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%M ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "30 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%p ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "PM " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%r ", &timeptr ) == 12 );
+    TESTCASE( strcmp( buffer, "01:30:59 PM " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%R ", &timeptr ) == 6 );
+    TESTCASE( strcmp( buffer, "12:30 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%S ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "59 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%T ", &timeptr ) == 9 );
+    TESTCASE( strcmp( buffer, "12:30:59 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%u ", &timeptr ) == 2 );
+    TESTCASE( strcmp( buffer, "7 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%w ", &timeptr ) == 2 );
+    TESTCASE( strcmp( buffer, "0 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%x ", &timeptr ) == 9 );
+    TESTCASE( strcmp( buffer, "10/01/72 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%X ", &timeptr ) == 9 );
+    TESTCASE( strcmp( buffer, "12:30:59 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%y ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "72 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%Y ", &timeptr ) == 5 );
+    TESTCASE( strcmp( buffer, "1972 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%% ", &timeptr ) == 2 );
+    TESTCASE( strcmp( buffer, "% " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%n ", &timeptr ) == 2 );
+    TESTCASE( strcmp( buffer, "\n " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%t ", &timeptr ) == 2 );
+    TESTCASE( strcmp( buffer, "\t " ) == 0 );
+#endif
     return TEST_RESULTS;
 }
 
