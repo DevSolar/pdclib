@@ -404,6 +404,9 @@ int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream );
 /* Closing all streams on program exit */
 void _PDCLIB_closeall( void );
 
+/* Check if a given year is a leap year. Parameter is offset to 1900. */
+int _PDCLIB_is_leap( int year_offset );
+
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */
 /* -------------------------------------------------------------------------- */

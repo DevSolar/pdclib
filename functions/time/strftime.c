@@ -17,6 +17,69 @@
    care for putting it into a number of macros / helper functions.
 */
 
+static int iso_week( const struct tm * timeptr )
+{
+    /* calculations below rely on Sunday == 7 */
+    int wday = timeptr->tm_wday;
+    if ( wday == 0 )
+    {
+        wday = 7;
+    }
+    /* https://en.wikipedia.org/wiki/ISO_week_date */
+    int week = ( timeptr->tm_yday - wday + 11 ) / 7;
+    if ( week == 53 )
+    {
+        /* date *may* belong to the *next* year, if:
+           * it is 31.12. and Monday - Wednesday
+           * it is 30.12. and Monday - Tuesday
+           * it is 29.12. and Monday
+           We can safely assume December...
+        */
+        if ( ( timeptr->tm_mday - wday ) > 27 )
+        {
+            week = 1;
+        }
+    }
+    else if ( week == 0 )
+    {
+        /* date *does* belong to *previous* year,
+           i.e. has week 52 *unless*...
+           * current year started on a Friday, or
+           * previous year is leap and this year
+             started on a Saturday.
+        */
+        int firstday = timeptr->tm_wday - ( timeptr->tm_yday % 7 );
+        if ( firstday < 0 )
+        {
+            firstday += 7;
+        }
+        if ( ( firstday == 5 ) || ( _PDCLIB_is_leap( timeptr->tm_year - 1 ) && firstday == 6 ) )
+        {
+            week = 53;
+        }
+        else
+        {
+            week = 52;
+        }
+    }
+    return week;
+}
+
+static int sprints( char * _PDCLIB_restrict dest, const char * _PDCLIB_restrict src, size_t maxsize, size_t * rc )
+{
+    size_t len = strlen( src );
+    if ( *rc < ( maxsize - len ) )
+    {
+        strcpy( dest + *rc, src );
+        *rc += len;
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB_restrict format, const struct tm * _PDCLIB_restrict timeptr )
 {
     size_t rc = 0;
@@ -52,14 +115,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'a':
                     {
                         /* tm_wday abbreviated */
-                        const char * day = _PDCLIB_lconv.day_name_abbr[ timeptr->tm_wday ];
-                        size_t len = strlen( day );
-                        if ( rc < ( maxsize - len ) )
-                        {
-                            strcpy( s + rc, day );
-                            rc += len;
-                        }
-                        else
+                        if ( ! sprints( s, _PDCLIB_lconv.day_name_abbr[ timeptr->tm_wday ], maxsize, &rc ) )
                         {
                             return 0;
                         }
@@ -68,14 +124,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'A':
                     {
                         /* tm_wday full */
-                        const char * day = _PDCLIB_lconv.day_name_full[ timeptr->tm_wday ];
-                        size_t len = strlen( day );
-                        if ( rc < ( maxsize - len ) )
-                        {
-                            strcpy( s + rc, day );
-                            rc += len;
-                        }
-                        else
+                        if ( ! sprints( s, _PDCLIB_lconv.day_name_full[ timeptr->tm_wday ], maxsize, &rc ) )
                         {
                             return 0;
                         }
@@ -85,14 +134,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'h':
                     {
                         /* tm_mon abbreviated */
-                        const char * month = _PDCLIB_lconv.month_name_abbr[ timeptr->tm_mon ];
-                        size_t len = strlen( month );
-                        if ( rc < ( maxsize - len ) )
-                        {
-                            strcpy( s + rc, month );
-                            rc += len;
-                        }
-                        else
+                        if ( ! sprints( s, _PDCLIB_lconv.month_name_abbr[ timeptr->tm_mon ], maxsize, &rc ) )
                         {
                             return 0;
                         }
@@ -101,14 +143,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'B':
                     {
                         /* tm_mon full */
-                        const char * month = _PDCLIB_lconv.month_name_full[ timeptr->tm_mon ];
-                        size_t len = strlen( month );
-                        if ( rc < ( maxsize - len ) )
-                        {
-                            strcpy( s + rc, month );
-                            rc += len;
-                        }
-                        else
+                        if ( ! sprints( s, _PDCLIB_lconv.month_name_full[ timeptr->tm_mon ], maxsize, &rc ) )
                         {
                             return 0;
                         }
@@ -208,13 +243,56 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'g':
                     {
                         /* last 2 digits of the week-based year as decimal (00-99) */
-                        /* TODO: 'g' */
+                        if ( rc < ( maxsize - 2 ) )
+                        {
+                            int week = iso_week( timeptr );
+                            int bias = 0;
+                            if ( week >= 52 && timeptr->tm_mon == 0 )
+                            {
+                                --bias;
+                            }
+                            else if ( week == 1 && timeptr->tm_mon == 11 )
+                            {
+                                ++bias;
+                            }
+                            div_t year = div( timeptr->tm_year % 100 + bias, 10 );
+                            s[rc++] = '0' + year.quot;
+                            s[rc++] = '0' + year.rem;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                         break;
                     }
                 case 'G':
                     {
                         /* week-based year as decimal (e.g. 1997) */
-                        /* TODO: 'G' */
+                        if ( rc < ( maxsize - 4 ) )
+                        {
+                            int week = iso_week( timeptr );
+                            int year = timeptr->tm_year + 1900;
+                            if ( week >= 52 && timeptr->tm_mon == 0 )
+                            {
+                                --year;
+                            }
+                            else if ( week == 1 && timeptr->tm_mon == 11 )
+                            {
+                                ++year;
+                            }
+                            for ( int i = 3; i >= 0; --i )
+                            {
+                                div_t digit = div( year, 10 );
+                                s[ rc + i ] = '0' + digit.rem;
+                                year = digit.quot;
+                            }
+
+                            rc += 4;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                         break;
                     }
                 case 'H':
@@ -239,7 +317,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* 'O' for locale's alternative numeric symbols */
                         if ( rc < ( maxsize - 2 ) )
                         {
-                            div_t hour = div( ( timeptr->tm_hour + 1 ) % 12, 10 );
+                            div_t hour = div( ( timeptr->tm_hour + 11 ) % 12 + 1, 10 );
                             s[rc++] = '0' + hour.quot;
                             s[rc++] = '0' + hour.rem;
                         }
@@ -254,7 +332,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* tm_yday as decimal (001-366) */
                         if ( rc < ( maxsize - 3 ) )
                         {
-                            div_t yday = div( timeptr->tm_yday, 100 );
+                            div_t yday = div( timeptr->tm_yday + 1, 100 );
                             s[rc++] = '0' + yday.quot;
                             s[rc++] = '0' + yday.rem / 10;
                             s[rc++] = '0' + yday.rem % 10;
@@ -399,9 +477,18 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     }
                 case 'V':
                     {
-                        /* week number as decimal (01-53) */
+                        /* ISO week number as decimal (01-53) */
                         /* 'O' for locale's alternative numeric symbols */
-                        /* TODO: 'V' */
+                        if ( rc < ( maxsize - 2 ) )
+                        {
+                            div_t week = div( iso_week( timeptr ), 10 );
+                            s[rc++] = '0' + week.quot;
+                            s[rc++] = '0' + week.rem;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                         break;
                     }
                 case 'w':
@@ -519,12 +606,14 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
 
 #include "_PDCLIB_test.h"
 
+#define MKTIME( tm, sec, min, hour, day, month, year, wday, yday ) tm.tm_sec = sec; tm.tm_min = min; tm.tm_hour = hour; tm.tm_mday = day; tm.tm_mon = month; tm.tm_year = year; tm.tm_wday = wday; tm.tm_yday = yday; tm.tm_isdst = -1;
+
 int main( void )
 {
-#ifndef REGTEST
-    /* Replace with a call to mktime() once that is implemented. */
-    struct tm timeptr = { 59, 30, 12, 1, 9, 72, 0, 274, -1 };
     char buffer[100];
+    /* Basic functionality */
+    struct tm timeptr;
+    MKTIME( timeptr, 59, 30, 12, 1, 9, 72, 0, 274 );
     TESTCASE( strftime( buffer, 100, "%a ", &timeptr ) == 4 );
     TESTCASE( strcmp( buffer, "Sun " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%A ", &timeptr ) == 7 );
@@ -550,9 +639,9 @@ int main( void )
     TESTCASE( strftime( buffer, 100, "%H ", &timeptr ) == 3 );
     TESTCASE( strcmp( buffer, "12 " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%I ", &timeptr ) == 3 );
-    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    TESTCASE( strcmp( buffer, "12 " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%j ", &timeptr ) == 4 );
-    TESTCASE( strcmp( buffer, "274 " ) == 0 );
+    TESTCASE( strcmp( buffer, "275 " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%m ", &timeptr ) == 3 );
     TESTCASE( strcmp( buffer, "10 " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%M ", &timeptr ) == 3 );
@@ -560,7 +649,7 @@ int main( void )
     TESTCASE( strftime( buffer, 100, "%p ", &timeptr ) == 3 );
     TESTCASE( strcmp( buffer, "PM " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%r ", &timeptr ) == 12 );
-    TESTCASE( strcmp( buffer, "01:30:59 PM " ) == 0 );
+    TESTCASE( strcmp( buffer, "12:30:59 PM " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%R ", &timeptr ) == 6 );
     TESTCASE( strcmp( buffer, "12:30 " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%S ", &timeptr ) == 3 );
@@ -585,7 +674,66 @@ int main( void )
     TESTCASE( strcmp( buffer, "\n " ) == 0 );
     TESTCASE( strftime( buffer, 100, "%t ", &timeptr ) == 2 );
     TESTCASE( strcmp( buffer, "\t " ) == 0 );
-#endif
+    /* ISO week calculation */
+    MKTIME( timeptr, 0, 0, 0, 27, 11, 3, 0, 360 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "52 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 28, 11, 3, 1, 361 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "53 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 31, 11, 3, 4, 364 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "53 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 1, 0, 4, 5, 0 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "53 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 3, 0, 4, 0, 2 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "53 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%g ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "03 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%G ", &timeptr ) == 5 );
+    TESTCASE( strcmp( buffer, "1903 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 4, 0, 4, 1, 3 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%g ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "04 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%G ", &timeptr ) == 5 );
+    TESTCASE( strcmp( buffer, "1904 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 1, 0, 5, 0, 0 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "52 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%g ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "04 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%G ", &timeptr ) == 5 );
+    TESTCASE( strcmp( buffer, "1904 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 24, 11, 100, 0, 358 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "51 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 25, 11, 100, 1, 359 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "52 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 31, 11, 100, 0, 365 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "52 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%g ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "00 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%G ", &timeptr ) == 5 );
+    TESTCASE( strcmp( buffer, "2000 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 1, 0, 101, 1, 0 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%g ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    TESTCASE( strftime( buffer, 100, "%G ", &timeptr ) == 5 );
+    TESTCASE( strcmp( buffer, "2001 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 7, 0, 101, 7, 6 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 8, 0, 101, 1, 7 );
+    TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "02 " ) == 0 );
     return TEST_RESULTS;
 }
 
