@@ -17,6 +17,25 @@
    care for putting it into a number of macros / helper functions.
 */
 
+enum wstart_t
+{
+    E_SUNDAY = 0,
+    E_MONDAY = 1
+};
+
+#include <stdio.h>
+
+static int weeknr( const struct tm * timeptr, int wstart )
+{
+    int wday = ( timeptr->tm_wday + 7 - wstart ) % 7;
+    div_t week = div( timeptr->tm_yday, 7 );
+    if ( week.rem > wday )
+    {
+        ++week.quot;
+    }
+    return week.quot;
+}
+
 static int iso_week( const struct tm * timeptr )
 {
     /* calculations below rely on Sunday == 7 */
@@ -472,7 +491,16 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* week number of the year (first Sunday as the first day of week 1) as decimal (00-53) */
                         /* 'O' for locale's alternative numeric symbols */
-                        /* TODO: 'U' */
+                        if ( rc < ( maxsize - 2 ) )
+                        {
+                            div_t week = div( weeknr( timeptr, E_SUNDAY ), 10 );
+                            s[rc++] = '0' + week.quot;
+                            s[rc++] = '0' + week.rem;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                         break;
                     }
                 case 'V':
@@ -502,7 +530,16 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* week number of the year (first Monday as the first day of week 1) as decimal (00-53) */
                         /* 'O' for locale's alternative numeric symbols */
-                        /* TODO: 'W' */
+                        if ( rc < ( maxsize - 2 ) )
+                        {
+                            div_t week = div( weeknr( timeptr, E_MONDAY ), 10 );
+                            s[rc++] = '0' + week.quot;
+                            s[rc++] = '0' + week.rem;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
                         break;
                     }
                 case 'x':
@@ -734,6 +771,35 @@ int main( void )
     MKTIME( timeptr, 0, 0, 0, 8, 0, 101, 1, 7 );
     TESTCASE( strftime( buffer, 100, "%V ", &timeptr ) == 3 );
     TESTCASE( strcmp( buffer, "02 " ) == 0 );
+    /* Sunday week calculation */
+    MKTIME( timeptr, 0, 0, 0, 2, 0, 116, 6, 1 );
+    TESTCASE( strftime( buffer, 100, "%U ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "00 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 3, 0, 116, 0, 2 );
+    TESTCASE( strftime( buffer, 100, "%U ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 31, 11, 116, 6, 365 );
+    TESTCASE( strftime( buffer, 100, "%U ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "52 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 1, 0, 117, 0, 1 );
+    TESTCASE( strftime( buffer, 100, "%U ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    /* Monday week calculation */
+    MKTIME( timeptr, 0, 0, 0, 3, 0, 116, 0, 2 );
+    TESTCASE( strftime( buffer, 100, "%W ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "00 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 4, 0, 116, 1, 3 );
+    TESTCASE( strftime( buffer, 100, "%W ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 31, 11, 116, 6, 365 );
+    TESTCASE( strftime( buffer, 100, "%W ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "52 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 1, 0, 117, 0, 1 );
+    TESTCASE( strftime( buffer, 100, "%W ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "00 " ) == 0 );
+    MKTIME( timeptr, 0, 0, 0, 2, 0, 117, 1, 2 );
+    TESTCASE( strftime( buffer, 100, "%W ", &timeptr ) == 3 );
+    TESTCASE( strcmp( buffer, "01 " ) == 0 );
     return TEST_RESULTS;
 }
 
