@@ -1,4 +1,4 @@
-/* time( time_t * )
+/* clock( void )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -8,8 +8,15 @@
 
 #ifndef REGTEST
 
-time_t time( time_t * timer )
+#include <sys/times.h>
+
+clock_t clock( void )
 {
+    struct tms buf;
+    if ( times( &buf ) != (clock_t)-1 )
+    {
+        return buf.tms_utime + buf.tms_stime;
+    }
     return -1;
 }
 
