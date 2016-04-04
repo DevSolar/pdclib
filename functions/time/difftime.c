@@ -10,7 +10,7 @@
 
 double difftime( time_t time1, time_t time0 )
 {
-    return 0.0;
+    return ( time1 > time0 ) ? (double)( time1 - time0 ) : -(double)( time0 - time1 );
 }
 
 #endif
