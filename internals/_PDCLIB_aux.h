@@ -47,12 +47,18 @@
 /* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
 /* _PDCLIB_static_assert( e, m ) does a compile-time assertion of expression  */
 /*                               e, with m as the failure message.            */
+/* _PDCLIB_TYPE_SIGNED( type ) resolves to true if type is signed.            */
+/* _PDCLIB_TWOS_COMPLEMENT( type ) resolves to true if two's complement is    */
+/*                                 used for type.                             */
 /* -------------------------------------------------------------------------- */
 
 #define _PDCLIB_cc( x, y )     x ## y
 #define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
 
 #define _PDCLIB_static_assert( e, m ) enum { _PDCLIB_concat( _PDCLIB_assert_, __LINE__ ) = 1 / ( !!(e) ) }
+
+#define _PDCLIB_TYPE_SIGNED( type ) (((type) -1) < 0)
+#define _PDCLIB_TWOS_COMPLEMENT( type ) ((type) ~ (type) 0 < 0 )
 
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )
