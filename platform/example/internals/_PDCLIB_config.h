@@ -176,7 +176,6 @@ struct _PDCLIB_imaxdiv_t
 
 /* See <time.h> for a couple of comments on these types and their semantics. */
 
-/* If you change this type to something exotic, check time/difftime.c */
 #define _PDCLIB_time long
 
 #define _PDCLIB_clock long
