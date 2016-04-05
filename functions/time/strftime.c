@@ -85,20 +85,29 @@ static int iso_week( const struct tm * timeptr )
     return week;
 }
 
-static int sprints( char * _PDCLIB_restrict dest, const char * _PDCLIB_restrict src, size_t maxsize, size_t * rc )
-{
-    size_t len = strlen( src );
-    if ( *rc < ( maxsize - len ) )
-    {
-        strcpy( dest + *rc, src );
-        *rc += len;
-        return 1;
+/* Assuming presence of s, rc, maxsize.
+   Checks index for valid range, target buffer for sufficient remaining
+   capacity, and copies the locale-specific string (or "?" if index out
+   of range). Returns with zero if buffer capacity insufficient.
+*/
+#define SPRINTSTR( array, index, max ) \
+    { \
+        const char * str = "?"; \
+        if ( index >= 0 && index <= max ) \
+        { \
+            str = array[ index ]; \
+        } \
+        size_t len = strlen( str ); \
+        if ( rc < ( maxsize - len ) ) \
+        { \
+            strcpy( s + rc, str ); \
+            rc += len; \
+        } \
+        else \
+        { \
+            return 0; \
+        } \
     }
-    else
-    {
-        return 0;
-    }
-}
 
 size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB_restrict format, const struct tm * _PDCLIB_restrict timeptr )
 {
@@ -135,38 +144,26 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'a':
                     {
                         /* tm_wday abbreviated */
-                        if ( ! sprints( s, _PDCLIB_lconv.day_name_abbr[ timeptr->tm_wday ], maxsize, &rc ) )
-                        {
-                            return 0;
-                        }
+                        SPRINTSTR( _PDCLIB_lconv.day_name_abbr, timeptr->tm_wday, 6 );
                         break;
                     }
                 case 'A':
                     {
                         /* tm_wday full */
-                        if ( ! sprints( s, _PDCLIB_lconv.day_name_full[ timeptr->tm_wday ], maxsize, &rc ) )
-                        {
-                            return 0;
-                        }
+                        SPRINTSTR( _PDCLIB_lconv.day_name_full, timeptr->tm_wday, 6 );
                         break;
                     }
                 case 'b':
                 case 'h':
                     {
                         /* tm_mon abbreviated */
-                        if ( ! sprints( s, _PDCLIB_lconv.month_name_abbr[ timeptr->tm_mon ], maxsize, &rc ) )
-                        {
-                            return 0;
-                        }
+                        SPRINTSTR( _PDCLIB_lconv.month_name_abbr, timeptr->tm_mon, 11 );
                         break;
                     }
                 case 'B':
                     {
                         /* tm_mon full */
-                        if ( ! sprints( s, _PDCLIB_lconv.month_name_full[ timeptr->tm_mon ], maxsize, &rc ) )
-                        {
-                            return 0;
-                        }
+                        SPRINTSTR( _PDCLIB_lconv.month_name_full, timeptr->tm_mon, 11 );
                         break;
                     }
                 case 'c':
