@@ -13,31 +13,42 @@
 
 /* ...printf() tests */
 #if defined( _PDCLIB_FILEIO )
-    #define RESULT_MISMATCH( act, exp ) \
-        rewind( act ), \
-        result_buffer[ fread( result_buffer, 1, strlen( exp ) + 1, act ) ] = '\0', \
-        rewind( act ), \
-        memcmp( result_buffer, exp, strlen( exp ) )
+   #define GET_RESULT \
+      rewind( target ); \
+      if ( (int)fread( result_buffer, 1, actual_rc, target ) != actual_rc ) \
+      { \
+          fprintf( stderr, "GET_RESULT failed." ); \
+      }
+   #define RESULT_MISMATCH( act, exp ) strcmp( result_buffer, exp ) != 0
    #define RESULT_STRING( tgt ) result_buffer
 #elif defined( _PDCLIB_STRINGIO )
    #define RESULT_MISMATCH( act, exp ) strcmp( act, exp ) != 0
+   #define GET_RESULT
    #define RESULT_STRING( tgt ) tgt
 #endif
 
 #ifdef _PDCLIB_FILEIO
-#define PREP_RESULT_BUFFER char result_buffer[100];
+#define PREP_RESULT_BUFFER char result_buffer[100] = { 0 }; rewind( target );
 #else
 #define PREP_RESULT_BUFFER
 #endif
 
-#define PRINTF_TEST( expected_rc, expected_string, format, ... ) do { \
+#define GETFMT( fmt, ... ) (fmt)
+#define PRINTF_TEST( expected_rc, expected_string, ... ) do { \
         PREP_RESULT_BUFFER \
-        int actual_rc = testprintf( target, format, __VA_ARGS__ ); \
+        int actual_rc = testprintf( target, __VA_ARGS__ ); \
+        GET_RESULT \
         if ( ( actual_rc != expected_rc ) || \
              ( RESULT_MISMATCH( target, expected_string ) ) ) \
         { \
             ++TEST_RESULTS; \
-            fprintf( stderr, "FAILED: " __FILE__ " (" _PDCLIB_FILEID "), line %d\n        expected %2d, \"%s\"\n        actual   %2d, \"%s\"\n", __LINE__, expected_rc, expected_string, actual_rc, RESULT_STRING( target ) ); \
+            fprintf( stderr, \
+                "FAILED: " __FILE__ " (" _PDCLIB_FILEID "), line %d\n" \
+                "        format string \"%s\"\n" \
+                "        expected %2d, \"%s\"\n" \
+                "        actual   %2d, \"%s\"\n", \
+                 __LINE__, GETFMT(__VA_ARGS__, 0), expected_rc, \
+                 expected_string, actual_rc, RESULT_STRING( target ) ); \
         } \
     } while ( 0 )
 
@@ -52,10 +63,10 @@
         memcpy( source, input_string, sizeof( input_string ) );
 #endif
 
-#define SCANF_TEST( expected_rc, input_string, format, ... ) do { \
+#define SCANF_TEST( expected_rc, input_string, ... ) do { \
         int actual_rc; \
         PREPARE_SOURCE( input_string ); \
-        actual_rc = testscanf( source, format, __VA_ARGS__ ); \
+        actual_rc = testscanf( source, __VA_ARGS__ ); \
         if ( actual_rc != expected_rc ) \
         { \
             ++TEST_RESULTS; \
