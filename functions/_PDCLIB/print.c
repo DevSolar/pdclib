@@ -16,24 +16,28 @@
    modifiers.
 */
 /* FIXME: one too many flags to work on a 16-bit machine, join some (e.g. the
-          width flags) into a combined field.  */
-#define E_minus    1<<0
-#define E_plus     1<<1
-#define E_alt      1<<2
-#define E_space    1<<3
-#define E_zero     1<<4
-#define E_done     1<<5
-#define E_char     1<<6
-#define E_short    1<<7
-#define E_long     1<<8
-#define E_llong    1<<9
-#define E_intmax   1<<10
-#define E_size     1<<11
-#define E_ptrdiff  1<<12
-#define E_pointer  1<<13
-#define E_ldouble  1<<14
-#define E_lower    1<<15
-#define E_unsigned 1<<16
+          width flags) into a combined field.
+*/
+#define E_minus    (1<<0)
+#define E_plus     (1<<1)
+#define E_alt      (1<<2)
+#define E_space    (1<<3)
+#define E_zero     (1<<4)
+#define E_done     (1<<5)
+
+#define E_char     (1<<6)
+#define E_short    (1<<7)
+#define E_long     (1<<8)
+#define E_llong    (1<<9)
+#define E_intmax   (1<<10)
+#define E_size     (1<<11)
+#define E_ptrdiff  (1<<12)
+#define E_pointer  (1<<13)
+
+#define E_ldouble  (1<<14)
+
+#define E_lower    (1<<15)
+#define E_unsigned (1<<16)
 
 /* This macro delivers a given character to either a memory buffer or a stream,
    depending on the contents of 'status' (struct _PDCLIB_status_t).
@@ -60,7 +64,7 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
     /* At worst, we need two prefix characters (hex prefix). */
     char preface[3] = "\0";
     size_t preidx = 0;
-    if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) )
+    if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) && ( value != 0 ) )
     {
         /* Octal / hexadecimal prefix for "%#" conversions */
         preface[ preidx++ ] = '0';
