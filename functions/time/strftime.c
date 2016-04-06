@@ -21,25 +21,30 @@
 enum wstart_t
 {
     E_SUNDAY = 0,
-    E_MONDAY = 1
+    E_MONDAY = 1,
+    E_ISO_WEEK,
+    E_ISO_YEAR
 };
 
 #include <stdio.h>
 
-static int weeknr( const struct tm * timeptr, int wstart )
+static int week_calc( const struct tm * timeptr, int wtype )
 {
-    int wday = ( timeptr->tm_wday + 7 - wstart ) % 7;
-    div_t week = div( timeptr->tm_yday, 7 );
-    if ( week.rem >= wday )
+    if ( wtype <= E_MONDAY )
     {
-        ++week.quot;
+        /* Simple -- first week starting with E_SUNDAY / E_MONDAY,
+           days before that are week 0.
+        */
+        int wday = ( timeptr->tm_wday + 7 - wtype ) % 7;
+        div_t week = div( timeptr->tm_yday, 7 );
+        if ( week.rem >= wday )
+        {
+            ++week.quot;
+        }
+        return week.quot;
     }
-    return week.quot;
-}
 
-static int iso_week( const struct tm * timeptr )
-{
-    /* calculations below rely on Sunday == 7 */
+    /* calculating ISO week; relies on Sunday == 7 */
     int wday = timeptr->tm_wday;
     if ( wday == 0 )
     {
@@ -82,7 +87,22 @@ static int iso_week( const struct tm * timeptr )
             week = 52;
         }
     }
-    return week;
+    if ( wtype == E_ISO_WEEK )
+    {
+        return week;
+    }
+
+    /* E_ISO_YEAR -- determine the "week-based year" */
+    int bias = 0;
+    if ( week >= 52 && timeptr->tm_mon == 0 )
+    {
+        --bias;
+    }
+    else if ( week == 1 && timeptr->tm_mon == 11 )
+    {
+        ++bias;
+    }
+    return timeptr->tm_year + 1900 + bias;
 }
 
 /* Assuming presence of s, rc, maxsize.
@@ -92,10 +112,11 @@ static int iso_week( const struct tm * timeptr )
 */
 #define SPRINTSTR( array, index, max ) \
     { \
+        int ind = (index); \
         const char * str = "?"; \
-        if ( index >= 0 && index <= max ) \
+        if ( ind >= 0 && ind <= max ) \
         { \
-            str = array[ index ]; \
+            str = array[ ind ]; \
         } \
         size_t len = strlen( str ); \
         if ( rc < ( maxsize - len ) ) \
@@ -106,6 +127,19 @@ static int iso_week( const struct tm * timeptr )
         else \
         { \
             return 0; \
+        } \
+    }
+
+#define SPRINTREC( format ) \
+    { \
+        size_t count = strftime( s + rc, maxsize - rc, format, timeptr ); \
+        if ( count == 0 ) \
+        { \
+            return 0; \
+        } \
+        else \
+        { \
+            rc += count; \
         } \
     }
 
@@ -170,15 +204,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* locale's date / time representation, %a %b %e %T %Y for C locale */
                         /* 'E' for locale's alternative representation */
-                        size_t count = strftime( s + rc, maxsize - rc, _PDCLIB_lconv.date_time_format, timeptr );
-                        if ( count == 0 )
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            rc += count;
-                        }
+                        SPRINTREC( _PDCLIB_lconv.date_time_format );
                         break;
                     }
                 case 'C':
@@ -216,15 +242,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'D':
                     {
                         /* %m/%d/%y */
-                        size_t count = strftime( s + rc, maxsize - rc, "%m/%d/%y", timeptr );
-                        if ( count == 0 )
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            rc += count;
-                        }
+                        SPRINTREC( "%m/%d/%y" );
                         break;
                     }
                 case 'e':
@@ -246,15 +264,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'F':
                     {
                         /* %Y-%m-%d */
-                        size_t count = strftime( s + rc, maxsize - rc, "%Y-%m-%d", timeptr );
-                        if ( count == 0 )
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            rc += count;
-                        }
+                        SPRINTREC( "%Y-%m-%d" );
                         break;
                     }
                 case 'g':
@@ -262,17 +272,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* last 2 digits of the week-based year as decimal (00-99) */
                         if ( rc < ( maxsize - 2 ) )
                         {
-                            int week = iso_week( timeptr );
-                            int bias = 0;
-                            if ( week >= 52 && timeptr->tm_mon == 0 )
-                            {
-                                --bias;
-                            }
-                            else if ( week == 1 && timeptr->tm_mon == 11 )
-                            {
-                                ++bias;
-                            }
-                            div_t year = div( timeptr->tm_year % 100 + bias, 10 );
+                            div_t year = div( week_calc( timeptr, E_ISO_YEAR ) % 100, 10 );
                             s[rc++] = '0' + year.quot;
                             s[rc++] = '0' + year.rem;
                         }
@@ -287,16 +287,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* week-based year as decimal (e.g. 1997) */
                         if ( rc < ( maxsize - 4 ) )
                         {
-                            int week = iso_week( timeptr );
-                            int year = timeptr->tm_year + 1900;
-                            if ( week >= 52 && timeptr->tm_mon == 0 )
-                            {
-                                --year;
-                            }
-                            else if ( week == 1 && timeptr->tm_mon == 11 )
-                            {
-                                ++year;
-                            }
+                            int year = week_calc( timeptr, E_ISO_YEAR );
                             for ( int i = 3; i >= 0; --i )
                             {
                                 div_t digit = div( year, 10 );
@@ -401,45 +392,19 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'p':
                     {
                         /* tm_hour locale's AM/PM designations */
-                        const char * designation = _PDCLIB_lconv.am_pm[ timeptr->tm_hour > 11 ];
-                        size_t len = strlen( designation );
-                        if ( rc < ( maxsize - len ) )
-                        {
-                            strcpy( s + rc, designation );
-                            rc += len;
-                        }
-                        else
-                        {
-                            return 0;
-                        }
+                        SPRINTSTR( _PDCLIB_lconv.am_pm, timeptr->tm_hour > 11, 1 );
                         break;
                     }
                 case 'r':
                     {
                         /* tm_hour / tm_min / tm_sec as locale's 12-hour clock time, %I:%M:%S %p for C locale */
-                        size_t count = strftime( s + rc, maxsize - rc, _PDCLIB_lconv.time_format_12h, timeptr );
-                        if ( count == 0 )
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            rc += count;
-                        }
+                        SPRINTREC( _PDCLIB_lconv.time_format_12h );
                         break;
                     }
                 case 'R':
                     {
                         /* %H:%M */
-                        size_t count = strftime( s + rc, maxsize - rc, "%H:%M", timeptr );
-                        if ( count == 0 )
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            rc += count;
-                        }
+                        SPRINTREC( "%H:%M" );
                         break;
                     }
                 case 'S':
@@ -467,15 +432,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'T':
                     {
                         /* %H:%M:%S */
-                        size_t count = strftime( s + rc, maxsize - rc, "%H:%M:%S", timeptr );
-                        if ( count == 0 )
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            rc += count;
-                        }
+                        SPRINTREC( "%H:%M:%S" );
                         break;
                     }
                 case 'u':
@@ -491,7 +448,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* 'O' for locale's alternative numeric symbols */
                         if ( rc < ( maxsize - 2 ) )
                         {
-                            div_t week = div( weeknr( timeptr, E_SUNDAY ), 10 );
+                            div_t week = div( week_calc( timeptr, E_SUNDAY ), 10 );
                             s[rc++] = '0' + week.quot;
                             s[rc++] = '0' + week.rem;
                         }
@@ -507,7 +464,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* 'O' for locale's alternative numeric symbols */
                         if ( rc < ( maxsize - 2 ) )
                         {
-                            div_t week = div( iso_week( timeptr ), 10 );
+                            div_t week = div( week_calc( timeptr, E_ISO_WEEK ), 10 );
                             s[rc++] = '0' + week.quot;
                             s[rc++] = '0' + week.rem;
                         }
@@ -530,7 +487,7 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         /* 'O' for locale's alternative numeric symbols */
                         if ( rc < ( maxsize - 2 ) )
                         {
-                            div_t week = div( weeknr( timeptr, E_MONDAY ), 10 );
+                            div_t week = div( week_calc( timeptr, E_MONDAY ), 10 );
                             s[rc++] = '0' + week.quot;
                             s[rc++] = '0' + week.rem;
                         }
@@ -544,30 +501,14 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* locale's date representation, %m/%d/%y for C locale */
                         /* 'E' for locale's alternative representation */
-                        size_t count = strftime( s + rc, maxsize - rc, _PDCLIB_lconv.date_format, timeptr );
-                        if ( count == 0 )
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            rc += count;
-                        }
+                        SPRINTREC( _PDCLIB_lconv.date_format );
                         break;
                     }
                 case 'X':
                     {
                         /* locale's time representation, %T for C locale */
                         /* 'E' for locale's alternative representation */
-                        size_t count = strftime( s + rc, maxsize - rc, _PDCLIB_lconv.time_format, timeptr );
-                        if ( count == 0 )
-                        {
-                            return 0;
-                        }
-                        else
-                        {
-                            rc += count;
-                        }
+                        SPRINTREC( _PDCLIB_lconv.time_format );
                         break;
                     }
                 case 'y':
