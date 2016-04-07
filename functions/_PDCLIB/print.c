@@ -61,6 +61,10 @@ do { \
 
 static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
 {
+    if ( status->prec < 0 )
+    {
+        status->prec = 1;
+    }
     /* At worst, we need two prefix characters (hex prefix). */
     char preface[3] = "\0";
     size_t preidx = 0;
@@ -91,18 +95,22 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
         }
     }
     {
-    size_t prec_pads = ( status->prec > status->current ) ? ( status->prec - status->current ) : 0;
+    /* At this point, status->current has the number of digits queued up.
+       Determine if we have a precision requirement to pad those.
+    */
+    size_t prec_pads = ( (_PDCLIB_size_t)status->prec > status->current ) ? ( (_PDCLIB_size_t)status->prec - status->current ) : 0;
     if ( ! ( status->flags & ( E_minus | E_zero ) ) )
     {
         /* Space padding is only done if no zero padding or left alignment
-           is requested. Leave space for any prefixes determined above.
+           is requested. Calculate the number of characters that WILL be
+           printed, including any prefixes determined above.
         */
         /* The number of characters to be printed, plus prefixes if any. */
         /* This line contained probably the most stupid, time-wasting bug
            I've ever perpetrated. Greetings to Samface, DevL, and all
            sceners at Breakpoint 2006.
         */
-        size_t characters = preidx + ( ( status->current > status->prec ) ? status->current : status->prec );
+        size_t characters = preidx + ( ( status->current > (_PDCLIB_size_t)status->prec ) ? status->current : (_PDCLIB_size_t)status->prec );
         if ( status->width > characters )
         {
             for ( size_t i = 0; i < status->width - characters; ++i )
@@ -119,6 +127,12 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
         PUT( preface[ preidx++ ] );
         ++(status->current);
     }
+    /* Do the precision padding if necessary. */
+    while ( prec_pads-- > 0 )
+    {
+        PUT( '0' );
+        ++(status->current);
+    }
     if ( ( ! ( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
     {
         /* If field is not left aligned, and zero padding is requested, do
@@ -129,11 +143,6 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
             PUT( '0' );
             ++(status->current);
         }
-    }
-    /* Do the precision padding if necessary. */
-    for ( size_t i = 0; i < prec_pads; ++i )
-    {
-        PUT( '0' );
     }
     }
 }
@@ -203,7 +212,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
     status->base  = 0;
     status->current  = 0;
     status->width = 0;
-    status->prec  = 0;
+    status->prec  = EOF;
 
     /* First come 0..n flags */
     do
@@ -278,6 +287,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                EOF (negative), there is no need for testing for negative here.
             */
             status->prec = va_arg( status->arg, int );
+            ++spec;
         }
         else
         {
@@ -285,8 +295,8 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             status->prec = (int)strtol( spec, &endptr, 10 );
             if ( spec == endptr )
             {
-                /* Decimal point but no number - bad conversion specifier. */
-                return orig_spec;
+                /* Decimal point but no number - equals zero */
+                status->prec = 0;
             }
             spec = endptr;
         }
@@ -448,10 +458,9 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                     return NULL;
             }
             ++(status->current);
-            /* FIXME: The if clause means one-digit values do not get formatted */
-            /* Was introduced originally to get value to "safe" levels re. uintmax_t. */
             if ( ( value / status->base ) != 0 )
             {
+                /* Get value to "safe" levels re. uintmax_t. */
                 int2base( (intmax_t)(value / status->base), status );
             }
             else

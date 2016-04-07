@@ -344,7 +344,7 @@ struct _PDCLIB_status_t
     char *           s;      /* *sprintf(): target buffer                    */
                              /* *sscanf():  source string                    */
     _PDCLIB_size_t   width;  /* specified field width                        */
-    _PDCLIB_size_t   prec;   /* specified field precision                    */
+    int              prec;   /* specified field precision                    */
     struct _PDCLIB_file_t * stream; /* *fprintf() / *fscanf() stream         */
     _PDCLIB_va_list  arg;    /* argument stack                               */
 };
