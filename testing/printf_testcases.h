@@ -131,7 +131,6 @@
     PRINTF_TEST( 1,  "1", "%ju", (uintmax_t)  1); // uintmax_t
     PRINTF_TEST( 1,  "1", "%zd", (size_t)     1); // signed size_t
 
-#ifndef TEST_CONVERSION_ONLY
 /******************************************************************************
  * NOTE: The following test cases are imported from the Tyndur project. They  *
  *       are therefore under the license of said project, not CC0.            *
@@ -168,8 +167,10 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
     {
+#ifndef TEST_CONVERSION_ONLY
     /* Ein String ohne alles */
     PRINTF_TEST(12, "Hallo heimur", "Hallo heimur");
+#endif
     /* Einfache Konvertierungen */
     PRINTF_TEST(12, "Hallo heimur", "%s", "Hallo heimur");
     PRINTF_TEST(4, "1024", "%d", 1024);
@@ -431,5 +432,3 @@
     PRINTF_TEST(20, "00EDCB5433          ", "% -+0*.*X", 20, 10, -0x1234abcdu);
     }
 /******************************************************************************/
-#endif
-    
