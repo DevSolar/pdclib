@@ -12,13 +12,14 @@
 
 size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, size_t n )
 {
+    const _PDCLIB_ctype_t * ctype = _PDCLIB_lconv.ctype;
     size_t len = strlen( s2 );
     if ( len < n )
     {
         /* Cannot use strncpy() here as the filling of s1 with '\0' is not part
            of the spec.
         */
-        while ( n-- && ( *s1++ = _PDCLIB_lconv.ctype[(unsigned char)*s2++].collation ) );
+        while ( n-- && ( *s1++ = ctype[(unsigned char)*s2++].collation ) );
     }
     return len;
 }
