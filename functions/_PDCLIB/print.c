@@ -157,51 +157,60 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
    output once the number of characters to be printed is known, which happens
    at the lowermost recursion level.
 */
+#define INT2BASE() \
+do \
+{ \
+    /* Special case: zero value, zero precision -- no output (but padding) */ \
+    if ( status->current == 0 && value == 0 && status->prec == 0 ) \
+    { \
+        intformat( value, status ); \
+    } \
+    else \
+    { \
+        /* Registering the character being printed at the end of the function here \
+           already so it will be taken into account when the deepestmost recursion \
+           does the prefix / padding stuff. \
+        */ \
+        ++(status->current); \
+        if ( ( value / status->base ) != 0 ) \
+        { \
+            /* More digits to be done - recurse deeper */ \
+            int2base( value / status->base, status ); \
+        } \
+        else \
+        { \
+            /* We reached the last digit, the deepest point of our recursion, and \
+               only now know how long the number to be printed actually is. Now we \
+               have to do the sign, prefix, width, and precision padding stuff \
+               before printing the numbers while we resurface from the recursion. \
+            */ \
+            intformat( value, status ); \
+        } \
+        /* Recursion tail - print the current digit. */ \
+        { \
+        int digit = value % status->base; \
+        if ( digit < 0 ) \
+        { \
+            digit *= -1; \
+        } \
+        if ( status->flags & E_lower ) \
+        { \
+            /* Lowercase letters. Same array used for strto...(). */ \
+            PUT( _PDCLIB_digits[ digit ] ); \
+        } \
+        else \
+        { \
+            /* Uppercase letters. Array only used here, only 0-F. */ \
+            PUT( _PDCLIB_Xdigits[ digit ] ); \
+        } \
+        } \
+    } \
+} while ( 0 )
+
+
 static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
 {
-    /* Special case: zero value, zero precision -- no output (but padding) */
-    if ( status->current == 0 && value == 0 && status->prec == 0 )
-    {
-        intformat( value, status );
-        return;
-    }
-    /* Registering the character being printed at the end of the function here
-       already so it will be taken into account when the deepestmost recursion
-       does the prefix / padding stuff.
-    */
-    ++(status->current);
-    if ( ( value / status->base ) != 0 )
-    {
-        /* More digits to be done - recurse deeper */
-        int2base( value / status->base, status );
-    }
-    else
-    {
-        /* We reached the last digit, the deepest point of our recursion, and
-           only now know how long the number to be printed actually is. Now we
-           have to do the sign, prefix, width, and precision padding stuff
-           before printing the numbers while we resurface from the recursion.
-        */
-        intformat( value, status );
-    }
-    /* Recursion tail - print the current digit. */
-    {
-    int digit = value % status->base;
-    if ( digit < 0 )
-    {
-        digit *= -1;
-    }
-    if ( status->flags & E_lower )
-    {
-        /* Lowercase letters. Same array used for strto...(). */
-        PUT( _PDCLIB_digits[ digit ] );
-    }
-    else
-    {
-        /* Uppercase letters. Array only used here, only 0-F. */
-        PUT( _PDCLIB_Xdigits[ digit ] );
-    }
-    }
+    INT2BASE();
 }
 
 
@@ -511,70 +520,39 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                     puts( "UNSUPPORTED PRINTF FLAG COMBINATION" );
                     return NULL;
             }
-            /* Special case: zero value, zero precision: No output, just padding */
-            if ( value == 0 && status->prec == 0 )
-            {
-                int2base( 0, status );
-            }
-            else
-            {
-                /* To make the call to int2base (using intmax_t) safe for
-                   uintmax_t values > INTMAX_MAX, we basically to the first
-                   "recursion" level of int2base right here.
-                */
-                ++(status->current);
-                if ( ( value / status->base ) != 0 )
-                {
-                    int2base( (intmax_t)(value / status->base), status );
-                }
-                else
-                {
-                    intformat( (intmax_t)value, status );
-                }
-                int digit = value % status->base;
-                if ( digit < 0 )
-                {
-                    digit *= -1;
-                }
-                if ( status->flags & E_lower )
-                {
-                    PUT( _PDCLIB_digits[ digit ] );
-                }
-                else
-                {
-                    PUT( _PDCLIB_Xdigits[ digit ] );
-                }
-            }
+            INT2BASE();
         }
         else
         {
+            intmax_t value;
             switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_intmax ) )
             {
                 case E_char:
-                    int2base( (intmax_t)(char)va_arg( status->arg, int ), status );
+                    value = (intmax_t)(char)va_arg( status->arg, int );
                     break;
                 case E_short:
-                    int2base( (intmax_t)(short)va_arg( status->arg, int ), status );
+                    value = (intmax_t)(short)va_arg( status->arg, int );
                     break;
                 case 0:
-                    int2base( (intmax_t)va_arg( status->arg, int ), status );
+                    value = (intmax_t)va_arg( status->arg, int );
                     break;
                 case E_long:
-                    int2base( (intmax_t)va_arg( status->arg, long ), status );
+                    value = (intmax_t)va_arg( status->arg, long );
                     break;
                 case E_llong:
-                    int2base( (intmax_t)va_arg( status->arg, long long ), status );
+                    value = (intmax_t)va_arg( status->arg, long long );
                     break;
                 case E_ptrdiff:
-                    int2base( (intmax_t)va_arg( status->arg, ptrdiff_t ), status );
+                    value = (intmax_t)va_arg( status->arg, ptrdiff_t );
                     break;
                 case E_intmax:
-                    int2base( va_arg( status->arg, intmax_t ), status );
+                    value = va_arg( status->arg, intmax_t );
                     break;
                 default:
                     puts( "UNSUPPORTED PRINTF FLAG COMBINATION" );
                     return NULL;
             }
+            INT2BASE();
         }
         if ( status->flags & E_minus )
         {
