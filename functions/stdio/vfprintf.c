@@ -21,7 +21,7 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
     status.current = 0;
     status.s = NULL;
     status.width = 0;
-    status.prec = 0;
+    status.prec = EOF;
     status.stream = stream;
     va_copy( status.arg, arg );
 

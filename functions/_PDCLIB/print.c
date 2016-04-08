@@ -159,6 +159,12 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
 */
 static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
 {
+    /* Special case: zero value, zero precision -- no output (but padding) */
+    if ( status->current == 0 && value == 0 && status->prec == 0 )
+    {
+        intformat( value, status );
+        return;
+    }
     /* Registering the character being printed at the end of the function here
        already so it will be taken into account when the deepestmost recursion
        does the prefix / padding stuff.
@@ -505,28 +511,39 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                     puts( "UNSUPPORTED PRINTF FLAG COMBINATION" );
                     return NULL;
             }
-            ++(status->current);
-            if ( ( value / status->base ) != 0 )
+            /* Special case: zero value, zero precision: No output, just padding */
+            if ( value == 0 && status->prec == 0 )
             {
-                /* Get value to "safe" levels re. uintmax_t. */
-                int2base( (intmax_t)(value / status->base), status );
+                int2base( 0, status );
             }
             else
             {
-                intformat( (intmax_t)value, status );
-            }
-            int digit = value % status->base;
-            if ( digit < 0 )
-            {
-                digit *= -1;
-            }
-            if ( status->flags & E_lower )
-            {
-                PUT( _PDCLIB_digits[ digit ] );
-            }
-            else
-            {
-                PUT( _PDCLIB_Xdigits[ digit ] );
+                /* To make the call to int2base (using intmax_t) safe for
+                   uintmax_t values > INTMAX_MAX, we basically to the first
+                   "recursion" level of int2base right here.
+                */
+                ++(status->current);
+                if ( ( value / status->base ) != 0 )
+                {
+                    int2base( (intmax_t)(value / status->base), status );
+                }
+                else
+                {
+                    intformat( (intmax_t)value, status );
+                }
+                int digit = value % status->base;
+                if ( digit < 0 )
+                {
+                    digit *= -1;
+                }
+                if ( status->flags & E_lower )
+                {
+                    PUT( _PDCLIB_digits[ digit ] );
+                }
+                else
+                {
+                    PUT( _PDCLIB_Xdigits[ digit ] );
+                }
             }
         }
         else
@@ -596,7 +613,7 @@ static int testprintf( char * buffer, const char * format, ... )
     status.current = 0;
     status.s = buffer;
     status.width = 0;
-    status.prec = 0;
+    status.prec = EOF;
     status.stream = NULL;
     va_start( status.arg, format );
     memset( buffer, '\0', 100 );
