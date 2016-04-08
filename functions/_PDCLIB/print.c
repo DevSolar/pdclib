@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <string.h>
 
 #ifndef REGTEST
 
@@ -194,6 +195,55 @@ static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
         /* Uppercase letters. Array only used here, only 0-F. */
         PUT( _PDCLIB_Xdigits[ digit ] );
     }
+    }
+}
+
+
+static void stringformat( const char * s, struct _PDCLIB_status_t * status )
+{
+    if ( status->flags & E_char )
+    {
+        status->prec = 1;
+    }
+    else
+    {
+        if ( status->prec < 0 )
+        {
+            status->prec = strlen( s );
+        }
+        else
+        {
+            for ( int i = 0; i < status->prec; ++i )
+            {
+                if ( s[i] == 0 )
+                {
+                    status->prec = i;
+                    break;
+                }
+            }
+        }
+    }
+    if ( ! ( status->flags & E_minus ) && ( status->width > (_PDCLIB_size_t)status->prec ) )
+    {
+        while ( status->current < ( status->width - status->prec ) )
+        {
+            PUT( ' ' );
+            ++(status->current);
+        }
+    }
+    while ( status->prec > 0 )
+    {
+        PUT( *(s++) );
+        --(status->prec);
+        ++(status->current);
+    }
+    if ( status->flags & E_minus )
+    {
+        while ( status->width > status->current )
+        {
+            PUT( ' ' );
+            ++(status->current);
+        }
     }
 }
 
@@ -393,21 +443,19 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         case 'A':
             break;
         case 'c':
-            /* TODO: Flags, wide chars. */
-            PUT( va_arg( status->arg, int ) );
-            return ++spec;
-        case 's':
-            /* TODO: Flags, wide chars. */
+            /* TODO: wide chars. */
             {
-                char * s = va_arg( status->arg, char * );
-                while ( *s != '\0' )
-                {
-                    PUT( *(s++) );
-                }
+                char c[1];
+                c[0] = (char)va_arg( status->arg, int );
+                status->flags |= E_char;
+                stringformat( c, status );
                 return ++spec;
             }
+        case 's':
+            /* TODO: wide chars. */
+            stringformat( va_arg( status->arg, char * ), status );
+            return ++spec;
         case 'p':
-            /* TODO: E_long -> E_intptr */
             status->base = 16;
             status->flags |= ( E_lower | E_unsigned | E_alt | E_pointer );
             break;
