@@ -20,7 +20,7 @@ int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restric
     status.current = 0;
     status.s = s;
     status.width = 0;
-    status.prec = 0;
+    status.prec = EOF;
     status.stream = NULL;
     va_copy( status.arg, arg );
 

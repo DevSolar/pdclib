@@ -21,7 +21,7 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
     status.current = 0;
     status.s = (char *) s;
     status.width = 0;
-    status.prec = 0;
+    status.prec = EOF;
     status.stream = NULL;
     va_copy( status.arg, arg );
 
