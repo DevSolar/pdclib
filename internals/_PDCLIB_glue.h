@@ -62,11 +62,6 @@ bool _PDCLIB_open(
    _PDCLIB_fd_t* fd, const _PDCLIB_fileops_t** ops,
    char const * filename, unsigned int mode );
 
-/* A system call that removes a file identified by name. Return zero on success,
-   non-zero otherwise.
-*/
-int _PDCLIB_remove( const char * filename );
-
 /* A system call that renames a file from given old name to given new name.
    Return zero on success, non-zero otherwise. In case of failure, the file
    must still be accessible by old name. Any handling of open files etc. is
