@@ -33,7 +33,7 @@
 #define _PDCLIB_UCHAR_MAX   0xff
 #define _PDCLIB_SCHAR_MIN   (-0x7f - 1)
 #define _PDCLIB_SCHAR_MAX   0x7f
-#ifdef  _PDCLIB_CHAR_SIGNED
+#if _PDCLIB_CHAR_SIGNED == 1
 #define _PDCLIB_CHAR_MIN    _PDCLIB_SCHAR_MIN
 #define _PDCLIB_CHAR_MAX    _PDCLIB_SCHAR_MAX
 #else
