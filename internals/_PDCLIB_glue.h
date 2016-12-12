@@ -61,11 +61,6 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
 */
 int _PDCLIB_close( _PDCLIB_fd_t fd );
 
-/* A system call that removes a file identified by name. Return zero on success,
-   non-zero otherwise.
-*/
-int _PDCLIB_remove( const char * filename );
-
 /* A system call that renames a file from given old name to given new name.
    Return zero on success, non-zero otherwise. In case of failure, the file
    must still be accessible by old name. Any handling of open files etc. is
