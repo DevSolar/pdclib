@@ -39,7 +39,7 @@
 /* first, before going to lengths about it.                                   */
 /* -------------------------------------------------------------------------- */
 
-/* Comment out (or delete) the line below if your 'char' type is unsigned.    */
+/* Set to 0 if your 'char' type is unsigned.                                  */
 #define _PDCLIB_CHAR_SIGNED 1
 
 /* Width of the integer types short, int, long, and long long, in bytes.      */
