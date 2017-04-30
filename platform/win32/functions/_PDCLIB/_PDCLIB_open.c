@@ -4,9 +4,6 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-/* This is a stub implementation of open.
-*/
-
 #include <stdio.h>
 #include <errno.h>
 

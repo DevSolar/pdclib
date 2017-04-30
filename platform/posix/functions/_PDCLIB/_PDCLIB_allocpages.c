@@ -1,11 +1,7 @@
-/* _PDCLIB_allocpages( int const )
+/* _PDCLIB_allocpages( size_t )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
-*/
-
-/* This is an example implementation of _PDCLIB_allocpages() (declared in
-   _PDCLIB_config.h), fit for use with POSIX kernels.
 */
 
 #ifndef REGTEST

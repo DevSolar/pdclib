@@ -4,10 +4,6 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-/* This is an example implementation of _PDCLIB_allocpages() (declared in
-   _PDCLIB_config.h), fit for use with POSIX kernels.
-*/
-
 #ifndef REGTEST
 #include <stdint.h>
 #include <stddef.h>

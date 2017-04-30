@@ -1,4 +1,4 @@
-/* _PDCLIB_allocpages( int const )
+/* _PDCLIB_freepages( void *, size_t )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

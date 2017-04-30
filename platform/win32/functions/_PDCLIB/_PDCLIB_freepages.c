@@ -4,7 +4,7 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-/* This is a stub implementation of _PDCLIB_allocpages
+/* This is a stub implementation of _PDCLIB_freepages.
 */
 
 #include <stdint.h>

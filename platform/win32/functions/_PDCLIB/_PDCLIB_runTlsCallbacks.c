@@ -1,3 +1,9 @@
+/* _PDCLIB_runTlsCallbacks( void *, DWORD, PVOID )
+
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
+
 #include <stddef.h>
 #include <windows.h>
 
