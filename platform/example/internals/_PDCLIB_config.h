@@ -46,7 +46,11 @@
 /* -------------------------------------------------------------------------- */
 
 /* Set to 0 if your 'char' type is unsigned.                                  */
+#ifdef __CHAR_UNSIGNED__
+#define _PDCLIB_CHAR_SIGNED 0
+#else
 #define _PDCLIB_CHAR_SIGNED 1
+#endif
 
 /* Width of the integer types short, int, long, and long long, in bytes.      */
 /* SHRT == 2, INT >= SHRT, LONG >= INT >= 4, LLONG >= LONG - check your       */
@@ -248,10 +252,10 @@ typedef char * _PDCLIB_va_list;
 #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
 #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
 
-#elif defined( __x86_64 )
+#elif defined( __x86_64 ) || defined( __arm )
 
-/* No way to cover x86_64 with a generic implementation, as it uses register-
-   based parameter passing. Using the GCC builtins here.
+/* No way to cover x86_64 or arm with a generic implementation, as it uses
+    register-based parameter passing. Using compiler builtins here.
 */
 typedef __builtin_va_list _PDCLIB_va_list;
 #define _PDCLIB_va_arg( ap, type ) ( __builtin_va_arg( ap, type ) )
