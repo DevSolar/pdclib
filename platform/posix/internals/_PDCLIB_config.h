@@ -40,7 +40,11 @@
 /* -------------------------------------------------------------------------- */
 
 /* Set to 0 if your 'char' type is unsigned.                                  */
+#ifdef __CHAR_UNSIGNED__
+#define _PDCLIB_CHAR_SIGNED 0
+#else
 #define _PDCLIB_CHAR_SIGNED 1
+#endif
 
 /* Width of the integer types short, int, long, and long long, in bytes.      */
 /* SHRT == 2, INT >= SHRT, LONG >= INT >= 4, LLONG >= LONG - check your       */
