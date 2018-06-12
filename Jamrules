@@ -90,7 +90,7 @@ if $(PDCLIB_PLATFORM) {
 }
 
 rule PDCLibHeaders {
-    SubDirHdrs $(PDCLIB_TOP) includes ;
+    SubDirHdrs $(PDCLIB_TOP) include ;
     SubDirHdrs $(PDCLIB_TOP) internals ;
     SubDirHdrs $(PDCLIB_TOP) testing ;
     for opt in $(PDCLIB_OPTIONS) {

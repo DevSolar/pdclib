@@ -1,6 +1,6 @@
 rule PDCLibTargetConfig { }
 rule PDCLibTargetHeaders {
-    SubDirHdrs $(PDCLIB_TOP) platform posix includes ;
+    SubDirHdrs $(PDCLIB_TOP) platform posix include ;
     SubDirHdrs $(PDCLIB_TOP) platform posix internals ;
 }
 
