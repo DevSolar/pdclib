@@ -66,7 +66,7 @@ PDCLib consists of several parts:
 5) platform-specific implementation files;
 6) platform-specific, optimized "overlay" implementations (optional).
 
-The standard headers (in ./includes/) only contain what they are
+The standard headers (in ./include/) only contain what they are
 defined to contain. Where additional logic or macro magic is
 necessary, that is deferred to the internal files. This has been done
 so that the headers are actually educational as to what they provide
