@@ -4,6 +4,10 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+/* This is an example implementation of _PDCLIB_seek() fit for use with POSIX
+   kernels.
+ */
+
 #include <stdio.h>
 
 #ifndef REGTEST
