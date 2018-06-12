@@ -2,7 +2,7 @@
 AUXFILES := Makefile Readme.txt
 
 # Directories belonging to the project
-PROJDIRS := functions includes internals platform/example
+PROJDIRS := functions include internals platform/example
 # All source files of the project
 SRCFILES := $(shell find -L $(PROJDIRS) -type f -name "*.c")
 # All header files of the project
@@ -107,11 +107,11 @@ help:
 
 %.o: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -MMD -MP -I./includes -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -I./include -c $< -o $@
 
 %_t: %.c Makefile pdclib.a
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -MMD -MP -DTEST -I./includes $< pdclib.a -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -DTEST -I./include $< pdclib.a -o $@
 
 %_r: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
