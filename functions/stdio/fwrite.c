@@ -5,7 +5,6 @@
 */
 
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
 
 #ifndef REGTEST
@@ -16,7 +15,7 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
 {
     _PDCLIB_size_t offset = 0;
     /* TODO: lineend */
-    /* bool lineend = false; */
+    /* int lineend = 0; */
     size_t nmemb_i;
     if ( _PDCLIB_prepwrite( stream ) == EOF )
     {
@@ -24,7 +23,8 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
     }
     for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
     {
-        for ( size_t size_i = 0; size_i < size; ++size_i )
+        size_t size_i;
+        for ( size_i = 0; size_i < size; ++size_i )
         {
             if ( ( stream->buffer[ stream->bufidx++ ] = ((char*)ptr)[ nmemb_i * size + size_i ] ) == '\n' )
             {

@@ -15,6 +15,7 @@
 unsigned int _PDCLIB_filemode( char const * const mode )
 {
     unsigned rc = 0;
+    size_t i;
     switch ( mode[0] )
     {
         case 'r':
@@ -30,7 +31,7 @@ unsigned int _PDCLIB_filemode( char const * const mode )
             /* Other than read, write, or append - invalid */
             return 0;
     }
-    for ( size_t i = 1; i < 4; ++i )
+    for ( i = 1; i < 4; ++i )
     {
         switch ( mode[i] )
         {

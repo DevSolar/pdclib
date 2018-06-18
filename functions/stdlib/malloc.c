@@ -6,7 +6,6 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdbool.h>
 
 #ifndef REGTEST
 
@@ -71,7 +70,7 @@ void * malloc( size_t size )
     /* No exact fit; go for first fit */
     if ( firstfit != NULL )
     {
-        bool node_split = false;
+        int node_split = 0;
         if ( ( firstfit->size - size ) > ( _PDCLIB_MINALLOC + sizeof( struct _PDCLIB_memnode_t ) ) )
         {
             /* Oversized - split into two nodes */
@@ -80,7 +79,7 @@ void * malloc( size_t size )
             newnode->next = firstfit->next;
             firstfit->next = newnode;
             firstfit->size = firstfit->size - newnode->size - sizeof( struct _PDCLIB_memnode_t );
-            node_split = true;
+            node_split = 1;
         }
         if ( firstfit_previous != NULL )
         {

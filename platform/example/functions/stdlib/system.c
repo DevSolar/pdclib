@@ -15,7 +15,8 @@ extern int wait( int * status );
 
 int system( const char * string )
 {
-    char const * const argv[] = { "sh", "-c", (char const * const)string, NULL };
+    char const * argv[] = { "sh", "-c", NULL, NULL };
+    argv[2] = string;
     if ( string != NULL )
     {
         int pid = fork();

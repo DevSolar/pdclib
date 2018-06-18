@@ -114,7 +114,8 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
         size_t characters = preidx + ( ( status->current > (_PDCLIB_size_t)status->prec ) ? status->current : (_PDCLIB_size_t)status->prec );
         if ( status->width > characters )
         {
-            for ( size_t i = 0; i < status->width - characters; ++i )
+            size_t i;
+            for ( i = 0; i < status->width - characters; ++i )
             {
                 PUT( ' ' );
                 ++(status->current);
@@ -228,7 +229,8 @@ static void stringformat( const char * s, struct _PDCLIB_status_t * status )
         }
         else
         {
-            for ( int i = 0; i < status->prec; ++i )
+            int i;
+            for ( i = 0; i < status->prec; ++i )
             {
                 if ( s[i] == 0 )
                 {

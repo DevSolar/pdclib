@@ -34,6 +34,7 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
     /* No need to handle buffers > INT_MAX, as PDCLib doesn't allow them */
     _PDCLIB_size_t written = 0;
     int rc;
+    unsigned int retries;
     if ( ! ( stream->status & _PDCLIB_FBIN ) )
     {
         /* TODO: Text stream conversion here */
@@ -41,7 +42,7 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
     /* Keep trying to write data until everything is written, an error
        occurs, or the configured number of retries is exceeded.
     */
-    for ( unsigned int retries = _PDCLIB_IO_RETRIES; retries > 0; --retries )
+    for ( retries = _PDCLIB_IO_RETRIES; retries > 0; --retries )
     {
         rc = (int)write( stream->handle, stream->buffer + written, stream->bufidx - written );
         if ( rc < 0 )
