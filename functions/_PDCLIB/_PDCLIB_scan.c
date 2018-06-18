@@ -78,7 +78,7 @@ static void UNGET( int c, struct _PDCLIB_status_t * status )
 /* Helper function to check if a character is part of a given scanset */
 static bool IN_SCANSET( const char * scanlist, const char * end_scanlist, int rc )
 {
-    // SOLAR
+    /* SOLAR */
     int previous = -1;
     while ( scanlist != end_scanlist )
     {
@@ -340,10 +340,10 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             spec = endspec;
             do
             {
-                // TODO: This can run beyond a malformed format string
+                /* TODO: This can run beyond a malformed format string */
                 ++endspec;
             } while ( *endspec != ']' );
-            // read according to scanlist, equiv. to %s above
+            /* read according to scanlist, equiv. to %s above */
             char * c = va_arg( status->arg, char * );
             while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
