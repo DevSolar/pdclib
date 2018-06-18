@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_int.h"
 
 /* TODO: Primitive placeholder. Much room for improvement. */
 

@@ -12,7 +12,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_glue.h"
 
 extern int close( int fd );
 

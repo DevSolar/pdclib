@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_glue.h"
 
 int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
 {

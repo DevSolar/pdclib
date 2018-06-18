@@ -6,7 +6,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_int.h"
 
 int _PDCLIB_errno = 0;
 

@@ -10,7 +10,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_aux.h"
+#include "pdclib/_PDCLIB_aux.h"
 
 void _PDCLIB_assert99( char const * const message1, char const * const function, char const * const message2 )
 {

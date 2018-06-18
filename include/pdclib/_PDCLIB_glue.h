@@ -7,7 +7,7 @@
 #ifndef _PDCLIB_GLUE_H
 #define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
 
-#include "_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_int.h"
 
 /* -------------------------------------------------------------------------- */
 /* OS "glue", part 2                                                          */

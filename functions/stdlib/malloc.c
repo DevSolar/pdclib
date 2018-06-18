@@ -10,7 +10,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_glue.h"
 
 /* TODO: Primitive placeholder. Much room for improvement. */
 

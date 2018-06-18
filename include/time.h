@@ -7,7 +7,7 @@
 #ifndef _PDCLIB_TIME_H
 #define _PDCLIB_TIME_H _PDCLIB_TIMEH
 
-#include "_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_int.h"
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
 #define _PDCLIB_SIZE_T_DEFINED _PDCLIB_SIZE_T_DEFINED

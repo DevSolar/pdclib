@@ -2,7 +2,7 @@
 AUXFILES := Makefile Readme.txt
 
 # Directories belonging to the project
-PROJDIRS := functions include internals platform/example
+PROJDIRS := functions include platform/example
 # All source files of the project
 SRCFILES := $(shell find -L $(PROJDIRS) -type f -name "*.c")
 # All header files of the project
@@ -23,7 +23,7 @@ REGDEPFILES := $(patsubst %,%.d,$(REGFILES))
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
 WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes
-CFLAGS := -fno-builtin -g -std=c99 -I./internals -I./testing -I./platform/example/include -I./platform/example/internals $(WARNINGS) $(USERFLAGS)
+CFLAGS := -fno-builtin -g -std=c99 -I./testing -I./platform/example/include $(WARNINGS) $(USERFLAGS)
 
 .PHONY: all clean srcdist tests testdrivers regtests regtestdrivers todos fixmes help
 
