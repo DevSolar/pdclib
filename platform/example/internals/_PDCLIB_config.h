@@ -252,7 +252,7 @@ typedef char * _PDCLIB_va_list;
 #define _PDCLIB_va_end( ap ) ( (ap) = (void *)0, (void)0 )
 #define _PDCLIB_va_start( ap, parmN ) ( (ap) = (char *) &parmN + ( _PDCLIB_va_round(parmN) ), (void)0 )
 
-#elif defined( __x86_64 ) || defined( __arm )
+#elif defined( __x86_64 ) || defined( __arm__ )
 
 /* No way to cover x86_64 or arm with a generic implementation, as it uses
     register-based parameter passing. Using compiler builtins here.
