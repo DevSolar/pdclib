@@ -94,8 +94,9 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
 static int testscanf( FILE * stream, char const * format, ... )
 {
     va_list ap;
+    int result;
     va_start( ap, format );
-    int result = vfscanf( stream, format, ap );
+    result = vfscanf( stream, format, ap );
     va_end( ap );
     return result;
 }

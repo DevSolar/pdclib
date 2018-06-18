@@ -31,13 +31,13 @@ extern ssize_t write( int fd, const void * buf, size_t count );
 
 int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
 {
+    /* No need to handle buffers > INT_MAX, as PDCLib doesn't allow them */
+    _PDCLIB_size_t written = 0;
+    int rc;
     if ( ! ( stream->status & _PDCLIB_FBIN ) )
     {
         /* TODO: Text stream conversion here */
     }
-    /* No need to handle buffers > INT_MAX, as PDCLib doesn't allow them */
-    _PDCLIB_size_t written = 0;
-    int rc;
     /* Keep trying to write data until everything is written, an error
        occurs, or the configured number of retries is exceeded.
     */

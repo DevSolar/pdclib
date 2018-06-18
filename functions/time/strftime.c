@@ -30,28 +30,32 @@ enum wstart_t
 
 static int week_calc( const struct tm * timeptr, int wtype )
 {
+    int wday;
+    int bias;
+    int week;
+
     if ( wtype <= E_MONDAY )
     {
         /* Simple -- first week starting with E_SUNDAY / E_MONDAY,
            days before that are week 0.
         */
-        int wday = ( timeptr->tm_wday + 7 - wtype ) % 7;
-        div_t week = div( timeptr->tm_yday, 7 );
-        if ( week.rem >= wday )
+        div_t weeks = div( timeptr->tm_yday, 7 );
+        wday = ( timeptr->tm_wday + 7 - wtype ) % 7;
+        if ( weeks.rem >= wday )
         {
-            ++week.quot;
+            ++weeks.quot;
         }
-        return week.quot;
+        return weeks.quot;
     }
 
     /* calculating ISO week; relies on Sunday == 7 */
-    int wday = timeptr->tm_wday;
+    wday = timeptr->tm_wday;
     if ( wday == 0 )
     {
         wday = 7;
     }
     /* https://en.wikipedia.org/wiki/ISO_week_date */
-    int week = ( timeptr->tm_yday - wday + 11 ) / 7;
+    week = ( timeptr->tm_yday - wday + 11 ) / 7;
     if ( week == 53 )
     {
         /* date *may* belong to the *next* year, if:
@@ -93,7 +97,7 @@ static int week_calc( const struct tm * timeptr, int wtype )
     }
 
     /* E_ISO_YEAR -- determine the "week-based year" */
-    int bias = 0;
+    bias = 0;
     if ( week >= 52 && timeptr->tm_mon == 0 )
     {
         --bias;
@@ -114,11 +118,12 @@ static int week_calc( const struct tm * timeptr, int wtype )
     { \
         int ind = (index); \
         const char * str = "?"; \
+        size_t len; \
         if ( ind >= 0 && ind <= max ) \
         { \
             str = array[ ind ]; \
         } \
-        size_t len = strlen( str ); \
+        len = strlen( str ); \
         if ( rc < ( maxsize - len ) ) \
         { \
             strcpy( s + rc, str ); \
@@ -1623,11 +1628,11 @@ static int test_week_calc( void )
     for ( int i = 0; i < 1020; ++i )
     {
         struct tm t = { 0 };
+        int U, V, W;
         t.tm_year = data[i][0];
         t.tm_wday = data[i][1];
         t.tm_yday = data[i][2];
         assert( strftime( buffer, 100, "%U %V %W", &t ) == 8 );
-        int U, V, W;
         assert( sscanf( buffer, "%d %d %d", &U, &V, &W ) == 3 );
         if ( data[i][3] != U || data[i][4] != V || data[i][5] != W )
         {

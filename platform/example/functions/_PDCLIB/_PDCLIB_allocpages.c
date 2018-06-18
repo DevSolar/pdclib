@@ -22,6 +22,7 @@ static void * membreak = NULL;
 
 void * _PDCLIB_allocpages( int const n )
 {
+    void * oldbreak;
     if ( membreak == NULL )
     {
         /* first call, make sure end-of-heap is page-aligned */
@@ -40,7 +41,7 @@ void * _PDCLIB_allocpages( int const n )
         }
     }
     /* increasing or decreasing heap - standard operation */
-    void * oldbreak = membreak;
+    oldbreak = membreak;
     membreak = (void *)( (char *)membreak + ( n * _PDCLIB_PAGESIZE ) );
 #ifdef __CYGWIN__
     if ( sbrk( (char*)membreak - (char*)oldbreak ) == membreak )

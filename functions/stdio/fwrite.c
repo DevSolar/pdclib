@@ -14,14 +14,14 @@
 
 size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
-    if ( _PDCLIB_prepwrite( stream ) == EOF )
-    {
-        return 0;
-    }
     _PDCLIB_size_t offset = 0;
     /* TODO: lineend */
     /* bool lineend = false; */
     size_t nmemb_i;
+    if ( _PDCLIB_prepwrite( stream ) == EOF )
+    {
+        return 0;
+    }
     for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
     {
         for ( size_t size_i = 0; size_i < size; ++size_i )

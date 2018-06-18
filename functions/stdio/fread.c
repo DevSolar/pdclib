@@ -14,12 +14,12 @@
 
 size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
+    char * dest = (char *)ptr;
+    size_t nmemb_i;
     if ( _PDCLIB_prepread( stream ) == EOF )
     {
         return 0;
     }
-    char * dest = (char *)ptr;
-    size_t nmemb_i;
     for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
     {
         for ( size_t size_i = 0; size_i < size; ++size_i )
