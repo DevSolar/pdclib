@@ -72,10 +72,6 @@ necessary, that is deferred to the internal files. This has been done
 so that the headers are actually educational as to what they provide
 (as opposed to how the library does it).
 
-Note that there *might* be some feature to remove this additional
-level of indirection for a production release, to ease the workload
-put on the preprocessor.
-
 There is a seperate implementation file (in ./function/{header}/) for
 every function defined by the standard, named {function}.c. Not only
 does this avoid linking in huge amounts of unused code when you use
@@ -85,13 +81,13 @@ but a single function, it also allows the optimization overlay to work
 (The directory ./functions/_PDCLIB/ contains internal and helper
 functions that are not part of the standard.)
 
-Then there are internal header files (in ./internal/), which contain
-all the "black magic" and "code fu" that was kept out of the standard
-headers. You should not have to touch them if you want to adapt PDCLib
-to a new platform. Note that, if you *do* have to touch them, I would
-consider it a serious design flaw, and would be happy to fix it in the
-next PDCLib release. Any adaption work should be covered by the steps
-detailed below.
+Then there are internal header files (in ./include/pdclib/), which
+contain all the "black magic" and "code fu" that was kept out of the
+standard headers. You should not have to touch them if you want to
+adapt PDCLib to a new platform. Note that, if you *do* have to touch
+them, I would consider it a serious design flaw, and would be happy
+to fix it in the next PDCLib release. Any adaption work should be
+covered by the steps detailed below.
 
 For adapting PDCLib to a new platform (the trinity of CPU, operating
 system, and compiler), make a copy of ./platform/example/ named
@@ -141,6 +137,10 @@ the overlay for your platform over the PDCLib source tree structure.
 Development Status
 ------------------
 
+Note that pre-v1.0 "releases" are internal milestones only, and that
+you are strongly encouraged to use the latest source snapshot at all
+times.
+
 v0.1 - 2004-12-12
 Freestanding-only C99 implementation without any overlay, and missing
 the INTN_C() / UINTN_C() macros. <float.h> still has the enquire.c
@@ -181,27 +181,3 @@ Still no locale / wide-char support. Enabled all GCC compiler warnings I
 could find, and fixed everything that threw a warning. (You see this,
 maintainers of Open Source software? No warnings whatsoever. Stop telling
 me it cannot be done.) Fixed all known bugs in the v0.4 release.
-
-
-A WORD ON THE v0.5 RELEASE
-==========================
-
-The v0.5 release is not well-tested. There are several things in it done
-in a way that I would never label "release quality". Some things are not
-even in the *structure* I would like them to be. An example for this is
-the current handling of errno values: It needlessly introduces dependency
-on PDCLib (because I use non-standard values), and the values are placed
-in the wrong header (_PDCLIB_int.h instead of _PDCLIB_glue.h where they
-would be more appropriate).
-
-But at some point during the development toward the v0.5 release, I found
-that my current PDCLib work schedule simply does not allow me to wait
-until every piece of <stdio.h> is as I would like it to be. It would
-probably take another year or two, and my patience is UP.
-
-I want this released, and I want to think about something else but
-<stdio.h> for some time.
-
-So, expect significant change to how stdio is done in upcoming releases.
-Everything *WILL* be stable by the time v1.0 comes around, but until then
-you will have to accept that I can only deliver "hobby quality" for now.
