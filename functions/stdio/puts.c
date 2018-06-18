@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_glue.h"
 
 extern char * _PDCLIB_eol;
 

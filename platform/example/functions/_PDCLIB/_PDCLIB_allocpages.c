@@ -16,7 +16,7 @@
 int brk( void * );
 void * sbrk( intptr_t );
 
-#include "_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_glue.h"
 
 static void * membreak = NULL;
 

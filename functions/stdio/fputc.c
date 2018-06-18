@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_glue.h"
 
 /* Write the value c (cast to unsigned char) to the given stream.
    Returns c if successful, EOF otherwise.

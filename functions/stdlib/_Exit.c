@@ -9,7 +9,7 @@
 
 #ifndef REGTEST
 
-#include "_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_glue.h"
 
 void _Exit( int status )
 {
