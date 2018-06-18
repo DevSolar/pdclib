@@ -92,8 +92,9 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
 static int testscanf( char const * stream, char const * format, ... )
 {
     va_list ap;
+    int result;
     va_start( ap, format );
-    int result = vsscanf( stream, format, ap );
+    result = vsscanf( stream, format, ap );
     va_end( ap );
     return result;
 }

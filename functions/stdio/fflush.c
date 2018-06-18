@@ -16,9 +16,9 @@ int fflush( struct _PDCLIB_file_t * stream )
 {
     if ( stream == NULL )
     {
+        int rc = 0;
         stream = _PDCLIB_filelist;
         /* TODO: Check what happens when fflush( NULL ) encounters write errors, in other libs */
-        int rc = 0;
         while ( stream != NULL )
         {
             if ( stream->status & _PDCLIB_FWRITE )

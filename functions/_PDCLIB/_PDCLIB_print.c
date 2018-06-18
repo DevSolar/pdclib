@@ -62,13 +62,13 @@ do { \
 
 static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
 {
+    /* At worst, we need two prefix characters (hex prefix). */
+    char preface[3] = "\0";
+    size_t preidx = 0;
     if ( status->prec < 0 )
     {
         status->prec = 1;
     }
-    /* At worst, we need two prefix characters (hex prefix). */
-    char preface[3] = "\0";
-    size_t preidx = 0;
     if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) && ( value != 0 ) )
     {
         /* Octal / hexadecimal prefix for "%#" conversions */

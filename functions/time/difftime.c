@@ -49,8 +49,10 @@ double difftime( time_t time1, time_t time0 )
        This suffers from double rounding; attempt to lessen that
        by using long double temporaries.
     */
+    {
     long double t1 = time1, t0 = time0;
     return t1 - t0;
+    }
 }
 
 #endif

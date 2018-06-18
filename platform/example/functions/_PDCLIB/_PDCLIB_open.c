@@ -27,6 +27,7 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
        POSIX kernels.
     */
     int osmode;
+    int rc;
     switch ( mode & ( _PDCLIB_FREAD | _PDCLIB_FWRITE | _PDCLIB_FAPPEND | _PDCLIB_FRW ) )
     {
         case _PDCLIB_FREAD: /* "r" */
@@ -50,7 +51,6 @@ int _PDCLIB_open( char const * const filename, unsigned int mode )
         default: /* Invalid mode */
             return -1;
     }
-    int rc;
     if ( osmode & O_CREAT )
     {
         rc = open( filename, osmode, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );

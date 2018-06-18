@@ -5,7 +5,6 @@
 */
 
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -76,7 +75,7 @@ static void UNGET( int c, struct _PDCLIB_status_t * status )
 
 
 /* Helper function to check if a character is part of a given scanset */
-static bool IN_SCANSET( const char * scanlist, const char * end_scanlist, int rc )
+static int IN_SCANSET( const char * scanlist, const char * end_scanlist, int rc )
 {
     /* SOLAR */
     int previous = -1;
@@ -94,7 +93,7 @@ static bool IN_SCANSET( const char * scanlist, const char * end_scanlist, int rc
             {
                 if ( previous == rc )
                 {
-                    return true;
+                    return 1;
                 }
             }
             previous = -1;
@@ -104,12 +103,12 @@ static bool IN_SCANSET( const char * scanlist, const char * end_scanlist, int rc
             /* not a scangroup, check verbatim */
             if ( rc == (unsigned char)*scanlist )
             {
-                return true;
+                return 1;
             }
             previous = (unsigned char)(*scanlist++);
         }
     }
-    return false;
+    return 0;
 }
 
 
@@ -117,7 +116,9 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 {
     /* generic input character */
     int rc;
+    char const * prev_spec;
     const char * orig_spec = spec;
+    int value_parsed;
     if ( *(++spec) == '%' )
     {
         /* %% -> match single '%' */
@@ -156,7 +157,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
        strtol() will return zero. In both cases, endptr will point to the
        rest of the conversion specifier - just what we need.
     */
-    char const * prev_spec = spec;
+    prev_spec = spec;
     status->width = (int)strtol( spec, (char**)&spec, 10 );
     if ( spec == prev_spec )
     {
@@ -220,7 +221,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     /* Conversion specifier */
 
     /* whether valid input had been parsed */
-    bool value_parsed = false;
+    value_parsed = 0;
 
     switch ( *spec )
     {
@@ -264,7 +265,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                     ( ( rc = GET( status ) ) != EOF ) )
             {
                 *(c++) = rc;
-                value_parsed = true;
+                value_parsed = 1;
             }
             /* width or input exhausted */
             if ( value_parsed )
@@ -307,7 +308,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 else
                 {
                     /* match */
-                    value_parsed = true;
+                    value_parsed = 1;
                     *(c++) = rc;
                 }
             }
@@ -331,10 +332,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         case '[':
         {
             const char * endspec = spec;
-            bool negative_scanlist = false;
+            int negative_scanlist = 0;
+            char * c;
             if ( *(++endspec) == '^' )
             {
-                negative_scanlist = true;
+                negative_scanlist = 1;
                 ++endspec;
             }
             spec = endspec;
@@ -344,7 +346,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 ++endspec;
             } while ( *endspec != ']' );
             /* read according to scanlist, equiv. to %s above */
-            char * c = va_arg( status->arg, char * );
+            c = va_arg( status->arg, char * );
             while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
@@ -364,7 +366,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                         break;
                     }
                 }
-                value_parsed = true;
+                value_parsed = 1;
                 *(c++) = rc;
             }
             if ( value_parsed )
@@ -401,7 +403,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
     {
         /* integer conversion */
         uintmax_t value = 0;         /* absolute value read */
-        bool prefix_parsed = false;
+        int prefix_parsed = 0;
         int sign = 0;
         while ( ( status->current < status->width ) &&
                 ( ( rc = GET( status ) ) != EOF ) )
@@ -441,7 +443,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             else if ( ! prefix_parsed )
             {
                 /* no prefix (0x... for hex, 0... for octal) parsed yet */
-                prefix_parsed = true;
+                prefix_parsed = 1;
                 if ( rc != '0' )
                 {
                     /* not a prefix; if base not yet set, set to decimal */
@@ -470,7 +472,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                             {
                                 /* ...unless already set to other value */
                                 UNGET( rc, status );
-                                value_parsed = true;
+                                value_parsed = 1;
                             }
                         }
                         else
@@ -482,13 +484,13 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                                 status->base = 8;
                             }
                             /* in any case we have read a zero */
-                            value_parsed = true;
+                            value_parsed = 1;
                         }
                     }
                     else
                     {
                         /* failed to read beyond the initial zero */
-                        value_parsed = true;
+                        value_parsed = 1;
                         break;
                     }
                 }
@@ -504,7 +506,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 }
                 value *= status->base;
                 value += digitptr - _PDCLIB_digits;
-                value_parsed = true;
+                value_parsed = 1;
             }
         }
         /* width or input exhausted, or non-matching character */

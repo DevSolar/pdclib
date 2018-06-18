@@ -12,6 +12,7 @@
 
 char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
+    char * dest = s;
     if ( size == 0 )
     {
         return NULL;
@@ -25,7 +26,6 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
     {
         return NULL;
     }
-    char * dest = s;
     while ( ( ( *dest++ = stream->buffer[stream->bufidx++] ) != '\n' ) && --size > 0 )
     {
         if ( stream->bufidx == stream->bufend )

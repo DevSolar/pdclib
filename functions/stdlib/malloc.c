@@ -185,9 +185,9 @@ int test_nodes( char const * const action, int expected_pages, ... )
 {
     static int count = 1;
     int result = 1;
-    PRINT( action );
     /* Determining the amount of allocated pages */
     int allocated_pages = ( (intptr_t)_PDCLIB_allocpages( 0 ) - (intptr_t)pages_start ) / _PDCLIB_PAGESIZE;
+    PRINT( action );
     PRINT( "Test #%2d, %d allocated pages", count++, allocated_pages );
     if ( allocated_pages != expected_pages )
     {
@@ -198,19 +198,20 @@ int test_nodes( char const * const action, int expected_pages, ... )
     {
         PRINT( "\n" );
     }
+    {
     /* Now moving through the free nodes list */
     va_list( ap );
-    va_start( ap, expected_pages );
     struct _PDCLIB_memnode_t * tracer = _PDCLIB_memlist.first;
     int firstnode = 0;
     int lastnode = 0;
+    va_start( ap, expected_pages );
     while ( tracer != NULL )
     {
+        /* Expected data */
+        size_t expected_location = va_arg( ap, size_t );
         /* Data from node */
         size_t node_location = (char *)tracer - (char *)pages_start;
         PRINT( "   - node %.4p, size %#.4x", node_location, tracer->size );
-        /* Expected data */
-        size_t expected_location = va_arg( ap, size_t );
         if ( expected_location == 0 )
         {
             PRINT( " - UNEXPECTED NODE\n" );
@@ -223,6 +224,7 @@ int test_nodes( char const * const action, int expected_pages, ... )
             firstnode = expected_location;
         }
         lastnode = expected_location;
+        {
         /* Comparing expected node against current node */
         size_t expected_size = va_arg( ap, size_t );
         if ( ( node_location != expected_location ) || ( tracer->size != expected_size ) )
@@ -233,6 +235,7 @@ int test_nodes( char const * const action, int expected_pages, ... )
         else
         {
             PRINT( "\n" );
+        }
         }
         tracer = tracer->next;
     }
@@ -250,6 +253,7 @@ int test_nodes( char const * const action, int expected_pages, ... )
     else
     {
         PRINT( "\n" );
+    }
     }
     PRINT( "\n" );
     return result;

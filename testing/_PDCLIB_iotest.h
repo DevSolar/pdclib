@@ -35,8 +35,9 @@
 
 #define GETFMT( fmt, ... ) (fmt)
 #define PRINTF_TEST( expected_rc, expected_string, ... ) do { \
+        int actual_rc; \
         PREP_RESULT_BUFFER \
-        int actual_rc = testprintf( target, __VA_ARGS__ ); \
+        actual_rc = testprintf( target, __VA_ARGS__ ); \
         GET_RESULT \
         if ( ( actual_rc != expected_rc ) || \
              ( RESULT_MISMATCH( target, expected_string ) ) ) \
