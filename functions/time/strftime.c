@@ -293,7 +293,8 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 4 ) )
                         {
                             int year = week_calc( timeptr, E_ISO_YEAR );
-                            for ( int i = 3; i >= 0; --i )
+                            int i;
+                            for ( i = 3; i >= 0; --i )
                             {
                                 div_t digit = div( year, 10 );
                                 s[ rc + i ] = '0' + digit.rem;
@@ -540,8 +541,9 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                         if ( rc < ( maxsize - 4 ) )
                         {
                             int year = timeptr->tm_year + 1900;
+                            int i;
 
-                            for ( int i = 3; i >= 0; --i )
+                            for ( i = 3; i >= 0; --i )
                             {
                                 div_t digit = div( year, 10 );
                                 s[ rc + i ] = '0' + digit.rem;
@@ -1625,7 +1627,8 @@ static int test_week_calc( void )
 {
     char buffer[100];
     int rc = 1;
-    for ( int i = 0; i < 1020; ++i )
+    int i;
+    for ( i = 0; i < 1020; ++i )
     {
         struct tm t = { 0 };
         int U, V, W;

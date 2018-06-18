@@ -54,10 +54,11 @@ int main( void )
 {
     char const * const message = "SUCCESS testing fputs()";
     FILE * fh;
+    size_t i;
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( fputs( message, fh ) >= 0 );
     rewind( fh );
-    for ( size_t i = 0; i < 23; ++i )
+    for ( i = 0; i < 23; ++i )
     {
         TESTCASE( fgetc( fh ) == message[i] );
     }

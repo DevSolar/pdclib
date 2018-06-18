@@ -25,7 +25,6 @@
 #if __STDC_VERSION__ < 199901L
 #define _PDCLIB_restrict
 #define _PDCLIB_inline
-#error PDCLib might not be fully conforming to either C89 or C95 prior to v2.x.
 #else
 #define _PDCLIB_restrict restrict
 #define _PDCLIB_inline inline
