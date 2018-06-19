@@ -8,8 +8,8 @@
 
 #ifndef _PDCLIB_ASSERT_H
 #define _PDCLIB_ASSERT_H _PDCLIB_ASSERT_H
-void _PDCLIB_assert99( char const * const, char const * const, char const * const );
-void _PDCLIB_assert89( char const * const );
+void _PDCLIB_assert99( const char * const, const char * const, const char * const );
+void _PDCLIB_assert89( const char * const );
 #endif
 
 /* If NDEBUG is set, assert() is a null operation. */

@@ -37,7 +37,7 @@ void * _PDCLIB_allocpages( int n );
    a file descriptor uniquely identifying that file.
    (The mode is the return value of the _PDCLIB_filemode() function.)
 */
-_PDCLIB_fd_t _PDCLIB_open( char const * const filename, unsigned int mode );
+_PDCLIB_fd_t _PDCLIB_open( const char * const filename, unsigned int mode );
 
 /* A system call that writes a stream's buffer.
    Returns 0 on success, EOF on write error.

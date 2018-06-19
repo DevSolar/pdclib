@@ -56,7 +56,7 @@ int main( void )
 {
     FILE * fh;
     char buffer[10];
-    char const * fgets_test = "foo\nbar\0baz\nweenie";
+    const char * fgets_test = "foo\nbar\0baz\nweenie";
     TESTCASE( ( fh = fopen( testfile, "wb+" ) ) != NULL );
     TESTCASE( fwrite( fgets_test, 1, 18, fh ) == 18 );
     rewind( fh );

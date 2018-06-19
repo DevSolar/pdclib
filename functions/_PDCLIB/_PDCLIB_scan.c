@@ -116,7 +116,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 {
     /* generic input character */
     int rc;
-    char const * prev_spec;
+    const char * prev_spec;
     const char * orig_spec = spec;
     int value_parsed;
     if ( *(++spec) == '%' )
@@ -606,7 +606,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 
 #ifndef REGTEST
 
-static int testscanf( char const * s, char const * format, ... )
+static int testscanf( const char * s, const char * format, ... )
 {
     struct _PDCLIB_status_t status;
     status.n = 0;

@@ -91,7 +91,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
 
 #include "_PDCLIB_test.h"
 
-static int testscanf( FILE * stream, char const * format, ... )
+static int testscanf( FILE * stream, const char * format, ... )
 {
     va_list ap;
     int result;

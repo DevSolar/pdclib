@@ -14,14 +14,14 @@
 #include <assert.h>
 
 /* Some strings used for <string.h> and <stdlib.h> testing. */
-static char const abcde[] = "abcde";
-static char const abcdx[] = "abcdx";
-static char const teststring[] = "1234567890\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n";
+static const char abcde[] = "abcde";
+static const char abcdx[] = "abcdx";
+static const char teststring[] = "1234567890\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n";
 
 /* Temporary file names */
-static char const testfile[]="testing/testfile";
-static char const testfile1[]="testing/testfile1";
-static char const testfile2[]="testing/testfile2";
+static const char testfile[]="testing/testfile";
+static const char testfile1[]="testing/testfile1";
+static const char testfile2[]="testing/testfile2";
 
 #define NO_TESTDRIVER 0
 
