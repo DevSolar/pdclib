@@ -52,7 +52,7 @@ int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_rest
 
 int main( void )
 {
-    char const * const message = "SUCCESS testing fputs()";
+    const char * const message = "SUCCESS testing fputs()";
     FILE * fh;
     size_t i;
     TESTCASE( ( fh = tmpfile() ) != NULL );

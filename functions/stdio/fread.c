@@ -47,7 +47,7 @@ size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PD
 int main( void )
 {
     FILE * fh;
-    char const * message = "Testing fwrite()...\n";
+    const char * message = "Testing fwrite()...\n";
     char buffer[21];
     buffer[20] = 'x';
     TESTCASE( ( fh = tmpfile() ) != NULL );

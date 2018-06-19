@@ -159,19 +159,19 @@ void * malloc( size_t size )
 #define MEMTEST( ptr, size ) ( ( ptr = malloc( size ) ) != NULL ) && ( memset( ptr, 0, size ) == ptr )
 
 char * pages_start = 0;
-int test_nodes( char const * const, int, ... );
-void PRINT( char const * const, ... );
+int test_nodes( const char * const, int, ... );
+void PRINT( const char * const, ... );
 
 /* This can be enabled to give a dump of node information */
 #if 0
-void PRINT( char const * const format, ... )
+void PRINT( const char * const format, ... )
 {
     va_list( ap );
     va_start( ap, format );
     vprintf( format, ap );
 }
 #else
-void PRINT( char const * const format, ... )
+void PRINT( const char * const format, ... )
 {
     /* EMPTY */
 }
@@ -180,7 +180,7 @@ void PRINT( char const * const format, ... )
 /* Helper function checking number of allocated memory pages and the nodes
    in the free memory list against expectations.
 */
-int test_nodes( char const * const action, int expected_pages, ... )
+int test_nodes( const char * const action, int expected_pages, ... )
 {
     static int count = 1;
     int result = 1;

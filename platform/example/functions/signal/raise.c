@@ -21,7 +21,7 @@ extern void (*_PDCLIB_sigterm)( int );
 int raise( int sig )
 {
     void (*sighandler)( int );
-    char const * message;
+    const char * message;
     switch ( sig )
     {
         case SIGABRT:

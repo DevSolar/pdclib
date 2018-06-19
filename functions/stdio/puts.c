@@ -50,7 +50,7 @@ int puts( const char * s )
 int main( void )
 {
     FILE * fh;
-    char const * message = "SUCCESS testing puts()";
+    const char * message = "SUCCESS testing puts()";
     char buffer[23];
     buffer[22] = 'x';
     TESTCASE( ( fh = freopen( testfile, "wb+", stdout ) ) != NULL );

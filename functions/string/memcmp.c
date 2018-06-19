@@ -32,7 +32,7 @@ int memcmp( const void * s1, const void * s2, size_t n )
 
 int main( void )
 {
-    char const xxxxx[] = "xxxxx";
+    const char xxxxx[] = "xxxxx";
     TESTCASE( memcmp( abcde, abcdx, 5 ) < 0 );
     TESTCASE( memcmp( abcde, abcdx, 4 ) == 0 );
     TESTCASE( memcmp( abcde, xxxxx, 0 ) == 0 );
