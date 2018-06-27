@@ -1,0 +1,45 @@
+/* PDCLib testing suite <_PDCLIB_test.h>
+
+   This file is part of the Public Domain C Library (PDCLib).
+   Permission is granted to use, modify, and / or redistribute at will.
+*/
+
+/* -------------------------------------------------------------------------- */
+/* Helper macros for test drivers                                             */
+/* -------------------------------------------------------------------------- */
+
+#include <stdio.h>
+#include <limits.h>
+#include <string.h>
+#include <assert.h>
+
+/* Some strings used for <string.h> and <stdlib.h> testing. */
+static const char abcde[] = "abcde";
+static const char abcdx[] = "abcdx";
+static const char teststring[] = "1234567890\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n";
+
+/* Temporary file names */
+static const char testfile[]="testing/testfile";
+static const char testfile1[]="testing/testfile1";
+static const char testfile2[]="testing/testfile2";
+
+#define NO_TESTDRIVER 0
+
+static int TEST_RESULTS = 0;
+
+/* TESTCASE() - generic test */
+#define TESTCASE( x ) if ( x ) {} \
+                      else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - %s\n", __LINE__, #x ); }
+
+/* TESTCASE_NOREG() - PDCLib-only test */
+#ifndef REGTEST
+    #define TESTCASE_NOREG( x ) TESTCASE( x )
+#else
+    #define TESTCASE_NOREG( x )
+#endif
+
+/* Include printf() / scanf() test macros if required */
+
+#if defined( _PDCLIB_FILEIO ) || defined( _PDCLIB_STRINGIO )
+#include "_PDCLIB_iotest.h"
+#endif
