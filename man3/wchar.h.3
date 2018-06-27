@@ -1,0 +1,254 @@
+.\" This file is part of the Public Domain C Library " "PDCLib).
+.\" Permission is granted to use" "modify" "and / or redistribute at will.
+.\"
+.Dd
+.Dt WCHAR.H 3
+.Os
+.\"
+.Sh NAME
+.Nm wchar.h
+.Nd wide character & wide character string manipulation
+.\"
+.Sh SYNOPSIS
+.In wchar.h
+.\"
+.Sh DESCRIPTION
+The
+.In wchar.h
+header provides functions for manipulating wide character strings" "for
+converting between wide characters and multibyte character sets" "for 
+manipulating wide character strings" "and for wide character oriented input and 
+output.
+.\"
+.Ss Types & Definitions
+The type
+.Vt size_t
+and macro
+.Dv NULL
+shall be defined as in
+.In stddef.h .
+.Pp
+The type
+.Vt wchar_t
+shall be defined as an integral type capable of representing any wide character
+in the implementation defined encoding. The type
+.Vt wint_t
+shall be defined as an integral type capable of representing any wide character
+in the implementation defined encoding" "plus the distinct value given by
+.Dv WEOF ,
+which evaluates to a constant expression of type
+.Vt wint_t
+which does not correspond to any character in the implementation defined 
+character set. The macros 
+.Dv WCHAR_MIN
+and
+.Dv WCHAR_MAX
+shall be defined as in
+.In stdint.h .
+.Pp
+The type
+.Vt mbstate_t
+shall be a complete non-array object type used for the storage of the state of
+a multibyte to wide character conversion.
+.Pp
+The type
+.Vt struct tm
+shall be defined as an incomplete type" "a full definition of wich can be found 
+in
+.In time.h .
+.\"
+.Ss Wide Character String Handling Functions
+.Fn "wchar_t *wcscpy" "wchar_t *restrict s1" "const wchar_t *restrict s2"
+.br
+.Fn "wchar_t *wcsncpy" "wchar_t *restrict s1" "const wchar_t *restrict s2" "size_t n"
+.br
+.Fn "wchar_t *wmemcpy" "wchar_t *restrict s1" "const wchar_t *restrict s2" "size_t n"
+.br
+.Fn "wchar_t *wmemmove" "wchar_t *s1" "const wchar_t *s2" "size_t n"
+.br
+.Fn "wchar_t *wcscat" "wchar_t *restrict s1" "const wchar_t *restrict s2"
+.br
+.Fn "wchar_t *wcsncat" "wchar_t *restrict s1" "const wchar_t *restrict s2" "size_t n"
+.br
+.Fn "int wcscmp" "const wchar_t *s1" "const wchar_t *s2"
+.br
+.Fn "int wcscoll" "const wchar_t *s1" "const wchar_t *s2"
+.br
+.Fn "int wcsncmp" "const wchar_t *s1" "const wchar_t *s2" "size_t n"
+.br
+.Fn "size_t wcsxfrm" "wchar_t *restrict s1" "const wchar_t *restrict s2" "size_t n"
+.br
+.Fn "int wmemcmp" "const wchar_t *s1" "const wchar_t *s2" "size_t n"
+.br
+.Fn "wchar_t *wcschr" "const wchar_t *s" "wchar_t c"
+.br
+.Fn "size_t wcscspn" "const wchar_t *s1" "const wchar_t *s2"
+.br
+.Fn "wchar_t *wcspbrk" "const wchar_t *s1" "const wchar_t *s2"
+.br
+.Fn "wchar_t *wcsrchr" "const wchar_t *s" "wchar_t c"
+.br
+.Fn "size_t wcsspn" "const wchar_t *s1" "const wchar_t *s2"
+.br
+.Fn "wchar_t *wcsstr" "const wchar_t *s1" "const wchar_t *s2"
+.br
+.Fn "wchar_t *wcstok" "wchar_t *restrict s1" "const wchar_t *restrict s2" "wchar_t **restrict ptr"
+.br
+.Fn "wchar_t *wmemchr" "const wchar_t *s" "wchar_t c" "size_t n" 
+.br
+.Fn "size_t wcslen" "const wchar_t *s"
+.br
+.Fn "wchar_t *wmemset" "wchar_t *s" "wchar_t c" "size_t n"
+.\"
+.Ss Wide Character String Formatting
+.Fn "int swprintf" "wchar_t *restrict s" "size_t n" "const wchar_t *restrict format" "..."
+.br
+.Fn "int swscanf" "const wchar_t *restrict s" "const wchar_t *restrict format" "..."
+.br
+.Fn "int vswprintf" "wchar_t *restrict s" "size_t n" "const wchar_t *restrict format" "va_list arg"
+.br
+.Fn "int vswscanf" "const wchar_t *restrict s" "const wchar_t *restrict format" "va_list arg"
+.br
+.Fn "size_t wcsftime" "wchar_t *restrict s" "size_t maxsize" "const wchar_t *restrict format" "const struct tm *restrict timeptr"
+.\"
+.Ss Wide Character Input and Output
+.Fn "int fwprintf" "FILE *restrict stream" "const wchar_t *restrict format" "..."
+.br
+.Fn "int fwscanf" "FILE *restrict stream" "const wchar_t *restrict format" "..."
+.br
+.Fn "int vfwprintf" "FILE *restrict stream" "const wchar_t *restrict format" "va_list arg"
+.br
+.Fn "int vfwscanf" "FILE *restrict stream" "const wchar_t *restrict format" "va_list arg"
+.br
+.Fn "int vwprintf" "const wchar_t *restrict format" "va_list arg"
+.br
+.Fn "int vwscanf" "const wchar_t *restrict format" "va_list arg"
+.br
+.Fn "int wprintf" "const wchar_t *restrict format" "..."
+.br
+.Fn "int wscanf" "const wchar_t *restrict format" "..."
+.br
+.Fn "wint_t fgetwc" "FILE *stream"
+.br
+.Fn "wchar_t *fgetws" "wchar_t *restrict s" "int n" "FILE *restrict stream"
+.br
+.Fn "wint_t fputwc" "wchar_t c" "FILE *stream"
+.br
+.Fn "int fputws" "const wchar_t *restrict s" "FILE *restrict stream"
+.br
+.Fn "int fwide" "FILE *stream" "int mode"
+.br
+.Fn "wint_t getwc" "FILE *stream"
+.br
+.Fn "wint_t getwchar" "void"
+.br
+.Fn "wint_t putwc" "wchar_t c" "FILE *stream"
+.br
+.Fn "wint_t putwchar" "wchar_t c"
+.br
+.Fn "wint_t ungetwc" "wint_t c" "FILE *stream"
+.\"
+.Ss Wide Character String Parsing
+.Fn "double wcstod" "const wchar_t *restrict nptr" "wchar_t **restrict endptr"
+.br
+.Fn "float wcstof" "const wchar_t *restrict nptr" "wchar_t **restrict endptr"
+.br
+.Fn "long double wcstold" "const wchar_t *restrict nptr" "wchar_t **restrict endptr"
+.br
+.Fn "long int wcstol" "const wchar_t *restrict nptr" "wchar_t **restrict endptr" "int base"
+.br
+.Fn "long long int wcstoll" "const wchar_t *restrict nptr" "wchar_t **restrict endptr" "int base"
+.br
+.Fn "unsigned long int wcstoul" "const wchar_t *restrict nptr" "wchar_t **restrict endptr" "int base"
+.br
+.Fn "unsigned long long int wcstoull" "const wchar_t *restrict nptr" "wchar_t **restrict endptr" "int base"
+.\"
+.Ss Character Set Conversion
+.Fn "wint_t btowc" "int c"
+.br
+.Fn "int wctob" "wint_t c"
+.br
+.Fn "int mbsinit" "const mbstate_t *ps"
+.br
+.Fn "size_t mbrlen" "const char *restrict s" "size_t n" "mbstate_t *restrict ps"
+.br
+.Fn "size_t mbrtowc" "wchar_t *restrict pwc" "const char *restrict s" "size_t n" "mbstate_t *restrict ps"
+.br
+.Fn "size_t wcrtomb" "char *restrict s" "wchar_t wc" "mbstate_t *restrict ps"
+.br
+.Fn "size_t mbsrtowcs" "wchar_t *restrict dst" "const char **restrict src" "size_t len" "mbstate_t *restrict ps"
+.br
+.Fn "size_t wcsrtombs" "char *restrict dst" "const wchar_t **restrict src" "size_t len" "mbstate_t *restrict ps"
+.\"
+.Sh SEE ALSO
+.Xr string.h 3
+.Xr uchar.h 3
+.Xr wcscpy 3
+.Xr wcsncpy 3
+.Xr wmemcpy 3
+.Xr wmemmove 3
+.Xr wcscat 3
+.Xr wcsncat 3
+.Xr wcscmp 3
+.Xr wcscoll 3
+.Xr wcsncmp 3
+.Xr wcsxfrm 3
+.Xr wmemcmp 3
+.Xr wcschr 3
+.Xr wcscspn 3
+.Xr wcspbrk 3
+.Xr wcsrchr 3
+.Xr wcsspn 3
+.Xr wcsstr 3
+.Xr wcstok 3
+.Xr wmemchr 3
+.Xr wcslen 3
+.Xr wmemset 3
+.\"
+.Xr swprintf 3
+.Xr swscanf 3
+.Xr vswprintf 3
+.Xr vswscanf 3
+.Xr wcsftime 3
+.\"
+.Xr fwprintf 3
+.Xr fwscanf 3
+.Xr vfwprintf 3
+.Xr vfwscanf 3
+.Xr vwprintf 3
+.Xr vwscanf 3
+.Xr wprintf 3
+.Xr wscanf 3
+.Xr fgetwc 3
+.Xr fgetws 3
+.Xr fputwc 3
+.Xr fputws 3
+.Xr fwide 3
+.Xr getwc 3
+.Xr getwchar 3
+.Xr putwc 3
+.Xr putwchar 3
+.Xr ungetwc 3
+.\"
+.Xr wcstod 3
+.Xr wcstof 3
+.Xr wcstold 3
+.Xr wcstol 3
+.Xr wcstoll 3
+.Xr wcstoul 3
+.Xr wcstoull 3
+.\"
+.Xr btowc 3
+.Xr wctomb 3
+.Xr mbsinit 3
+.Xr mbrlen 3
+.Xr mbrtowc 3
+.Xr wcrtomb 3
+.Xr mbsrtowcs 3
+.Xr wcsrtombs 3
+.\"
+.Sh STANDARDS
+Conforming to
+.St -isoC-amd1 ,
+.St -isoC-99 and
+.St -isoC-2011 .

@@ -1,0 +1,114 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use" "modify" "and / or redistribute at will.
+.\"
+.Dd
+.Dt STRING.H 3
+.Os
+.\"
+.Sh NAME
+.Nm string.h
+.Nd byte string manipulation
+.\"
+.Sh SYNOPSIS
+.In string.h
+.\"
+.Sh DESCRIPTION
+The
+.In string.h
+header provides byte string manipulation operations.
+.\"
+.Pp
+The type
+.Vt size_t ,
+and the preprocessor constant
+.Dv NULL
+shall be defined.
+.\"
+.Pp
+The following shall be defined as functions:
+.br
+.Fn "void *memcpy" "void *restrict dest" "const void *restrict src" "size_t byteCount" 
+.br
+.Fn "void *memmove" "void *dest" "void *src" "size_t byteCount"
+.br
+.Fn "char *strcpy" "char *restrict dest" "const char *restrict src"
+.br
+.Fn "char *strncpy" "char *restrict dest" "const char *src" "size_t byteCount"
+.br
+.Fn "char *strcat" "char *restrict s1" "const char *restrict s2"
+.br
+.Fn "char *strncat" "char *restrict s1" "const char *restrict s2" "size_t n"
+.br
+.Fn "int memcmp" "const void *s1" "const void *s2" "size_t n"
+.br
+.Fn "int strcmp" "const char *s1" "const char *s2"
+.br
+.Fn "int strcoll" "const char *s1" "const char *s2"
+.br
+.Fn "int strncmp" "const char *s1" "const char *s2" "size_t n"
+.br
+.Fn "size_t strxfrm" "char *restrict s1" "const char *restrict s2" "size_t n"
+.br
+.Fn "void *memchr" "const void *s" "int c" "size_t n"
+.br
+.Fn "char *strchr" "const char *s" "int c"
+.br
+.Fn "size_t strcspn" "const char *s1" "const char *s2"
+.br
+.Fn "char *strpbrk" "const char *s1" "const char *s2"
+.br
+.Fn "char *strrchr" "const char *s" "int c"
+.br
+.Fn "size_t strspn" "const char *s1" "const char *s2"
+.br
+.Fn "char *strstr" "const char *s1" "const char *s2"
+.br
+.Fn "char *strtok" "char *restrict s1" "const char *restrict s2"
+.br
+.Fn "void *memset" "void *s" "int c" "size_t n"
+.br
+.Fn "char *strerror" "int errnum"
+.br
+.Fn "size_t strlen" "const char *s"
+.\"
+.Pp
+.Sy #define _XOPEN_SOURCE || _POSIX_C_SOURCE >= 200809L
+.br
+.Fn "char *strdup" "const char*src"
+.\"
+.Pp
+.Sy #define _POSIX_C_SOURCE >= 200809L
+.br
+.Fn "char *strndup" "const char*src" "size_t n"
+.\"
+.Sh SEE ALSO
+.Xr wchar.h 3
+.Xr stdlib.h 3
+.Xr memcpy 3
+.Xr memmove 3
+.Xr strcpy 3
+.Xr strncpy 3
+.Xr strcat 3
+.Xr strncat 3
+.Xr memcmp 3
+.Xr strcmp 3
+.Xr strcoll 3
+.Xr strncmp 3
+.Xr strxfrm 3
+.Xr memchr 3
+.Xr strchr 3
+.Xr strcspn 3
+.Xr strpbrk 3
+.Xr strrchr 3
+.Xr strspn 3
+.Xr strstr 3
+.Xr strtok 3
+.Xr memset 3
+.Xr strerror 3
+.Xr strlen 3
+.Xr strdup 3
+.Xr strndup 3
+.Sh STANDARDS
+Conforming to
+.St -isoC-90 ,
+.St -isoC-99 .

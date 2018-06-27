@@ -1,0 +1,56 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt flockfile 3
+.Os
+.\"
+.Sh NAME
+.Nm flockfile, ftrylockfile, funlockfile
+.Nd stdio file locking
+.\"
+.Sh SYNOPSIS
+.Sy #define _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || _SVID_SOURCE || _BSD_SOURCE
+.\"
+.In stdio.h
+.Fn "void flockfile" "FILE *file"
+.Fn "int ftrylockfile" "FILE *file"
+.Fn "void funlockfile" "FILE *file"
+.\"
+.Sh DESCRIPTION
+.Fn flockfile
+locks the passed FILE stream for access by the calling thread, potentially 
+blocking. 
+.Fn ftrylockfile
+attempts to lock the file for the calling thread, but will return failure if
+another thread has already locked the file.
+.Fn funlockfile
+releases the lock on the stream, allowing another thread in the process to 
+access it.
+.\"
+.Pp
+The same stream may be locked multiple times by the calling thread; the number 
+of calls to 
+.Fn flockfile 
+and 
+.Fn ftrylockfile
+on a file must be equal to the number of calls to
+.Fn funlockfile .
+.\"
+.Pp
+No other thread may do I/O through the locked file while it is locked.
+.\"
+.Sh IMPLEMENTATION NOTES
+PDCLib implements the file locking on top of the Mutex primitives added by C11
+.\"
+.Sh SEE ALSO
+.Xr fopen 3
+.Xr fclose 3
+.Xr unlocked_stdio 3
+.Xr mtx_t 3
+.\"
+.Sh STANDARDS
+The locked I/O routines were initially introduced in 
+.St -svid4 ,
+and incorporated into POSIX in 
+.St -p1003.1-2001 .

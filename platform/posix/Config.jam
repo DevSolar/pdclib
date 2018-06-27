@@ -1,0 +1,16 @@
+rule PDCLibTargetConfig { }
+rule PDCLibTargetHeaders {
+    SubDirHdrs $(PDCLIB_TOP) platform posix include ;
+    SubDirHdrs $(PDCLIB_TOP) platform posix internals ;
+}
+
+if $(OS) = "MACOSX" {
+    # Need to link libSystem
+} else {
+    #PDCLIB_TEST_LINKFLAGS += -nostdlib ;
+    PDCLIB_TEST_LINKLIBS += -lgcc -lpthread ;
+}
+
+PDCLIB_OPTIONS =
+    pthreads
+    ;

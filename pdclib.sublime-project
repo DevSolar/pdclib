@@ -1,0 +1,44 @@
+{
+	"folders":
+	[
+		{
+            "name": "PDCLib",
+			"path": ".",
+            "file_exclude_patterns": ["*.o", "*_t", "*_r", "*.exe"]
+		}
+	],
+
+    "settings":
+    {
+        "tab_size": 4,
+        "translate_tabs_to_spaces": true,
+        "rulers": [ 80 ],
+        "use_tab_stops": true
+    },
+
+    "build_systems":
+    [
+        {
+            "name": "PDCLib Jam",
+            "working_dir": "$project_path",
+            "cmd": ["jam", "-qj4"],
+
+            "variants": [
+                { 
+                    "cmd": ["jam", "test"],
+                    "name": "Run"
+                },
+                { 
+                    "cmd": ["jam", "regtest"],
+                    "name": "Regtest"
+                }
+            ],
+
+            "windows": {
+                "env": {
+                    "JAM_TOOLSET": "MINGW"
+                }
+            }
+        }
+    ]
+}

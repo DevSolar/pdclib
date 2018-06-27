@@ -1,0 +1,8 @@
+rule PDCLibTargetConfig { }
+rule PDCLibTargetHeaders {
+    SubDirHdrs $(PDCLIB_TOP) platform gandr include ;
+}
+
+PDCLIB_OPTIONS =
+    nothread
+    ;

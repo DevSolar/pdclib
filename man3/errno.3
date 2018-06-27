@@ -1,0 +1,66 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt ERRNO 3
+.Os
+.\"
+.Sh NAME
+.Nm errno
+.Nd library error result
+.\"
+.Sh SYNOPSIS
+.In errno.h
+.Pp
+.Sy #define errno <object of thread local storage duration>
+.\"
+.Sh DESCRIPTION
+The header
+.In errno.h
+defines the name
+.Va errno
+to refer to an object of thread local storage duration. It is undefined whether
+or not 
+.Va errno
+refers to a preprocessor symbol or not.
+.\"
+.Pp
+At program startup, the runtime shall initialize
+.Va errno
+to contain the value zero (the initial value in other threads is undefined). It 
+is guaranteed that no function provided by the C standard library shall set the 
+value of 
+.Va errno
+to zero; therefore, for functions which do not have a unique return value for
+indicating error, it is possible to determine whether an error occured by 
+setting
+.Va errno
+to zero before the call, then after the call seeing if an error value has been
+stored into 
+.Va errno.
+.Pp
+.Bf Sy
+Note that it is valid for any function which is not described as explicitly 
+setting 
+.Va errno 
+to set it to a non-zero value. Checking for a non-zero value is only valid with
+functions which are defined to modify 
+.Va errno .
+.Ef
+.\"
+.Pp
+In some historical versions of the POSIX standard, the prescribed method of 
+using errno was to define
+.Va extern int errno .
+This is no longer supported by the POSIX or C standards, and will not work on 
+the majority of implementations, including this one.
+.\"
+.Sh SEE ALSO
+.Xr errno.h 3
+.Xr abort 3
+.Xr assert 3
+\"
+.Sh STANDARDS
+Conforming to
+.St -isoC-90 ,
+.St -isoC-99 .

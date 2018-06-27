@@ -1,0 +1,70 @@
+SubDir PDCLIB_TOP ;
+if $(PDCLIB_PLATFORM) {
+    SubInclude PDCLIB_TOP platform $(PDCLIB_PLATFORM) ;
+    SubDir PDCLIB_TOP ;
+}
+PDCLibConfig ;
+
+PDCLIB_SOURCES = [ RecursiveGlob $(PDCLIB_TOP) : [ FDirName functions ] : *.c ] ;
+
+if $(PDCLIB_PLATFORM) {
+    PDCLIB_PLATFORM_SOURCE_DIR = 
+        [ FDirName platform $(PDCLIB_PLATFORM) functions ] ;
+    PDCLIB_SOURCES += [ RecursiveGlob $(PDCLIB_TOP) : $(PDCLIB_PLATFORM_SOURCE_DIR) : *.c ] ;
+}
+
+for opt in $(PDCLIB_OPTIONS) {
+    optdir = [ FDirName opt $(opt) ] ;
+    PDCLIB_SOURCES += [ RecursiveGlob $(PDCLIB_TOP) : $(optdir) : *.c ] ;   
+}
+
+Library $(PDCLIB) : $(PDCLIB_SOURCES) ;
+
+if ! $(PDCLIB_NO_TEST) {
+    for file in $(PDCLIB_SOURCES) {
+        testfile    = $(file:S=_t) ;
+        regtestfile = $(file:S=_r) ;
+        test        = $(file:S=-test) ;
+        regtest     = $(file:S=-regtest) ;
+
+        Object $(testfile).o    : $(file) ;
+        MainFromObjects $(testfile)    : $(testfile).o $(CRT0) ;
+        CCFLAGS on $(testfile).o += -DTEST $(PDCLIB_TEST_CCFLAGS) ;
+        LINKFLAGS on $(testfile)$(SUFEXE) += $(PDCLIB_TEST_LINKFLAGS) ;
+        LINKLIBS on $(testfile)$(SUFEXE) += $(PDCLIB_TEST_LINKLIBS) ;
+        LinkLibraries $(testfile) : $(PDCLIB) ;
+        Test    $(test)    : $(testfile) ;
+
+        if ! $(PDCLIB_NO_REGTEST) {
+            Object $(regtestfile).o : $(file) ;
+            MainFromObjects $(regtestfile) : $(regtestfile).o ;
+            CCFLAGS on $(regtestfile).o += -DTEST -DREGTEST 
+                                    $(PDCLIB_REGTEST_CCFLAGS) ;
+            CCHDRS on $(regtestfile).o = [ FIncludes [ FDirName testing ] ] $(PDCLIB_REGTEST_CCHDRS) ;
+            LINKFLAGS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKFLAGS) ;
+            LINKLIBS on $(regtestfile)$(SUFEXE) += $(PDCLIB_REGTEST_LINKLIBS) ;
+            RegTest $(regtest) : $(regtestfile) ;
+        }
+    }
+
+    Main helloworld : helloworld.c ;
+    LinkLibraries helloworld : $(PDCLIB) ;
+    LINKLIBS on helloworld$(SUFEXE) += $(PDCLIB_TEST_LINKLIBS) ;
+    LINKFLAGS on helloworld$(SUFEXE) += $(PDCLIB_TEST_LINKFLAGS) ;
+}
+
+rule HtmlMan { 
+    DEPENDS htmlman : $(<) ;
+    DEPENDS $(<) : $(<:D) ;
+    DEPENDS $(<) : $(>) ;
+    MkDir $(<:D) ;
+}
+
+actions HtmlMan {
+    mandoc -Thtml -Oincludes=../3/%I.html -Oman=../%S/%N.html -Ostyle=../style.css $(>) >$(<)
+}
+
+for manpg in [ GLOB man3 : *.3 ] {
+    local section = [ SPLIT $(manpg:S) : . ] ;
+    HtmlMan [ FDirName html $(section) $(manpg:B).html ] : $(manpg) ;
+}

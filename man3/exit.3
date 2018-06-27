@@ -1,0 +1,119 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt exit 3
+.Os
+.\"
+.Sh NAME
+.Nm exit
+.Nd terminates the process
+.\"
+.Sh SYNOPSIS
+.In stdlib.h
+.Fn "noreturn void exit" "int status"
+.Fn "noreturn void quick_exit" "int status"
+.Fn "noreturn void _Exit" "int exitcode"
+.\"
+.Sh DESCRIPTION
+Calling any of these three functions terminates the current process, returning 
+the exit code passed as a parameter. The interpretation of the exit code is 
+undefined, except that 0 or
+.Dv EXIT_SUCCESS
+shall indicate successful completion and
+.Dv EXIT_FAILURE
+shall indicate a non-successful completion.
+.\"
+.Pp
+.Fn exit
+first destroys all objects with C++ thread local storage duration (the C 
+standard leaves whether or not thread local objects are destroyed or not 
+undefined). Next, the destructors of all C++ objects of static storage duration 
+are invoked along with all functions passed to
+.Fn atexit 
+in reverse order of registration (the time of registration for C++ objects of 
+static storage duration is taken to be the time at which the constructor 
+completes). It then flushes all open
+.Vt FILE
+streams with unwritten data and closes them. Finally, files created by
+.Fn tmpfile
+are removed, before handing control back to the host environment. Note in 
+particular that functions registered with
+.Fn at_quick_exit
+are
+.Sy not
+called.
+.\"
+.Pp
+.Fn quick_exit
+invokes any functions registered with
+.Fn at_quick_exit
+in reverse order of registration, then returns control to the host 
+environment by calling
+.Fn _Exit .
+No signal handlers are called, nor are any functions registered with
+.Fn atexit .
+.\"
+.Pp
+.Fn _Exit
+returns control to the controlling environment without invoking any functions
+registered by
+.Fn atexit ,
+.Fn at_quick_exit ,
+any signal handlers, or the destructors of any thread local objects or C++ 
+objects of static storage duration. Whether or not any open 
+.Vt FILE
+streams with unwritten data are flushed or not is undefined.
+.\"
+.Pp
+The result of aborting a call to 
+.Fn exit
+or
+.Fn quick_exit
+by use of 
+.Fn longjmp
+is undefined. If any function or destructor invoked by
+.Fn exit
+or
+.Fn quick_exit
+should throw, 
+.Fn std::terminate
+is invoked.
+.\"
+.Pp
+Undefined behaviour results if, while a call to
+.Fn exit
+or
+.Fn quick_exit
+is in progress, a call to 
+.Fn exit
+or
+.Fn quick_exit
+is made. 
+.\"
+.Sh IMPLEMENTATION NOTES
+PDCLib implements the process of flushing streams in
+.Fn _Exit ,
+and therefore
+.Fn exit
+calls it after all
+.Fn atexit
+handlers have been invoked.
+.\"
+.Sh SEE ALSO
+.Xr abort 3
+.Xr atexit 3
+.Xr at_quick_exit 3
+.\"
+.Sh STANDARDS
+.Fn exit
+is first defined in
+.St -isoC-90 ;
+.Fn _Exit
+was introduced in
+.St -isoC-99 .
+.Fn quick_exit
+was introduced in
+.St -isoC-11 
+and
+ISO/IEC 14882:2011 "C++ 2011" .

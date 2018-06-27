@@ -1,0 +1,83 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt setlocale 3
+.Os
+.\"
+.Sh NAME
+.Nm setlocale
+.Nd Set the application global locale
+.\"
+.Sh SYNOPSIS
+.In locale.h
+.Fn "char *setlocale" "int category" "const char * locale"
+.\"
+.Sh DESCRIPTION
+The ISO C standards define an application global locale, which all 
+locale-dependent functions implicitly use.
+.Fn setlocale
+may be used to change this locale.
+.Pp
+The locale is defined to be comprised of several categories; the category 
+parameter specifies which category of the global locale to change, and takes one
+of the following values:
+.Bl -tag
+.It Dv LC_ALL
+Modifies all categories
+.It Dv LC_COLLATE
+Changes the string collation order; affects 
+.Fn strcoll
+and
+.Fn strxfrm .
+.It Dv LC_CTYPE
+Affects the behaviour of the character handling functions defined in
+.In ctype.h ,
+excluding 
+.Fn isdigit
+and
+.Fn isxdigit .
+.It Dv LC_MONETARY
+Controls the currency-related information returned by
+.Fn localeconv .
+.It Dv LC_NUMERIC
+Controls the decimal point character used by the number formatting functions,
+plus the nonmonetary information returned by 
+.Fn localeconv .
+.It Dv LC_TIME
+Controls the formatting used by the
+.Fn strftime
+and
+.Fn wcsftime
+functions.
+.El
+.Pp
+.St -p1003.1-2008
+defines the
+.Fn uselocale
+function which controls the locale of the present thread. If the thread locale
+has been modified using the 
+.Fn uselocale
+function, and has not been reset to the global locale by invoking
+.Fn uselocale
+with
+.Dv LC_GLOBAL_LOCALE
+as its parameter, then the
+.Fn setlocale
+function will not affect the result of functions invoked on the current thread.
+.\"
+.Sh IMPLEMENTATION NOTES
+None
+.\"
+.Sh SEE ALSO
+.Xr lconv 3
+.Xr uselocale 3
+.Xr duplocale 3
+.Xr freelocale 3
+.\"
+.Sh STANDARDS
+Conforming to
+.St -isoC-amd1 ,
+.St -isoC-99 ,
+.St -isoC-2011 ,
+.St -p1003.1-2008 .

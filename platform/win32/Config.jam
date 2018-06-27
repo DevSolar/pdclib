@@ -1,0 +1,29 @@
+rule PDCLibTargetConfig { }
+rule PDCLibTargetHeaders {
+    SubDirHdrs $(PDCLIB_TOP) platform win32 include ;
+    SubDirHdrs $(PDCLIB_TOP) platform win32 internals ;
+
+    if $(PDCLIB_TOOLCHAIN) = "WATCOM" {
+        SubDirHdrs $(WATCOM) h ;
+    }
+}
+
+if $(PDCLIB_TOOLCHAIN) = "gcc" {
+    PDCLIB_TEST_LINKFLAGS += -nostdlib ;
+    PDCLIB_TEST_LINKLIBS += -lgcc -lkernel32 -lshell32 ;
+} else if $(PDCLIB_TOOLCHAIN) = "WATCOM" {
+    PDCLIB_TEST_LINKFLAGS = "-\"option start=_mainCRTStartup\"" ;
+    PDCLIB_TEST_LINKLIBS =
+        $(WATCOM)\\lib386\\nt\\kernel32.lib
+        $(WATCOM)\\lib386\\nt\\shell32.lib
+        $(WATCOM)\\lib386\\nt\\clib3r.lib ;
+    PDCLIB_REGTEST_CCHDRS = [ FIncludes $(WATCOM)\\h ] ;
+} else {
+    ECHO Win32 doesn't support toolchain $(PDCLIB_TOOLCHAIN) ;
+    EXIT ;
+}
+
+PDCLIB_OPTIONS =
+    ;
+
+CRT0 = [ FDirName platform win32 crt0$(SUFOBJ) ] ;

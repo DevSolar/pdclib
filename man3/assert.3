@@ -1,0 +1,43 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt assert 3
+.Os
+.\"
+.Sh NAME
+.Nm assert
+.Nd validate assertion
+.\"
+.Sh SYNOPSIS
+.In assert.h
+.Fn "void assert" "<scalar expression>"
+.\"
+.Sh DESCRIPTION
+If
+.Dv NDEBUG
+was defined when
+.In assert.h
+was last included, the macro
+.Nm
+results in no code being generated. Otherwise, if the expression evaluates to 
+false, an error message is printed to 
+.Va stderr
+and execution is terminated by invoking
+.Fn abort .
+.Sh IMPLEMENTATION NOTES
+The enclosing function of the call to
+.Nm
+will only be printed in the error message when compiling for C99, or a later
+revision of the C standard. 
+.\"
+.Sh SEE ALSO
+.Xr _Exit 3
+.Xr quick_exit 3
+.Xr exit 3
+.Xr abort 3
+.\"
+.Sh STANDARDS
+Conforming to
+.St -isoC-90 ,
+.St -isoC-99 .

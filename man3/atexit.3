@@ -1,0 +1,100 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt atexit 3
+.Os
+.\"
+.Sh NAME
+.Nm atexit
+.Nd registration of functions to be invoked before process termination
+.\"
+.Sh SYNOPSIS
+.In stdlib.h
+.Fn "int atexit" "void (*handler)(void)"
+.Fn "int at_quick_exit" "void (*handler)(void)" 
+(C11, C++11)
+.\"
+.Sh DESCRIPTION
+These functions register a function to be called when the corresponding process
+exit function is invoked. For
+.Fn atexit 
+the function will be invoked when the process is terminated by calling
+.Fn exit ;
+for
+.Fn at_quick_exit
+the function will be invoked when the process is terminated by calling
+.Fn quick_exit .
+.\"
+.Pp
+These functions are used in order to permit a program to perform actions before
+a process is terminated; for example, releasing an interprocess semaphore. 
+Special care should be taken when writing 
+.Fn at_quick_exit
+handlers; the purpose of 
+.Fn quick_exit
+is to support the abandonning of a process when normal process termination might
+not be possible; at_quick_exit handlers should therefore be used sparingly and
+only when their use is essential.
+.\"
+.Pp
+The standard guarantees that 
+.Fn atexit
+and
+.Fn at_quick_exit
+may each be called at least 32 times successfully.
+.\"
+.Pp
+.Fn atexit 
+and
+.Fn at_quick_exit
+handlers are called in reverse order of the order they were registered in. For
+precise details of their ordering, see
+.Xr exit 3 .
+.\"
+.Pp
+The result of exiting from a handler registered with
+.Fn atexit
+or
+.Fn at_quick_exit
+by use of 
+.Fn longjmp
+is undefined. If any function or destructor invoked by
+.Fn exit
+or
+.Fn quick_exit
+should throw, 
+.Fn std::terminate
+is invoked.
+.\"
+.Pp
+Undefined behaviour results if an 
+.Fn atexit
+or
+.Fn at_quick_exit
+handler calls
+.Fn exit
+or
+.Fn quick_exit . 
+.\"
+.Sh RETURN VALUES
+Returns 0 to indicate success; nonzero returns indicate failure.
+.\"
+.Sh ERRORS
+No errors are defined
+.\"
+.Sh SEE ALSO
+.Xr abort 3
+.Xr exit 3
+.Xr quick_exit 3
+.Xr _Exit 3
+.\"
+.Sh STANDARDS
+.Fn atexit
+is first defined in
+.St -isoC-90 ;
+.Fn at_quick_exit
+was introduced in
+.St -isoC-2011 
+and
+ISO/IEC 14882:2011 "C++ 2011" .

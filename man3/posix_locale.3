@@ -1,0 +1,147 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt posix_locale 3
+.Os
+.\"
+.Sh NAME
+.Nm posix_locale
+.Nd POSIX extended locale functions
+.\"
+.Sh SYNOPSIS
+.Sy #define _POSIX_C_SOURCE >= 200112L
+.In locale.h
+.Vt typedef <anonymous> locale_t;
+.br
+#define 
+.Va LC_GLOBAL_LOCALE
+<constant of type locale_t>;
+.Fn "locale_t uselocale" "locale_t newlocale"
+.Fn "locale_t duplocale" "locale_t loc"
+.Fn "locale_t newlocale" "int category_mask" "const char *locale" "locale_t base"
+.Fn "void freelocale" "locale_t loc"
+.\"
+.Sh DESCRIPTION
+The ISO C standard defines the
+.Xr setlocale 3
+function, which can be used for modifying the application global locale. In 
+multithreaded programs, it can sometimes be useful to allow a thread to, either
+temporarily or permanently, assume a different locale from the rest of the 
+application. POSIX defines extended locale functions which permit this.
+.\"
+.Pp
+The function
+.Fn uselocale
+is used to change the locale of the current thread. If 
+.Fa newlocale
+is the symbolic constant
+.Dv LC_GLOBAL_LOCALE ,
+then the thread locale will be set to the application global locale. If
+.Fa newlocale
+is
+.Dv NULL ,
+then the locale will not be changed. Otherwise, 
+.Fa newlocale
+should be a value returned from either of the
+.Fn newlocale
+or
+.Fn duplocale
+functions. The return value will be the previous thread locale; or 
+.Dv LC_GLOBAL_LOCALE
+if the thread has no current locale.
+.Pp
+.\"
+The function
+.Fn duplocale
+is used to make an exact copy of an existing locale. The passed locale object 
+must have been returned from a call to either
+.Fn duplocale
+or
+.Fn newlocale .
+.Pp
+.\"
+The function
+.Fn newlocale
+is used to modify an existing locale or create a new locale. The returned locale
+will have the properties defined by
+.Fa category_mask
+set to the values from
+.Fa locale
+as per 
+.Xr setlocale 3 ,
+with the remainder being taken from either
+.Fa base
+(which must be a locale object previously returned by
+.Fn duplocale
+or
+.Fn newlocale )
+if it is specified, or otherwise from the "C" locale.
+.Pp
+It is undefined if 
+.Fn newlocale
+modifies
+.Fa base
+or frees it and creates a new locale.
+.Pp
+.\"
+The 
+.Fn freelocale
+function is used to free a locale previously created via
+.Fn duplocale
+or
+.Fn newlocale .
+.\"
+.\"
+.Sh ERRORS
+For uselocale,
+.Er EINVAL
+may be returned if
+.Fa locale
+is not a valid locale.
+.Pp
+.\"
+For 
+.Fn duplocale ,
+.Bl -tag -width 8
+.It Er EINVAL
+may be returned if
+.Fa locale
+is not a valid locale
+.It Er ENOMEM
+shall be returned if the system had insufficient memory to satisfy the request.
+.El
+.Pp
+.\"
+For 
+.Fn newlocale ,
+.Bl -tag -width 8
+.It Er EINVAL
+shall be returned if 
+.Fa category_mask
+contains a bit which does not correspond to a valid category, and may be 
+returned if
+.Fa locale
+is not a valid locale object.
+.It Er ENOMEM
+shall be returned if the system did not have enough memory to allocate a new 
+locale object or read the locale data
+.It Er ENOENT
+shall be returned if the locale specified does not contain data for all the 
+specified categories
+.El
+.Pp
+.\"
+.Fn freelocale
+has no errors
+.\"
+.Sh IMPLEMENTATION NOTES
+None
+.\"
+.Sh SEE ALSO
+.Xr lconv 3
+.Xr setlocale 3
+.\"
+.Sh STANDARDS
+Conforming to
+.St -p1003.1-2008 .

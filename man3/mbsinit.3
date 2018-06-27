@@ -1,0 +1,58 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt MBSINIT 3
+.Os
+.\"
+.Sh NAME
+.Nm mbsinit
+.Nd determines multibyte conversion state
+.\"
+.Sh SYNOPSIS
+.In wchar.h
+.Fn "int mbsinit" "const mbstate_t *ps"
+.In xlocale.h
+.Fn "int mbsinit_l" "const mbstate_t *ps" "locale_t loc"
+.\"
+.Sh DESCRIPTION
+.Fn mbsinit 
+and
+.Fn mbsinit_l 
+shall return a nonzero value if the multibyte converison state pointed to by
+.Va ps
+corresponds to an initial conversion state. The interpretation of 
+.Va *ps
+is locale dependent; the only guarantee is that an
+.Vt mbstate_t
+object initialized to zero shall correspond to an initial conversion state. If
+.Va ps
+is
+.Dv NULL ,
+then a nonzero value shall be returned.
+.\"
+.Pp
+The locale used for 
+.Fn mbsinit
+shall be the currently active locale; either the current thread locale as set by
+.Xr uselocale 3
+if one has been specified, or otherwise the global locale controlled by
+.Xr setlocale 3 .
+The locale used by 
+.Fn mbsinit_l
+is that specified by
+.Va loc .
+.\"
+.Sh SEE ALSO
+.Xr mbrtowc 3
+.Xr wcrtomb 3
+.Xr setlocale 3
+.Xr uselocale 3
+.\"
+.Sh STANDARDS
+.Fn mbsinit
+is first defined in
+.St -isoC-amd1 ;
+.Fn mbsinit_l
+is a nonstandard extension originating in Darwin. See
+.Xr xlocale.h 3

@@ -1,0 +1,52 @@
+.\" This file is part of the Public Domain C Library (PDCLib).
+.\" Permission is granted to use, modify, and / or redistribute at will.
+.\"
+.Dd
+.Dt abort 3
+.Os
+.\"
+.Sh NAME
+.Nm abort
+.Nd abnormal process termination
+.\"
+.Sh SYNOPSIS
+.In stdlib.h
+.Fn "noreturn void abort" "void"
+.\"
+.Sh DESCRIPTION
+.Fn abort
+causes abnormal process termination to occur.
+.\"
+.Pp
+First,
+.Dv SIGABRT
+will be raised, as if by
+.Fn raise SIGABRT .
+If the signal is not being caught, or the handler which catches the signal 
+returns, 
+.Fn abort
+will then proceed to cause the process to terminate with a failure exit status.
+It is implementation defined whether any open
+.Vt FILE
+streams are flushed before the process exits.
+.\"
+.Sh IMPLEMENTATION NOTES
+PDCLib implements termination (in the case that the 
+.Dv SIGABRT
+handler returns) by calling
+.Fn _Exit EXIT_FAILURE .
+Therefore, stream flushing rules for
+.Nm
+follow those defined for
+.Fn _Exit .
+.\"
+.Sh SEE ALSO
+.Xr exit 3
+.Xr quick_exit 3
+.Xr _Exit 3
+.Xr raise 3
+.\"
+.Sh STANDARDS
+.Fn abort
+is first defined in
+.St -isoC-90 .

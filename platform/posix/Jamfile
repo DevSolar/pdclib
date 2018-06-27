@@ -1,0 +1,2 @@
+SubDir PDCLIB_TOP platform posix ;
+PDCLibConfig ;

@@ -1,0 +1,104 @@
+.\" This file is part of the Public Domain C Library " "PDCLib).
+.\" Permission is granted to use" "modify" "and / or redistribute at will.
+.\"
+.Dd
+.Dt UNLOCKED_STDIO 3
+.Os
+.\"
+.Sh NAME
+.Nm *_unlocked
+.Nd unlocked stdio routnes
+.\"
+.Sh SYNOPSIS
+.Sy #define _POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600 || _SVID_SOURCE || _BSD_SOURCE
+.In stdio.h
+.Fn "int getc_unlocked" "FILE *stream"
+.Fn "int getchar_unlocked" "void"
+.Fn "int putc_unlocked" "int c" "FILE *stream"
+.Fn "int putchar_unlocked" "int c"
+.Pp
+.Sy #define _SVID_SOURCE || _BSD_SOURCE
+.In stdio.h
+.Fn "void clearerr_unlocked" "FILE *stream" 
+.Fn "int feof_unlocked" "FILE *stream"
+.Fn "int ferror_unlocked" "FILE *stream"
+.Fn "int fflush_unlocked" "FILE *stream"
+.Fn "int fgetc_unlocked" "FILE *stream"
+.Fn "int fputc_unlocked" "int c" "FILE *stream"
+.Fn "size_t fread_unlocked" "void *ptr" "size_t size" "size_t n" "FILE *stream"
+.Fn "size_t fwrite_unlocked" "const void *ptr" "size_t size" "size_t n" "FILE *stream"
+.Pp
+.Sy #define _GNU_SOURCE
+.In stdio.h
+.Fn "char *fgets_unlocked" "char *s" "int n" "FILE *stream"
+.Fn "int fputs_unlocked" "const char *s" "FILE *stream"
+.Pp
+.Sy #define _PDCLIB_EXTENSIONS
+.In stdio.h
+.Fn "int fgetpos_unlocked" "FILE * restrict stream" "fpos_t * restrict pos"
+.Fn "int fsetpos_unlocked" "FILE * stream" "const fpos_t * pos"
+.Fn "long int ftell_unlocked" "FILE * stream"
+.Fn "int fseek_unlocked" "FILE * stream" "long int offset" "int whence"
+.Fn "void rewind_unlocked" "FILE * stream"
+.Fn "int puts_unlocked" "const char * s"
+.Fn "int ungetc_unlocked" "int c" "FILE * stream"
+.Fn "int printf_unlocked" "const char * restrict format" "..."
+.Fn "int vprintf_unlocked" "const char * restrict format" "va_list arg"
+.Fn "int fprintf_unlocked" "FILE * restrict stream" "const char * restrict format" "..."
+.Fn "int vfprintf_unlocked" "FILE * restrict stream" "const char * restrict format" "va_list arg"
+.Fn "int scanf_unlocked" "const char * restrict format" "..."
+.Fn "int vscanf_unlocked" "const char * restrict format" "va_list arg"
+.Fn "int fscanf_unlocked" "FILE * restrict stream" "const char * restrict format" "..."
+.Fn "int vfscanf_unlocked" "FILE * restrict stream" "const char * restrict format" "va_list arg"
+.\"
+.Sh DESCRIPTION
+Functions with analogous purposes to the same functions named without the 
+.Li _unlocked 
+prefix, excepting that they must be called with the stream already locked (they
+do not lock the stream themself)
+.Pp
+Befor calling these functions, callers must lock the stream upon which they wish
+to operate on with the
+.Fn flockfile
+or
+.Fn ftrylockfile
+function. Once they are done operating on the stream, they should unlock the 
+stream using the
+.Fn funlockfile
+to allow other threads to use the stream
+.Pp
+It is undefined behaviour to operate on a stream using one of these functions
+without previously locking the stream appropriately, even in a single threaded
+application.
+.\"
+.Sh IMPLEMENTATION NOTES
+PDCLib implements the locked variants of most functions using the following 
+template:
+.Bd -literal -offset indent -compact 
+type function(FILE* file, other arguments...)
+{
+    flockfile(file);
+    type rv = function_unlocked(file, other arguments...)
+    funlockfile(file);
+    return rv;
+}
+.Ed
+.\"
+.Sh SEE ALSO
+.Xr fopen 3
+.Xr fclose 3
+.Xr flockfile 3
+.Xr mtx_t 3
+.\"
+.Sh STANDARDS
+The most basic I/O routines (getc/getchar/putc/putchar_unlocked) are from
+.St -p1003.1-2001 .
+A more complete set of routines comes from
+.St -svid4 
+and
+.Bx .
+.Fn fgets_unlocked 
+and 
+.Fn fputs_unlocked
+are extensions originating from glibc. Finally, PDCLib extends the set to 
+encompass the entirety of the C standard I/o library.
