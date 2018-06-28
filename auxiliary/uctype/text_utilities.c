@@ -76,60 +76,73 @@ char * next_token( char * s, char delim )
     return rc;
 }
 
-int_least32_t check_file( FILE * fh, uint_least32_t buffer_size, char delim, uint_least32_t fields, int const * widths )
+size_t check_file( FILE * fh, size_t buffer_size, char delim, size_t fields, int const * widths )
 {
-    int_least32_t lines = 0;
+    /* Dynamically allocated buffer */
     char * buffer = malloc( buffer_size );
+    size_t lines = 0;
 
     rewind( fh );
 
     while ( fgets( buffer, buffer_size, fh ) )
     {
-        uint_least32_t i;
+        size_t i;
         char * p;
 
         ++lines;
 
+        /* Check line for complete read */
         if ( buffer[ strlen( buffer ) - 1 ] != '\n' )
         {
-            fprintf( stderr, "Line %" PRIdLEAST32 " will not fit into a %" PRIuLEAST32 "-character buffer.\n", lines, buffer_size );
+            fprintf( stderr, "Line %zu will not fit into a %zu-character buffer.\n", lines, buffer_size );
             rewind( fh );
             free( buffer );
             return -1;
         }
 
-        p = next_token( buffer, delim );
-
-        for ( i = 0; i < fields; ++i )
+        /* Remove comments */
+        if ( ( p = strchr( buffer, '#' ) ) != NULL )
         {
-            if ( ! p )
-            {
-                fprintf( stderr, "Line %" PRIdLEAST32 " contains less than %" PRIuLEAST32 " fields.\n", lines, fields );
-                rewind( fh );
-                free( buffer );
-                return -1;
-            }
-
-            if ( widths[ i ] >= 0 && strlen( p ) >= (unsigned)widths[ i ] )
-            {
-                fprintf( stderr, "Line %" PRIdLEAST32 ": Field %" PRIuLEAST32 " '%s' will not fit in a %d character string.\n", lines, i + 1, p, widths[ i ] );
-                rewind( fh );
-                free( buffer );
-                return -1;
-            }
-
-            p = next_token( NULL, delim );
+            *p = '\0';
         }
 
-        if ( p )
+        if ( strlen( buffer ) > 0 )
         {
-            fprintf( stderr, "Line %" PRIdLEAST32 " contains more than %" PRIuLEAST32 " fields.\n", lines, fields );
-            rewind( fh );
-            free( buffer );
-            return -1;
+            /* Check field count and field widths */
+            p = next_token( buffer, delim );
+
+            for ( i = 0; i < fields; ++i )
+            {
+                if ( ! p )
+                {
+                    fprintf( stderr, "Line %zu contains less than %zu fields.\n", lines, fields );
+                    rewind( fh );
+                    free( buffer );
+                    return -1;
+                }
+
+                if ( widths[ i ] >= 0 && strlen( p ) >= (unsigned)widths[ i ] )
+                {
+                    fprintf( stderr, "Line %zu: Field %zu '%s' will not fit in a %d character string.\n", lines, i + 1, p, widths[ i ] );
+                    rewind( fh );
+                    free( buffer );
+                    return -1;
+                }
+
+                p = next_token( NULL, delim );
+            }
+
+            if ( p )
+            {
+                fprintf( stderr, "Line %zu contains more than %zu fields.\n", lines, fields );
+                rewind( fh );
+                free( buffer );
+                return -1;
+            }
         }
     }
 
+    /* Rewind, free the buffer, and report the number of lines */
     rewind( fh );
     free( buffer );
     return lines;
@@ -153,16 +166,16 @@ int main( void )
     TESTCASE( check_file( fh, 10, ';', 3, widths ) == 2 );
     /* Field 1 too long */
     TESTCASE( fprintf( fh, "%s;%s;%s\n", "", "1234", "1" ) == 8 );
-    TESTCASE( check_file( fh, 10, ';', 3, widths ) < 0 );
+    TESTCASE( check_file( fh, 10, ';', 3, widths ) == (size_t)-1 );
     /* Too few fields */
     TESTCASE( fprintf( fh, "%s;%s\n", "123", "123" ) == 8 );
-    TESTCASE( check_file( fh, 10, ';', 3, widths ) < 0 );
+    TESTCASE( check_file( fh, 10, ';', 3, widths )== (size_t)-1 );
     /* Too many fields */
     TESTCASE( fprintf( fh, "%s;%s;%s;%s\n", "1", "1", "1", "1" ) == 8 );
-    TESTCASE( check_file( fh, 10, ';', 3, widths ) < 0 );
+    TESTCASE( check_file( fh, 10, ';', 3, widths )== (size_t)-1 );
     /* Line too long */
     TESTCASE( fprintf( fh, "%s;%s;%s\n", "12", "123", "12" ) == 10 );
-    TESTCASE( check_file( fh, 10, ';', 3, widths ) < 0 );
+    TESTCASE( check_file( fh, 10, ';', 3, widths )== (size_t)-1 );
 
     fclose( fh );
     remove( "test.txt" );
