@@ -7,7 +7,7 @@
 #ifndef UNICODE_DATA
 #define UNICODE_DATA UNICODE_DATA
 
-#include <stdint.h>
+#include <stddef.h>
 
 /* https://www.unicode.org/reports/tr44/#UnicodeData.txt */
 
@@ -16,7 +16,7 @@
 */
 struct unicode_record_t
 {
-    uint_least32_t code_point;
+    size_t code_point;
     char * name;
     char general_category[ 3 ];
     int canonical_combining_class;
@@ -28,19 +28,19 @@ struct unicode_record_t
     char bidi_mirrored;
     /*char * unicode_1_name;*/ /* Obsolete as of 6.2.0 */
     /*char * iso_comment;*/ /* Obsoöete as of 5.2.0 */
-    uint_least32_t simple_uppercase_mapping;
-    uint_least32_t simple_lowercase_mapping;
-    uint_least32_t simple_titlecase_mapping;
+    size_t simple_uppercase_mapping;
+    size_t simple_lowercase_mapping;
+    size_t simple_titlecase_mapping;
 };
 
 struct unicode_data_t
 {
-    uint_least32_t size;
+    size_t size;
     struct unicode_record_t * records;
 };
 
 /* The assumed field widths, for use with check_file(). */
-int const unicode_record_fields[] = {
+static const int unicode_record_fields[] = {
     -1, /* code_point */
     -1, /* name */
      3, /* general_category */
@@ -59,5 +59,7 @@ int const unicode_record_fields[] = {
 };
 
 struct unicode_data_t * read_unicode_data( const char * filename );
+
+void release_unicode_data( struct unicode_data_t * ud );
 
 #endif

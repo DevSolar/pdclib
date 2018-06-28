@@ -12,14 +12,14 @@
 
 #include "unicode_data.h"
 
-#define LINE_BUFFER_SIZE 500
+#define LINE_BUFFER_SIZE 500u
 
 struct unicode_data_t * read_unicode_data( const char * filename )
 {
     FILE * fh;
     char buffer[ LINE_BUFFER_SIZE ];
     struct unicode_data_t * ud = NULL;
-    int_least32_t lines;
+    size_t lines;
 
     if ( ( fh = fopen( filename, "r" ) ) == NULL )
     {
@@ -27,15 +27,15 @@ struct unicode_data_t * read_unicode_data( const char * filename )
         return NULL;
     }
 
-    if ( ( lines = check_file( fh, LINE_BUFFER_SIZE, ';', sizeof( unicode_record_fields ) / sizeof( int ), unicode_record_fields ) ) > 0 )
+    if ( ( lines = check_file( fh, LINE_BUFFER_SIZE, ';', sizeof( unicode_record_fields ) / sizeof( int ), unicode_record_fields ) ) != (size_t)-1 )
     {
         if ( ( ud = malloc( sizeof( struct unicode_data_t ) ) ) )
         {
             ud->size = lines;
 
-            if ( ( ud->records = malloc( lines * sizeof( struct unicode_record_t ) ) ) )
+            if ( ( ud->records = calloc( lines, sizeof( struct unicode_record_t ) ) ) )
             {
-                int_least32_t i;
+                size_t i;
 
                 for ( i = 0; i < lines; ++i )
                 {
@@ -92,14 +92,34 @@ struct unicode_data_t * read_unicode_data( const char * filename )
             }
             else
             {
+                fprintf( stderr, "Memory allocation failure.\n" );
                 free( ud );
                 ud = NULL;
             }
+        }
+        else
+        {
+            fprintf( stderr, "Memory allocation failure.\n" );
         }
     }
 
     fclose( fh );
     return ud;
+}
+
+void release_unicode_data( struct unicode_data_t * ud )
+{
+    size_t i;
+
+    for ( i = 0; i < ud->size; ++i )
+    {
+        free( ud->records[i].name );
+        free( ud->records[i].decomposition );
+        free( ud->records[i].numeric_value );
+    }
+
+    free( ud->records );
+    free( ud );
 }
 
 #ifdef TEST
@@ -110,9 +130,50 @@ struct unicode_data_t * read_unicode_data( const char * filename )
 
 int main( void )
 {
-    struct unicode_data_t * ud = read_unicode_data( "UnicodeData.txt" );
+    FILE * fh = fopen( "test.txt", "w" );
+    struct unicode_data_t * ud;
+    int rc;
+
+    TESTCASE( fh != NULL );
+    TESTCASE( fprintf( fh, "%04x;%s;%s;%d;%s;;;;;%c;%s;;;;\n", 0, "<control>", "Cc", 0, "BN", 'N', "NULL" ) == 38 );
+    TESTCASE( ( rc = fprintf( fh, "%04x;%s;%s;%d;%s;%s;;;%s;%c;;;%04x;;%04x\n", 0x2170, "SMALL ROMAN NUMERAL ONE", "Nl", 0, "L", "<compat> 0069", "1", 'N', 0x2160, 0x2160 ) ) == 69 );
+
+    fclose( fh );
+    ud = read_unicode_data( "test.txt" );
+
     TESTCASE( ud != NULL );
-    TESTCASE( ud->size > 32000 );
+    TESTCASE( ud->size == 2 );
+
+    TESTCASE( ud->records[0].code_point == 0 );
+    TESTCASE( strcmp( ud->records[0].name, "<control>" ) == 0 );
+    TESTCASE( strcmp( ud->records[0].general_category, "Cc" ) == 0 );
+    TESTCASE( ud->records[0].canonical_combining_class == 0 );
+    TESTCASE( strcmp( ud->records[0].bidi_class, "BN" ) == 0 );
+    TESTCASE( ud->records[0].decomposition == NULL );
+    TESTCASE( ud->records[0].numeric_type == -1 );
+    TESTCASE( ud->records[0].numeric_digit == -1 );
+    TESTCASE( ud->records[0].numeric_value == NULL );
+    TESTCASE( ud->records[0].bidi_mirrored == 'N' );
+    TESTCASE( ud->records[0].simple_uppercase_mapping == 0 );
+    TESTCASE( ud->records[0].simple_lowercase_mapping == 0 );
+    TESTCASE( ud->records[0].simple_titlecase_mapping == 0 );
+
+    TESTCASE( ud->records[1].code_point == 0x2170 );
+    TESTCASE( strcmp( ud->records[1].name, "SMALL ROMAN NUMERAL ONE" ) == 0 );
+    TESTCASE( strcmp( ud->records[1].general_category, "Nl" ) == 0 );
+    TESTCASE( ud->records[1].canonical_combining_class == 0 );
+    TESTCASE( strcmp( ud->records[1].bidi_class, "L" ) == 0 );
+    TESTCASE( strcmp( ud->records[1].decomposition, "<compat> 0069" ) == 0 );
+    TESTCASE( ud->records[1].numeric_type == -1 );
+    TESTCASE( ud->records[1].numeric_digit == -1 );
+    TESTCASE( strcmp( ud->records[1].numeric_value, "1" ) == 0 );
+    TESTCASE( ud->records[1].bidi_mirrored == 'N' );
+    TESTCASE( ud->records[1].simple_uppercase_mapping == 0x2160 );
+    TESTCASE( ud->records[1].simple_lowercase_mapping == 0 );
+    TESTCASE( ud->records[1].simple_titlecase_mapping == 0x2160 );
+
+    remove( "test.txt" );
+    release_unicode_data( ud );
 
     return TEST_RESULTS;
 }

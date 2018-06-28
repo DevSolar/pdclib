@@ -48,12 +48,12 @@ char * next_token( char * s, char delim );
    - a pointer to an array holding the expected maximum width for each field,
      with a negative value indicating that this field's width need not be
      checked.
-   The function will return the number of lines in the file, or a negative
-   value if one of the checks failed. The reason for the failed check will be
+   The function will return the number of lines in the file, or (size_t)-1
+   if one of the checks failed. The reason for the failed check will be
    written to stderr. (The file will not be rewound in this case.)
    This requires reading and tokenizing the file twice, but removes lots of
    error checking from the actual parsing, making for cleaner code.
 */
-int_least32_t check_file( FILE * fh, uint_least32_t max_line_length, char delim, uint_least32_t fields, int const * widths );
+size_t check_file( FILE * fh, size_t max_line_length, char delim, size_t fields, int const * widths );
 
 #endif
