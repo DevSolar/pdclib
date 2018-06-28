@@ -27,6 +27,8 @@ static const int derived_properties_fields[] = {
 
 struct derived_properties_t * read_derived_properties( const char * filename );
 
+int lookup_property( struct derived_properties_t * dp, const char * property, size_t codepoint );
+
 void release_derived_properties( struct derived_properties_t * dp );
 
 #endif
