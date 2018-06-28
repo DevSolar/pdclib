@@ -211,6 +211,29 @@ struct derived_properties_t * read_derived_properties( const char * filename )
     return dp;
 }
 
+int lookup_property( struct derived_properties_t * dp, const char * property, size_t codepoint )
+{
+    size_t i;
+
+    for ( i = 0; i < dp->count; ++i )
+    {
+        /* Look for the requested property */
+        if ( strcmp( dp->name[ i ], property ) == 0 )
+        {
+            size_t cp = dp->begin[ i ];
+
+            while ( cp < dp->end[ i ] && dp->code_points[ cp ] < codepoint )
+            {
+                ++cp;
+            }
+
+            return codepoint == dp->code_points[ cp ];
+        }
+    }
+
+    return 0;
+}
+
 void release_derived_properties( struct derived_properties_t * dp )
 {
     size_t i;
@@ -249,6 +272,17 @@ int main( void )
     TESTCASE( dp->count == 2 );
     TESTCASE( ! strcmp( dp->name[0], "Test1" ) );
     TESTCASE( ! strcmp( dp->name[1], "Test2" ) );
+
+    TESTCASE( lookup_property( dp, "Test1", 0 ) );
+    TESTCASE( lookup_property( dp, "Test1", 6 ) );
+    TESTCASE( ! lookup_property( dp, "Test1", 7 ) );
+
+    TESTCASE( ! lookup_property( dp, "Test2", 0 ) );
+    TESTCASE( lookup_property( dp, "Test2", 1 ) );
+    TESTCASE( ! lookup_property( dp, "Test2", 2 ) );
+
+    TESTCASE( ! lookup_property( dp, "Test", 0 ) );
+    TESTCASE( ! lookup_property( dp, "Test3", 0 ) );
 
     release_derived_properties( dp );
     remove( "test.txt" );
