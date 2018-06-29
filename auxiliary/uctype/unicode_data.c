@@ -107,6 +107,36 @@ struct unicode_data_t * read_unicode_data( const char * filename )
     return ud;
 }
 
+int has_name( struct unicode_record_t * ur, const char * name )
+{
+    return strcmp( ur->name, name ) == 0;
+}
+
+int name_ends_with( struct unicode_record_t * ur, const char * name )
+{
+    return strstr( ur->name, name ) == ( ur->name + ( strlen( ur->name ) - strlen( name ) ) );
+}
+
+int is_general_category( struct unicode_record_t * ur, const char * category )
+{
+    return strcmp( ur->general_category, category ) == 0;
+}
+
+int decomposition_contains( struct unicode_record_t * ur, const char * substring )
+{
+    return ur->decomposition && strstr( ur->decomposition, substring ) != NULL;
+}
+
+int towupper_differs( struct unicode_record_t * ur, size_t codepoint )
+{
+    return ur->simple_uppercase_mapping && ( ur->simple_uppercase_mapping != codepoint );
+}
+
+int towlower_differs( struct unicode_record_t * ur, size_t codepoint )
+{
+    return ur->simple_lowercase_mapping && ( ur->simple_lowercase_mapping != codepoint );
+}
+
 void release_unicode_data( struct unicode_data_t * ud )
 {
     size_t i;
@@ -140,6 +170,7 @@ int main( void )
 
     fclose( fh );
     ud = read_unicode_data( "test.txt" );
+    remove( "test.txt" );
 
     TESTCASE( ud != NULL );
     TESTCASE( ud->size == 2 );
@@ -172,7 +203,19 @@ int main( void )
     TESTCASE( ud->records[1].simple_lowercase_mapping == 0 );
     TESTCASE( ud->records[1].simple_titlecase_mapping == 0x2160 );
 
-    remove( "test.txt" );
+    TESTCASE( is_general_category( &(ud->records[0]), "Cc" ) );
+    TESTCASE( ! is_general_category( &(ud->records[0]), "" ) );
+    TESTCASE( is_general_category( &(ud->records[1]), "Nl" ) );
+    TESTCASE( ! is_general_category( &(ud->records[1]), "Foo" ) );
+
+    TESTCASE( decomposition_contains( &(ud->records[1]), "<compat>" ) );
+    TESTCASE( ! decomposition_contains( &(ud->records[1]), "Foo" ) );
+
+    TESTCASE( ! towupper_differs( &(ud->records[0]), 0 ) );
+    TESTCASE( ! towlower_differs( &(ud->records[0]), 0 ) );
+    TESTCASE( towupper_differs( &(ud->records[1]), 0x2170 ) );
+    TESTCASE( ! towlower_differs( &(ud->records[1]), 0x2170 ) );
+
     release_unicode_data( ud );
 
     return TEST_RESULTS;
