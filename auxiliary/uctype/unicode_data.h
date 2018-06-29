@@ -60,6 +60,18 @@ static const int unicode_record_fields[] = {
 
 struct unicode_data_t * read_unicode_data( const char * filename );
 
+int has_name( struct unicode_record_t * ur, const char * name );
+
+int name_ends_with( struct unicode_record_t * ur, const char * name );
+
+int is_general_category( struct unicode_record_t * ur, const char * category );
+
+int decomposition_contains( struct unicode_record_t * ur, const char * substring );
+
+int towupper_differs( struct unicode_record_t * ur, size_t codepoint );
+
+int towlower_differs( struct unicode_record_t * ur, size_t codepoint );
+
 void release_unicode_data( struct unicode_data_t * ud );
 
 #endif
