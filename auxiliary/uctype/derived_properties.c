@@ -77,7 +77,8 @@ struct derived_properties_t * read_derived_properties( const char * filename )
                                     *p = '\0';
                                 }
 
-                                if ( strlen( buffer ) > 0 )
+                                /* > 0 because of newline */
+                                if ( strlen( buffer ) > 1 )
                                 {
                                     size_t first;
                                     size_t last;
@@ -166,6 +167,9 @@ struct derived_properties_t * read_derived_properties( const char * filename )
                                     }
                                 }
                             }
+
+                            /* Have to end the last property as well */
+                            dp->end[ properties ] = code_points;
                         }
                         else
                         {
@@ -211,6 +215,14 @@ struct derived_properties_t * read_derived_properties( const char * filename )
     return dp;
 }
 
+static int comp( const void * l, const void *  r )
+{
+    const size_t * lhs = l;
+    const size_t * rhs = r;
+
+    return ( *lhs < *rhs ) ? -1 : ( *lhs > *rhs ) ? 1 : 0;
+}
+
 int lookup_property( struct derived_properties_t * dp, const char * property, size_t codepoint )
 {
     size_t i;
@@ -222,12 +234,7 @@ int lookup_property( struct derived_properties_t * dp, const char * property, si
         {
             size_t cp = dp->begin[ i ];
 
-            while ( cp < dp->end[ i ] && dp->code_points[ cp ] < codepoint )
-            {
-                ++cp;
-            }
-
-            return codepoint == dp->code_points[ cp ];
+            return bsearch( &codepoint, dp->code_points + cp, dp->end[ i ] - cp, sizeof( size_t ), comp ) != NULL;
         }
     }
 

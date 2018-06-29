@@ -106,7 +106,8 @@ size_t check_file( FILE * fh, size_t buffer_size, char delim, size_t fields, int
             *p = '\0';
         }
 
-        if ( strlen( buffer ) > 0 )
+        /* > 1 because of newline */
+        if ( strlen( buffer ) > 1 )
         {
             /* Check field count and field widths */
             p = next_token( buffer, delim );
