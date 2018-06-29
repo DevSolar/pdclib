@@ -7,7 +7,7 @@
 #ifndef TEST_H
 #define TEST_H TEST_H
 
-#include <assert.h>
+#include <stdio.h>
 
 #define NO_TESTDRIVER 0
 
