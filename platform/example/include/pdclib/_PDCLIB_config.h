@@ -152,6 +152,13 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_wchar unsigned int
 #define _PDCLIB_WCHAR UINT
 
+/* Large enough an integer to hold all character codes of the largest supported
+   locale plus WEOF (which needs not to be equal to EOF, nor needs to be of
+   negative value).
+*/
+#define _PDCLIB_wint unsigned int
+#define _PDCLIB_WINT UINT
+
 /* (Signed) integer type capable of taking the (cast) value of a void *, and
    having the value cast back to void *, comparing equal to the original.
 */
