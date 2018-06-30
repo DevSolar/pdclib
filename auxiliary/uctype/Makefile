@@ -13,7 +13,7 @@ DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
 TSTDEPFILES := $(patsubst %,%.d,$(TSTFILES))
 # All test driver dependency files (_t.d)
 
-WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -Werror
+WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement
 CFLAGS := -g -std=c99 $(WARNINGS) $(USERFLAGS) -I.
 
 .PHONY: all clean tests
