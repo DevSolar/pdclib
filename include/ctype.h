@@ -40,7 +40,10 @@ int iscntrl( int c );
 /* Returns true if the character is a decimal digit. Locale-independent. */
 int isdigit( int c );
 
-/* Returns true for every printing character except space (' '). */
+/* Returns true for every printing character except space (' ').
+   NOTE: This definition differs from that of iswgraph() in <wctype.h>,
+         which considers any iswspace() character, not only ' '.
+*/
 int isgraph( int c );
 
 /* Returns true for lowercase letters in the "C" locale.
@@ -54,10 +57,9 @@ int islower( int c );
 /* Returns true for every printing character including space (' '). */
 int isprint( int c );
 
-/* Returns true for every printing character that is neither whitespace
-   nor alphanumeric in the "C" locale. In any other locale, there might be
-   characters that are printing characters, but neither whitespace nor
-   alphanumeric.
+/* Returns true for a locale-specific set of punctuation charcters; these
+   may not be whitespace or alphanumeric. In the "C" locale, returns true
+   for every printing character that is not whitespace or alphanumeric.
 */
 int ispunct( int c );
 
