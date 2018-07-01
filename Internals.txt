@@ -1,0 +1,51 @@
+Internals
+=========
+
+Large parts of PDCLib (or any standard library, really) work well in isolation,
+and have minimal dependencies. The implementation of <string.h>, for example,
+is really just a collection of stand-alone functions.
+
+Other parts, however, depend on each other, and on "background" functionality
+that all involved parts need to be aware of and agree upon.
+
+This text file is intended to give a rough overview of what those parts are,
+and how PDCLib goes about implementing them.
+
+Numeric conversion functions -- strto*()
+----------------------------------------
+
+The numeric conversion functions -- strtol(), strtoul(), strtoll(), strtoull()
+from <stdlib.h> and strtoimax(), strtoumax() from <inttypes.h> -- all use the
+same two internal functions, _PDCLIB_strtox_prelim() and _PDCLIB_strtox_main().
+The former does skip leading whitespace, determines the sign (if any), and the
+base prefix (0 for octal, 0x for hexadecimal, none for decimal). The latter is
+working on type uintmax_t, and gets the limiting values (to determine when to
+set ERANGE) from the caller.
+
+Numeric conversion functions -- ato*()
+--------------------------------------
+
+The non-checking conversion functions atoi(), atol() and atoll() use the simpler
+backend function _PDCLIB_atomax().
+
+Formatted input / output functions -- *printf(), *scanf()
+---------------------------------------------------------
+
+The rather complex formatting logic used by the functions of the *printf() and
+*scanf() family is provided by _PDCLIB_print() and _PDCLIB_scan(), with the
+individual implementations in functions/stdio/ being rather simple wrappers
+around those two backend functions.
+
+There is some ugliness arising from the fact that the backend functions have to
+work with both file I/O and string I/O. Both backend functions are designed to
+work purely stack-based; there is no dependency on malloc(), which allows to use
+especially the print variety very early in the boot process with only minimal
+adjustments.
+
+File I/O
+--------
+
+The actual handling of stream buffers and I/O is handled by four functions:
+_PDCLIB_prepread() and _PDCLIB_prepwrite() handle the I/O direction of a stream,
+while _PDCLIB_fillbuffer() and _PDCLIB_flushbuffer() are responsible for moving
+data between stream buffers and their associated files.
