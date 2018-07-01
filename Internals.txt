@@ -49,3 +49,19 @@ The actual handling of stream buffers and I/O is handled by four functions:
 _PDCLIB_prepread() and _PDCLIB_prepwrite() handle the I/O direction of a stream,
 while _PDCLIB_fillbuffer() and _PDCLIB_flushbuffer() are responsible for moving
 data between stream buffers and their associated files.
+
+Localization
+------------
+
+PDCLib does not yet have proper support for different locales. At the point of
+this writing, only the "C" locale is supported. Some of the infrastructure that
+will be required in the future is already in place though.
+
+<locale.h> holds the definition of struct lconv (the return value of the
+localeconv() function, holding all the numerical formatting options). At this
+point this structure also holds a pointer to _PDCLIB_errno_texts (an array
+with localized descriptions of errno values, referred to by strerror() and
+perror()), and _PDCLIB_ctype_t -- the lookup table used by <ctype.h>, as well
+as the collation functions strxfrm() and strcoll(). The structure is defined
+in _PDCLIB_int.h, and -- for the time being -- filled with static values in
+_PDCLIB_stdinit.c.
