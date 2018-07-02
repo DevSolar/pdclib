@@ -12,7 +12,7 @@
 
 int isspace( int c )
 {
-    return ( _PDCLIB_lconv.ctype[c].flags & _PDCLIB_CTYPE_SPACE );
+    return ( _PDCLIB_lc_ctype[c].flags & _PDCLIB_CTYPE_SPACE );
 }
 
 #endif

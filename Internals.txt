@@ -58,10 +58,8 @@ this writing, only the "C" locale is supported. Some of the infrastructure that
 will be required in the future is already in place though.
 
 <locale.h> holds the definition of struct lconv (the return value of the
-localeconv() function, holding all the numerical formatting options). At this
-point this structure also holds a pointer to _PDCLIB_errno_texts (an array
-with localized descriptions of errno values, referred to by strerror() and
-perror()), and _PDCLIB_ctype_t -- the lookup table used by <ctype.h>, as well
-as the collation functions strxfrm() and strcoll(). The structure is defined
-in _PDCLIB_int.h, and -- for the time being -- filled with static values in
-_PDCLIB_stdinit.c.
+localeconv() function, holding all the numerical and monetary formatting
+options). There are also references to _PDCLIB_lc_* structures holding
+the other types of locale-dependent information. The definition of the
+structures is in _PDCLIB_int.h, with initialization (for the "C" locale)
+in _PDCLIB_stdinit.c.
