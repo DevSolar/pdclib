@@ -6,9 +6,9 @@
     PRINTF_TEST( 3,    "127", "%hhd", CHAR_MAX );
 #else
     assert(CHAR_MIN == 0);
-    PRINTF_TEST( 1,   "0", "%hhd", CHAR_MIN );
+    PRINTF_TEST( 1,   "0", "%hhu", CHAR_MIN );
     assert(CHAR_MAX == 255);
-    PRINTF_TEST( 3,    "255", "%hhd", CHAR_MAX );
+    PRINTF_TEST( 3,    "255", "%hhu", CHAR_MAX );
 #endif
     PRINTF_TEST( 1,      "0", "%hhd", 0 );
     assert(SHRT_MIN == -32768);
