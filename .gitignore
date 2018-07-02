@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# PDCLib test drivers
+*_t
+
+# PDCLib regression test drivers
+*_r
+
+# Auxiliary Targets
+get-uctypes
