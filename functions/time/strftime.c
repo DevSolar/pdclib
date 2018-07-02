@@ -183,33 +183,33 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'a':
                     {
                         /* tm_wday abbreviated */
-                        SPRINTSTR( _PDCLIB_lconv.day_name_abbr, timeptr->tm_wday, 6 );
+                        SPRINTSTR( _PDCLIB_lc_time.day_name_abbr, timeptr->tm_wday, 6 );
                         break;
                     }
                 case 'A':
                     {
                         /* tm_wday full */
-                        SPRINTSTR( _PDCLIB_lconv.day_name_full, timeptr->tm_wday, 6 );
+                        SPRINTSTR( _PDCLIB_lc_time.day_name_full, timeptr->tm_wday, 6 );
                         break;
                     }
                 case 'b':
                 case 'h':
                     {
                         /* tm_mon abbreviated */
-                        SPRINTSTR( _PDCLIB_lconv.month_name_abbr, timeptr->tm_mon, 11 );
+                        SPRINTSTR( _PDCLIB_lc_time.month_name_abbr, timeptr->tm_mon, 11 );
                         break;
                     }
                 case 'B':
                     {
                         /* tm_mon full */
-                        SPRINTSTR( _PDCLIB_lconv.month_name_full, timeptr->tm_mon, 11 );
+                        SPRINTSTR( _PDCLIB_lc_time.month_name_full, timeptr->tm_mon, 11 );
                         break;
                     }
                 case 'c':
                     {
                         /* locale's date / time representation, %a %b %e %T %Y for C locale */
                         /* 'E' for locale's alternative representation */
-                        SPRINTREC( _PDCLIB_lconv.date_time_format );
+                        SPRINTREC( _PDCLIB_lc_time.date_time_format );
                         break;
                     }
                 case 'C':
@@ -398,13 +398,13 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                 case 'p':
                     {
                         /* tm_hour locale's AM/PM designations */
-                        SPRINTSTR( _PDCLIB_lconv.am_pm, timeptr->tm_hour > 11, 1 );
+                        SPRINTSTR( _PDCLIB_lc_time.am_pm, timeptr->tm_hour > 11, 1 );
                         break;
                     }
                 case 'r':
                     {
                         /* tm_hour / tm_min / tm_sec as locale's 12-hour clock time, %I:%M:%S %p for C locale */
-                        SPRINTREC( _PDCLIB_lconv.time_format_12h );
+                        SPRINTREC( _PDCLIB_lc_time.time_format_12h );
                         break;
                     }
                 case 'R':
@@ -507,14 +507,14 @@ size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB
                     {
                         /* locale's date representation, %m/%d/%y for C locale */
                         /* 'E' for locale's alternative representation */
-                        SPRINTREC( _PDCLIB_lconv.date_format );
+                        SPRINTREC( _PDCLIB_lc_time.date_format );
                         break;
                     }
                 case 'X':
                     {
                         /* locale's time representation, %T for C locale */
                         /* 'E' for locale's alternative representation */
-                        SPRINTREC( _PDCLIB_lconv.time_format );
+                        SPRINTREC( _PDCLIB_lc_time.time_format );
                         break;
                     }
                 case 'y':
