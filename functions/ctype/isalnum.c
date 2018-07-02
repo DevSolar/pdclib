@@ -12,7 +12,7 @@
 
 int isalnum( int c )
 {
-    return ( _PDCLIB_lconv.ctype[c].flags & ( _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_DIGIT ) );
+    return ( _PDCLIB_lc_ctype[c].flags & ( _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_DIGIT ) );
 }
 
 #endif

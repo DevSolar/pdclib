@@ -12,14 +12,12 @@
 
 int strcoll( const char * s1, const char * s2 )
 {
-    const struct _PDCLIB_ctype_t * ctype = _PDCLIB_lconv.ctype;
-
-    while ( ( *s1 ) && ( ctype[(unsigned char)*s1].collation == ctype[(unsigned char)*s2].collation ) )
+    while ( ( *s1 ) && ( _PDCLIB_lc_ctype[(unsigned char)*s1].collation == _PDCLIB_lc_ctype[(unsigned char)*s2].collation ) )
     {
         ++s1;
         ++s2;
     }
-    return ( ctype[(unsigned char)*s1].collation == ctype[(unsigned char)*s2].collation );
+    return ( _PDCLIB_lc_ctype[(unsigned char)*s1].collation == _PDCLIB_lc_ctype[(unsigned char)*s2].collation );
 }
 
 #endif

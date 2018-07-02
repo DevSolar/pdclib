@@ -12,7 +12,7 @@
 
 int islower( int c )
 {
-    return ( _PDCLIB_lconv.ctype[c].flags & _PDCLIB_CTYPE_LOWER );
+    return ( _PDCLIB_lc_ctype[c].flags & _PDCLIB_CTYPE_LOWER );
 }
 
 #endif
