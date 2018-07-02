@@ -428,7 +428,7 @@ extern int _PDCLIB_errno;
 int * _PDCLIB_errno_func( void );
 
 /* -------------------------------------------------------------------------- */
-/* <ctype.h> lookup tables                                                    */
+/* <locale.h> support                                                         */
 /* -------------------------------------------------------------------------- */
 
 #define _PDCLIB_CTYPE_ALPHA   1
@@ -449,6 +449,21 @@ struct _PDCLIB_ctype_t
     unsigned char lower;
     unsigned char collation;
 };
+
+struct _PDCLIB_lc_time_t
+{
+    char * month_name_abbr[12]; /* month names, abbreviated                   */
+    char * month_name_full[12]; /* month names, full                          */
+    char * day_name_abbr[7];    /* weekday names, abbreviated                 */
+    char * day_name_full[7];    /* weekday names, full                        */
+    char * date_time_format;    /* date / time format for strftime( "%c" )    */
+    char * time_format_12h;     /* 12-hour time format for strftime( "%r" )   */
+    char * date_format;         /* date format for strftime( "%x" )           */
+    char * time_format;         /* time format for strftime( "%X" )           */
+    char * am_pm[2];            /* AM / PM designation                        */
+};
+
+extern struct _PDCLIB_lc_time_t _PDCLIB_lc_time;
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
