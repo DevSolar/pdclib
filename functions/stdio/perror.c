@@ -23,7 +23,7 @@ void perror( const char * s )
     }
     else
     {
-        fprintf( stderr, "%s\n", _PDCLIB_lconv._PDCLIB_errno_texts[errno] );
+        fprintf( stderr, "%s\n", _PDCLIB_lc_texts.errno_texts[errno] );
     }
     return;
 }

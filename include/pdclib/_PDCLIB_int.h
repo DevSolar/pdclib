@@ -442,13 +442,24 @@ int * _PDCLIB_errno_func( void );
 #define _PDCLIB_CTYPE_DIGIT 256
 #define _PDCLIB_CTYPE_XDIGT 512
 
-struct _PDCLIB_ctype_t
+extern struct lconv _PDCLIB_lconv;
+
+struct _PDCLIB_lc_ctype_t
 {
     _PDCLIB_uint16_t flags;
     unsigned char upper;
     unsigned char lower;
     unsigned char collation;
 };
+
+extern struct _PDCLIB_lc_ctype_t * _PDCLIB_lc_ctype;
+
+struct _PDCLIB_lc_texts_t
+{
+    char * errno_texts[_PDCLIB_ERRNO_MAX]; /* strerror() / perror()   */
+};
+
+extern struct _PDCLIB_lc_texts_t _PDCLIB_lc_texts;
 
 struct _PDCLIB_lc_time_t
 {
