@@ -495,7 +495,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         if ( status->flags & E_unsigned )
         {
             uintmax_t value;
-            switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_size | E_pointer ) )
+            switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_size | E_pointer | E_intmax ) )
             {
                 case E_char:
                     value = (uintmax_t)(unsigned char)va_arg( status->arg, int );
@@ -517,6 +517,9 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                     break;
                 case E_pointer:
                     value = (uintmax_t)(uintptr_t)va_arg( status->arg, void * );
+                    break;
+                case E_intmax:
+                    value = va_arg( status->arg, uintmax_t );
                     break;
                 default:
                     puts( "UNSUPPORTED PRINTF FLAG COMBINATION" );
