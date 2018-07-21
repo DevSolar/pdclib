@@ -401,12 +401,22 @@ typedef int _PDCLIB_fd_t;
 #define _PDCLIB_ERROR  4
 
 /* The maximum value that errno can be set to. This is used to set the size   */
-/* of the array in struct lconv (<locale.h>) holding error messages for the   */
+/* of the array in struct _PDCLIB_lc_text_t holding error messages for the    */
 /* strerror() and perror() functions. (If you change this value because you   */
 /* are using additional errno values, you *HAVE* to provide appropriate error */
 /* messages for *ALL* locales.)                                               */
 /* Default is 4 (0, ERANGE, EDOM, EILSEQ).                                    */
 #define _PDCLIB_ERRNO_MAX 4
+
+/* locale data -------------------------------------------------------------- */
+
+/* The default path where PDCLib should look for its locale data.             */
+/* Must end with the appropriate separator character.                         */
+#define _PDCLIB_LOCALE_PATH "/usr/share/pdclib/i18n"
+
+/* The name of the environment variable that can be used to override that     */
+/* path setting.                                                              */
+#define _PDCLIB_LOCALE_PATH_ENV PDCLIB_I18N
 
 #ifdef __CYGWIN__
 typedef unsigned int wint_t;
