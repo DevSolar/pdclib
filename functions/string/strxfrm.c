@@ -18,7 +18,9 @@ size_t strxfrm( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2, si
         /* Cannot use strncpy() here as the filling of s1 with '\0' is not part
            of the spec.
         */
-        while ( n-- && ( *s1++ = _PDCLIB_lc_ctype[(unsigned char)*s2++].collation ) );
+        /* FIXME: The code below became invalid when we started doing *real* locales... */
+        /*while ( n-- && ( *s1++ = _PDCLIB_lc_collate[(unsigned char)*s2++].collation ) );*/
+        while ( n-- && ( *s1++ = (unsigned char)*s2++ ) );
     }
     return len;
 }

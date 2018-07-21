@@ -10,7 +10,7 @@
 
 struct lconv * localeconv( void )
 {
-    return &_PDCLIB_lconv;
+    return _PDCLIB_lc_numeric_monetary.lconv;
 }
 
 #endif
