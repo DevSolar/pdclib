@@ -65,15 +65,20 @@ struct lconv
 #define LC_ALL      0
 /* Collation (strcoll(), strxfrm()) */
 #define LC_COLLATE  1
-/* Character types (<ctype.h>) */
+/* Character types (<ctype.h>, <wctype.h>) */
 #define LC_CTYPE    2
 /* Monetary formatting (as returned by localeconv) */
 #define LC_MONETARY 3
 /* Decimal-point character (for printf() / scanf() functions), string
-   conversions, nonmonetary formatting as returned by localeconv              */
+   conversions, nonmonetary formatting as returned by localeconv
+*/
 #define LC_NUMERIC  4
 /* Time formats (strftime(), wcsftime()) */
 #define LC_TIME     5
+/* Messages (not specified but allowed by C99, and specified by POSIX)
+   (used by perror() / strerror())
+*/
+#define LC_MESSAGES 6
 
 /* The category parameter can be any of the LC_* macros to specify if the call
    to setlocale() shall affect the entire locale or only a portion thereof.

@@ -14,9 +14,9 @@
 
 #include "pdclib/_PDCLIB_int.h"
 
-bool _PDCLIB_load_lc_monetary( const char * path, const char * locale )
+struct _PDCLIB_lc_lconv_monetary_t * _PDCLIB_load_lc_monetary( const char * path, const char * locale )
 {
-    bool rc = false;
+    struct _PDCLIB_lc_lconv_monetary_t * rc = NULL;
     const char * extension = "_monetary.dat";
     char * file = malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
 
@@ -30,48 +30,55 @@ bool _PDCLIB_load_lc_monetary( const char * path, const char * locale )
 
         if ( ( fh = fopen( file, "rb" ) ) != NULL )
         {
-            char buffer[ 14 ];
-            char * data = _PDCLIB_load_lines( fh, 7 );
-
-            if ( data != NULL )
+            if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_lconv_monetary_t ) ) ) != NULL )
             {
-                if ( fread( buffer, 1, 14, fh ) == 14 )
+                char buffer[ 14 ];
+                char * data = _PDCLIB_load_lines( fh, 7 );
+
+                if ( data != NULL )
                 {
-                    _PDCLIB_lc_numeric_monetary.monetary_alloced = 1;
-                    _PDCLIB_lc_numeric_monetary.lconv->mon_decimal_point = data;
-                    data += strlen( data ) + 1;
-                    _PDCLIB_lc_numeric_monetary.lconv->mon_thousands_sep = data;
-                    data += strlen( data ) + 1;
-                    _PDCLIB_lc_numeric_monetary.lconv->mon_grouping = data;
-                    data += strlen( data ) + 1;
-                    _PDCLIB_lc_numeric_monetary.lconv->positive_sign = data;
-                    data += strlen( data ) + 1;
-                    _PDCLIB_lc_numeric_monetary.lconv->negative_sign = data;
-                    data += strlen( data ) + 1;
-                    _PDCLIB_lc_numeric_monetary.lconv->currency_symbol = data;
-                    data += strlen( data ) + 1;
-                    _PDCLIB_lc_numeric_monetary.lconv->int_curr_symbol = data;
+                    if ( fread( buffer, 1, 14, fh ) == 14 )
+                    {
+                        rc->mon_decimal_point = data;
+                        data += strlen( data ) + 1;
+                        rc->mon_thousands_sep = data;
+                        data += strlen( data ) + 1;
+                        rc->mon_grouping = data;
+                        data += strlen( data ) + 1;
+                        rc->positive_sign = data;
+                        data += strlen( data ) + 1;
+                        rc->negative_sign = data;
+                        data += strlen( data ) + 1;
+                        rc->currency_symbol = data;
+                        data += strlen( data ) + 1;
+                        rc->int_curr_symbol = data;
 
-                    _PDCLIB_lc_numeric_monetary.lconv->frac_digits = buffer[ 0 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->p_cs_precedes = buffer[ 1 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->n_cs_precedes = buffer[ 2 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->p_sep_by_space = buffer[ 3 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->n_sep_by_space = buffer[ 4 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->p_sign_posn = buffer[ 5 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->n_sign_posn = buffer[ 6 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->int_frac_digits = buffer[ 7 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->int_p_cs_precedes = buffer[ 8 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->int_n_cs_precedes = buffer[ 9 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->int_p_sep_by_space = buffer[ 10 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->int_n_sep_by_space = buffer[ 11 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->int_p_sign_posn = buffer[ 12 ];
-                    _PDCLIB_lc_numeric_monetary.lconv->int_n_sign_posn= buffer[ 13 ];
-
-                    rc = true;
+                        rc->frac_digits = buffer[ 0 ];
+                        rc->p_cs_precedes = buffer[ 1 ];
+                        rc->n_cs_precedes = buffer[ 2 ];
+                        rc->p_sep_by_space = buffer[ 3 ];
+                        rc->n_sep_by_space = buffer[ 4 ];
+                        rc->p_sign_posn = buffer[ 5 ];
+                        rc->n_sign_posn = buffer[ 6 ];
+                        rc->int_frac_digits = buffer[ 7 ];
+                        rc->int_p_cs_precedes = buffer[ 8 ];
+                        rc->int_n_cs_precedes = buffer[ 9 ];
+                        rc->int_p_sep_by_space = buffer[ 10 ];
+                        rc->int_n_sep_by_space = buffer[ 11 ];
+                        rc->int_p_sign_posn = buffer[ 12 ];
+                        rc->int_n_sign_posn= buffer[ 13 ];
+                    }
+                    else
+                    {
+                        free( data );
+                        free( rc );
+                        rc = NULL;
+                    }
                 }
                 else
                 {
-                    free( data );
+                    free( rc );
+                    rc = NULL;
                 }
             }
 
@@ -94,7 +101,7 @@ int main( void )
 {
 #ifndef REGTEST
     FILE * fh = fopen( "test_monetary.dat", "wb" );
-    struct lconv * lc;
+    struct _PDCLIB_lc_lconv_monetary_t * lc;
     TESTCASE( fh != NULL );
     fprintf( fh, "%s\n", "," );    /* mon_decimal_point */
     fprintf( fh, "%s\n", "." );    /* mon_thousands_sep */
@@ -119,9 +126,8 @@ int main( void )
     fputc( 1, fh ); /* int_n_sign_posn */
     fprintf( fh, "\n" );
     fclose( fh );
-    TESTCASE( _PDCLIB_load_lc_monetary( "./", "test" ) );
+    TESTCASE( ( lc = _PDCLIB_load_lc_monetary( "./", "test" ) ) );
     remove( "test_monetary.dat" );
-    lc = localeconv();
     TESTCASE( strcmp( lc->mon_decimal_point, "," ) == 0 );
     TESTCASE( strcmp( lc->mon_thousands_sep, "." ) == 0 );
     TESTCASE( strcmp( lc->mon_grouping, "3" ) == 0 );

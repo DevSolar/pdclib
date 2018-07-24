@@ -42,7 +42,7 @@ struct _PDCLIB_file_t * _PDCLIB_filelist = &_PDCLIB_sin;
    1 kByte (+ 4 byte) of <ctype.h> data.
    Each line: flags, lowercase, uppercase, collation.
 */
-static struct _PDCLIB_lc_ctype_entry_t _ctype_entries[ ( 1 << CHAR_BIT ) + 1 ] = {
+static struct _PDCLIB_lc_ctype_entry_t _ctype_entries[ _PDCLIB_CHARSET_SIZE + 1 ] = {
     { /* EOF */    0,    0,    0 },
     { /* NUL */ _PDCLIB_CTYPE_CNTRL,                                             0x00, 0x00 },
     { /* SOH */ _PDCLIB_CTYPE_CNTRL,                                             0x01, 0x01 },
@@ -302,7 +302,9 @@ static struct _PDCLIB_lc_ctype_entry_t _ctype_entries[ ( 1 << CHAR_BIT ) + 1 ] =
     { 0x00, 0xFF, 0xFF }
 };
 
-struct _PDCLIB_lc_ctype_t _PDCLIB_lc_ctype = { 0x30, 0x39, 0x41, 0x46, 0x61, 0x66, &_ctype_entries[1] };
+struct _PDCLIB_lc_ctype_t _PDCLIB_lc_ctype = { 0, 0x30, 0x39, 0x41, 0x46, 0x61, 0x66, &_ctype_entries[1] };
+
+struct _PDCLIB_lc_collate_t _PDCLIB_lc_collate = { 0 };
 
 struct lconv _PDCLIB_lconv = {
     /* decimal_point      */ (char *)".",
@@ -337,7 +339,8 @@ struct _PDCLIB_lc_numeric_monetary_t _PDCLIB_lc_numeric_monetary = {
     0  /* monetary_allocated */
 };
 
-struct _PDCLIB_lc_texts_t _PDCLIB_lc_texts = {
+struct _PDCLIB_lc_messages_t _PDCLIB_lc_messages = {
+    0,
     /* _PDCLIB_errno_texts */
     {
         /* no error */ (char *)"",

@@ -16,9 +16,9 @@
 
 #include "pdclib/_PDCLIB_int.h"
 
-bool _PDCLIB_load_lc_ctype( const char * path, const char * locale )
+struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char * locale )
 {
-    bool rc = false;
+    struct _PDCLIB_lc_ctype_t * rc = NULL;
     const char * extension = "_ctype.dat";
     char * file = malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
 
@@ -32,31 +32,36 @@ bool _PDCLIB_load_lc_ctype( const char * path, const char * locale )
 
         if ( ( fh = fopen( file, "rb" ) ) != NULL )
         {
-            size_t charset_size = 1 << CHAR_BIT;
-            struct _PDCLIB_lc_ctype_entry_t * ctype = malloc( sizeof( struct _PDCLIB_lc_ctype_entry_t ) * charset_size );
-
-            if ( ctype != NULL )
+            if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_ctype_t ) ) ) != NULL )
             {
-                size_t i;
+                struct _PDCLIB_lc_ctype_entry_t * entry;
 
-                if ( fscanf( fh, "%x %x %x %x %x %x", &_PDCLIB_lc_ctype.digits_low, &_PDCLIB_lc_ctype.digits_high, &_PDCLIB_lc_ctype.Xdigits_low, &_PDCLIB_lc_ctype.Xdigits_high, &_PDCLIB_lc_ctype.xdigits_low, &_PDCLIB_lc_ctype.xdigits_high ) != 6 )
+                if ( ( entry = malloc( sizeof( struct _PDCLIB_lc_ctype_entry_t ) * _PDCLIB_CHARSET_SIZE + 1 ) ) != NULL )
                 {
-                    fclose( fh );
-                    free( ctype );
-                    return false;
-                }
+                    rc->entry = entry + 1;
+                    rc->entry[ -1 ].flags = rc->entry[ -1 ].upper = rc->entry[ -1 ].lower =  0;
 
-                for ( i = 0; i < charset_size; ++i )
-                {
-                    if ( fscanf( fh, "%" SCNxLEAST8 "%hhx %hhx", &ctype[ i ].flags, &ctype[ i ].upper, &ctype[ i ].lower ) != 3 )
+                    if ( fscanf( fh, "%x %x %x %x %x %x", &rc->digits_low, &_PDCLIB_lc_ctype.digits_high, &_PDCLIB_lc_ctype.Xdigits_low, &_PDCLIB_lc_ctype.Xdigits_high, &_PDCLIB_lc_ctype.xdigits_low, &_PDCLIB_lc_ctype.xdigits_high ) == 6 )
                     {
-                        fclose( fh );
-                        free( ctype );
-                        return false;
+                        size_t i;
+
+                        for ( i = 0; i < _PDCLIB_CHARSET_SIZE; ++i )
+                        {
+                            if ( fscanf( fh, "%x %hhx %hhx", &rc->entry[ i ].flags, &rc->entry[ i ].upper, &rc->entry[ i ].lower ) != 3 )
+                            {
+                                fclose( fh );
+                                free( file );
+                                free( rc->entry - 1 );
+                                free( rc );
+                                return NULL;
+                            }
+                        }
                     }
                 }
-
-                rc = true;
+                else
+                {
+                    free( rc );
+                }
             }
 
             fclose( fh );
@@ -74,141 +79,147 @@ bool _PDCLIB_load_lc_ctype( const char * path, const char * locale )
 
 #include "_PDCLIB_test.h"
 
+#include <ctype.h>
+
 int main( void )
 {
 #ifndef REGTEST
     FILE * fh = fopen( "test_ctype.dat", "wb" );
     TESTCASE( fh != NULL );
-    TESTCASE( fprintf( fh, "%x %x\n", 0x30, 0x39 ) );
-    TESTCASE( fprintf( fh, "%x %x %x %x\n", 0x41, 0x46, 0x61, 0x66 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x00, 0x00 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x01, 0x01 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x02, 0x02 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x03, 0x03 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x04, 0x04 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x05, 0x05 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x06, 0x06 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x07, 0x07 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x08, 0x08 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL | _PDCLIB_CTYPE_BLANK | _PDCLIB_CTYPE_SPACE, 0x09, 0x09 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL | _PDCLIB_CTYPE_SPACE,                       0x0A, 0x0A ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL | _PDCLIB_CTYPE_SPACE,                       0x0B, 0x0B ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL | _PDCLIB_CTYPE_SPACE,                       0x0C, 0x0C ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL | _PDCLIB_CTYPE_SPACE,                       0x0D, 0x0D ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x0E, 0x0E ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x0F, 0x0F ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x10, 0x10 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x11, 0x11 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x12, 0x12 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x13, 0x13 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x14, 0x14 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x15, 0x15 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x16, 0x16 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x17, 0x17 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x18, 0x18 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x19, 0x19 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x1A, 0x1A ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x1B, 0x1B ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x1C, 0x1C ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x1D, 0x1D ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x1E, 0x1E ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x1F, 0x1F ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_BLANK | _PDCLIB_CTYPE_SPACE,                       0x20, 0x20 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x21, 0x21 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x22, 0x22 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x23, 0x23 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x24, 0x24 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x25, 0x25 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x26, 0x26 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x27, 0x27 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x28, 0x28 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x29, 0x29 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x2A, 0x2A ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x2B, 0x2B ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x2C, 0x2C ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x2D, 0x2D ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x2E, 0x2E ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x2F, 0x2F ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x30, 0x30 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x31, 0x31 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x32, 0x32 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x33, 0x33 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x34, 0x34 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x35, 0x35 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x36, 0x36 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x37, 0x37 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x38, 0x38 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH,                                             0x39, 0x39 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x3A, 0x3A ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x3B, 0x3B ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x3C, 0x3C ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x3D, 0x3D ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x3E, 0x3E ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x3F, 0x3F ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x40, 0x40 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x41, 0x61 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x42, 0x62 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x43, 0x63 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x44, 0x64 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x45, 0x65 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x46, 0x66 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x47, 0x67 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x48, 0x68 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x49, 0x69 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x4A, 0x6A ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x4B, 0x6B ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x4C, 0x6C ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x4D, 0x6D ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x4E, 0x6E ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x4F, 0x6F ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x50, 0x70 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x51, 0x71 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x52, 0x72 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x53, 0x73 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x54, 0x74 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x55, 0x75 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x56, 0x76 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x57, 0x77 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x58, 0x78 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x59, 0x79 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x5A, 0x7A ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x5B, 0x5B ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x5C, 0x5C ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x5D, 0x5D ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x5E, 0x5E ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x5F, 0x5F ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x60, 0x60 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x41, 0x61 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x42, 0x62 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x43, 0x63 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x44, 0x64 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x45, 0x65 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x46, 0x66 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x47, 0x67 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x48, 0x68 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x49, 0x69 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x4A, 0x6A ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x4B, 0x6B ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x4C, 0x6C ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x4D, 0x6D ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x4E, 0x6E ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x4F, 0x6F ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x50, 0x70 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x51, 0x71 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x52, 0x72 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x53, 0x73 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x54, 0x74 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x55, 0x75 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x56, 0x76 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x57, 0x77 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x58, 0x78 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x59, 0x79 ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x5A, 0x7A ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x7B, 0x7B ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x7C, 0x7C ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x7D, 0x7D ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_PUNCT,                       0x7E, 0x7E ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_CNTRL,                                             0x7F, 0x7F ) );
+    /* For test purposes, let's set up a charset that only has the hex digits */
+    /* 0x00..0x09 - digits */
+    /* 0x11..0x16 - Xdigits */
+    /* 0x21..0x26 - xdigits */
+    TESTCASE( fprintf( fh, "%x %x\n", 0x00, 0x09 ) );
+    TESTCASE( fprintf( fh, "%x %x %x %x\n", 0x11, 0x16, 0x21, 0x26 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x00, 0x00 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x01, 0x01 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x02, 0x02 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x03, 0x03 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x04, 0x04 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x05, 0x05 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x06, 0x06 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x07, 0x07 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x08, 0x08 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH, 0x09, 0x09 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x0A, 0x0A ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x0B, 0x0B ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x0C, 0x0C ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x0D, 0x0D ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x0E, 0x0E ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x0F, 0x0F ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x10, 0x10 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x11, 0x11 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x12, 0x12 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x13, 0x13 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x14, 0x14 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x15, 0x15 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_UPPER, 0x16, 0x16 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x17, 0x17 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x18, 0x18 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x19, 0x19 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x1A, 0x1A ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x1B, 0x1B ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x1C, 0x1C ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x1D, 0x1D ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x1E, 0x1E ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x1F, 0x1F ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x20, 0x20 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x21, 0x21 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x22, 0x22 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x23, 0x23 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x24, 0x24 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x25, 0x25 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", _PDCLIB_CTYPE_GRAPH | _PDCLIB_CTYPE_ALPHA | _PDCLIB_CTYPE_LOWER, 0x26, 0x26 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x27, 0x27 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x28, 0x28 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x29, 0x29 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x2A, 0x2A ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x2B, 0x2B ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x2C, 0x2C ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x2D, 0x2D ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x2E, 0x2E ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x2F, 0x2F ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x30, 0x30 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x31, 0x31 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x32, 0x32 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x33, 0x33 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x34, 0x34 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x35, 0x35 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x36, 0x36 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x37, 0x37 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x38, 0x38 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x39, 0x39 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x3A, 0x3A ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x3B, 0x3B ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x3C, 0x3C ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x3D, 0x3D ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x3E, 0x3E ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x3F, 0x3F ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x40, 0x40 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x41, 0x41 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x42, 0x42 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x43, 0x43 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x44, 0x44 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x45, 0x45 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x46, 0x46 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x47, 0x47 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x48, 0x48 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x49, 0x49 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x4A, 0x4A ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x4B, 0x4B ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x4C, 0x4C ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x4D, 0x4D ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x4E, 0x4E ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x4F, 0x4F ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x50, 0x50 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x51, 0x51 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x52, 0x52 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x53, 0x53 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x54, 0x54 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x55, 0x55 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x56, 0x56 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x57, 0x57 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x58, 0x58 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x59, 0x59 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x5A, 0x5A ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x5B, 0x5B ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x5C, 0x5C ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x5D, 0x5D ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x5E, 0x5E ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x5F, 0x5F ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x60, 0x60 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x61, 0x61 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x62, 0x62 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x63, 0x63 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x64, 0x64 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x65, 0x65 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x66, 0x66 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x67, 0x67 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x68, 0x68 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x69, 0x69 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x6A, 0x6A ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x6B, 0x6B ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x6C, 0x6C ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x6D, 0x6D ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x6E, 0x6E ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x6F, 0x6F ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x70, 0x70 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x71, 0x71 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x72, 0x72 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x73, 0x73 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x74, 0x74 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x75, 0x75 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x76, 0x76 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x77, 0x77 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x78, 0x78 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x79, 0x79 ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x7A, 0x7A ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x7B, 0x7B ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x7C, 0x7C ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x7D, 0x7D ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x7E, 0x7E ) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x7F, 0x7F ) );
     TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x80, 0x80 ) );
     TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x81, 0x81 ) );
     TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0x82, 0x82 ) );
@@ -338,10 +349,14 @@ int main( void )
     TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0xFE, 0xFE ) );
     TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0xFF, 0xFF) );
     fclose( fh );
-    TESTCASE( _PDCLIB_load_lc_ctype( "./", "test" ) );
+    TESTCASE( _PDCLIB_load_lc_ctype( "./", "test" ) != NULL );
     remove( "test_ctype.dat" );
+    /*
+    TESTCASE( isdigit( 0x00 ) && ! isxdigit( 0x00 ) && ! isalpha( 0x00 ) );
+    TESTCASE( ! isdigit( 0x11 ) && isxdigit( 0x11 ) && isalpha( 0x11 ) && isupper( 0x11 ) && ! islower( 0x11 ) );
+    TESTCASE( ! isdigit( 0x21 ) && isxdigit( 0x21 ) && isalpha( 0x21 ) && ! isupper( 0x11 ) && islower( 0x11 ) );
+    */
 #endif
-
     return TEST_RESULTS;
 }
 
