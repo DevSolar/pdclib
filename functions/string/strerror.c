@@ -19,7 +19,7 @@ char * strerror( int errnum )
     }
     else
     {
-        return _PDCLIB_lc_texts.errno_texts[errnum];
+        return _PDCLIB_lc_messages.errno_texts[errnum];
     }
 }
 

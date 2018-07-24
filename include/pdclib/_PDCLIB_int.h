@@ -448,6 +448,40 @@ int * _PDCLIB_errno_func( void );
 #define _PDCLIB_CTYPE_LOWER  64
 #define _PDCLIB_CTYPE_UPPER 128
 
+#define _PDCLIB_CHARSET_SIZE ( 1 << _PDCLIB_CHAR_BIT )
+
+struct _PDCLIB_lc_lconv_numeric_t
+{
+    char * decimal_point;
+    char * thousands_sep;
+    char * grouping;
+};
+
+struct _PDCLIB_lc_lconv_monetary_t
+{
+    char * mon_decimal_point;
+    char * mon_thousands_sep;
+    char * mon_grouping;
+    char * positive_sign;
+    char * negative_sign;
+    char * currency_symbol;
+    char * int_curr_symbol;
+    char frac_digits;
+    char p_cs_precedes;
+    char n_cs_precedes;
+    char p_sep_by_space;
+    char n_sep_by_space;
+    char p_sign_posn;
+    char n_sign_posn;
+    char int_frac_digits;
+    char int_p_cs_precedes;
+    char int_n_cs_precedes;
+    char int_p_sep_by_space;
+    char int_n_sep_by_space;
+    char int_p_sign_posn;
+    char int_n_sign_posn;
+};
+
 struct _PDCLIB_lc_numeric_monetary_t
 {
     struct lconv * lconv;
@@ -459,10 +493,10 @@ extern struct _PDCLIB_lc_numeric_monetary_t _PDCLIB_lc_numeric_monetary;
 
 struct _PDCLIB_lc_collate_t
 {
-    int dummy;
+    int alloced;
 };
 
-extern struct _PDCLIB_collate_t _PDCLIB_lc_collate;
+extern struct _PDCLIB_lc_collate_t _PDCLIB_lc_collate;
 
 struct _PDCLIB_lc_ctype_entry_t
 {
@@ -473,6 +507,7 @@ struct _PDCLIB_lc_ctype_entry_t
 
 struct _PDCLIB_lc_ctype_t
 {
+    int alloced;
     int digits_low;
     int digits_high;
     int Xdigits_low;
@@ -484,12 +519,13 @@ struct _PDCLIB_lc_ctype_t
 
 extern struct _PDCLIB_lc_ctype_t _PDCLIB_lc_ctype;
 
-struct _PDCLIB_lc_texts_t
+struct _PDCLIB_lc_messages_t
 {
+    int alloced;
     char * errno_texts[_PDCLIB_ERRNO_MAX]; /* strerror() / perror()   */
 };
 
-extern struct _PDCLIB_lc_texts_t _PDCLIB_lc_texts;
+extern struct _PDCLIB_lc_messages_t _PDCLIB_lc_messages;
 
 struct _PDCLIB_lc_time_t
 {
@@ -507,12 +543,12 @@ struct _PDCLIB_lc_time_t
 
 extern struct _PDCLIB_lc_time_t _PDCLIB_lc_time;
 
-bool _PDCLIB_load_lc_numeric( const char * path, const char * locale );
-bool _PDCLIB_load_lc_monetary( const char * path, const char * locale );
-const char * _PDCLIB_load_lc_collate( const char * path, const char * locale );
-bool _PDCLIB_load_lc_ctype( const char * path, const char * locale );
-bool _PDCLIB_load_lc_time( const char * path, const char * locale );
-const char * _PDCLIB_load_lc_all( const char * path, const char * locale );
+struct _PDCLIB_lc_lconv_numeric_t * _PDCLIB_load_lc_numeric( const char * path, const char * locale );
+struct _PDCLIB_lc_lconv_monetary_t * _PDCLIB_load_lc_monetary( const char * path, const char * locale );
+struct _PDCLIB_lc_collate_t * _PDCLIB_load_lc_collate( const char * path, const char * locale );
+struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char * locale );
+struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char * locale );
+struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, const char * locale );
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
