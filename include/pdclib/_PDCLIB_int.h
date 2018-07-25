@@ -12,6 +12,8 @@
 /* would be considered a bug / missing feature: notify the author(s).         */
 /* -------------------------------------------------------------------------- */
 
+#include <stdbool.h>
+
 #include "pdclib/_PDCLIB_config.h"
 #include "pdclib/_PDCLIB_aux.h"
 
@@ -411,6 +413,12 @@ void _PDCLIB_closeall( void );
 /* Check if a given year is a leap year. Parameter is offset to 1900. */
 int _PDCLIB_is_leap( int year_offset );
 
+/* Read a specified number of lines from a file stream; return a pointer to
+   allocated memory holding the lines (newlines replaced with zero terminators)
+   or NULL in case of error.
+*/
+char * _PDCLIB_load_lines( struct _PDCLIB_file_t * fh, _PDCLIB_size_t lines );
+
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */
 /* -------------------------------------------------------------------------- */
@@ -439,30 +447,89 @@ int * _PDCLIB_errno_func( void );
 #define _PDCLIB_CTYPE_SPACE  32
 #define _PDCLIB_CTYPE_LOWER  64
 #define _PDCLIB_CTYPE_UPPER 128
-#define _PDCLIB_CTYPE_DIGIT 256
-#define _PDCLIB_CTYPE_XDIGT 512
 
-extern struct lconv _PDCLIB_lconv;
+#define _PDCLIB_CHARSET_SIZE ( 1 << _PDCLIB_CHAR_BIT )
 
-struct _PDCLIB_lc_ctype_t
+struct _PDCLIB_lc_lconv_numeric_t
+{
+    char * decimal_point;
+    char * thousands_sep;
+    char * grouping;
+};
+
+struct _PDCLIB_lc_lconv_monetary_t
+{
+    char * mon_decimal_point;
+    char * mon_thousands_sep;
+    char * mon_grouping;
+    char * positive_sign;
+    char * negative_sign;
+    char * currency_symbol;
+    char * int_curr_symbol;
+    char frac_digits;
+    char p_cs_precedes;
+    char n_cs_precedes;
+    char p_sep_by_space;
+    char n_sep_by_space;
+    char p_sign_posn;
+    char n_sign_posn;
+    char int_frac_digits;
+    char int_p_cs_precedes;
+    char int_n_cs_precedes;
+    char int_p_sep_by_space;
+    char int_n_sep_by_space;
+    char int_p_sign_posn;
+    char int_n_sign_posn;
+};
+
+struct _PDCLIB_lc_numeric_monetary_t
+{
+    struct lconv * lconv;
+    int numeric_alloced;
+    int monetary_alloced;
+};
+
+extern struct _PDCLIB_lc_numeric_monetary_t _PDCLIB_lc_numeric_monetary;
+
+struct _PDCLIB_lc_collate_t
+{
+    int alloced;
+};
+
+extern struct _PDCLIB_lc_collate_t _PDCLIB_lc_collate;
+
+struct _PDCLIB_lc_ctype_entry_t
 {
     _PDCLIB_uint16_t flags;
     unsigned char upper;
     unsigned char lower;
-    unsigned char collation;
 };
 
-extern struct _PDCLIB_lc_ctype_t * _PDCLIB_lc_ctype;
-
-struct _PDCLIB_lc_texts_t
+struct _PDCLIB_lc_ctype_t
 {
+    int alloced;
+    int digits_low;
+    int digits_high;
+    int Xdigits_low;
+    int Xdigits_high;
+    int xdigits_low;
+    int xdigits_high;
+    struct _PDCLIB_lc_ctype_entry_t * entry;
+};
+
+extern struct _PDCLIB_lc_ctype_t _PDCLIB_lc_ctype;
+
+struct _PDCLIB_lc_messages_t
+{
+    int alloced;
     char * errno_texts[_PDCLIB_ERRNO_MAX]; /* strerror() / perror()   */
 };
 
-extern struct _PDCLIB_lc_texts_t _PDCLIB_lc_texts;
+extern struct _PDCLIB_lc_messages_t _PDCLIB_lc_messages;
 
 struct _PDCLIB_lc_time_t
 {
+    int alloced;
     char * month_name_abbr[12]; /* month names, abbreviated                   */
     char * month_name_full[12]; /* month names, full                          */
     char * day_name_abbr[7];    /* weekday names, abbreviated                 */
@@ -475,6 +542,13 @@ struct _PDCLIB_lc_time_t
 };
 
 extern struct _PDCLIB_lc_time_t _PDCLIB_lc_time;
+
+struct _PDCLIB_lc_lconv_numeric_t * _PDCLIB_load_lc_numeric( const char * path, const char * locale );
+struct _PDCLIB_lc_lconv_monetary_t * _PDCLIB_load_lc_monetary( const char * path, const char * locale );
+struct _PDCLIB_lc_collate_t * _PDCLIB_load_lc_collate( const char * path, const char * locale );
+struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char * locale );
+struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char * locale );
+struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, const char * locale );
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */

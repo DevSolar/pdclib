@@ -3,22 +3,24 @@ AUXFILES := Makefile Readme.txt
 
 # Directories belonging to the project
 PROJDIRS := functions include platform/example
+# Directory where binaries should be written
+BUILDDIR := .
 # All source files of the project
 SRCFILES := $(shell find -L $(PROJDIRS) -type f -name "*.c")
 # All header files of the project
 HDRFILES := $(shell find -L $(PROJDIRS) -type f -name "*.h")
 # All object files in the library
-OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
+OBJFILES := $(patsubst %.c,$(BUILDDIR)/%.o,$(SRCFILES))
 # All test drivers (.t)
-TSTFILES := $(patsubst %.c,%_t,$(SRCFILES))
+TSTFILES := $(patsubst %.c,$(BUILDDIR)/%_t,$(SRCFILES))
 # All regression test drivers (.r)
-REGFILES := $(patsubst %.c,%_r,$(SRCFILES))
+REGFILES := $(patsubst %.c,$(BUILDDIR)/%_r,$(SRCFILES))
 # All library dependency files (.d)
-DEPFILES := $(patsubst %.c,%.d,$(SRCFILES))
+DEPFILES := $(patsubst %.c,$(BUILDDIR)/%.d,$(SRCFILES))
 # All test driver dependency files (_t.d)
-TSTDEPFILES := $(patsubst %,%.d,$(TSTFILES))
+TSTDEPFILES := $(patsubst %,$(BUILDDIR)/%.d,$(TSTFILES))
 # All regression test driver dependency files (_r.d)
-REGDEPFILES := $(patsubst %,%.d,$(REGFILES))
+REGDEPFILES := $(patsubst %,$(BUILDDIR)/%.d,$(REGFILES))
 # All files belonging to the source distribution
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
@@ -27,7 +29,7 @@ CFLAGS := -fno-builtin -g -std=c99 -I./testing -I./platform/example/include $(WA
 
 .PHONY: all clean srcdist tests testdrivers regtests regtestdrivers todos fixmes help
 
-all: pdclib.a testdrivers regtestdrivers
+all: $(BUILDDIR)/pdclib.a testdrivers regtestdrivers
 	@echo
 	@echo "========================"
 	@echo "Executing library tests:"
@@ -54,19 +56,19 @@ all: pdclib.a testdrivers regtestdrivers
 	@$(MAKE) todos | head
 	@echo "..."
 
-pdclib.a: $(OBJFILES)
+$(BUILDDIR)/pdclib.a: $(OBJFILES)
 	@echo " AR	$@"
-	@ar rc pdclib.a $?
+	@ar rc $(BUILDDIR)/pdclib.a $?
 	@echo
 
 tests: testdrivers
-	-@rc=0; count=0; failed=""; for file in $(TSTFILES); do echo " TST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done; echo
+	-@rc=0; count=0; failed=""; for file in $(TSTFILES); do echo " TST	$$file"; $$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking PDCLib): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done; echo
 
 testdrivers: $(TSTFILES)
 	@echo
 
 regtests: regtestdrivers
-	-@rc=0; count=0; failed=""; for file in $(REGFILES); do echo " RTST	$$file"; ./$$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done; echo
+	-@rc=0; count=0; failed=""; for file in $(REGFILES); do echo " RTST	$$file"; $$file; test=$$?; if [ $$test != 0 ]; then rc=`expr $$rc + $$test`; failed="$$failed $$file"; fi; count=`expr $$count + 1`; done; echo; echo "Tests executed (linking system libc): $$count  Tests failed: $$rc"; echo; for file in $$failed; do echo "Failed: $$file"; done; echo
 
 regtestdrivers: $(REGFILES)
 	@echo
@@ -74,7 +76,7 @@ regtestdrivers: $(REGFILES)
 -include $(DEPFILES) $(TSTDEPFILES) $(REGDEPFILES)
 
 clean:
-	-@$(RM) $(wildcard $(OBJFILES) $(DEPFILES) $(TSTFILES) $(TSTDEPFILES) $(REGFILES) $(REGDEPFILES) pdclib.a pdclib.tgz scanf_testdata_*)
+	-@$(RM) $(wildcard $(OBJFILES) $(DEPFILES) $(TSTFILES) $(TSTDEPFILES) $(REGFILES) $(REGDEPFILES) $(BUILDDIR)/pdclib.a pdclib.tgz scanf_testdata_*)
 
 srcdist:
 	@tar czf pdclib.tgz $(ALLFILES)
@@ -104,15 +106,21 @@ help:
 	@echo
 	@echo "Any additional compiler flags you want to use can be passed as USERFLAGS"
 	@echo "(Usage: USERFLAGS=\"flags\" make [...])."
+	@echo
+	@echo "If you want to build out-of-source, you can specify BUILDDIR"
+	@echo "(Usage: make [...] BUILDDIR=/path/to/binaries/)."
 
-%.o: %.c Makefile
+$(BUILDDIR)/%.o: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
+	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -MMD -MP -I./include -c $< -o $@
 
-%_t: %.c Makefile pdclib.a
+$(BUILDDIR)/%_t: %.c Makefile $(BUILDDIR)/pdclib.a
 	@echo " CC	$(patsubst functions/%,%,$@)"
-	@$(CC) $(CFLAGS) -MMD -MP -DTEST -I./include $< pdclib.a -o $@
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -MMD -MP -DTEST -I./include $< $(BUILDDIR)/pdclib.a -o $@
 
-%_r: %.c Makefile
+$(BUILDDIR)/%_r: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"
+	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -Wno-deprecated-declarations -Wno-format -MMD -MP -DTEST -DREGTEST $< -o $@
