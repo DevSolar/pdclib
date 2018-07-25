@@ -33,8 +33,6 @@ struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, cons
             {
                 char * data = _PDCLIB_load_lines( fh, _PDCLIB_ERRNO_MAX );
 
-                rc->alloced = 1;
-
                 if ( data != NULL )
                 {
                     size_t i;
@@ -44,6 +42,8 @@ struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, cons
                         rc->errno_texts[ i ] = data;
                         data += strlen( data ) + 1;
                     }
+
+                    rc->alloced = 1;
                 }
                 else
                 {

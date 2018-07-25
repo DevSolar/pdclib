@@ -30,15 +30,13 @@ struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char *
 
         if ( ( fh = fopen( file, "rb" ) ) != NULL )
         {
-            char * data = _PDCLIB_load_lines( fh, 44 );
-
-            if ( data != NULL )
+            if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_time_t ) ) ) != NULL )
             {
-                size_t i;
+                char * data = _PDCLIB_load_lines( fh, 44 );
 
-                if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_time_t ) ) ) != NULL )
+                if ( data != NULL )
                 {
-                    rc->alloced = 1;
+                    size_t i;
 
                     for ( i = 0; i < 12; ++i )
                     {
@@ -63,10 +61,13 @@ struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char *
                         rc->day_name_full[ i ] = data;
                         data += strlen( data ) + 1;
                     }
+
+                    rc->alloced = 1;
                 }
                 else
                 {
-                    free( data );
+                    free( rc );
+                    rc = NULL;
                 }
             }
 
