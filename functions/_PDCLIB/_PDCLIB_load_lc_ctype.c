@@ -57,6 +57,8 @@ struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char
                             }
                         }
                     }
+
+                    rc->alloced = 1;
                 }
                 else
                 {

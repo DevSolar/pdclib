@@ -31,7 +31,9 @@ struct _PDCLIB_lc_collate_t * _PDCLIB_load_lc_collate( const char * path, const 
         {
             if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_collate_t ) ) ) != NULL )
             {
-                /* TODO */
+                /* TODO: Collation data */
+
+                rc->alloced = 1;
             }
 
             fclose( fh );
