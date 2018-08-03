@@ -439,6 +439,15 @@ int * _PDCLIB_errno_func( void );
 /* <locale.h> support                                                         */
 /* -------------------------------------------------------------------------- */
 
+#define _PDCLIB_LC_ALL        0
+#define _PDCLIB_LC_COLLATE    1
+#define _PDCLIB_LC_CTYPE      2
+#define _PDCLIB_LC_MONETARY   3
+#define _PDCLIB_LC_NUMERIC    4
+#define _PDCLIB_LC_TIME       5
+#define _PDCLIB_LC_MESSAGES   6
+#define _PDCLIB_LC_COUNT      7
+
 #define _PDCLIB_CTYPE_ALPHA   1
 #define _PDCLIB_CTYPE_BLANK   2
 #define _PDCLIB_CTYPE_CNTRL   4
@@ -494,6 +503,8 @@ extern struct _PDCLIB_lc_numeric_monetary_t _PDCLIB_lc_numeric_monetary;
 struct _PDCLIB_lc_collate_t
 {
     int alloced;
+    /* 1..3 code points */
+    /* 1..8, 18 collation elements of 3 16-bit integers */
 };
 
 extern struct _PDCLIB_lc_collate_t _PDCLIB_lc_collate;
