@@ -6,11 +6,45 @@
 
 #include <locale.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef REGTEST
 
+static const char * _PDCLIB_LC_category_name[ _PDCLIB_LC_COUNT ] = { NULL, "LC_COLLATE", "LC_CTYPE", "LC_MONETARY", "LC_NUMERIC", "LC_TIME", "LC_MESSAGES" };
+
+static const char * _PDCLIB_default_locale( int category )
+{
+    const char * s;
+
+    if ( ( s = getenv( "LC_ALL" ) ) == NULL )
+    {
+        if ( category == LC_ALL || ( s = getenv( _PDCLIB_LC_category_name[ category ] ) ) == NULL )
+        {
+            if ( ( s = getenv( "LANG" ) ) == NULL )
+            {
+                s = "C";
+            }
+        }
+    }
+
+    return s;
+}
+
 char * setlocale( int category, const char * locale )
 {
+    /* All below is very much work-in-progress, so we do a dumb-dummy
+       return here.
+    */
+    if ( locale == NULL || ! strcmp( locale, "C" ) )
+    {
+        return (char *)"C";
+    }
+    else
+    {
+        return NULL;
+    }
+
+#if 0
     /* Path to locale data files - _PDCLIB_LOCALE_PATH unless overruled
        by the environment variable whose name is defined by preprocessor
        symbol _PDCLIB_LOCALE_PATH_ENV (defaulting to PDCLIB_I18N).
@@ -26,6 +60,24 @@ char * setlocale( int category, const char * locale )
     struct _PDCLIB_lc_time_t * time = NULL;
 
     char * rc = (char *)locale;
+
+    if ( category < 0 || category >= _PDCLIB_LC_COUNT )
+    {
+        /* Bad category */
+        return NULL;
+    }
+
+    if ( locale == NULL )
+    {
+        /* NULL - Return current locale settings */
+        /* TODO */
+    }
+
+    if ( strlen( locale ) == 0 )
+    {
+        /* "" - Use default locale */
+        locale = _PDCLIB_default_locale( category );
+    }
 
     if ( getenv( _PDCLIB_symbol2string( _PDCLIB_LOCALE_PATH_ENV ) ) != NULL )
     {
@@ -186,6 +238,7 @@ char * setlocale( int category, const char * locale )
     }
 
     return NULL;
+#endif
 }
 
 #endif
