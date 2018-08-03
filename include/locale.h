@@ -59,26 +59,27 @@ struct lconv
 };
 
 /* First arguments to setlocale().
-   TODO: Beware, values might change before v0.6 is released.
+   NOTE: If you add to / modify these, look at functions/locale/setlocale.c
+         and keep things in sync.
 */
 /* Entire locale */
-#define LC_ALL      0
+#define LC_ALL      _PDCLIB_LC_ALL
 /* Collation (strcoll(), strxfrm()) */
-#define LC_COLLATE  1
+#define LC_COLLATE  _PDCLIB_LC_COLLATE
 /* Character types (<ctype.h>, <wctype.h>) */
-#define LC_CTYPE    2
+#define LC_CTYPE    _PDCLIB_LC_CTYPE
 /* Monetary formatting (as returned by localeconv) */
-#define LC_MONETARY 3
+#define LC_MONETARY _PDCLIB_LC_MONETARY
 /* Decimal-point character (for printf() / scanf() functions), string
    conversions, nonmonetary formatting as returned by localeconv
 */
-#define LC_NUMERIC  4
+#define LC_NUMERIC  _PDCLIB_LC_NUMERIC
 /* Time formats (strftime(), wcsftime()) */
-#define LC_TIME     5
+#define LC_TIME     _PDCLIB_LC_TIME
 /* Messages (not specified but allowed by C99, and specified by POSIX)
    (used by perror() / strerror())
 */
-#define LC_MESSAGES 6
+#define LC_MESSAGES _PDCLIB_LC_MESSAGES
 
 /* The category parameter can be any of the LC_* macros to specify if the call
    to setlocale() shall affect the entire locale or only a portion thereof.
