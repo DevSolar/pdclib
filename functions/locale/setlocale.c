@@ -249,8 +249,9 @@ char * setlocale( int category, const char * locale )
 
 int main( void )
 {
-    setlocale(0,"");
-    TESTCASE( NO_TESTDRIVER );
+    TESTCASE( strcmp( setlocale( LC_ALL, "C" ), "C" ) == 0 );
+    TESTCASE( setlocale( LC_ALL, "" ) == NULL );
+    TESTCASE( strcmp( setlocale( LC_ALL, NULL ), "C" ) == 0 );
     return TEST_RESULTS;
 }
 
