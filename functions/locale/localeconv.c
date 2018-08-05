@@ -21,7 +21,11 @@ struct lconv * localeconv( void )
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    struct lconv * lconv;
+    TESTCASE( ( lconv = localeconv() ) != NULL );
+    TESTCASE( strcmp( lconv->decimal_point, "." ) == 0 );
+    TESTCASE( strcmp( lconv->thousands_sep, "" ) == 0 );
+    TESTCASE( strcmp( lconv->grouping, "" ) == 0 );
     return TEST_RESULTS;
 }
 
