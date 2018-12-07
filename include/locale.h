@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_LOCALE_H
 #define _PDCLIB_LOCALE_H _PDCLIB_LOCALE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 #ifndef _PDCLIB_NULL_DEFINED
@@ -95,5 +99,9 @@ char * setlocale( int category, const char * locale );
    locale setting.
 */
 struct lconv * localeconv( void );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

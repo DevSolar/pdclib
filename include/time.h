@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_TIME_H
 #define _PDCLIB_TIME_H _PDCLIB_TIMEH
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
@@ -108,5 +112,9 @@ struct tm * localtime( const time_t * timer );
    null character), or zero on failure.
 */
 size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB_restrict format, const struct tm * _PDCLIB_restrict timeptr );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

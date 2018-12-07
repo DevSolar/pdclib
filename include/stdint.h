@@ -5,6 +5,11 @@
 */
 
 #ifndef _PDCLIB_STDINT_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define _PDCLIB_STDINT_H _PDCLIB_STDINT_H
 
 #include "pdclib/_PDCLIB_int.h"
@@ -202,6 +207,10 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 /* Expand to an integer constant of specified value and type uintmax_t */
 #define UINTMAX_C( value ) _PDCLIB_UINTMAX_C( value )
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif
