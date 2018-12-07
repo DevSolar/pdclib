@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_STDLIB_H
 #define _PDCLIB_STDLIB_H _PDCLIB_STDLIB_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
@@ -238,5 +242,9 @@ int wctomb( char * s, wchar_t wc );
 size_t mbstowcs( wchar_t * _PDCLIB_restrict pwcs, const char * _PDCLIB_restrict s, size_t n );
 size_t wcstombs( char * _PDCLIB_restrict s, const wchar_t * _PDCLIB_restrict pwcs, size_t n );
 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

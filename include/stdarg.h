@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_STDARG_H
 #define _PDCLIB_STDARG_H _PDCLIB_STDARG_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_config.h"
 
 typedef _PDCLIB_va_list va_list;
@@ -15,5 +19,9 @@ typedef _PDCLIB_va_list va_list;
 #define va_copy( dest, src )  _PDCLIB_va_copy( dest, src )
 #define va_end( ap )          _PDCLIB_va_end( ap )
 #define va_start( ap, parmN ) _PDCLIB_va_start( ap, parmN )
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
