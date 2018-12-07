@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_INTTYPES_H
 #define _PDCLIB_INTTYPES_H _PDCLIB_INTTYPES_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
@@ -245,5 +249,9 @@ intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restric
 uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
 
 /* TODO: wcstoimax(), wcstoumax() */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

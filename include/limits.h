@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_LIMITS_H
 #define _PDCLIB_LIMITS_H _PDCLIB_LIMITS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 /* TODO: Defined to 1 as multibyte characters are not supported yet. */
@@ -31,5 +35,9 @@
 #define USHRT_MAX  _PDCLIB_USHRT_MAX
 #define UINT_MAX   _PDCLIB_UINT_MAX
 #define ULONG_MAX  _PDCLIB_ULONG_MAX
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_WCTYPE_H
 #define _PDCLIB_WCTYPE_H _PDCLIB_WCTYPE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 typedef _PDCLIB_wint_t wint_t;
@@ -134,5 +138,9 @@ wint_t towctrans( wint_t wc, wctrans_t desc );
    For unsupported properties, the function returns zero.
 */
 wctrans_t wctrans( const char * property );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

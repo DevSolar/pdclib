@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_STDIO_H
 #define _PDCLIB_STDIO_H _PDCLIB_STDIO_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
@@ -782,5 +786,9 @@ int ferror( FILE * stream );
    strerror( errno ) had been called).
 */
 void perror( const char * s );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

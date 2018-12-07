@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_STRING_H
 #define _PDCLIB_STRING_H _PDCLIB_STRING_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 #ifndef _PDCLIB_SIZE_T_DEFINED
@@ -181,5 +185,9 @@ char * strerror( int errnum );
 /* Returns the length of the string s (excluding terminating '\0').
 */
 size_t strlen( const char * s );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -4,6 +4,10 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_aux.h"
 
 #ifndef _PDCLIB_ASSERT_H
@@ -32,4 +36,8 @@ void _PDCLIB_assert89( const char * const );
                             ", line " _PDCLIB_symbol2string( __LINE__ ) \
                             "." _PDCLIB_endl ) )
 #endif
+#endif
+
+#ifdef __cplusplus
+}
 #endif

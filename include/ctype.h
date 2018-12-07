@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_CTYPE_H
 #define _PDCLIB_CTYPE_H _PDCLIB_CTYPE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 /* Character classification functions */
@@ -91,5 +95,9 @@ int tolower( int c );
    is not a lowercase letter remains unchanged.
 */
 int toupper( int c );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

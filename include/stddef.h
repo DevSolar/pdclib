@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_STDDEF_H
 #define _PDCLIB_STDDEF_H _PDCLIB_STDDEF_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 typedef _PDCLIB_ptrdiff_t ptrdiff_t;
@@ -24,5 +28,9 @@ typedef _PDCLIB_wchar_t   wchar_t;
 #endif
 
 #define offsetof( type, member ) _PDCLIB_offsetof( type, member )
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
