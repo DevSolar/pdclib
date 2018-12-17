@@ -17,10 +17,8 @@ int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
          ! ( stream->status & ( _PDCLIB_FREAD | _PDCLIB_FRW ) ) )
     {
         /* Function called on illegal (e.g. output) stream.
-           See comments on implementation-defined errno values in
-           <_PDCLIB_config.h>.
         */
-        _PDCLIB_errno = _PDCLIB_ERROR;
+        _PDCLIB_errno = _PDCLIB_EBADF;
         stream->status |= _PDCLIB_ERRORFLAG;
         return EOF;
     }

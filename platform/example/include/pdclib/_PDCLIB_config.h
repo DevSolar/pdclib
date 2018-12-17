@@ -522,36 +522,6 @@ typedef int _PDCLIB_fd_t;
 /* Cross-device link */
 #define _PDCLIB_EXDEV            18
 
-/* The following is not strictly "configuration", but there is no better place
-   to explain it than here.
-
-   PDCLib strives to be as generic as possible, so by default it does NOT define
-   any values beyond the three standard ones above, even where it would have
-   been prudent and convenient to do so. Any errno "caught" from the host OS,
-   and some internal error conditions as well, are all lumped together into the
-   value of '_PDCLIB_ERROR'.
-
-   '_PDCLIB_ERROR' is STRICLY meant as a PLACEHOLDER only.
-
-   You should NEVER ship an adaption of PDCLib still using that particular
-   value. You should NEVER write code that *tests* for that value. Indeed it is
-   not even conforming, since errno values should be defined as beginning with
-   an uppercase 'E', and there is no mechanics in <errno.h> to unmask that
-   particular value (for exactly that reason).
-
-   There also is no error message available for this value through either the
-   strerror() or perror() functions. It is being reported as "unknown" error.
-
-   The idea is that you scan the source of PDCLib for occurrences of this macro
-   and replace _PDCLIB_ERROR with whatever additional errno value you came up
-   with for your platform.
-
-   If you cannot find it within you to do that, tell your clients to check for
-   an errno value larger than zero. That, at least, would be standard compliant
-   (and fully portable).
-*/
-#define _PDCLIB_ERROR  132
-
 /* The maximum value that errno can be set to. This is used to set the size   */
 /* of the array in struct _PDCLIB_lc_text_t holding error messages for the    */
 /* strerror() and perror() functions. (If you change this value because you   */
