@@ -25,7 +25,7 @@ REGDEPFILES := $(patsubst %,$(BUILDDIR)/%.d,$(REGFILES))
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
 WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement
-CFLAGS := -fno-builtin -g -std=c99 -I./testing -I./platform/example/include $(WARNINGS) $(USERFLAGS)
+CFLAGS := -DUSE_DL_PREFIX -DDLMALLOC_EXPORT= -fno-builtin -g -std=c99 -I./testing -I./platform/example/include $(WARNINGS) $(USERFLAGS)
 
 .PHONY: all clean srcdist tests testdrivers regtests regtestdrivers todos fixmes help
 
@@ -109,6 +109,11 @@ help:
 	@echo
 	@echo "If you want to build out-of-source, you can specify BUILDDIR"
 	@echo "(Usage: make [...] BUILDDIR=/path/to/binaries/)."
+
+$(BUILDDIR)/platform/example/functions/_dlmalloc/malloc.o: platform/example/functions/_dlmalloc/malloc.c Makefile
+	@echo " CC	$(patsubst functions/%,%,$@)"
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -Wno-cast-align -MMD -MP -I./include -c $< -o $@
 
 $(BUILDDIR)/%.o: %.c Makefile
 	@echo " CC	$(patsubst functions/%,%,$@)"

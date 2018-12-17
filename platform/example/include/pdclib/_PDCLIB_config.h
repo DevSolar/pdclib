@@ -362,43 +362,165 @@ typedef int _PDCLIB_fd_t;
    EILSEQ. The standard leaves it up to "the implementation" whether there are
    any more beyond those three. There is some controversy as to whether errno is
    such a good idea at all, so you might want to come up with a different error
-   reporting facility for your platform. Since errno values beyond the three
-   defined by the standard are not portable anyway (unless you look at POSIX),
-   having your own error reporting facility would not hurt anybody either.
+   reporting facility for your platform.
 */
-#define _PDCLIB_ERANGE 1
-#define _PDCLIB_EDOM   2
-#define _PDCLIB_EILSEQ 3
 
-/* The following is not strictly "configuration", but there is no better place
-   to explain it than here.
-
-   PDCLib strives to be as generic as possible, so by default it does NOT define
-   any values beyond the three standard ones above, even where it would have
-   been prudent and convenient to do so. Any errno "caught" from the host OS,
-   and some internal error conditions as well, are all lumped together into the
-   value of '_PDCLIB_ERROR'.
-
-   '_PDCLIB_ERROR' is STRICLY meant as a PLACEHOLDER only.
-
-   You should NEVER ship an adaption of PDCLib still using that particular
-   value. You should NEVER write code that *tests* for that value. Indeed it is
-   not even conforming, since errno values should be defined as beginning with
-   an uppercase 'E', and there is no mechanics in <errno.h> to unmask that
-   particular value (for exactly that reason).
-
-   There also is no error message available for this value through either the
-   strerror() or perror() functions. It is being reported as "unknown" error.
-
-   The idea is that you scan the source of PDCLib for occurrences of this macro
-   and replace _PDCLIB_ERROR with whatever additional errno value you came up
-   with for your platform.
-
-   If you cannot find it within you to do that, tell your clients to check for
-   an errno value larger than zero. That, at least, would be standard compliant
-   (and fully portable).
-*/
-#define _PDCLIB_ERROR  4
+/* Argument list too long */
+#define _PDCLIB_E2BIG             7
+/* Permission denied */
+#define _PDCLIB_EACCES           13
+/* Address in use */
+#define _PDCLIB_EADDRINUSE       98
+/* Address not available */
+#define _PDCLIB_EADDRNOTAVAIL    99
+/* Address family not supported */
+#define _PDCLIB_EAFNOSUPPORT     97
+/* Resource unavailable, try again */
+#define _PDCLIB_EAGAIN           11
+/* Connection already in progress */
+#define _PDCLIB_EALREADY        114
+/* Bad file descriptor */
+#define _PDCLIB_EBADF             9
+/* Bad message */
+#define _PDCLIB_EBADMSG          74
+/* Device or resource busy */
+#define _PDCLIB_EBUSY            16
+/* Operation canceled */
+#define _PDCLIB_ECANCELED       125
+/* No child processes */
+#define _PDCLIB_ECHILD           10
+/* Connection aborted */
+#define _PDCLIB_ECONNABORTED    103
+/* Connection refused */
+#define _PDCLIB_ECONNREFUSED    111
+/* Connection reset */
+#define _PDCLIB_ECONNRESET      104
+/* Resource deadlock would occur */
+#define _PDCLIB_EDEADLK          35
+/* Destination address required */
+#define _PDCLIB_EDESTADDRREQ     89
+/* Mathematics argument out of domain of function */
+#define _PDCLIB_EDOM             33
+/* File exists */
+#define _PDCLIB_EEXIST           17
+/* Bad address */
+#define _PDCLIB_EFAULT           14
+/* File too large */
+#define _PDCLIB_EFBIG            27
+/* Host is unreachable */
+#define _PDCLIB_EHOSTUNREACH    113
+/* Identifier removed */
+#define _PDCLIB_EIDRM            43
+/* Illegal byte sequence */
+#define _PDCLIB_EILSEQ           84
+/* Operation in progress */
+#define _PDCLIB_EINPROGRESS     115
+/* Interrupted function */
+#define _PDCLIB_EINTR             4
+/* Invalid argument */
+#define _PDCLIB_EINVAL           22
+/* I/O error */
+#define _PDCLIB_EIO               5
+/* Socket is connected */
+#define _PDCLIB_EISCONN         106
+/* Is a directory */
+#define _PDCLIB_EISDIR           21
+/* Too many levels of symbolic links */
+#define _PDCLIB_ELOOP            40
+/* File descriptor value too large */
+#define _PDCLIB_EMFILE           24
+/* Too many links */
+#define _PDCLIB_EMLINK           31
+/* Message too large */
+#define _PDCLIB_EMSGSIZE         90
+/* Filename too long */
+#define _PDCLIB_ENAMETOOLONG     36
+/* Network is down */
+#define _PDCLIB_ENETDOWN        100
+/* Connection aborted by network */
+#define _PDCLIB_ENETRESET       102
+/* Network unreachable */
+#define _PDCLIB_ENETUNREACH     101
+/* Too many files open in system */
+#define _PDCLIB_ENFILE           23
+/* No buffer space available */
+#define _PDCLIB_ENOBUFS         105
+/* No message is available on the STREAM head read queue */
+#define _PDCLIB_ENODATA          61
+/* No such device */
+#define _PDCLIB_ENODEV           19
+/* No such file or directory */
+#define _PDCLIB_ENOENT            2
+/* Executable file format error */
+#define _PDCLIB_ENOEXEC           8
+/* No locks available */
+#define _PDCLIB_ENOLCK           37
+/* Link has been severed */
+#define _PDCLIB_ENOLINK          67
+/* Not enough space */
+#define _PDCLIB_ENOMEM           12
+/* No message of the desired type */
+#define _PDCLIB_ENOMSG           42
+/* Protocol not available */
+#define _PDCLIB_ENOPROTOOPT      92
+/* No space left on device */
+#define _PDCLIB_ENOSPC           28
+/* No STREAM resources */
+#define _PDCLIB_ENOSR            63
+/* Not a STREAM */
+#define _PDCLIB_ENOSTR           60
+/* Function not supported */
+#define _PDCLIB_ENOSYS           38
+/* The socket is not connected */
+#define _PDCLIB_ENOTCONN        107
+/* Not a directory */
+#define _PDCLIB_ENOTDIR          20
+/* Directory not empty */
+#define _PDCLIB_ENOTEMPTY        39
+/* State not recoverable */
+#define _PDCLIB_ENOTRECOVERABLE 131
+/* Not a socket */
+#define _PDCLIB_ENOTSOCK         88
+/* Not supported */
+#define _PDCLIB_ENOTSUP          95
+/* Inappropriate I/O control operation */
+#define _PDCLIB_ENOTTY           25
+/* No such device or address */
+#define _PDCLIB_ENXIO             6
+/* Operation not supported on socket */
+#define _PDCLIB_EOPNOTSUPP       95
+/* Value too large to be stored in data type */
+#define _PDCLIB_EOVERFLOW        75
+/* Previous owner died */
+#define _PDCLIB_EOWNERDEAD      130
+/* Operation not permitted */
+#define _PDCLIB_EPERM             1
+/* Broken pipe */
+#define _PDCLIB_EPIPE            32
+/* Protocol error */
+#define _PDCLIB_EPROTO           71
+/* Protocol not supported */
+#define _PDCLIB_EPROTONOSUPPORT  93
+/* Protocol wrong type for socket */
+#define _PDCLIB_EPROTOTYPE       91
+/* Result too large */
+#define _PDCLIB_ERANGE           34
+/* Read-only file system */
+#define _PDCLIB_EROFS            30
+/* Invalid seek */
+#define _PDCLIB_ESPIPE           29
+/* No such process */
+#define _PDCLIB_ESRCH             3
+/* Stream ioctl() timeout */
+#define _PDCLIB_ETIME            62
+/* Connection timed out */
+#define _PDCLIB_ETIMEDOUT       110
+/* Text file busy */
+#define _PDCLIB_ETXTBSY          26
+/* Operation would block */
+#define _PDCLIB_EWOULDBLOCK      11
+/* Cross-device link */
+#define _PDCLIB_EXDEV            18
 
 /* The maximum value that errno can be set to. This is used to set the size   */
 /* of the array in struct _PDCLIB_lc_text_t holding error messages for the    */
@@ -406,7 +528,7 @@ typedef int _PDCLIB_fd_t;
 /* are using additional errno values, you *HAVE* to provide appropriate error */
 /* messages for *ALL* locales.)                                               */
 /* Default is 4 (0, ERANGE, EDOM, EILSEQ).                                    */
-#define _PDCLIB_ERRNO_MAX 4
+#define _PDCLIB_ERRNO_MAX 132
 
 /* locale data -------------------------------------------------------------- */
 

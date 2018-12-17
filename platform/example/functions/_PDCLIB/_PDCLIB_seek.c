@@ -30,10 +30,7 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
             /* EMPTY - OK */
             break;
         default:
-            /* See comments on implementation-defined errno values in
-               <_PDCLIB_config.h>.
-            */
-            _PDCLIB_errno = _PDCLIB_ERROR;
+            _PDCLIB_errno = _PDCLIB_EINVAL;
             return EOF;
             break;
     }
@@ -50,20 +47,8 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
         stream->pos.offset = rc;
         return rc;
     }
-    switch ( errno )
-    {
-        case EBADF:
-        case EFAULT:
-            /* See comments on implementation-defined errno values in
-               <_PDCLIB_config.h>.
-            */
-            _PDCLIB_errno = _PDCLIB_ERROR;
-            break;
-        default:
-            /* This should be something like EUNKNOWN. */
-            _PDCLIB_errno = _PDCLIB_ERROR;
-            break;
-    }
+    /* The 1:1 mapping in _PDCLIB_config.h ensures that this works. */
+    _PDCLIB_errno = errno;
     return EOF;
 }
 

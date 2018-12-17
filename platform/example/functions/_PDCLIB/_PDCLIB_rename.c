@@ -30,29 +30,8 @@ int _PDCLIB_rename( const char * old, const char * new )
     {
         if ( unlink( old ) == EOF )
         {
-            switch ( errno )
-            {
-                /* See the comments on implementation-defined errno values in
-                   <_PDCLIB_config.h>.
-                */
-                case EACCES:
-                case EFAULT:
-                case EIO:
-                case EISDIR:
-                case ELOOP:
-                case ENAMETOOLONG:
-                case ENOENT:
-                case ENOMEM:
-                case ENOTDIR:
-                case EPERM:
-                case EROFS:
-                    _PDCLIB_errno = _PDCLIB_ERROR;
-                    break;
-                default:
-                    /* This should be something like EUNKNOWN. */
-                    _PDCLIB_errno = _PDCLIB_ERROR;
-                    break;
-            }
+            /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
+            _PDCLIB_errno = errno;
             return -1;
         }
         else
@@ -62,32 +41,8 @@ int _PDCLIB_rename( const char * old, const char * new )
     }
     else
     {
-        switch ( errno )
-        {
-            /* See the comments on implementation-defined errno values in
-               <_PDCLIB_config.h>.
-            */
-            case EACCES:
-            case EEXIST:
-            case EFAULT:
-            case EIO:
-            case ELOOP:
-            case EMLINK:
-            case ENAMETOOLONG:
-            case ENOENT:
-            case ENOMEM:
-            case ENOSPC:
-            case ENOTDIR:
-            case EPERM:
-            case EROFS:
-            case EXDEV:
-                _PDCLIB_errno = _PDCLIB_ERROR;
-                break;
-            default:
-                /* This should be something like EUNKNOWN. */
-                _PDCLIB_errno = _PDCLIB_ERROR;
-                break;
-        }
+        /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
+        _PDCLIB_errno = errno;
         return EOF;
     }
 }
