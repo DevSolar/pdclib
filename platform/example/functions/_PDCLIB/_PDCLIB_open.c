@@ -61,34 +61,8 @@ int _PDCLIB_open( const char * const filename, unsigned int mode )
     }
     if ( rc == -1 )
     {
-        switch ( errno )
-        {
-            /* See the comments on implementation-defined errno values in
-               <_PDCLIB_config.h>.
-            */
-            case EACCES:
-            case EFAULT:
-            case EINTR:
-            case EISDIR:
-            case ELOOP:
-            case EMFILE:
-            case ENAMETOOLONG:
-            case ENFILE:
-            case ENODEV:
-            case ENOENT:
-            case ENOMEM:
-            case ENOSPC:
-            case ENOTDIR:
-            case EOVERFLOW:
-            case EROFS:
-            case ETXTBSY:
-                _PDCLIB_errno = _PDCLIB_ERROR;
-                break;
-            default:
-                /* This should be something like EUNKNOWN. */
-                _PDCLIB_errno = _PDCLIB_ERROR;
-                break;
-        }
+        /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
+        _PDCLIB_errno = errno;
     }
     return rc;
 }
