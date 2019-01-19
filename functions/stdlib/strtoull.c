@@ -58,6 +58,10 @@ int main( void )
     TESTCASE( endptr == tricky + 2 );
     /* errno should still be 0 */
     TESTCASE( errno == 0 );
+    /* correctly decoding zero */
+    TESTCASE( strtoull( "0", &endptr, 0 ) == 0 );
+    TESTCASE( *endptr == '\0' );
+    TESTCASE( errno == 0 );
     /* overflowing subject sequence must still return proper endptr */
     TESTCASE( strtoull( overflow, &endptr, 36 ) == ULLONG_MAX );
     TESTCASE( errno == ERANGE );

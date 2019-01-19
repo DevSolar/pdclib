@@ -36,6 +36,8 @@ Rink Springer, for very precise bug reports including patches, a heads-up on
 the capabilities of PDCLib when I most needed it, and for pushing me back in
 the driver's seat, thanks.
 
+Giovanni Mascellani, for his finding a bug in the strto*l() functions.
+
 Everyone involved in the first, "public" attempt at PDCLib, for bearing with me
 when I restarted from scratch, thanks.
 
