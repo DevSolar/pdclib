@@ -38,6 +38,11 @@ const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
         else if ( *base == 0 )
         {
             *base = 8;
+            /* back up one digit, so that a plain zero is decoded correctly
+               (and endptr is set correctly as well).
+               (2019-01-15, Giovanni Mascellani)
+            */
+            --p;
         }
         else
         {
@@ -70,7 +75,7 @@ int main( void )
     TESTCASE( base == 10 );
     base = 0;
     sign = '\0';
-    TESTCASE( _PDCLIB_strtox_prelim( test2, &sign, &base ) == &test2[3] );
+    TESTCASE( _PDCLIB_strtox_prelim( test2, &sign, &base ) == &test2[2] );
     TESTCASE( sign == '+' );
     TESTCASE( base == 8 );
     base = 0;
