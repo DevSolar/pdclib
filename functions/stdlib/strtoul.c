@@ -25,7 +25,9 @@ unsigned long int strtoul( const char * s, char ** endptr, int base )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
+
 #include <errno.h>
 
 int main( void )
@@ -55,6 +57,10 @@ int main( void )
     TESTCASE( strtoul( tricky, &endptr, 8 ) == 0 );
     TESTCASE( endptr == tricky + 2 );
     /* errno should still be 0 */
+    TESTCASE( errno == 0 );
+    /* correctly decoding zero */
+    TESTCASE( strtoul( "0", &endptr, 0 ) == 0 );
+    TESTCASE( *endptr == '\0' );
     TESTCASE( errno == 0 );
     /* overflowing subject sequence must still return proper endptr */
     TESTCASE( strtoul( overflow, &endptr, 36 ) == ULONG_MAX );
