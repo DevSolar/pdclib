@@ -32,6 +32,7 @@ long long int strtoll( const char * s, char ** endptr, int base )
 #endif
 
 #ifdef TEST
+
 #include "_PDCLIB_test.h"
 
 #include <errno.h>
@@ -63,6 +64,10 @@ int main( void )
     TESTCASE( strtoll( tricky, &endptr, 8 ) == 0 );
     TESTCASE( endptr == tricky + 2 );
     /* errno should still be 0 */
+    TESTCASE( errno == 0 );
+    /* correctly decoding zero */
+    TESTCASE( strtoll( "0", &endptr, 0 ) == 0 );
+    TESTCASE( *endptr == '\0' );
     TESTCASE( errno == 0 );
     /* overflowing subject sequence must still return proper endptr */
     TESTCASE( strtoll( overflow, &endptr, 36 ) == LLONG_MIN );
