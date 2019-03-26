@@ -237,13 +237,13 @@ set_property( TARGET pdclib PROPERTY POSITION_INDEPENDENT_CODE 1 )
 
 # List of strict warnings; the compiler is your friend.
 if ( CMAKE_COMPILER_IS_GNUCC )
-    set( WARNINGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin" )
-    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${WARNINGS} )
-    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${WARNINGS} )
+    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin" )
+    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
+    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
 elseif( MSVC )
-    set( WARNINGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
-    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${WARNINGS} )
-    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${WARNINGS} )
+    set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
+    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
+    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
 endif()
 
 # On Windows, both a dynamic .dll and a static .a library require
@@ -254,6 +254,9 @@ endif()
 if ( UNIX )
     set_target_properties( pdclibs PROPERTIES OUTPUT_NAME pdclib )
 endif()
+
+add_custom_target( testdrivers )
+add_custom_target( regtestdrivers )
 
 # Each source file can be compiled to 1) a test driver for the
 # function it defines, and 2) a regression test driver for the
@@ -267,6 +270,7 @@ foreach( file ${PDCLIB_SOURCES} )
     target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
     target_link_libraries( ${basename}_t pdclib )
     add_test( ${basename}_t test_support/testdrivers/${basename}_t )
+    add_dependencies( testdrivers ${basename}_t )
 
     # Regression test driver.
     add_executable( ${basename}_r ${file} )
@@ -274,4 +278,5 @@ foreach( file ${PDCLIB_SOURCES} )
     set_property( TARGET ${basename}_r PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
     target_include_directories( ${basename}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
+    add_dependencies( regtestdrivers ${basename}_r )
 endforeach()
