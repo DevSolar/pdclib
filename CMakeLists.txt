@@ -16,7 +16,7 @@ endif()
 
 # Test drivers write files to test_support/..., but this directory
 # only exists in the source dir, so we create it in the build dir.
-file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test_support )
+file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
 include( CTest )
 mark_as_advanced( BUILD_TESTING )
 
@@ -263,13 +263,15 @@ foreach( file ${PDCLIB_SOURCES} )
     # Test driver.
     add_executable( ${basename}_t ${file} )
     set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST" )
+    set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers )
     target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
     target_link_libraries( ${basename}_t pdclib )
-    add_test( ${basename}_t ./${basename}_t )
+    add_test( ${basename}_t test_support/testdrivers/${basename}_t )
 
     # Regression test driver.
     add_executable( ${basename}_r ${file} )
     set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST" )
+    set_property( TARGET ${basename}_r PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
     target_include_directories( ${basename}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
-    add_test( ${basename}_r ./${basename}_r )
+    add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
 endforeach()
