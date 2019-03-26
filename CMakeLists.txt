@@ -2,19 +2,25 @@ cmake_minimum_required( VERSION 2.9 FATAL_ERROR )
 
 project( pdclib LANGUAGES C )
 
+# Setting compiler to C99 standard at minimum, no extensions.
 set( CMAKE_C_STANDARD 99 )
 set( CMAKE_C_STANDARD_REQUIRED ON )
 set( CMAKE_C_EXTENSIONS OFF )
 
+# Debug is the default setting anyway, but better to make it explicit
+# and give output about it.
 if ( NOT CMAKE_BUILD_TYPE )
     message( "++ CMAKE_BUILD_TYPE not set. Defaulting to 'Debug'." )
     set( CMAKE_BUILD_TYPE Debug )
 endif()
 
+# Test drivers write files to test_support/..., but this directory
+# only exists in the source dir, so we create it in the build dir.
+file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test_support )
 include( CTest )
 mark_as_advanced( BUILD_TESTING )
-file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test_support )
 
+# List of source files.
 set( PDCLIB_SOURCES
      functions/ctype/isalnum.c
      functions/ctype/isalpha.c
@@ -187,6 +193,9 @@ set( PDCLIB_SOURCES
      platform/example/functions/time/timespec_get.c
 )
 
+# List of header files. Not required for actually building, but if
+# they are not listed in add_library(), they do not show up in IDE
+# project files.
 set( PDCLIB_HEADERS
      include/assert.h
      include/ctype.h
@@ -214,46 +223,53 @@ set( PDCLIB_HEADERS
      platform/example/include/pdclib/_PDCLIB_config.h
 )
 
-add_library( pdclib_obj_shared SHARED OBJECT ${PDCLIB_SOURCES} )
-target_include_directories( pdclib_obj_shared BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
-set_property( TARGET pdclib_obj_shared PROPERTY POSITION_INDEPENDENT_CODE 1 )
+# Two libraries, one for dynamic linking, one for static linking.
+add_library( pdclib  SHARED ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} )
+add_library( pdclibs STATIC ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} )
 
-add_library( pdclib_obj_static STATIC OBJECT ${PDCLIB_SOURCES} )
-target_include_directories( pdclib_obj_static BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
+# Compilation shall use PDCLib's over system include directories.
+target_include_directories( pdclib  BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
+target_include_directories( pdclibs BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
 
-set( GCC_WARNINGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin" )
-set( MSVC_WARNINGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
+# The code for pdclib_obj_shared should be compiled with whatever
+# options the compiler used requires to generate relocatable code.
+set_property( TARGET pdclib PROPERTY POSITION_INDEPENDENT_CODE 1 )
 
+# List of strict warnings; the compiler is your friend.
 if ( CMAKE_COMPILER_IS_GNUCC )
-    set_property( TARGET pdclib_obj_shared APPEND_STRING PROPERTY COMPILE_FLAGS ${GCC_WARNINGS} )
-    set_property( TARGET pdclib_obj_static APPEND_STRING PROPERTY COMPILE_FLAGS ${GCC_WARNINGS} )
+    set( WARNINGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin" )
+    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${WARNINGS} )
+    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${WARNINGS} )
 elseif( MSVC )
-    set_property( TARGET pdclib_obj_shared APPEND_STRING PROPERTY COMPILE_FLAGS ${MSVC_WARNINGS} )
-    set_property( TARGET pdclib_obj_static APPEND_STRING PROPERTY COMPILE_FLAGS ${MSVC_WARNINGS} )
+    set( WARNINGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
+    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${WARNINGS} )
+    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${WARNINGS} )
 endif()
 
-add_library( pdclib SHARED $<TARGET_OBJECTS:pdclib_obj_shared> ${PDCLIB_HEADERS} )
-add_library( pdclibs STATIC $<TARGET_OBJECTS:pdclib_obj_static> ${PDCLIB_HEADERS} )
-
+# On Windows, both a dynamic .dll and a static .a library require
+# their own respective .lib file, which is why the static library
+# has its distinctive name pdclibs.a (note the "s").
+# On Unix-like OS', we can have both .so and .a with the same base
+# name, so we do away with the "s".
 if ( UNIX )
-    # On Unix-like OS, we can have pdclib.a and pdclib.so.
-    # On Windows, either needs a .lib file, which would collide,
-    # so on Windows the statically linked lib is pdclibs.a (note
-    # the "s" in the library name).
     set_target_properties( pdclibs PROPERTIES OUTPUT_NAME pdclib )
 endif()
 
+# Each source file can be compiled to 1) a test driver for the
+# function it defines, and 2) a regression test driver for the
+# function as defined by the system's C library.
 foreach( file ${PDCLIB_SOURCES} )
-    get_filename_component( stub ${file} NAME_WE )
+    get_filename_component( basename ${file} NAME_WE )
+    # Test driver.
+    add_executable( ${basename}_t ${file} )
+    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST" )
+    target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
+    target_link_libraries( ${basename}_t pdclib )
+    add_test( ${basename}_t ./${basename}_t )
 
-    add_executable( ${stub}_t ${file} )
-    set_property( TARGET ${stub}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST" )
-    target_include_directories( ${stub}_t BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
-    target_link_libraries( ${stub}_t pdclib )
-    add_test( ${stub}_t ./${stub}_t )
-
-    add_executable( ${stub}_r ${file} )
-    set_property( TARGET ${stub}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST" )
-    target_include_directories( ${stub}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
-    add_test( ${stub}_r ./${stub}_r )
+    # Regression test driver.
+    add_executable( ${basename}_r ${file} )
+    set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST" )
+    target_include_directories( ${basename}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
+    add_test( ${basename}_r ./${basename}_r )
 endforeach()
