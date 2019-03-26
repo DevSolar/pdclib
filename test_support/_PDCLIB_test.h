@@ -19,9 +19,9 @@ static const char abcdx[] = "abcdx";
 static const char teststring[] = "1234567890\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n";
 
 /* Temporary file names */
-static const char testfile[]="testing/testfile";
-static const char testfile1[]="testing/testfile1";
-static const char testfile2[]="testing/testfile2";
+static const char testfile[]="test_support/testfile";
+static const char testfile1[]="test_support/testfile1";
+static const char testfile2[]="test_support/testfile2";
 
 #define NO_TESTDRIVER 0
 
