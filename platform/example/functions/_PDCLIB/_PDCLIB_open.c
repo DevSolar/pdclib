@@ -89,6 +89,7 @@ int main( void )
     TESTCASE( _PDCLIB_open( testfile, _PDCLIB_FREAD ) == _PDCLIB_NOHANDLE );
     /* Writing to file, trying to read from it. */
     TESTCASE( ( fh = _PDCLIB_open( testfile, _PDCLIB_FWRITE ) ) != _PDCLIB_NOHANDLE );
+    puts( strerror( errno ) );
     TESTCASE( write( fh, "test", 4 ) == 4 );
     TESTCASE( lseek( fh, 0, SEEK_SET ) == 0 );
     TESTCASE( read( fh, buffer, 4 ) == -1 );
