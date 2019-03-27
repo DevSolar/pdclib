@@ -14,9 +14,6 @@ if ( NOT CMAKE_BUILD_TYPE )
     set( CMAKE_BUILD_TYPE Debug )
 endif()
 
-# Test drivers write files to test_support/..., but this directory
-# only exists in the source dir, so we create it in the build dir.
-file( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
 include( CTest )
 mark_as_advanced( BUILD_TESTING )
 
@@ -215,17 +212,21 @@ set( PDCLIB_HEADERS
      include/string.h
      include/time.h
      include/wctype.h
+
+     platform/example/include/float.h
+     platform/example/include/signal.h
+)
+
+set( PDCLIB_PRIVATE_HEADERS
      include/pdclib/_PDCLIB_aux.h
      include/pdclib/_PDCLIB_glue.h
      include/pdclib/_PDCLIB_int.h
-     platform/example/include/float.h
-     platform/example/include/signal.h
      platform/example/include/pdclib/_PDCLIB_config.h
 )
 
 # Two libraries, one for dynamic linking, one for static linking.
-add_library( pdclib  SHARED ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} )
-add_library( pdclibs STATIC ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} )
+add_library( pdclib  SHARED ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
+add_library( pdclibs STATIC ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
 
 # Compilation shall use PDCLib's over system include directories.
 target_include_directories( pdclib  BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
@@ -279,4 +280,67 @@ foreach( file ${PDCLIB_SOURCES} )
     target_include_directories( ${basename}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
     add_dependencies( regtestdrivers ${basename}_r )
+endforeach()
+
+# Installation files
+
+if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    install( TARGETS pdclib pdclibs DESTINATION lib64 )
+else()
+    install( TARGETS pdclib pdclibs DESTINATION lib )
+endif()
+
+install( FILES ${PDCLIB_HEADERS} DESTINATION include )
+install( FILES ${PDCLIB_PRIVATE_HEADERS} DESTINATION include/pdclib )
+
+# errno_readout
+# -------------
+# A helper executable to read, from the system library, this platform's
+# errno numbers and perror() / strerror() texts, to faciliate adapting
+# PDCLib to use the same numbers / texts on any given platform.
+# (Platform maintainers are supposed to use the output to adapt their
+# platform's platform/<xyz>/functions/_PDCLIB/_PDCLIB_stdinit.c and
+# platform/<xyz>/include/pdclib/_PDCLIB_config.h.)
+add_executable( errno_readout
+                auxiliary/errno/errno_readout.c )
+
+# get_uctypes
+# -----------
+# A helper executable to parse up-to-date Unicode metadata from the
+# Unicode database.
+set( uctype_SOURCES
+     auxiliary/uctype/derived_properties.c
+     auxiliary/uctype/text_utilities.c
+     auxiliary/uctype/uctype.c
+     auxiliary/uctype/unicode_data.c
+)
+
+set( uctype_HEADERS
+     auxiliary/uctype/derived_properties.h
+     auxiliary/uctype/test.h
+     auxiliary/uctype/text_utilities.h
+     auxiliary/uctype/uctype.h
+     auxiliary/uctype/unicode_data.h
+)
+
+add_library( uctype STATIC ${uctype_SOURCES} )
+set_property( TARGET uctype APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
+target_include_directories( uctype PRIVATE ${CMAKE_SOURCE_DIR}/auxiliary/uctype )
+
+add_executable( get_uctypes auxiliary/uctype/main.c )
+set_property( TARGET get_uctypes APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
+target_include_directories( get_uctypes PRIVATE ${CMAKE_SOURCE_DIR}/auxiliary/uctype )
+target_link_libraries( get_uctypes uctype )
+
+foreach( file ${uctype_SOURCES} )
+    get_filename_component( basename ${file} NAME_WE )
+
+    # Test driver.
+    add_executable( ${basename}_t ${file} )
+    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST" )
+    set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/uctype )
+    target_include_directories( ${basename}_t PRIVATE ${CMAKE_SOURCE_DIR}/auxiliary/uctype )
+    target_link_libraries( ${basename}_t uctype )
+    add_test( ${basename}_t test_support/uctype/${basename}_t )
+    add_dependencies( testdrivers ${basename}_t )
 endforeach()
