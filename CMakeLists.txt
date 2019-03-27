@@ -293,6 +293,25 @@ endif()
 install( FILES ${PDCLIB_HEADERS} DESTINATION include )
 install( FILES ${PDCLIB_PRIVATE_HEADERS} DESTINATION include/pdclib )
 
+# CPack config
+
+set( CPACK_PACKAGE_VERSION_MAJOR "0" )
+set( CPACK_PACKAGE_VERSION_MINOR "6" )
+set( CPACK_PACKAGE_VERSION_PATCH "0" )
+set( CPACK_PACKAGE_CONTACT "Martin Baute <solar@rootdirectory.de>" )
+set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "PDCLib -- Public Domain C Library" )
+set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING.CC0" )
+set( CPACK_PACKAGE_VENDOR "Martin Baute -- http://pdclib.rootdirectory.de" )
+set( CPACK_PACKAGE_NAME "pdclib" )
+if ( WIN32 )
+    set( CPACK_GENERATOR "ZIP" )
+    set( CPACK_SOURCE_GENERATOR "ZIP" )
+else()
+    set( CPACK_GENERATOR "TGZ" )
+    set( CPACK_SOURCE_GENERATOR "TGZ" )
+endif()
+include( CPack )
+
 # errno_readout
 # -------------
 # A helper executable to read, from the system library, this platform's
