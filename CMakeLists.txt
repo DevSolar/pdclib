@@ -238,7 +238,7 @@ set_property( TARGET pdclib PROPERTY POSITION_INDEPENDENT_CODE 1 )
 
 # List of strict warnings; the compiler is your friend.
 if ( CMAKE_COMPILER_IS_GNUCC )
-    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin" )
+    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin -fvisibility=hidden" )
     set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
     set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
 elseif( MSVC )
@@ -266,16 +266,16 @@ foreach( file ${PDCLIB_SOURCES} )
     get_filename_component( basename ${file} NAME_WE )
     # Test driver.
     add_executable( ${basename}_t ${file} )
-    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST" )
+    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST ${FLAGS}" )
     set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers )
     target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
-    target_link_libraries( ${basename}_t pdclib )
+    target_link_libraries( ${basename}_t pdclibs )
     add_test( ${basename}_t test_support/testdrivers/${basename}_t )
     add_dependencies( testdrivers ${basename}_t )
 
     # Regression test driver.
     add_executable( ${basename}_r ${file} )
-    set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST" )
+    set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST ${FLAGS}" )
     set_property( TARGET ${basename}_r PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
     target_include_directories( ${basename}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
@@ -356,7 +356,7 @@ foreach( file ${uctype_SOURCES} )
 
     # Test driver.
     add_executable( ${basename}_t ${file} )
-    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST" )
+    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST ${FLAGS}" )
     set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/uctype )
     target_include_directories( ${basename}_t PRIVATE ${CMAKE_SOURCE_DIR}/auxiliary/uctype )
     target_link_libraries( ${basename}_t uctype )
