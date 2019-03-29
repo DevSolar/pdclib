@@ -47,7 +47,7 @@ struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char
 
                         for ( i = 0; i < _PDCLIB_CHARSET_SIZE; ++i )
                         {
-                            if ( fscanf( fh, "%x %hhx %hhx", &rc->entry[ i ].flags, &rc->entry[ i ].upper, &rc->entry[ i ].lower ) != 3 )
+                            if ( fscanf( fh, "%" SCNx16 " %hhx %hhx", &rc->entry[ i ].flags, &rc->entry[ i ].upper, &rc->entry[ i ].lower ) != 3 )
                             {
                                 fclose( fh );
                                 free( file );
