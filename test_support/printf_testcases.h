@@ -1,4 +1,8 @@
     {
+#if __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat"
+#endif
 #if CHAR_MIN == -128
     assert(CHAR_MIN == -128);
     PRINTF_TEST( 4,   "-128", "%hhd", CHAR_MIN );
@@ -430,5 +434,8 @@
     PRINTF_TEST(20, "00edcb5433          ", "%+ -0*.*x", 20, 10, -0x1234abcdu);
     PRINTF_TEST(20, "1234ABCD            ", "% -+0*.*X", 20, 5, 0x1234abcdu);
     PRINTF_TEST(20, "00EDCB5433          ", "% -+0*.*X", 20, 10, -0x1234abcdu);
+#if __GNUC__
+#pragma GCC diagnostic pop
+#endif
     }
 /******************************************************************************/

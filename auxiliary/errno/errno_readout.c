@@ -117,7 +117,7 @@ int main( int argc, char * argv[] )
 
     for ( size_t i = 0; i < sizeof( error ) / sizeof( error[0] ); ++i )
     {
-        printf( "/* %s */\n#define %-*s %3d\n", error[i].text, string_len_max, error[i].string, error[i].errno_value );
+        printf( "/* %s */\n#define %-*s %3d\n", error[i].text, (int)string_len_max, error[i].string, error[i].errno_value );
     }
 
     string_len_max -= 8;
@@ -138,11 +138,11 @@ int main( int argc, char * argv[] )
 
         if ( index >= 0 )
         {
-            printf( "        /* %-*s */ (char *)\"%s (%s)\",\n", string_len_max, error[index].string + 8, error[index].string + 8, error[index].text );
+            printf( "        /* %-*s */ (char *)\"%s (%s)\",\n", (int)string_len_max, error[index].string + 8, error[index].string + 8, error[index].text );
         }
         else
         {
-            printf( "        /* %-*s */ (char *)\"unknown error\",\n", string_len_max, "unknown error" );
+            printf( "        /* %-*s */ (char *)\"unknown error\",\n", (int)string_len_max, "unknown error" );
         }
     }
 }
