@@ -12,7 +12,18 @@
 
 int vsprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, va_list arg )
 {
+#if __GCC__
+/* POSIX requires an EOVERFLOW failure for bounds > INT_MAX, which is in
+   conflict with the C standard. We explicitly disable the warning GCC
+   emits about SIZE_MAX > INT_MAX.
+*/
+#pragma GCC diagnostics push
+#pragma GCC diagnostics ignored "-Wformat-truncation="
+#endif
     return vsnprintf( s, SIZE_MAX, format, arg ); /* TODO: Replace with a non-checking call */
+#if __GCC__
+#pragma GCC diagnostics pop
+#endif
 }
 
 #endif
