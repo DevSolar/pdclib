@@ -17,18 +17,18 @@
 #include </usr/include/errno.h>
 
 extern int unlink( const char * pathname );
-extern int link( const char * old, const char * new );
+extern int link( const char * oldpath, const char * newpath );
 
-int _PDCLIB_rename( const char * old, const char * new )
+int _PDCLIB_rename( const char * oldpath, const char * newpath )
 {
     /* Note that the behaviour if new file exists is implementation-defined.
        There is nothing wrong with either overwriting it or failing the
        operation, but you might want to document whichever you chose.
        This example fails if new file exists.
     */
-    if ( link( old, new ) == 0 )
+    if ( link( oldpath, newpath ) == 0 )
     {
-        if ( unlink( old ) == EOF )
+        if ( unlink( oldpath ) == EOF )
         {
             /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
             _PDCLIB_errno = errno;

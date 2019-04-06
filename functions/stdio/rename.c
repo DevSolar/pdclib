@@ -14,19 +14,19 @@
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
-int rename( const char * old, const char * new )
+int rename( const char * oldpath, const char * newpath )
 {
     struct _PDCLIB_file_t * current = _PDCLIB_filelist;
     while ( current != NULL )
     {
-        if ( ( current->filename != NULL ) && ( strcmp( current->filename, old ) == 0 ) )
+        if ( ( current->filename != NULL ) && ( strcmp( current->filename, oldpath ) == 0 ) )
         {
             /* File of that name currently open. Do not rename. */
             return EOF;
         }
         current = current->next;
     }
-    return _PDCLIB_rename( old, new );
+    return _PDCLIB_rename( oldpath, newpath );
 }
 
 #endif
