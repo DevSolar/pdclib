@@ -7,6 +7,11 @@
 #include <stdlib.h>
 
 #ifndef REGTEST
+/* Sometimes I work on my mobile, using Termux. In that environment,
+   atexit() is defined by the C runtime, leading to linker error when
+   trying to build the test driver executable.
+*/
+#if defined( TEST ) && ! defined( __ANDROID__ )
 
 extern void (*_PDCLIB_exitstack[])( void );
 extern size_t _PDCLIB_exitptr;
@@ -24,6 +29,7 @@ int atexit( void (*func)( void ) )
     }
 }
 
+#endif
 #endif
 
 #ifdef TEST
@@ -52,12 +58,16 @@ static void checkhandler( void )
 
 int main( void )
 {
+#ifdef __ANDROID__
+    TESTCASE( NO_TESTDRIVER );
+#else
     int i;
     TESTCASE( atexit( &checkhandler ) == 0 );
     for ( i = 0; i < 31; ++i )
     {
         TESTCASE( atexit( &counthandler ) == 0 );
     }
+#endif
     return TEST_RESULTS;
 }
 
