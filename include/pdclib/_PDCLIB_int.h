@@ -572,6 +572,9 @@ _PDCLIB_static_assert( ( (char)-1 < 0 ) == _PDCLIB_CHAR_SIGNED, "Compiler disagr
 _PDCLIB_static_assert( sizeof( sizeof( int ) ) == sizeof( _PDCLIB_size ), "Compiler disagrees on _PDCLIB_size." );
 
 _PDCLIB_static_assert( sizeof( _PDCLIB_wchar ) == sizeof( L'x' ), "Compiler disagrees on _PDCLIB_wchar." );
+#ifdef __cplusplus
+_PDCLIB_static_assert( sizeof( _PDCLIB_wchar ) == sizeof( wchar_t ), "Compiler disagrees on _PDCLIB_wchar / wchar_t (C++)." );
+#endif
 
 _PDCLIB_static_assert( sizeof( void * ) == sizeof( _PDCLIB_intptr ), "Compiler disagrees on _PDCLIB_intptr." );
 

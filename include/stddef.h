@@ -20,7 +20,9 @@ typedef _PDCLIB_ptrdiff_t ptrdiff_t;
 typedef _PDCLIB_size_t size_t;
 #endif
 
+#ifndef __cplusplus
 typedef _PDCLIB_wchar_t   wchar_t;
+#endif
 
 #ifndef _PDCLIB_NULL_DEFINED
 #define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED
