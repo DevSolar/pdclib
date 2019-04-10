@@ -17,6 +17,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#ifdef __ANDROID__
+/* Getting the sigset_t typedef for Termux */
+#include <bits/signal_types.h>
+#endif
 #include <unistd.h>
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
