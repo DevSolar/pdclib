@@ -65,7 +65,8 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
 
-     platform/example/functions/_PDCLIB/_PDCLIB_allocpages.c
+     functions/_dlmalloc/malloc.c
+
      platform/example/functions/_PDCLIB/_PDCLIB_close.c
      platform/example/functions/_PDCLIB/_PDCLIB_Exit.c
      platform/example/functions/_PDCLIB/_PDCLIB_fillbuffer.c
@@ -132,19 +133,15 @@ set( PDCLIB_SOURCES
      functions/stdlib/atol.c
      functions/stdlib/atoll.c
      functions/stdlib/bsearch.c
-     functions/stdlib/calloc.c
      functions/stdlib/div.c
      functions/stdlib/exit.c
      functions/stdlib/_Exit.c
-     functions/stdlib/free.c
      functions/stdlib/labs.c
      functions/stdlib/ldiv.c
      functions/stdlib/llabs.c
      functions/stdlib/lldiv.c
-     functions/stdlib/malloc.c
      functions/stdlib/qsort.c
      functions/stdlib/rand.c
-     functions/stdlib/realloc.c
      functions/stdlib/srand.c
      functions/stdlib/strtol.c
      functions/stdlib/strtoll.c
@@ -239,12 +236,12 @@ set_property( TARGET pdclib PROPERTY POSITION_INDEPENDENT_CODE 1 )
 # List of strict warnings; the compiler is your friend.
 if ( CMAKE_COMPILER_IS_GNUCC )
     set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin -fvisibility=hidden" )
-    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
-    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
+    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
+    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
 elseif( MSVC )
     set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
-    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
-    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
+    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
+    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
 endif()
 
 # On Windows, both a dynamic .dll and a static .a library require
@@ -258,12 +255,14 @@ endif()
 
 add_custom_target( testdrivers )
 add_custom_target( regtestdrivers )
+add_custom_target( linktestdrivers )
 
 # Each source file can be compiled to 1) a test driver for the
 # function it defines, and 2) a regression test driver for the
 # function as defined by the system's C library.
 foreach( file ${PDCLIB_SOURCES} )
     get_filename_component( basename ${file} NAME_WE )
+
     # Test driver.
     add_executable( ${basename}_t ${file} )
     set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST ${FLAGS}" )
@@ -280,6 +279,14 @@ foreach( file ${PDCLIB_SOURCES} )
     target_include_directories( ${basename}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
     add_dependencies( regtestdrivers ${basename}_r )
+
+    # Link test driver.
+    add_executable( ${basename}_l ${file} )
+    set_property( TARGET ${basename}_l APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST -nostdlib ${FLAGS}" )
+    set_property( TARGET ${basename}_l PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/linktestdrivers )
+    target_include_directories( ${basename}_l BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
+    target_link_libraries( ${basename}_l pdclib )
+    add_dependencies( linktestdrivers ${basename}_l )
 endforeach()
 
 # Installation files

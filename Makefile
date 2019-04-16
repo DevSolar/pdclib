@@ -25,7 +25,7 @@ REGDEPFILES := $(patsubst %,$(BUILDDIR)/%.d,$(REGFILES))
 ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
 
 WARNINGS := -Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement
-CFLAGS := -DUSE_DL_PREFIX -DDLMALLOC_EXPORT= -fno-builtin -g -std=c99 -I./test_support -I./platform/example/include $(WARNINGS) $(USERFLAGS)
+CFLAGS := -fno-builtin -g -std=c99 -I./test_support -I./platform/example/include $(WARNINGS) $(USERFLAGS)
 
 .PHONY: all clean srcdist tests testdrivers regtests regtestdrivers todos fixmes help
 
