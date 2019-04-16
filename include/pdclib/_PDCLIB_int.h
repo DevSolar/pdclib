@@ -358,11 +358,11 @@ struct _PDCLIB_status_t
 /* -------------------------------------------------------------------------- */
 
 /* This is the main function called by atoi(), atol() and atoll().            */
-_PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
+_PDCLIB_LOCAL _PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
 
 /* Two helper functions used by strtol(), strtoul() and long long variants.   */
-const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
-_PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, int limdigit, char * sign );
+_PDCLIB_LOCAL const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
+_PDCLIB_LOCAL _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, int limdigit, char * sign );
 
 /* Digits arrays used by various integer conversion functions */
 extern const char _PDCLIB_digits[];
@@ -375,7 +375,7 @@ extern const char _PDCLIB_Xdigits[];
    by the function.
    Returns a pointer to the first character not parsed as conversion specifier.
 */
-const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
+_PDCLIB_LOCAL const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status );
 
 /* The worker for all scanf() type of functions. The pointer spec should point
    to the introducing '%' of a conversion specifier. The status structure is to
@@ -386,36 +386,36 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
    or NULL in case of error.
    FIXME: Should distinguish between matching and input error
 */
-const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status );
+_PDCLIB_LOCAL const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status );
 
 /* Parsing any fopen() style filemode string into a number of flags. */
-unsigned int _PDCLIB_filemode( const char * mode );
+_PDCLIB_LOCAL unsigned int _PDCLIB_filemode( const char * mode );
 
 /* Sanity checking and preparing of read buffer, should be called first thing
    by any stdio read-data function.
    Returns 0 on success, EOF on error.
    On error, EOF / error flags and errno are set appropriately.
 */
-int _PDCLIB_prepread( struct _PDCLIB_file_t * stream );
+_PDCLIB_LOCAL int _PDCLIB_prepread( struct _PDCLIB_file_t * stream );
 
 /* Sanity checking, should be called first thing by any stdio write-data
    function.
    Returns 0 on success, EOF on error.
    On error, error flags and errno are set appropriately.
 */
-int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream );
+_PDCLIB_LOCAL int _PDCLIB_prepwrite( struct _PDCLIB_file_t * stream );
 
 /* Closing all streams on program exit */
-void _PDCLIB_closeall( void );
+_PDCLIB_LOCAL void _PDCLIB_closeall( void );
 
 /* Check if a given year is a leap year. Parameter is offset to 1900. */
-int _PDCLIB_is_leap( int year_offset );
+_PDCLIB_LOCAL int _PDCLIB_is_leap( int year_offset );
 
 /* Read a specified number of lines from a file stream; return a pointer to
    allocated memory holding the lines (newlines replaced with zero terminators)
    or NULL in case of error.
 */
-char * _PDCLIB_load_lines( struct _PDCLIB_file_t * fh, _PDCLIB_size_t lines );
+_PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * fh, _PDCLIB_size_t lines );
 
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */
@@ -431,7 +431,7 @@ extern int _PDCLIB_errno;
 /* A mechanism for delayed evaluation. (Not sure if this is really necessary, so
    no detailed documentation on the "why".)
 */
-int * _PDCLIB_errno_func( void );
+_PDCLIB_PUBLIC int * _PDCLIB_errno_func( void );
 
 /* -------------------------------------------------------------------------- */
 /* <locale.h> support                                                         */
@@ -552,12 +552,12 @@ struct _PDCLIB_lc_time_t
 
 extern struct _PDCLIB_lc_time_t _PDCLIB_lc_time;
 
-struct _PDCLIB_lc_lconv_numeric_t * _PDCLIB_load_lc_numeric( const char * path, const char * locale );
-struct _PDCLIB_lc_lconv_monetary_t * _PDCLIB_load_lc_monetary( const char * path, const char * locale );
-struct _PDCLIB_lc_collate_t * _PDCLIB_load_lc_collate( const char * path, const char * locale );
-struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char * locale );
-struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char * locale );
-struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, const char * locale );
+_PDCLIB_LOCAL struct _PDCLIB_lc_lconv_numeric_t * _PDCLIB_load_lc_numeric( const char * path, const char * locale );
+_PDCLIB_LOCAL struct _PDCLIB_lc_lconv_monetary_t * _PDCLIB_load_lc_monetary( const char * path, const char * locale );
+_PDCLIB_LOCAL struct _PDCLIB_lc_collate_t * _PDCLIB_load_lc_collate( const char * path, const char * locale );
+_PDCLIB_LOCAL struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char * locale );
+_PDCLIB_LOCAL struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char * locale );
+_PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, const char * locale );
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
