@@ -1,0 +1,120 @@
+--- malloc-2.8.6.c	2019-04-16 16:33:03.318790578 +0200
++++ malloc.c	2019-04-16 15:34:23.881308957 +0200
+@@ -1,3 +1,55 @@
++/* malloc( size_t )
++   calloc( size_t, size_t )
++   realloc( void *, size_t )
++   free( void * )
++
++   This file is part of the Public Domain C Library (PDCLib).
++   Permission is granted to use, modify, and / or redistribute at will.
++
++   It is a slightly modified copy of Doug Lea's malloc(), retrieved from
++           ftp://gee.cs.oswego.edu/pub/misc/malloc.c
++   at version 2.8.6, which is released under CC0 license just as PDCLib.
++*/
++
++/* Declared implicitly by dlmalloc. This declaration avoids the warning. */
++#include <stdint.h>
++void * sbrk( intptr_t );
++
++#ifndef REGTEST
++
++#include "pdclib/_PDCLIB_config.h"
++
++/* Have all functions herein use the dl* prefix */
++#define USE_DL_PREFIX 1
++
++/* Hide all functions herein as internal to the library */
++#define DLMALLOC_EXPORT _PDCLIB_LOCAL
++
++/* Unhide the standard functions. (Their declarations with the
++   DLMALLOC_EXPORT modifier below has been commented out; they
++   are declared _PDCLIB_PUBLIC in <stdlib.h>, marking them
++   exported from the library.)
++*/
++#define dlmalloc  malloc
++#define dlcalloc  calloc
++#define dlrealloc realloc
++#define dlfree    free
++
++#endif
++
++#ifdef TEST
++
++#include "_PDCLIB_test.h"
++
++int main( void )
++{
++    TESTCASE( NO_TESTDRIVER );
++    return TEST_RESULTS;
++}
++
++#endif
++
++/* ------------------------------------------------------------------- */
+ /*
+   This is a version (aka dlmalloc) of malloc/free/realloc written by
+   Doug Lea and released to the public domain, as explained at
+@@ -585,8 +637,15 @@
+ #define MAX_SIZE_T           (~(size_t)0)
+ 
+ #ifndef USE_LOCKS /* ensure true if spin or recursive locks set */
+-#define USE_LOCKS  ((defined(USE_SPIN_LOCKS) && USE_SPIN_LOCKS != 0) || \
+-                    (defined(USE_RECURSIVE_LOCKS) && USE_RECURSIVE_LOCKS != 0))
++/* defined() in the expansion of a macro is non-portable behavior
++   and runs afoul of -Wextra.
++*/
++#if ((defined(USE_SPIN_LOCKS) && USE_SPIN_LOCKS != 0) || \
++     (defined(USE_RECURSIVE_LOCKS) && USE_RECURSIVE_LOCKS != 0))
++#define USE_LOCKS 1
++#else
++#define USE_LOCKS 0
++#endif
+ #endif /* USE_LOCKS */
+ 
+ #if USE_LOCKS /* Spin locks for gcc >= 4.1, older gcc on x86, MSC >= 1310 */
+@@ -851,7 +910,7 @@
+   maximum supported value of n differs across systems, but is in all
+   cases less than the maximum representable value of a size_t.
+ */
+-DLMALLOC_EXPORT void* dlmalloc(size_t);
++/*DLMALLOC_EXPORT void* dlmalloc(size_t);*/
+ 
+ /*
+   free(void* p)
+@@ -860,14 +919,14 @@
+   It has no effect if p is null. If p was not malloced or already
+   freed, free(p) will by default cause the current program to abort.
+ */
+-DLMALLOC_EXPORT void  dlfree(void*);
++/*DLMALLOC_EXPORT void  dlfree(void*);*/
+ 
+ /*
+   calloc(size_t n_elements, size_t element_size);
+   Returns a pointer to n_elements * element_size bytes, with all locations
+   set to zero.
+ */
+-DLMALLOC_EXPORT void* dlcalloc(size_t, size_t);
++/*DLMALLOC_EXPORT void* dlcalloc(size_t, size_t);*/
+ 
+ /*
+   realloc(void* p, size_t n)
+@@ -891,7 +950,7 @@
+   The old unix realloc convention of allowing the last-free'd chunk
+   to be used as an argument to realloc is not supported.
+ */
+-DLMALLOC_EXPORT void* dlrealloc(void*, size_t);
++/*DLMALLOC_EXPORT void* dlrealloc(void*, size_t);*/
+ 
+ /*
+   realloc_in_place(void* p, size_t n)
+@@ -996,7 +1055,7 @@
+   guarantee that this number of bytes can actually be obtained from
+   the system.
+ */
+-DLMALLOC_EXPORT size_t dlmalloc_footprint_limit();
++DLMALLOC_EXPORT size_t dlmalloc_footprint_limit(void);
+ 
+ /*
+   malloc_set_footprint_limit();

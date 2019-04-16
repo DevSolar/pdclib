@@ -93,12 +93,12 @@ struct lconv
    Otherwise, returns a pointer to a string associated with the specified
    category for the new locale.
 */
-char * setlocale( int category, const char * locale );
+_PDCLIB_PUBLIC char * setlocale( int category, const char * locale );
 
 /* Returns a struct lconv initialized to the values appropriate for the current
    locale setting.
 */
-struct lconv * localeconv( void );
+_PDCLIB_PUBLIC struct lconv * localeconv( void );
 
 #ifdef __cplusplus
 }

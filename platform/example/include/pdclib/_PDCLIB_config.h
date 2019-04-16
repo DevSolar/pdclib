@@ -37,32 +37,32 @@
 /* Symbol Visibility                                                          */
 /* -------------------------------------------------------------------------- */
 
-#ifdef PDCLIB_STATIC_DEFINE
-  #define PDCLIB_PUBLIC
-  #define PDCLIB_LOCAL
+#ifdef _PDCLIB_STATIC_DEFINE
+  #define _PDCLIB_PUBLIC
+  #define _PDCLIB_LOCAL
 #else
   #if defined _WIN32 || defined __CYGWIN__
-    #ifdef PDCLIB_BUILD
+    #ifdef _PDCLIB_BUILD
       #ifdef __GNUC__
-        #define PDCLIB_PUBLIC __attribute__ ((dllexport))
+        #define _PDCLIB_PUBLIC __attribute__ ((dllexport))
       #else
-        #define PDCLIB_PUBLIC __declspec(dllexport)
+        #define _PDCLIB_PUBLIC __declspec(dllexport)
       #endif
     #else
       #ifdef __GNUC__
-        #define PDCLIB_PUBLIC __attribute__ ((dllimport))
+        #define _PDCLIB_PUBLIC __attribute__ ((dllimport))
       #else
-        #define PDCLIB_PUBLIC __declspec(dllimport)
+        #define _PDCLIB_PUBLIC __declspec(dllimport)
       #endif
     #endif
-    #define PDCLIB_LOCAL
+    #define _PDCLIB_LOCAL
   #else
     #if __GNUC__ >= 4
-      #define PDCLIB_PUBLIC __attribute__ ((visibility ("default")))
-      #define PDCLIB_LOCAL  __attribute__ ((visibility ("hidden")))
+      #define _PDCLIB_PUBLIC __attribute__ ((visibility ("default")))
+      #define _PDCLIB_LOCAL  __attribute__ ((visibility ("hidden")))
     #else
-      #define PDCLIB_PUBLIC
-      #define PDCLIB_LOCAL
+      #define _PDCLIB_PUBLIC
+      #define _PDCLIB_LOCAL
     #endif
   #endif
 #endif
