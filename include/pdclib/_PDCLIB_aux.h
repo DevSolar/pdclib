@@ -30,6 +30,12 @@
 #define _PDCLIB_inline inline
 #endif
 
+#if __STDC_VERSION__ < 201112L
+#define _PDCLIB_Noreturn
+#else
+#define _PDCLIB_Noreturn _Noreturn
+#endif
+
 #ifndef __STDC_HOSTED__
 #error Compiler does not define _ _STDC_HOSTED_ _ (not standard-compliant)!
 #elif __STDC_HOSTED__ == 0
