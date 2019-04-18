@@ -30,7 +30,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define PRIdFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, d ) )
 #define PRIdFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, d ) )
 
-#define PRIdMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, d ) )
+#define PRIdMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, d ) )
 #define PRIdPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, d ) )
 
 #define PRIi8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, i ) )
@@ -48,7 +48,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define PRIiFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, i ) )
 #define PRIiFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, i ) )
 
-#define PRIiMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, i ) )
+#define PRIiMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, i ) )
 #define PRIiPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, i ) )
 
 #define PRIo8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, o ) )
@@ -66,7 +66,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define PRIoFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, o ) )
 #define PRIoFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, o ) )
 
-#define PRIoMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, o ) )
+#define PRIoMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, o ) )
 #define PRIoPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, o ) )
 
 #define PRIu8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, u ) )
@@ -84,7 +84,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define PRIuFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, u ) )
 #define PRIuFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, u ) )
 
-#define PRIuMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, u ) )
+#define PRIuMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, u ) )
 #define PRIuPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, u ) )
 
 #define PRIx8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, x ) )
@@ -102,7 +102,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define PRIxFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, x ) )
 #define PRIxFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, x ) )
 
-#define PRIxMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, x ) )
+#define PRIxMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, x ) )
 #define PRIxPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, x ) )
 
 #define PRIX8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, X ) )
@@ -120,7 +120,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define PRIXFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, X ) )
 #define PRIXFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, X ) )
 
-#define PRIXMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, X ) )
+#define PRIXMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, X ) )
 #define PRIXPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, X ) )
 
 #define SCNd8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, d ) )
@@ -138,7 +138,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define SCNdFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, d ) )
 #define SCNdFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, d ) )
 
-#define SCNdMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, d ) )
+#define SCNdMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, d ) )
 #define SCNdPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, d ) )
 
 #define SCNi8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, i ) )
@@ -156,7 +156,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define SCNiFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, i ) )
 #define SCNiFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, i ) )
 
-#define SCNiMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, i ) )
+#define SCNiMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, i ) )
 #define SCNiPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, i ) )
 
 #define SCNo8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, o ) )
@@ -174,7 +174,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define SCNoFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, o ) )
 #define SCNoFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, o ) )
 
-#define SCNoMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, o ) )
+#define SCNoMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, o ) )
 #define SCNoPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, o ) )
 
 #define SCNu8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, u ) )
@@ -192,7 +192,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define SCNuFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, u ) )
 #define SCNuFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, u ) )
 
-#define SCNuMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, u ) )
+#define SCNuMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, u ) )
 #define SCNuPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, u ) )
 
 #define SCNx8  _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_8_CONV, x ) )
@@ -210,7 +210,7 @@ typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 #define SCNxFAST32 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST32_CONV, x ) )
 #define SCNxFAST64 _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_FAST64_CONV, x ) )
 
-#define SCNxMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_MAX_CONV, x ) )
+#define SCNxMAX _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_INTMAX_CONV, x ) )
 #define SCNxPTR _PDCLIB_symbol2string( _PDCLIB_concat( _PDCLIB_PTR_CONV, x ) )
 
 /* 7.8.2 Functions for greatest-width integer types */

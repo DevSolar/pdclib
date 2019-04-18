@@ -202,13 +202,13 @@ struct _PDCLIB_lldiv_t
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
 #define _PDCLIB_intmax long long int
 #define _PDCLIB_INTMAX LLONG
-#define _PDCLIB_MAX_CONV ll
-/* You are also required to state the literal suffix for the intmax type      */
+/* The appropriate printf()/scanf() conversion specifier width for the type. */
+#define _PDCLIB_INTMAX_CONV ll
+/* The appropriate literal suffix for the type. */
 #define _PDCLIB_INTMAX_LITERAL ll
 
 /* <inttypes.h> defines imaxdiv(), which is equivalent to the div() function  */
 /* family (see further above) with intmax_t as basis.                         */
-
 struct _PDCLIB_imaxdiv_t
 {
     _PDCLIB_intmax quot;
