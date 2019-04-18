@@ -14,14 +14,14 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include "sys/types.h"
+#include "sys/stat.h"
+#include "fcntl.h"
 #ifdef __ANDROID__
 /* Getting the sigset_t typedef for Termux */
-#include <bits/signal_types.h>
+#include "bits/signal_types.h"
 #endif
-#include <unistd.h>
+#include "unistd.h"
 
 #include "/usr/include/errno.h"
 

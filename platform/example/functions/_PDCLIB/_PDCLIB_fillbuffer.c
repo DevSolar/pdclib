@@ -14,7 +14,7 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#include </usr/include/errno.h>
+#include "/usr/include/errno.h"
 
 typedef long ssize_t;
 extern ssize_t read( int fd, void * buf, size_t count );
