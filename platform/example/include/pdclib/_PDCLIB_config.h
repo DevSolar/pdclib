@@ -385,18 +385,16 @@ typedef int _PDCLIB_fd_t;
    Example: In the example platform, the remove() function uses the unlink()
    system call as backend. Linux sets its errno to EISDIR if you try to unlink()
    a directory, but POSIX demands EPERM. Within the remove() function, you can
-   catch the 'errno == EISDIR', and set '_PDCLIB_errno = _PDCLIB_EPERM'. Anyone
-   using PDCLib's <errno.h> will "see" EPERM instead of EISDIR (the _PDCLIB_*
-   prefix removed by <errno.h> mechanics).
+   catch the 'errno == EISDIR', and set '*_PDCLIB_errno_func() = _PDCLIB_EPERM'.
+   Anyone using PDCLib's <errno.h> will "see" EPERM instead of EISDIR.
 
    If you do not want that kind of translation, you might want to "match" the
    values used by PDCLib with those used by the host OS, as to avoid confusion.
+   auxiliary/errno/errno_readout.c provides a convenience program to read those
+   errno values mandated by the standard from a platform's <errno.h>, giving
+   output that can readily be pasted here and in PDCLib's <errno.h>.
 
-   The standard only defines three distinct errno values: ERANGE, EDOM, and
-   EILSEQ. The standard leaves it up to "the implementation" whether there are
-   any more beyond those three. There is some controversy as to whether errno is
-   such a good idea at all, so you might want to come up with a different error
-   reporting facility for your platform.
+   The values below are read from a Linux system.
 */
 
 /* Argument list too long */
@@ -561,7 +559,6 @@ typedef int _PDCLIB_fd_t;
 /* strerror() and perror() functions. (If you change this value because you   */
 /* are using additional errno values, you *HAVE* to provide appropriate error */
 /* messages for *ALL* locales.)                                               */
-/* Default is 4 (0, ERANGE, EDOM, EILSEQ).                                    */
 #define _PDCLIB_ERRNO_MAX 132
 
 /* locale data -------------------------------------------------------------- */

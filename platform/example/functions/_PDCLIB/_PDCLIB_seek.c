@@ -30,7 +30,7 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
             /* EMPTY - OK */
             break;
         default:
-            _PDCLIB_errno = _PDCLIB_EINVAL;
+            *_PDCLIB_errno_func() = _PDCLIB_EINVAL;
             return EOF;
             break;
     }
@@ -48,7 +48,7 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
         return rc;
     }
     /* The 1:1 mapping in _PDCLIB_config.h ensures that this works. */
-    _PDCLIB_errno = errno;
+    *_PDCLIB_errno_func() = errno;
     return EOF;
 }
 

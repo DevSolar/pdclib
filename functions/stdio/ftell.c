@@ -33,7 +33,7 @@ long int ftell( struct _PDCLIB_file_t * stream )
     if ( ( stream->pos.offset - stream->bufend ) > ( LONG_MAX - ( stream->bufidx - stream->ungetidx ) ) )
     {
         /* integer overflow */
-        _PDCLIB_errno = _PDCLIB_ERANGE;
+        *_PDCLIB_errno_func() = _PDCLIB_ERANGE;
         return -1;
     }
     return (long int)( stream->pos.offset - ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx ) );
