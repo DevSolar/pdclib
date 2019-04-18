@@ -34,7 +34,7 @@ int remove( const char * pathname )
     if ( ( rc = unlink( pathname ) ) == -1 )
     {
         /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
-        _PDCLIB_errno = errno;
+        *_PDCLIB_errno_func() = errno;
     }
     return rc;
 }

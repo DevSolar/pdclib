@@ -15,7 +15,7 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#include </usr/include/errno.h>
+#include "/usr/include/errno.h"
 
 typedef long ssize_t;
 extern ssize_t write( int fd, const void * buf, size_t count );
@@ -50,7 +50,7 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
             /* The 1:1 mapping done in _PDCLIB_config.h ensures
                this works.
             */
-            _PDCLIB_errno = errno;
+            *_PDCLIB_errno_func() = errno;
             /* Flag the stream */
             stream->status |= _PDCLIB_ERRORFLAG;
             /* Move unwritten remains to begin of buffer. */
@@ -68,7 +68,7 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
         }
     }
     /* Number of retries exceeded. */
-    _PDCLIB_errno = _PDCLIB_EAGAIN;
+    *_PDCLIB_errno_func() = _PDCLIB_EAGAIN;
     stream->status |= _PDCLIB_ERRORFLAG;
     /* Move unwritten remains to begin of buffer. */
     stream->bufidx -= written;

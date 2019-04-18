@@ -14,7 +14,7 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#include </usr/include/errno.h>
+#include "/usr/include/errno.h"
 
 extern int unlink( const char * pathname );
 extern int link( const char * oldpath, const char * newpath );
@@ -31,7 +31,7 @@ int _PDCLIB_rename( const char * oldpath, const char * newpath )
         if ( unlink( oldpath ) == EOF )
         {
             /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
-            _PDCLIB_errno = errno;
+            *_PDCLIB_errno_func() = errno;
             return -1;
         }
         else
@@ -42,7 +42,7 @@ int _PDCLIB_rename( const char * oldpath, const char * newpath )
     else
     {
         /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
-        _PDCLIB_errno = errno;
+        *_PDCLIB_errno_func() = errno;
         return EOF;
     }
 }

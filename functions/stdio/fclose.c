@@ -62,7 +62,7 @@ int fclose( struct _PDCLIB_file_t * stream )
         previous = current;
         current = current->next;
     }
-    _PDCLIB_errno = _PDCLIB_EBADF;
+    *_PDCLIB_errno_func() = _PDCLIB_EBADF;
     return -1;
 }
 
