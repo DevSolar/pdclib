@@ -40,7 +40,7 @@ int _PDCLIB_fillbuffer( struct _PDCLIB_file_t * stream )
         /* The 1:1 mapping done in _PDCLIB_config.h ensures
            this works.
         */
-        _PDCLIB_errno = errno;
+        *_PDCLIB_errno_func() = errno;
         /* Flag the stream */
         stream->status |= _PDCLIB_ERRORFLAG;
         return EOF;
