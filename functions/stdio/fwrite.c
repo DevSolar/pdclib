@@ -11,22 +11,14 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-#endif
-
 size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     _PDCLIB_size_t offset = 0;
     /* TODO: lineend */
     /* int lineend = 0; */
     size_t nmemb_i;
-
-    _PDCLIB_LOCK( stream->mtx );
-
     if ( _PDCLIB_prepwrite( stream ) == EOF )
     {
-        _PDCLIB_UNLOCK( stream->mtx );
         return 0;
     }
     for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
@@ -45,7 +37,6 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
                 if ( _PDCLIB_flushbuffer( stream ) == EOF )
                 {
                     /* Returning number of objects completely buffered */
-                    _PDCLIB_UNLOCK( stream->mtx );
                     return nmemb_i;
                 }
                 /* lineend = false; */
@@ -67,7 +58,6 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
                    Catch 22. We'll return a value one short, to indicate the
                    error, and can't really do anything about the inconsistency.
                 */
-                _PDCLIB_UNLOCK( stream->mtx );
                 return nmemb_i - 1;
             }
             break;
@@ -79,15 +69,12 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
             {
                 /* See comment above. */
                 stream->bufidx = bufidx;
-                _PDCLIB_UNLOCK( stream->mtx );
                 return nmemb_i - 1;
             }
             stream->bufidx = bufidx - offset;
             memmove( stream->buffer, stream->buffer + offset, stream->bufidx );
             }
     }
-
-    _PDCLIB_UNLOCK( stream->mtx );
     return nmemb_i;
 }
 

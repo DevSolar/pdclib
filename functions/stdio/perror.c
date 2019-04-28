@@ -10,20 +10,13 @@
 
 #ifndef REGTEST
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-#endif
-
 /* TODO: Doing this via a static array is not the way to do it. */
 void perror( const char * s )
 {
-    _PDCLIB_LOCK( stderr->mtx );
-
     if ( ( s != NULL ) && ( s[0] != '\n' ) )
     {
         fprintf( stderr, "%s: ", s );
     }
-
     if ( errno >= _PDCLIB_ERRNO_MAX )
     {
         fprintf( stderr, "Unknown error\n" );
@@ -32,8 +25,6 @@ void perror( const char * s )
     {
         fprintf( stderr, "%s\n", _PDCLIB_lc_messages.errno_texts[errno] );
     }
-
-    _PDCLIB_UNLOCK( stderr->mtx );
     return;
 }
 

@@ -14,13 +14,6 @@
 
 extern char * * environ;
 
-/* The standard states (7.22.4.6 (3), "the implementation shall behave
-   as if no library function calls the getenv function." That is,
-   however, in context of the previous paragraph stating that getenv
-   "need not avoid data races with other threads of execution that
-   modify the environment list".
-   PDCLib does not provide means of modifying the environment list.
-*/
 char * getenv( const char * name )
 {
     size_t len = strlen( name );

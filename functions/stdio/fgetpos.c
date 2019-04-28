@@ -8,17 +8,11 @@
 
 #ifndef REGTEST
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-#endif
-
 int fgetpos( struct _PDCLIB_file_t * _PDCLIB_restrict stream, struct _PDCLIB_fpos_t * _PDCLIB_restrict pos )
 {
-    _PDCLIB_LOCK( stream->mtx );
     pos->offset = stream->pos.offset + stream->bufidx - stream->ungetidx;
     pos->status = stream->pos.status;
     /* TODO: Add mbstate. */
-    _PDCLIB_UNLOCK( stream->mtx );
     return 0;
 }
 

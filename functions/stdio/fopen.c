@@ -13,11 +13,6 @@
 
 #include <string.h>
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-extern mtx_t _PDCLIB_filelist_mtx;
-#endif
-
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
@@ -37,7 +32,6 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
        Data buffer comes last because it might change in size ( setvbuf() ).
     */
     filename_len = strlen( filename ) + 1;
-    /* See tmpfile(), which does much of the same. */
     if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + filename_len + BUFSIZ ) ) == NULL )
     {
         /* no memory */
@@ -49,21 +43,10 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
         free( rc );
         return NULL;
     }
-#ifndef __STDC_NO_THREADS__
-    if ( mtx_init( &rc->mtx, mtx_plain | mtx_recursive ) != thrd_success )
-    {
-        /* could not initialize stream mutex */
-        free( rc );
-        return NULL;
-    }
-#endif
     rc->handle = _PDCLIB_open( filename, rc->status );
     if ( rc->handle == _PDCLIB_NOHANDLE )
     {
         /* OS open() failed */
-#ifndef __STDC_NO_THREADS__
-        mtx_destroy( &rc->mtx );
-#endif
         free( rc );
         return NULL;
     }
@@ -84,10 +67,8 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     rc->status |= _IOLBF;
     /* TODO: Setting mbstate */
     /* Adding to list of open files */
-    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
     rc->next = _PDCLIB_filelist;
     _PDCLIB_filelist = rc;
-    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
     return rc;
 }
 
