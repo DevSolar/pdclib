@@ -1,3 +1,25 @@
+# CMake is a meta-buildsystem that allows you to *generate* the necessary
+# files for your build system of choice (Makefile, rules.ninja, CodeBlocks
+# project, MSVC solution, ...) from the configuration given below.
+#
+# Install CMake for your system (https://www.cmake.org), call
+# cmake --help
+# to get a list of buildfile generators available, then (from an empty dir)
+# cmake [-G <generator>] path/to/pdclib_source
+# to generate the desired build files. CMake will automatically track a
+# dependency on this configuration file, and re-build the buildfiles if you
+# make changes to it, so you need not re-run that generator step manually.
+#
+# Check
+# ctest --help
+# to find out about CMake's testing client.
+#
+# Check
+# cpack --help
+# to get a list of packaging options, and
+# cpack -G <generator>
+# to create a package of your compiled version of PDCLib.
+
 cmake_minimum_required( VERSION 2.9 FATAL_ERROR )
 
 project( pdclib LANGUAGES C )
@@ -7,13 +29,15 @@ set( CMAKE_C_STANDARD 99 )
 set( CMAKE_C_STANDARD_REQUIRED ON )
 set( CMAKE_C_EXTENSIONS OFF )
 
-# Debug is the default setting anyway, but better to make it explicit
-# and give output about it.
+# Debug is the default setting anyway, but better to make it explicit and
+# give output about it.
 if ( NOT CMAKE_BUILD_TYPE )
     message( "++ CMAKE_BUILD_TYPE not set. Defaulting to 'Debug'." )
     set( CMAKE_BUILD_TYPE Debug )
 endif()
 
+# Use the test support built-in to CMake. Use the "ctest" client to run
+# tests of built binaries.
 include( CTest )
 mark_as_advanced( BUILD_TESTING )
 
@@ -64,8 +88,6 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_strtox_main.c
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
-
-     functions/_dlmalloc/malloc.c
 
      platform/example/functions/_PDCLIB/_PDCLIB_close.c
      platform/example/functions/_PDCLIB/_PDCLIB_Exit.c
@@ -174,6 +196,32 @@ set( PDCLIB_SOURCES
      functions/string/strtok.c
      functions/string/strxfrm.c
 
+     platform/example/functions/threads/call_once.c
+     platform/example/functions/threads/cnd_broadcast.c
+     platform/example/functions/threads/cnd_destroy.c
+     platform/example/functions/threads/cnd_init.c
+     platform/example/functions/threads/cnd_signal.c
+     platform/example/functions/threads/cnd_timedwait.c
+     platform/example/functions/threads/cnd_wait.c
+     platform/example/functions/threads/mtx_destroy.c
+     platform/example/functions/threads/mtx_init.c
+     platform/example/functions/threads/mtx_lock.c
+     platform/example/functions/threads/mtx_timedlock.c
+     platform/example/functions/threads/mtx_trylock.c
+     platform/example/functions/threads/mtx_unlock.c
+     platform/example/functions/threads/thrd_create.c
+     platform/example/functions/threads/thrd_current.c
+     platform/example/functions/threads/thrd_detach.c
+     platform/example/functions/threads/thrd_equal.c
+     platform/example/functions/threads/thrd_exit.c
+     platform/example/functions/threads/thrd_join.c
+     platform/example/functions/threads/thrd_sleep.c
+     platform/example/functions/threads/thrd_yield.c
+     platform/example/functions/threads/tss_create.c
+     platform/example/functions/threads/tss_delete.c
+     platform/example/functions/threads/tss_get.c
+     platform/example/functions/threads/tss_set.c
+
      functions/time/asctime.c
      functions/time/ctime.c
      functions/time/difftime.c
@@ -187,9 +235,10 @@ set( PDCLIB_SOURCES
      platform/example/functions/time/timespec_get.c
 )
 
-# List of header files. Not required for actually building, but if
-# they are not listed in add_library(), they do not show up in IDE
-# project files.
+# List of header files. Not required for actually building, but if they
+# are not listed (in add_library()), they do not show up in IDE project
+# files (like MSVC solutions).
+# These get installed to your system's default include directory.
 set( PDCLIB_HEADERS
      include/assert.h
      include/ctype.h
@@ -212,8 +261,11 @@ set( PDCLIB_HEADERS
 
      platform/example/include/float.h
      platform/example/include/signal.h
+     platform/example/include/threads.h
 )
 
+# These get installed in a "pdclib" subdirectory of your system's default
+# "include" directory.
 set( PDCLIB_PRIVATE_HEADERS
      include/pdclib/_PDCLIB_aux.h
      include/pdclib/_PDCLIB_glue.h
@@ -221,49 +273,71 @@ set( PDCLIB_PRIVATE_HEADERS
      platform/example/include/pdclib/_PDCLIB_config.h
 )
 
+# dlmalloc, compiled separately as its inclusion of system headers conflicts
+# with PDCLib headers (specifically, struct timespec).
+add_library( _dlmalloc OBJECT functions/_dlmalloc/malloc.c )
+add_library( _dlmallocs OBJECT functions/_dlmalloc/malloc.c )
+target_include_directories( _dlmalloc  PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
+target_include_directories( _dlmallocs PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
+
 # Two libraries, one for dynamic linking, one for static linking.
-add_library( pdclib  SHARED ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
-add_library( pdclibs STATIC ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
+add_library( pdclib  SHARED ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmalloc>  ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
+add_library( pdclibs STATIC ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmallocs> ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
+
+# The example implementation makes use of pthread. We use CMake facilities
+# to locate the pthread library and header.
+set( CMAKE_THREAD_PREFER_PTHREAD 1 )
+set( THREADS_PREFER_PTHREAD_FLAG 1 )
+find_package( Threads )
+if ( NOT CMAKE_USE_PTHREADS_INIT )
+    message( FATAL_ERROR "Example platform requires pthread to be available." )
+endif()
+
+target_link_libraries( pdclib Threads::Threads )
+target_link_libraries( pdclibs Threads::Threads )
 
 # Compilation shall use PDCLib's over system include directories.
 target_include_directories( pdclib  BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
 target_include_directories( pdclibs BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
 
-# The code for pdclib_obj_shared should be compiled with whatever
-# options the compiler used requires to generate relocatable code.
-set_property( TARGET pdclib PROPERTY POSITION_INDEPENDENT_CODE 1 )
+# The code for the DLL / shared object should be compiled with whatever
+# options are appropriate for your compiler to generate relocatable code.
+set_property( TARGET pdclib _dlmalloc PROPERTY POSITION_INDEPENDENT_CODE 1 )
 
 # List of strict warnings; the compiler is your friend.
 if ( CMAKE_COMPILER_IS_GNUCC )
-    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin -fvisibility=hidden" )
-    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
-    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
+    # The bit about -D_STDC_PREDEF_H is a heavy-handed way to interdict
+    # GCC making statements about the standard library's capabilities,
+    # specifically __STDC_NO_THREADS__ (by including stdc-predef.h). I
+    # was unable to identify a more elegant way to achieve this.
+    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H" )
 elseif( MSVC )
     set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
-    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
-    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
 endif()
 
-# On Windows, both a dynamic .dll and a static .a library require
-# their own respective .lib file, which is why the static library
-# has its distinctive name pdclibs.a (note the "s").
+set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
+set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
+
+# On Windows, both a dynamic .dll and a static .a library require their own
+# respective .lib file, which is why the static library has its distinctive
+# name pdclibs.a (note the "s").
 # On Unix-like OS', we can have both .so and .a with the same base
-# name, so we do away with the "s".
+# name, so we do away with the "s" suffix.
 if ( UNIX )
     set_target_properties( pdclibs PROPERTIES OUTPUT_NAME pdclib )
 endif()
 
 add_custom_target( testdrivers )
 add_custom_target( regtestdrivers )
-add_custom_target( linktestdrivers )
 
-# Each source file can be compiled to 1) a test driver for the
-# function it defines, and 2) a regression test driver for the
-# function as defined by the system's C library.
+# Each source file can be compiled to
+# 1) a test driver for the function it defines,
+# 2) a regression test driver for the function as defined by the system's
+#    C library.
 foreach( file ${PDCLIB_SOURCES} )
     get_filename_component( basename ${file} NAME_WE )
 
-    # Test driver.
+    # Test driver, _t suffix, compiled with -DTEST against static lib.
     add_executable( ${basename}_t ${file} )
     set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST ${FLAGS}" )
     set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers )
@@ -272,21 +346,14 @@ foreach( file ${PDCLIB_SOURCES} )
     add_test( ${basename}_t test_support/testdrivers/${basename}_t )
     add_dependencies( testdrivers ${basename}_t )
 
-    # Regression test driver.
+    # Regression test driver, _t suffix, compiled with -DTEST -DREGTEST
+    # against system libc.
     add_executable( ${basename}_r ${file} )
     set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST ${FLAGS}" )
     set_property( TARGET ${basename}_r PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
     target_include_directories( ${basename}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
     add_dependencies( regtestdrivers ${basename}_r )
-
-    # Link test driver.
-    add_executable( ${basename}_l ${file} )
-    set_property( TARGET ${basename}_l APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST -nostdlib ${FLAGS}" )
-    set_property( TARGET ${basename}_l PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/linktestdrivers )
-    target_include_directories( ${basename}_l BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
-    target_link_libraries( ${basename}_l pdclib )
-    add_dependencies( linktestdrivers ${basename}_l )
 endforeach()
 
 # Installation files
@@ -319,54 +386,24 @@ else()
 endif()
 include( CPack )
 
-# errno_readout
-# -------------
+###########################################################################
+# Executables meant for library maintainers, not for distribution         #
+###########################################################################
+
 # A helper executable to read, from the system library, this platform's
 # errno numbers and perror() / strerror() texts, to faciliate adapting
 # PDCLib to use the same numbers / texts on any given platform.
 # (Platform maintainers are supposed to use the output to adapt their
 # platform's platform/<xyz>/functions/_PDCLIB/_PDCLIB_stdinit.c and
 # platform/<xyz>/include/pdclib/_PDCLIB_config.h.)
-add_executable( errno_readout
-                auxiliary/errno/errno_readout.c )
+add_subdirectory( auxiliary/errno )
 
-# get_uctypes
-# -----------
 # A helper executable to parse up-to-date Unicode metadata from the
 # Unicode database.
-set( uctype_SOURCES
-     auxiliary/uctype/derived_properties.c
-     auxiliary/uctype/text_utilities.c
-     auxiliary/uctype/uctype.c
-     auxiliary/uctype/unicode_data.c
-)
+add_subdirectory( auxiliary/uctype )
 
-set( uctype_HEADERS
-     auxiliary/uctype/derived_properties.h
-     auxiliary/uctype/test.h
-     auxiliary/uctype/text_utilities.h
-     auxiliary/uctype/uctype.h
-     auxiliary/uctype/unicode_data.h
-)
-
-add_library( uctype STATIC ${uctype_SOURCES} )
-set_property( TARGET uctype APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
-target_include_directories( uctype PRIVATE ${CMAKE_SOURCE_DIR}/auxiliary/uctype )
-
-add_executable( get_uctypes auxiliary/uctype/main.c )
-set_property( TARGET get_uctypes APPEND_STRING PROPERTY COMPILE_FLAGS ${FLAGS} )
-target_include_directories( get_uctypes PRIVATE ${CMAKE_SOURCE_DIR}/auxiliary/uctype )
-target_link_libraries( get_uctypes uctype )
-
-foreach( file ${uctype_SOURCES} )
-    get_filename_component( basename ${file} NAME_WE )
-
-    # Test driver.
-    add_executable( ${basename}_t ${file} )
-    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST ${FLAGS}" )
-    set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/uctype )
-    target_include_directories( ${basename}_t PRIVATE ${CMAKE_SOURCE_DIR}/auxiliary/uctype )
-    target_link_libraries( ${basename}_t uctype )
-    add_test( ${basename}_t test_support/uctype/${basename}_t )
-    add_dependencies( testdrivers ${basename}_t )
-endforeach()
+# A helper executable to read, from the system <pthread.h>, some size
+# parameters of pthread stuctures.
+# (Platform maintainers are supposed to use the output to adapt their
+# platform's platform/<xyz>/include/pdclib/_PDCLIB_config.h.)
+add_subdirectory( auxiliary/pthread )

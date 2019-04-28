@@ -9,6 +9,10 @@
 
 #ifndef REGTEST
 
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+#endif
+
 long int ftell( struct _PDCLIB_file_t * stream )
 {
     /* ftell() must take into account:
@@ -29,14 +33,20 @@ long int ftell( struct _PDCLIB_file_t * stream )
     /*  If offset is too large for return type, report error instead of wrong
         offset value.
     */
+    long int rc;
+    _PDCLIB_LOCK( stream->mtx );
+
     /* TODO: Check what happens when ungetc() is called on a stream at offset 0 */
     if ( ( stream->pos.offset - stream->bufend ) > ( LONG_MAX - ( stream->bufidx - stream->ungetidx ) ) )
     {
         /* integer overflow */
+        _PDCLIB_UNLOCK( stream->mtx );
         *_PDCLIB_errno_func() = _PDCLIB_ERANGE;
         return -1;
     }
-    return (long int)( stream->pos.offset - ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx ) );
+    rc = ( stream->pos.offset - ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx ) );
+    _PDCLIB_UNLOCK( stream->mtx );
+    return rc;
 }
 
 #endif

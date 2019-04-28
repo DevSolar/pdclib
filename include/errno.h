@@ -13,6 +13,7 @@ extern "C" {
 
 #include "pdclib/_PDCLIB_int.h"
 
+/* FIXME: With <threads.h>, this needs to be in thread-specific storage. */
 #define errno (*_PDCLIB_errno_func())
 
 /* C only requires the following three */

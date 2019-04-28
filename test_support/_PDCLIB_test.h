@@ -23,7 +23,9 @@ static const char testfile[]="test_support/testfile";
 static const char testfile1[]="test_support/testfile1";
 static const char testfile2[]="test_support/testfile2";
 
+#ifndef NO_TESTDRIVER
 #define NO_TESTDRIVER 0
+#endif
 
 static int TEST_RESULTS = 0;
 

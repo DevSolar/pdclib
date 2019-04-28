@@ -55,6 +55,8 @@
 /* _PDCLIB_TYPE_SIGNED( type ) resolves to true if type is signed.            */
 /* _PDCLIB_TWOS_COMPLEMENT( type ) resolves to true if two's complement is    */
 /*                                 used for type.                             */
+/* _PDCLIB_LOCK( mtx ) lock a mutex if library has threads support.           */
+/* _PDCLIB_UNLOCK( mtx ) unlock a mutex if library has threads support.       */
 /* -------------------------------------------------------------------------- */
 
 #define _PDCLIB_cc( x, y )     x ## y
@@ -67,5 +69,13 @@
 
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )
+
+#ifndef __STDC_NO_THREADS__
+#define _PDCLIB_LOCK( mtx ) mtx_lock( &mtx )
+#define _PDCLIB_UNLOCK( mtx ) mtx_unlock( &mtx )
+#else
+#define _PDCLIB_LOCK( mtx )
+#define _PDCLIB_UNLOCK( mtx )
+#endif
 
 #endif

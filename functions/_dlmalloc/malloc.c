@@ -1,6 +1,7 @@
 /* malloc( size_t )
    calloc( size_t, size_t )
    realloc( void *, size_t )
+   aligned_alloc( size_t, size_t )
    free( void * )
 
    This file is part of the Public Domain C Library (PDCLib).
@@ -17,10 +18,13 @@ void * sbrk( intptr_t );
 
 #ifndef REGTEST
 
-#include "pdclib/_PDCLIB_config.h"
+#include "_PDCLIB_config.h"
 
 /* Have all functions herein use the dl* prefix */
 #define USE_DL_PREFIX 1
+
+/* Thread safety */
+#define USE_LOCKS 1
 
 /* Hide all functions herein as internal to the library */
 #define DLMALLOC_EXPORT _PDCLIB_LOCAL
@@ -30,10 +34,13 @@ void * sbrk( intptr_t );
    are declared _PDCLIB_PUBLIC in <stdlib.h>, marking them
    exported from the library.)
 */
-#define dlmalloc  malloc
-#define dlcalloc  calloc
-#define dlrealloc realloc
-#define dlfree    free
+#define dlmalloc   malloc
+#define dlcalloc   calloc
+#define dlrealloc  realloc
+#define dlfree     free
+#if __STDC_VERSION__ >= 201112L
+#define dlmemalign aligned_alloc
+#endif
 
 #endif
 

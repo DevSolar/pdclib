@@ -24,9 +24,9 @@ typedef _PDCLIB_size_t size_t;
 #endif
 
 /* See setvbuf(), third argument */
-#define _IOFBF 1
-#define _IOLBF 2
-#define _IONBF 4
+#define _IOFBF (1u<<0)
+#define _IOLBF (1u<<1)
+#define _IONBF (1u<<2)
 
 /* The following are platform-dependant, and defined in _PDCLIB_config.h. */
 typedef struct _PDCLIB_fpos_t fpos_t;

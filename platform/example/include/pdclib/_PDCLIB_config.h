@@ -164,47 +164,43 @@ struct _PDCLIB_lldiv_t
 /* defines here are merely "configuration". See above for details.            */
 /* -------------------------------------------------------------------------- */
 
-/* The result type of substracting two pointers */
+/* The result type of substracting two pointers                               */
 #define _PDCLIB_ptrdiff long
 #define _PDCLIB_PTRDIFF LONG
 #define _PDCLIB_PTR_CONV l
 
-/* An integer type that can be accessed as atomic entity (think asynchronous
-   interrupts). The type itself is not defined in a freestanding environment,
-   but its limits are. (Don't ask.)
-*/
+/* An integer type that can be accessed as atomic entity (think asynchronous  */
+/* interrupts). The type itself is not defined in a freestanding environment, */
+/* but its limits are. (Don't ask.)                                           */
 #define _PDCLIB_sig_atomic int
 #define _PDCLIB_SIG_ATOMIC INT
 
-/* Result type of the 'sizeof' operator (must be unsigned) */
+/* Result type of the 'sizeof' operator (must be unsigned)                    */
 #define _PDCLIB_size unsigned long
 #define _PDCLIB_SIZE ULONG
 
-/* Large enough an integer to hold all character codes of the largest supported
-   locale.
-*/
+/* Large enough an integer to hold all character codes of the widest          */
+/* supported locale.                                                          */
 #define _PDCLIB_wchar unsigned int
 #define _PDCLIB_WCHAR UINT
 
-/* Large enough an integer to hold all character codes of the largest supported
-   locale plus WEOF (which needs not to be equal to EOF, nor needs to be of
-   negative value).
-*/
+/* Large enough an integer to hold all character codes of the widest          */
+/* supported locale plus WEOF (which needs not to be equal to EOF, nor needs  */
+/* to be of negative value).                                                  */
 #define _PDCLIB_wint unsigned int
 #define _PDCLIB_WINT UINT
 
-/* (Signed) integer type capable of taking the (cast) value of a void *, and
-   having the value cast back to void *, comparing equal to the original.
-*/
+/* (Signed) integer type capable of taking the (cast) value of a void *, and  */
+/* having the value cast back to void *, comparing equal to the original.     */
 #define _PDCLIB_intptr long
 #define _PDCLIB_INTPTR LONG
 
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
 #define _PDCLIB_intmax long long int
 #define _PDCLIB_INTMAX LLONG
-/* The appropriate printf()/scanf() conversion specifier width for the type. */
+/* The appropriate printf()/scanf() conversion specifier width for the type.  */
 #define _PDCLIB_INTMAX_CONV ll
-/* The appropriate literal suffix for the type. */
+/* The appropriate literal suffix for the type.                               */
 #define _PDCLIB_INTMAX_LITERAL ll
 
 /* <inttypes.h> defines imaxdiv(), which is equivalent to the div() function  */
@@ -232,59 +228,53 @@ struct _PDCLIB_imaxdiv_t
 /* Floating Point                                                             */
 /* -------------------------------------------------------------------------- */
 
-/* Whether the implementation rounds toward zero (0), to nearest (1), toward
-   positive infinity (2), or toward negative infinity (3). (-1) signifies
-   indeterminable rounding, any other value implementation-specific rounding.
-*/
+/* Whether the implementation rounds toward zero (0), to nearest (1), toward  */
+/* positive infinity (2), or toward negative infinity (3). (-1) signifies     */
+/* indeterminable rounding, any other value implementation-specific rounding. */
 #define _PDCLIB_FLT_ROUNDS -1
 
-/* Whether the implementation uses exact-width precision (0), promotes float
-   to double (1), or promotes float and double to long double (2). (-1)
-   signifies indeterminable behaviour, any other value implementation-specific
-   behaviour.
-*/
+/* Whether the implementation uses exact-width precision (0), promotes float  */
+/* to double (1), or promotes float and double to long double (2).            */
+/* (-1) signifies indeterminable behaviour, any other value implementation-   */
+/* specific behaviour.                                                        */
 #define _PDCLIB_FLT_EVAL_METHOD -1
 
-/* "Number of the decimal digits (n), such that any floating-point number in the
-   widest supported floating type with p(max) radix (b) digits can be rounded to
-   a floating-point number with (n) decimal digits and back again without change
-   to the value p(max) log(10)b if (b) is a power of 10, [1 + p(max) log(10)b]
-   otherwise."
-   64bit IEC 60559 double format (53bit mantissa) is DECIMAL_DIG 17.
-   80bit IEC 60559 double-extended format (64bit mantissa) is DECIMAL_DIG 21.
-*/
+/* "Number of the decimal digits (n), such that any floating-point number in  */
+/* the widest supported floating type with p(max) radix (b) digits can be     */
+/* rounded to a floating-point number with (n) decimal digits and back again  */
+/* without change to the value p(max) log(10)b if (b) is a power of 10,       */
+/* [1 + p(max) log(10)b] otherwise."                                          */
+/* 64bit IEC 60559 double format (53bit mantissa) is DECIMAL_DIG 17.          */
+/* 80bit IEC 60559 double-extended format (64bit mantissa) is DECIMAL_DIG 21. */
 #define _PDCLIB_DECIMAL_DIG 17
 
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
 /* -------------------------------------------------------------------------- */
 
-/* The offsetof macro
-   Contract: Expand to an integer constant expression of type size_t, which
-   represents the offset in bytes to the structure member from the beginning
-   of the structure. If the specified member is a bitfield, behaviour is
-   undefined.
-   There is no standard-compliant way to do this.
-   This implementation casts an integer zero to 'pointer to type', and then
-   takes the address of member. This is undefined behaviour but should work on
-   most compilers.
-*/
+/* The offsetof macro                                                         */
+/* Contract: Expand to an integer constant expression of type size_t, which   */
+/* represents the offset in bytes to the structure member from the beginning  */
+/* of the structure. If the specified member is a bitfield, behaviour is      */
+/* undefined.                                                                 */
+/* There is no standard-compliant way to do this.                             */
+/* This implementation casts an integer zero to 'pointer to type', and then   */
+/* takes the address of member. This is undefined behaviour but should work   */
+/* on most compilers.                                                         */
 #define _PDCLIB_offsetof( type, member ) ( (size_t) &( ( (type *) 0 )->member ) )
 
-/* Variable Length Parameter List Handling (<stdarg.h>)
-   The macros defined by <stdarg.h> are highly dependent on the calling
-   conventions used, and you probably have to replace them with builtins of
-   your compiler.
-*/
+/* Variable Length Parameter List Handling (<stdarg.h>)                       */
+/* The macros defined by <stdarg.h> are highly dependent on the calling       */
+/* conventions used, and you probably have to replace them with builtins of   */
+/* your compiler.                                                             */
 
 #if defined( __i386 )
 
-/* The following generic implementation works only for pure
-   stack-based architectures, and only if arguments are aligned to pointer
-   type. Credits to Michael Moody, who contributed this to the Public Domain.
-*/
+/* The following generic implementation works only for pure                   */
+/* stack-based architectures, and only if arguments are aligned to pointer    */
+/* type. Credits to Michael Moody, who contributed this to the Public Domain. */
 
-/* Internal helper macro. va_round is not part of <stdarg.h>. */
+/* Internal helper macro. va_round is not part of <stdarg.h>.                 */
 #define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
 
 typedef char * _PDCLIB_va_list;
@@ -295,9 +285,8 @@ typedef char * _PDCLIB_va_list;
 
 #elif defined( __x86_64 ) || defined( __arm__ ) || defined( __ARM_NEON )
 
-/* No way to cover x86_64 or arm with a generic implementation, as it uses
-    register-based parameter passing. Using compiler builtins here.
-*/
+/* No way to cover x86_64 or arm with a generic implementation, as it uses    */
+/* register-based parameter passing. Using compiler builtins here.            */
 typedef __builtin_va_list _PDCLIB_va_list;
 #define _PDCLIB_va_arg( ap, type ) ( __builtin_va_arg( ap, type ) )
 #define _PDCLIB_va_copy( dest, src ) ( __builtin_va_copy( dest, src ) )
@@ -317,85 +306,69 @@ typedef __builtin_va_list _PDCLIB_va_list;
 /* The actual *functions* of the OS interface are declared in _PDCLIB_glue.h. */
 /* -------------------------------------------------------------------------- */
 
-/* Memory management -------------------------------------------------------- */
-
-/* Set this to the page size of your OS. If your OS does not support paging, set
-   to an appropriate value. (Too small, and malloc() will call the kernel too
-   often. Too large, and you will waste memory.)
-*/
-#define _PDCLIB_PAGESIZE 4096
-
-/* Set this to the minimum memory node size. Any malloc() for a smaller size
-   will be satisfied by a malloc() of this size instead (to avoid excessive
-   fragmentation).
-*/
-#define _PDCLIB_MINALLOC 8
-
 /* I/O ---------------------------------------------------------------------- */
 
-/* The type of the file descriptor returned by _PDCLIB_open(). */
+/* The type of the file descriptor returned by _PDCLIB_open(), i.e. whatever  */
+/* the underlying kernel uses for stream identification.                      */
 typedef int _PDCLIB_fd_t;
 
-/* The value (of type _PDCLIB_fd_t) returned by _PDCLIB_open() if the operation
-   failed.
-*/
+/* The value of type _PDCLIB_fd_t returned by _PDCLIB_open() if the operation */
+/* failed.                                                                    */
 #define _PDCLIB_NOHANDLE ( (_PDCLIB_fd_t) -1 )
 
-/* The default size for file buffers. Must be at least 256. */
+/* The default size for file buffers. Must be at least 256.                   */
 #define _PDCLIB_BUFSIZ 1024
 
-/* The minimum number of files the implementation can open simultaneously. Must
-   be at least 8. Depends largely on how the bookkeeping is done by fopen() /
-   freopen() / fclose(). The example implementation limits the number of open
-   files only by available memory.
-*/
+/* The minimum number of files the implementation guarantees can opened       */
+/* simultaneously.  Must be at least 8. Depends largely on how the platform   */
+/* does the bookkeeping in whatever is called by _PDCLIB_open(). PDCLib puts  */
+/* no further limits on the number of open files other than available memory. */
 #define _PDCLIB_FOPEN_MAX 8
 
-/* Length of the longest filename the implementation guarantees to support. */
+/* Length of the longest filename the implementation guarantees to support.   */
 #define _PDCLIB_FILENAME_MAX 128
 
-/* Maximum length of filenames generated by tmpnam(). (See tmpfile.c.) */
+/* Maximum length of filenames generated by tmpnam(). (See tmpfile.c.)        */
 #define _PDCLIB_L_tmpnam 46
 
-/* Number of distinct file names that can be generated by tmpnam(). */
+/* Number of distinct file names that can be generated by tmpnam().           */
 #define _PDCLIB_TMP_MAX 50
 
-/* The values of SEEK_SET, SEEK_CUR and SEEK_END, used by fseek().
-   Since at least one platform (POSIX) uses the same symbols for its own "seek"
-   function, we use whatever the host defines (if it does define them).
-*/
+/* The values of SEEK_SET, SEEK_CUR and SEEK_END, used by fseek().            */
+/* Since at least one platform (POSIX) uses the same symbols for its own      */
+/* "seek" function, you should use whatever the host defines (if it does      */
+/* define them).                                                              */
 #define _PDCLIB_SEEK_SET 0
 #define _PDCLIB_SEEK_CUR 1
 #define _PDCLIB_SEEK_END 2
 
-/* The number of characters that can be buffered with ungetc(). The standard
-   guarantees only one (1); anything larger would make applications relying on
-   this capability dependent on implementation-defined behaviour (not good).
-*/
+/* The number of characters that can be buffered with ungetc(). The standard  */
+/* guarantees only one (1); PDCLib supports larger values, but applications   */
+/* relying on this would rely on implementation-defined behaviour (not good). */
 #define _PDCLIB_UNGETCBUFSIZE 1
 
 /* errno -------------------------------------------------------------------- */
 
-/* These are the values that _PDCLIB_errno can be set to by the library.
-
-   By keeping PDCLib's errno in the _PDCLIB_* namespace, the library is capable
-   to "translate" between errno values used by the hosting operating system and
-   those used and passed out by the library.
-
-   Example: In the example platform, the remove() function uses the unlink()
-   system call as backend. Linux sets its errno to EISDIR if you try to unlink()
-   a directory, but POSIX demands EPERM. Within the remove() function, you can
-   catch the 'errno == EISDIR', and set '*_PDCLIB_errno_func() = _PDCLIB_EPERM'.
-   Anyone using PDCLib's <errno.h> will "see" EPERM instead of EISDIR.
-
-   If you do not want that kind of translation, you might want to "match" the
-   values used by PDCLib with those used by the host OS, as to avoid confusion.
-   auxiliary/errno/errno_readout.c provides a convenience program to read those
-   errno values mandated by the standard from a platform's <errno.h>, giving
-   output that can readily be pasted here and in PDCLib's <errno.h>.
-
-   The values below are read from a Linux system.
-*/
+/* These are the values that _PDCLIB_errno can be set to by the library.      */
+/*                                                                            */
+/* By keeping PDCLib's errno in the _PDCLIB_* namespace, the library is       */
+/* capable of "translating" between errno values used by the hosting OS and   */
+/* those used and passed out by the library.                                  */
+/*                                                                            */
+/* Example: In the example platform, the remove() function uses the unlink()  */
+/* system call as backend. Linux sets its errno to EISDIR if you try to       */
+/* unlink() a directory, but POSIX demands EPERM. Within the remove()         */
+/* function, you can catch 'errno == EISDIR', and set '*_PDCLIB_errno_func()  */
+/* = _PDCLIB_EPERM'. Anyone using PDCLib's <errno.h> will "see" EPERM instead */
+/* of EISDIR.                                                                 */
+/*                                                                            */
+/* If you do not want that kind of translation, you might want to "match" the */
+/* values used by PDCLib with those used by the host OS, to avoid confusion.  */
+/* auxiliary/errno/errno_readout.c provides a convenience program to read     */
+/* those errno values mandated by the standard from a platform's <errno.h>,   */
+/* giving output that can readily be pasted here and in PDCLib's <errno.h>.   */
+/*                                                                            */
+/* The values below are read from a Linux system.                             */
 
 /* Argument list too long */
 #define _PDCLIB_E2BIG             7
@@ -575,5 +548,52 @@ typedef int _PDCLIB_fd_t;
 typedef unsigned int wint_t;
 #endif
 
+/* threads ------------------------------------------------------------------ */
+
+/* This is relying on underlying <pthread.h> implementation to provide thread */
+/* support.                                                                   */
+/* The problem here is we cannot just #include <pthread.h> and access the     */
+/* original definitions. The standard library must not drag identifiers into  */
+/* the user's namespace, so we have to set our own definitions. Which are,    */
+/* obviously, platform-specific.                                              */
+/* If you do NOT want to provide threads support, define __STDC_NO_THREADS__  */
+/* to 1 and simply delete the threads.h header and the corresponding files in */
+/* functions/threads/. This makes PDCLib not thread-safe (obviously), as all  */
+/* all the safeguards against race conditions (e.g. in <stdio.h>) will be     */
+/* omitted.                                                                   */
+
+/* auxiliary/pthread/pthread_readout.c provides a convenience program to read */
+/* appropriate definitions from a platform's <pthread.h>, giving output that  */
+/* can readily be pasted here.                                                */
+
+typedef unsigned long int _PDCLIB_thrd_t;
+typedef union { unsigned char _PDCLIB_cnd_t_data[ 48 ]; long long int _PDCLIB_cnd_t_align; } _PDCLIB_cnd_t;
+typedef union { unsigned char _PDCLIB_mtx_t_data[ 40 ]; long int _PDCLIB_mtx_t_align; } _PDCLIB_mtx_t;
+typedef unsigned int _PDCLIB_tss_t;
+typedef int _PDCLIB_once_flag;
+#define _PDCLIB_ONCE_FLAG_INIT 0
+#define _PDCLIB_RECURSIVE_MUTEX_INIT PTHREAD_MUTEX_INITIALIZER
+/* This one is actually hidden in <limits.h>, and only if __USE_POSIX is      */
+/* defined prior to #include <limits.h> (PTHREAD_DESTRUCTOR_ITERATIONS).      */
+#define _PDCLIB_TSS_DTOR_ITERATIONS 4
+/* The following are not made public in any header, but used internally for   */
+/* interfacing with the pthread API.                                          */
+typedef union { unsigned char _PDCLIB_cnd_attr_t_data[ 4 ]; int _PDCLIB_cnd_attr_t_align; } _PDCLIB_cnd_attr_t;
+typedef union { unsigned char _PDCLIB_mtx_attr_t_data[ 4 ]; int _PDCLIB_mtx_attr_t_align; } _PDCLIB_mtx_attr_t;
+typedef union { unsigned char _PDCLIB_thrd_attr_t_data[ 56 ]; long int _PDCLIB_thrd_attr_t_align; } _PDCLIB_thrd_attr_t;
+/* Static initialization of recursive mutex.                                  */
+#define _PDCLIB_MTX_RECURSIVE_INIT { {\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
+/* Static initialization of plain / timeout mutex (identical with pthread).   */
+#define _PDCLIB_MTX_PLAIN_INIT { {\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
 
 #endif
