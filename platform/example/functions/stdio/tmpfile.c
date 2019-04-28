@@ -23,11 +23,6 @@
 #endif
 #include "unistd.h"
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-extern mtx_t _PDCLIB_filelist_mtx;
-#endif
-
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 /* This is an example implementation of tmpfile() fit for use with POSIX
@@ -66,13 +61,12 @@ struct _PDCLIB_file_t * tmpfile( void )
         fd = open( filename, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR );
         if ( fd != -1 )
         {
-            /* Found a file that does not exist yet */
             break;
         }
         close( fd );
     }
     fclose( randomsource );
-    /* See fopen(), which does much of the same. */
+    /* See fopen(). */
     if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + L_tmpnam + BUFSIZ ) ) == NULL )
     {
         /* No memory to set up FILE structure */
@@ -80,32 +74,16 @@ struct _PDCLIB_file_t * tmpfile( void )
         return NULL;
     }
     rc->status = _PDCLIB_filemode( "wb+" ) | _IOLBF | _PDCLIB_DELONCLOSE;
-#ifndef __STDC_NO_THREADS__
-    if ( mtx_init( &rc->mtx, mtx_plain | mtx_recursive ) != thrd_success )
-    {
-        /* could not initialize stream mutex */
-        close( fd );
-        free( rc );
-        return NULL;
-    }
-#endif
     rc->handle = fd;
-    /* Setting pointers into the memory block allocated above */
     rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
     rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
     rc->buffer   = rc->filename + L_tmpnam;
-    /* Copying filename to FILE structure */
     strcpy( rc->filename, filename );
-    /* Initializing the rest of the structure */
     rc->bufsize = BUFSIZ;
     rc->bufidx = 0;
     rc->ungetidx = 0;
-    /* TODO: Setting mbstate */
-    /* Adding to list of open files */
-    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
     rc->next = _PDCLIB_filelist;
     _PDCLIB_filelist = rc;
-    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
     return rc;
 }
 

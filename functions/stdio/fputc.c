@@ -10,20 +10,16 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-#endif
-
+/* Write the value c (cast to unsigned char) to the given stream.
+   Returns c if successful, EOF otherwise.
+   If a write error occurs, the error indicator of the stream is set.
+*/
 int fputc( int c, struct _PDCLIB_file_t * stream )
 {
-    _PDCLIB_LOCK( stream->mtx );
-
     if ( _PDCLIB_prepwrite( stream ) == EOF )
     {
-        _PDCLIB_UNLOCK( stream->mtx );
         return EOF;
     }
-
     stream->buffer[stream->bufidx++] = (char)c;
     if ( ( stream->bufidx == stream->bufsize )                   /* _IOFBF */
            || ( ( stream->status & _IOLBF ) && ( (char)c == '\n' ) ) /* _IOLBF */
@@ -31,11 +27,8 @@ int fputc( int c, struct _PDCLIB_file_t * stream )
     )
     {
         /* buffer filled, unbuffered stream, or end-of-line. */
-        c = ( _PDCLIB_flushbuffer( stream ) == 0 ) ? c : EOF;
+        return ( _PDCLIB_flushbuffer( stream ) == 0 ) ? c : EOF;
     }
-
-    _PDCLIB_UNLOCK( stream->mtx );
-
     return c;
 }
 

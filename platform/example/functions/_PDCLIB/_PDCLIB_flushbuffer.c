@@ -20,7 +20,9 @@
 typedef long ssize_t;
 extern ssize_t write( int fd, const void * buf, size_t count );
 
-/* The number of attempts of output buffer flushing before giving up.         */
+/* The number of attempts to complete an output buffer flushing before giving
+ *    up.
+ *    */
 #define _PDCLIB_IO_RETRIES 1
 
 /* What the system should do after an I/O operation did not succeed, before   */
