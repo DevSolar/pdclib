@@ -259,27 +259,30 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 /* Flags for representing mode (see fopen()). Note these must fit the same
    status field as the _IO?BF flags in <stdio.h> and the internal flags below.
 */
-#define _PDCLIB_FREAD     8u
-#define _PDCLIB_FWRITE   16u
-#define _PDCLIB_FAPPEND  32u
-#define _PDCLIB_FRW      64u
-#define _PDCLIB_FBIN    128u
+#define _PDCLIB_FREAD   (1u<<3)
+#define _PDCLIB_FWRITE  (1u<<4)
+#define _PDCLIB_FAPPEND (1u<<5)
+#define _PDCLIB_FRW     (1u<<6)
+#define _PDCLIB_FBIN    (1u<<7)
 
 /* Internal flags, made to fit the same status field as the flags above. */
+/* FIXME: too many flags to work on a 16-bit machine */
 /* -------------------------------------------------------------------------- */
 /* free() the buffer memory on closing (false for user-supplied buffer) */
-#define _PDCLIB_FREEBUFFER   512u
+#define _PDCLIB_FREEBUFFER  (1u<<8)
 /* stream has encountered error / EOF */
-#define _PDCLIB_ERRORFLAG   1024u
-#define _PDCLIB_EOFFLAG     2048u
+#define _PDCLIB_ERRORFLAG   (1u<<9)
+#define _PDCLIB_EOFFLAG     (1u<<10)
 /* stream is wide-oriented */
-#define _PDCLIB_WIDESTREAM  4096u
+#define _PDCLIB_WIDESTREAM  (1u<<11)
 /* stream is byte-oriented */
-#define _PDCLIB_BYTESTREAM  8192u
+#define _PDCLIB_BYTESTREAM  (1u<<12)
 /* file associated with stream should be remove()d on closing (tmpfile()) */
-#define _PDCLIB_DELONCLOSE 16384u
+#define _PDCLIB_DELONCLOSE  (1u<<13)
 /* stream handle should not be free()d on close (stdin, stdout, stderr) */
-#define _PDCLIB_STATIC     32768u
+#define _PDCLIB_STATIC      (1u<<14)
+/* stream filename allocated separately, and needs free()ing on fclode(). */
+#define _PDCLIB_FREENAME    (1u<<15)
 
 /* Position / status structure for getpos() / fsetpos(). */
 struct _PDCLIB_fpos_t
@@ -563,21 +566,28 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const cha
 /* Sanity checks                                                              */
 /* -------------------------------------------------------------------------- */
 
+/* Width of basic types */
 _PDCLIB_static_assert( sizeof( short ) == _PDCLIB_SHRT_BYTES, "Compiler disagrees on _PDCLIB_SHRT_BYTES." );
 _PDCLIB_static_assert( sizeof( int ) == _PDCLIB_INT_BYTES, "Compiler disagrees on _PDCLIB_INT_BYTES." );
 _PDCLIB_static_assert( sizeof( long ) == _PDCLIB_LONG_BYTES, "Compiler disagrees on _PDCLIB_LONG_BYTES." );
 _PDCLIB_static_assert( sizeof( long long ) == _PDCLIB_LLONG_BYTES, "Compiler disagrees on _PDCLIB_LLONG_BYTES." );
 
+/* Signed-ness of char and size_t */
 _PDCLIB_static_assert( ( (char)-1 < 0 ) == _PDCLIB_CHAR_SIGNED, "Compiler disagrees on _PDCLIB_CHAR_SIGNED." );
+
+/* size_t as the result of sizeof */
 _PDCLIB_static_assert( sizeof( sizeof( int ) ) == sizeof( _PDCLIB_size ), "Compiler disagrees on _PDCLIB_size." );
 
+/* wchar_t as the type of wide character literals */
 _PDCLIB_static_assert( sizeof( _PDCLIB_wchar ) == sizeof( L'x' ), "Compiler disagrees on _PDCLIB_wchar." );
 #ifdef __cplusplus
 _PDCLIB_static_assert( sizeof( _PDCLIB_wchar ) == sizeof( wchar_t ), "Compiler disagrees on _PDCLIB_wchar / wchar_t (C++)." );
 #endif
 
+/* intptr_t being wide enough to store the value of a pointer */
 _PDCLIB_static_assert( sizeof( void * ) == sizeof( _PDCLIB_intptr ), "Compiler disagrees on _PDCLIB_intptr." );
 
+/* ptrdiff_t as the result of pointer arithmetic */
 _PDCLIB_static_assert( sizeof( &_PDCLIB_digits[1] - &_PDCLIB_digits[0] ) == sizeof( _PDCLIB_ptrdiff ), "Compiler disagrees on _PDCLIB_ptrdiff." );
 
 #endif
