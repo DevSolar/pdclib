@@ -10,12 +10,20 @@
 
 #ifndef REGTEST
 
+#if 0
 static const char * _PDCLIB_LC_category_name[ _PDCLIB_LC_COUNT ] = { NULL, "LC_COLLATE", "LC_CTYPE", "LC_MONETARY", "LC_NUMERIC", "LC_TIME", "LC_MESSAGES" };
 
 static const char * _PDCLIB_default_locale( int category )
 {
     const char * s;
 
+    /* The standard states (7.22.4.6 (3), "the implementation shall behave
+       as if no library function calls the getenv function." That is,
+       however, in context of the previous paragraph stating that getenv
+       "need not avoid data races with other threads of execution that
+       modify the environment list".
+       PDCLib does not provide means of modifying the environment list.
+    */
     if ( ( s = getenv( "LC_ALL" ) ) == NULL )
     {
         if ( category == LC_ALL || ( s = getenv( _PDCLIB_LC_category_name[ category ] ) ) == NULL )
@@ -29,6 +37,7 @@ static const char * _PDCLIB_default_locale( int category )
 
     return s;
 }
+#endif
 
 char * setlocale( int category, const char * locale )
 {
