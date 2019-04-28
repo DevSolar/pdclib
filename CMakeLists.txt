@@ -22,9 +22,10 @@
 
 cmake_minimum_required( VERSION 2.9 FATAL_ERROR )
 
-project( pdclib LANGUAGES C )
+project( pdclib )
 
 option( IGNORE_NO_TESTDRIVER "Ignore NO_TESTDRIVER flags instead of reporting them as error. Default: OFF." OFF )
+option( AS_CXX "Compile as C++. (For testing purposes.) Default: OFF." OFF )
 
 # Setting compiler to C99 standard at minimum, no extensions.
 set( CMAKE_C_STANDARD 99 )
@@ -312,9 +313,17 @@ if ( CMAKE_COMPILER_IS_GNUCC )
     # GCC making statements about the standard library's capabilities,
     # specifically __STDC_NO_THREADS__ (by including stdc-predef.h). I
     # was unable to identify a more elegant way to achieve this.
-    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H" )
+    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Winline -Wno-long-long -Wuninitialized -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H" )
+
+    if ( NOT AS_CXX )
+        string( APPEND FLAGS " -Wmissing-prototypes -Wnested-externs -Wstrict-prototypes -Wdeclaration-after-statement" )
+    endif()
 elseif( MSVC )
     set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
+endif()
+
+if ( AS_CXX )
+    set_source_files_properties( ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} PROPERTIES LANGUAGE CXX )
 endif()
 
 if ( IGNORE_NO_TESTDRIVER )
