@@ -10,20 +10,12 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-#endif
-
 int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
-    _PDCLIB_LOCK( stream->mtx );
-
     if ( _PDCLIB_prepwrite( stream ) == EOF )
     {
-        _PDCLIB_UNLOCK( stream->mtx );
         return EOF;
     }
-
     while ( *s != '\0' )
     {
         /* Unbuffered and line buffered streams get flushed when fputs() does
@@ -37,24 +29,18 @@ int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_rest
         {
             if ( _PDCLIB_flushbuffer( stream ) == EOF )
             {
-                _PDCLIB_UNLOCK( stream->mtx );
                 return EOF;
             }
         }
         ++s;
     }
-
     if ( stream->status & _IONBF )
     {
         if ( _PDCLIB_flushbuffer( stream ) == EOF )
         {
-            _PDCLIB_UNLOCK( stream->mtx );
             return EOF;
         }
     }
-
-    _PDCLIB_UNLOCK( stream->mtx );
-
     return 0;
 }
 

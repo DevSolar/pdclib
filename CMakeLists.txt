@@ -196,32 +196,6 @@ set( PDCLIB_SOURCES
      functions/string/strtok.c
      functions/string/strxfrm.c
 
-     platform/example/functions/threads/call_once.c
-     platform/example/functions/threads/cnd_broadcast.c
-     platform/example/functions/threads/cnd_destroy.c
-     platform/example/functions/threads/cnd_init.c
-     platform/example/functions/threads/cnd_signal.c
-     platform/example/functions/threads/cnd_timedwait.c
-     platform/example/functions/threads/cnd_wait.c
-     platform/example/functions/threads/mtx_destroy.c
-     platform/example/functions/threads/mtx_init.c
-     platform/example/functions/threads/mtx_lock.c
-     platform/example/functions/threads/mtx_timedlock.c
-     platform/example/functions/threads/mtx_trylock.c
-     platform/example/functions/threads/mtx_unlock.c
-     platform/example/functions/threads/thrd_create.c
-     platform/example/functions/threads/thrd_current.c
-     platform/example/functions/threads/thrd_detach.c
-     platform/example/functions/threads/thrd_equal.c
-     platform/example/functions/threads/thrd_exit.c
-     platform/example/functions/threads/thrd_join.c
-     platform/example/functions/threads/thrd_sleep.c
-     platform/example/functions/threads/thrd_yield.c
-     platform/example/functions/threads/tss_create.c
-     platform/example/functions/threads/tss_delete.c
-     platform/example/functions/threads/tss_get.c
-     platform/example/functions/threads/tss_set.c
-
      functions/time/asctime.c
      functions/time/ctime.c
      functions/time/difftime.c
@@ -261,7 +235,6 @@ set( PDCLIB_HEADERS
 
      platform/example/include/float.h
      platform/example/include/signal.h
-     platform/example/include/threads.h
 )
 
 # These get installed in a "pdclib" subdirectory of your system's default
@@ -284,18 +257,6 @@ target_include_directories( _dlmallocs PRIVATE ${CMAKE_SOURCE_DIR}/platform/exam
 add_library( pdclib  SHARED ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmalloc>  ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
 add_library( pdclibs STATIC ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmallocs> ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
 
-# The example implementation makes use of pthread. We use CMake facilities
-# to locate the pthread library and header.
-set( CMAKE_THREAD_PREFER_PTHREAD 1 )
-set( THREADS_PREFER_PTHREAD_FLAG 1 )
-find_package( Threads )
-if ( NOT CMAKE_USE_PTHREADS_INIT )
-    message( FATAL_ERROR "Example platform requires pthread to be available." )
-endif()
-
-target_link_libraries( pdclib Threads::Threads )
-target_link_libraries( pdclibs Threads::Threads )
-
 # Compilation shall use PDCLib's over system include directories.
 target_include_directories( pdclib  BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
 target_include_directories( pdclibs BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
@@ -306,17 +267,14 @@ set_property( TARGET pdclib _dlmalloc PROPERTY POSITION_INDEPENDENT_CODE 1 )
 
 # List of strict warnings; the compiler is your friend.
 if ( CMAKE_COMPILER_IS_GNUCC )
-    # The bit about -D_STDC_PREDEF_H is a heavy-handed way to interdict
-    # GCC making statements about the standard library's capabilities,
-    # specifically __STDC_NO_THREADS__ (by including stdc-predef.h). I
-    # was unable to identify a more elegant way to achieve this.
-    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H" )
+    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin -fvisibility=hidden" )
+    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
+    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
 elseif( MSVC )
     set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
+    set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
+    set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
 endif()
-
-set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
-set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
 
 # On Windows, both a dynamic .dll and a static .a library require their own
 # respective .lib file, which is why the static library has its distinctive

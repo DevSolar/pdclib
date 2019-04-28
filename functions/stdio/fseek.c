@@ -10,34 +10,21 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-#endif
-
 int fseek( struct _PDCLIB_file_t * stream, long offset, int whence )
 {
-    int rc;
-    _PDCLIB_LOCK( stream->mtx );
-
     if ( stream->status & _PDCLIB_FWRITE )
     {
         if ( _PDCLIB_flushbuffer( stream ) == EOF )
         {
-            _PDCLIB_UNLOCK( stream->mtx );
             return EOF;
         }
     }
-
     stream->status &= ~ _PDCLIB_EOFFLAG;
-
     if ( stream->status & _PDCLIB_FRW )
     {
         stream->status &= ~ ( _PDCLIB_FREAD | _PDCLIB_FWRITE );
     }
-
-    rc = ( _PDCLIB_seek( stream, offset, whence ) != EOF ) ? 0 : EOF;
-    _PDCLIB_UNLOCK( stream->mtx );
-    return rc;
+    return ( _PDCLIB_seek( stream, offset, whence ) != EOF ) ? 0 : EOF;
 }
 
 #endif

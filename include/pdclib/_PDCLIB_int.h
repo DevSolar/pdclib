@@ -304,9 +304,6 @@ struct _PDCLIB_file_t
     unsigned char *         ungetbuf; /* ungetc() buffer */
     unsigned int            status;   /* Status flags; see above */
     /* multibyte parsing status to be added later */
-#ifndef __STDC_NO_THREADS__
-    _PDCLIB_mtx_t           mtx;      /* Multithreading safety */
-#endif
     char *                  filename; /* Name the current stream has been opened with */
     struct _PDCLIB_file_t * next;     /* Pointer to next struct (internal) */
 };
