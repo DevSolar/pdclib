@@ -10,17 +10,23 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+#endif
+
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 int fflush( struct _PDCLIB_file_t * stream )
 {
+    int rc = 0;
     if ( stream == NULL )
     {
-        int rc = 0;
         stream = _PDCLIB_filelist;
         /* TODO: Check what happens when fflush( NULL ) encounters write errors, in other libs */
         while ( stream != NULL )
         {
+            _PDCLIB_LOCK( stream->mtx );
+
             if ( stream->status & _PDCLIB_FWRITE )
             {
                 if ( _PDCLIB_flushbuffer( stream ) == EOF )
@@ -28,14 +34,20 @@ int fflush( struct _PDCLIB_file_t * stream )
                     rc = EOF;
                 }
             }
+
+            _PDCLIB_UNLOCK( stream->mtx );
+
             stream = stream->next;
         }
-        return rc;
     }
     else
     {
-        return _PDCLIB_flushbuffer( stream );
+        _PDCLIB_LOCK( stream->mtx );
+        rc = _PDCLIB_flushbuffer( stream );
+        _PDCLIB_UNLOCK( stream->mtx );
     }
+
+    return rc;
 }
 
 #endif

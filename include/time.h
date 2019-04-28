@@ -38,6 +38,15 @@ typedef _PDCLIB_clock_t clock_t;
 #define CLOCKS_PER_SEC _PDCLIB_CLOCKS_PER_SEC
 #define TIME_UTC _PDCLIB_TIME_UTC
 
+/* Implementor's note: If you change this structure, and are using Pthread
+   threading support, check auxiliary/pthread/pthread_readout.c for its
+   twin. It is imperative that Pthread and PDCLib use identical layouts for
+   struct timespec, as they are implicitly cast from one to the other. This
+   cannot be checked for in this header (as we may not include host system
+   headers here), so the assert()s are in pthread_readout.c (which, in turn,
+   cannot include *this* header, which is why this admonishment to keep the
+   definitions in sync exists...).
+*/
 struct timespec
 {
     time_t tv_sec;
