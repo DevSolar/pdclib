@@ -359,3 +359,9 @@ add_subdirectory( auxiliary/errno )
 # A helper executable to parse up-to-date Unicode metadata from the
 # Unicode database.
 add_subdirectory( auxiliary/uctype )
+
+# A helper executable to read, from the system <pthread.h>, some size
+# parameters of pthread stuctures.
+# (Platform maintainers are supposed to use the output to adapt their
+# platform's platform/<xyz>/include/pdclib/_PDCLIB_config.h.)
+add_subdirectory( auxiliary/pthread )
