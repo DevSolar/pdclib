@@ -24,6 +24,8 @@ cmake_minimum_required( VERSION 2.9 FATAL_ERROR )
 
 project( pdclib LANGUAGES C )
 
+option( IGNORE_NO_TESTDRIVER "Ignore NO_TESTDRIVER flags instead of reporting them as error. Default: OFF." OFF )
+
 # Setting compiler to C99 standard at minimum, no extensions.
 set( CMAKE_C_STANDARD 99 )
 set( CMAKE_C_STANDARD_REQUIRED ON )
@@ -313,6 +315,10 @@ if ( CMAKE_COMPILER_IS_GNUCC )
     set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Wuninitialized -Wstrict-prototypes -Wdeclaration-after-statement -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H" )
 elseif( MSVC )
     set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
+endif()
+
+if ( IGNORE_NO_TESTDRIVER )
+    string( APPEND FLAGS " -DNO_TESTDRIVER=1" )
 endif()
 
 set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
