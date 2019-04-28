@@ -181,6 +181,8 @@ _PDCLIB_PUBLIC char * getenv( const char * name );
 */
 _PDCLIB_PUBLIC int system( const char * string );
 
+/* TODO: quick_exit(), at_quick_exit() -- __STDC_VERSION__ >= 201112L */
+
 /* Searching and sorting */
 
 /* Do a binary search for a given key in the array with a given base pointer,
