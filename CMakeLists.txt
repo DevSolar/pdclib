@@ -89,8 +89,6 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
 
-     functions/_dlmalloc/malloc.c
-
      platform/example/functions/_PDCLIB/_PDCLIB_close.c
      platform/example/functions/_PDCLIB/_PDCLIB_Exit.c
      platform/example/functions/_PDCLIB/_PDCLIB_fillbuffer.c
@@ -248,9 +246,16 @@ set( PDCLIB_PRIVATE_HEADERS
      platform/example/include/pdclib/_PDCLIB_config.h
 )
 
+# dlmalloc, compiled separately as its inclusion of system headers conflicts
+# with PDCLib headers (specifically, struct timespec).
+add_library( _dlmalloc OBJECT functions/_dlmalloc/malloc.c )
+add_library( _dlmallocs OBJECT functions/_dlmalloc/malloc.c )
+target_include_directories( _dlmalloc  PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
+target_include_directories( _dlmallocs PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
+
 # Two libraries, one for dynamic linking, one for static linking.
-add_library( pdclib  SHARED ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
-add_library( pdclibs STATIC ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
+add_library( pdclib  SHARED ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmalloc>  ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
+add_library( pdclibs STATIC ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmallocs> ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
 
 # Compilation shall use PDCLib's over system include directories.
 target_include_directories( pdclib  BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
@@ -258,7 +263,7 @@ target_include_directories( pdclibs BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include $
 
 # The code for the DLL / shared object should be compiled with whatever
 # options are appropriate for your compiler to generate relocatable code.
-set_property( TARGET pdclib PROPERTY POSITION_INDEPENDENT_CODE 1 )
+set_property( TARGET pdclib _dlmalloc PROPERTY POSITION_INDEPENDENT_CODE 1 )
 
 # List of strict warnings; the compiler is your friend.
 if ( CMAKE_COMPILER_IS_GNUCC )
