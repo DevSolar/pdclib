@@ -9,7 +9,9 @@
 
 #include <stdio.h>
 
+#ifndef NO_TESTDRIVER
 #define NO_TESTDRIVER 0
+#endif
 
 static int TEST_RESULTS = 0;
 
