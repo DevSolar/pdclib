@@ -10,6 +10,12 @@
 
 #ifndef REGTEST
 
+#include "pdclib/_PDCLIB_glue.h"
+
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+#endif
+
 int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
@@ -23,15 +29,38 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
     status.width = 0;
     status.prec = EOF;
     status.stream = stream;
+
+    _PDCLIB_LOCK( stream->mtx );
+
+    if ( _PDCLIB_prepwrite( stream ) == EOF )
+    {
+        _PDCLIB_UNLOCK( stream->mtx );
+        return EOF;
+    }
+
     va_copy( status.arg, arg );
 
     while ( *format != '\0' )
     {
         const char * rc;
+
         if ( ( *format != '%' ) || ( ( rc = _PDCLIB_print( format, &status ) ) == format ) )
         {
             /* No conversion specifier, print verbatim */
-            putc( *(format++), stream );
+            stream->buffer[ stream->bufidx++ ] = *format;
+            if ( ( stream->bufidx == stream->bufsize )
+                 || ( ( stream->status & _IOLBF ) && ( *format == '\n' ) )
+                 || ( stream->status & _IONBF )
+            )
+            {
+                if ( _PDCLIB_flushbuffer( stream ) != 0 )
+                {
+                    _PDCLIB_UNLOCK( stream->mtx );
+                    return EOF;
+                }
+            }
+
+            ++format;
             status.i++;
         }
         else
@@ -40,7 +69,9 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
             format = rc;
         }
     }
+
     va_end( status.arg );
+    _PDCLIB_UNLOCK( stream->mtx );
     return status.i;
 }
 

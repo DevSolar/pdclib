@@ -52,8 +52,8 @@ void (*signal( int sig, void (*func)( int ) ) )( int )
             break;
         default:
             /* The standard calls for an unspecified "positive value".
-              Copying Linux' behaviour of setting EINVAL.
-          */
+	       Copying Linux' behaviour of setting EINVAL.
+	   */
             *_PDCLIB_errno_func() = _PDCLIB_EINVAL;
             return SIG_ERR;
     }

@@ -10,6 +10,12 @@
 
 #ifndef REGTEST
 
+#include "pdclib/_PDCLIB_glue.h"
+
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+#endif
+
 int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, va_list arg )
 {
     /* TODO: This function should interpret format as multibyte characters.  */
@@ -23,14 +29,25 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
     status.width = 0;
     status.prec = EOF;
     status.stream = stream;
+
+    _PDCLIB_LOCK( stream->mtx );
+
+    if ( _PDCLIB_prepread( stream ) == EOF )
+    {
+        _PDCLIB_UNLOCK( stream->mtx );
+        return EOF;
+    }
+
     va_copy( status.arg, arg );
 
     while ( *format != '\0' )
     {
         const char * rc;
+
         if ( ( *format != '%' ) || ( ( rc = _PDCLIB_scan( format, &status ) ) == format ) )
         {
             int c;
+
             /* No conversion specifier, match verbatim */
             if ( isspace( *format ) )
             {
@@ -40,6 +57,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
                 {
                     ++status.i;
                 }
+
                 if ( ! feof( stream ) )
                 {
                     ungetc( c, stream );
@@ -57,8 +75,11 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
                     }
                     else if ( status.n == 0 )
                     {
+                        _PDCLIB_UNLOCK( stream->mtx );
                         return EOF;
                     }
+
+                    _PDCLIB_UNLOCK( stream->mtx );
                     return status.n;
                 }
                 else
@@ -79,7 +100,9 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
             format = rc;
         }
     }
+
     va_end( status.arg );
+    _PDCLIB_UNLOCK( stream->mtx );
     return status.n;
 }
 

@@ -59,6 +59,9 @@ int raise( int sig )
     }
     else if ( sighandler != SIG_IGN )
     {
+        /* FIXME: "The implementation shall behave as if no library function
+           calls the signal function."
+        */
         sighandler = signal( sig, SIG_DFL );
         sighandler( sig );
     }

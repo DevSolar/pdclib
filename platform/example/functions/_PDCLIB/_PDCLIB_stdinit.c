@@ -27,9 +27,21 @@ static unsigned char _PDCLIB_sin_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_sout_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 static unsigned char _PDCLIB_serr_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
 
-static struct _PDCLIB_file_t _PDCLIB_serr = { 2, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_serr_ungetbuf, _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, NULL };
-static struct _PDCLIB_file_t _PDCLIB_sout = { 1, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sout_ungetbuf, _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC, NULL, &_PDCLIB_serr };
-static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, _PDCLIB_sin_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sin_ungetbuf, _IOLBF | _PDCLIB_FREAD | _PDCLIB_STATIC, NULL, &_PDCLIB_sout };
+static struct _PDCLIB_file_t _PDCLIB_serr = { 2, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_serr_ungetbuf, _IONBF | _PDCLIB_FWRITE | _PDCLIB_STATIC,
+#ifndef __STDC_NO_THREADS__
+    _PDCLIB_MTX_RECURSIVE_INIT,
+#endif
+   NULL, NULL };
+static struct _PDCLIB_file_t _PDCLIB_sout = { 1, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sout_ungetbuf, _IOLBF | _PDCLIB_FWRITE | _PDCLIB_STATIC,
+#ifndef __STDC_NO_THREADS__
+    _PDCLIB_MTX_RECURSIVE_INIT,
+#endif
+    NULL, &_PDCLIB_serr };
+static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, _PDCLIB_sin_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sin_ungetbuf, _IOLBF | _PDCLIB_FREAD | _PDCLIB_STATIC,
+#ifndef __STDC_NO_THREADS__
+    _PDCLIB_MTX_RECURSIVE_INIT,
+#endif
+    NULL, &_PDCLIB_sout };
 
 struct _PDCLIB_file_t * stdin  = &_PDCLIB_sin;
 struct _PDCLIB_file_t * stdout = &_PDCLIB_sout;
@@ -37,6 +49,9 @@ struct _PDCLIB_file_t * stderr = &_PDCLIB_serr;
 
 /* FIXME: This approach is a possible attack vector. */
 struct _PDCLIB_file_t * _PDCLIB_filelist = &_PDCLIB_sin;
+#ifndef __STDC_NO_THREADS__
+_PDCLIB_mtx_t _PDCLIB_filelist_mtx = _PDCLIB_MTX_PLAIN_INIT;
+#endif
 
 /* "C" locale - defaulting to ASCII-7.
    1 kByte (+ 4 byte) of <ctype.h> data.
