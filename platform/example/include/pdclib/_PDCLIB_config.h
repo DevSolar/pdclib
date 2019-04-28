@@ -175,7 +175,7 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_sig_atomic int
 #define _PDCLIB_SIG_ATOMIC INT
 
-/* Result type of the 'sizeof' operator (must be unsigned) */
+/* Result type of the 'sizeof' operator (must be unsigned)                    */
 #define _PDCLIB_size unsigned long
 #define _PDCLIB_SIZE ULONG
 
@@ -548,5 +548,52 @@ typedef int _PDCLIB_fd_t;
 typedef unsigned int wint_t;
 #endif
 
+/* threads ------------------------------------------------------------------ */
+
+/* This is relying on underlying <pthread.h> implementation to provide thread */
+/* support.                                                                   */
+/* The problem here is we cannot just #include <pthread.h> and access the     */
+/* original definitions. The standard library must not drag identifiers into  */
+/* the user's namespace, so we have to set our own definitions. Which are,    */
+/* obviously, platform-specific.                                              */
+/* If you do NOT want to provide threads support, define __STDC_NO_THREADS__  */
+/* to 1 and simply delete the threads.h header and the corresponding files in */
+/* functions/threads/. This makes PDCLib not thread-safe (obviously), as all  */
+/* all the safeguards against race conditions (e.g. in <stdio.h>) will be     */
+/* omitted.                                                                   */
+
+/* auxiliary/pthread/pthread_readout.c provides a convenience program to read */
+/* appropriate definitions from a platform's <pthread.h>, giving output that  */
+/* can readily be pasted here.                                                */
+
+typedef unsigned long int _PDCLIB_thrd_t;
+typedef union { unsigned char _PDCLIB_cnd_t_data[ 48 ]; long long int _PDCLIB_cnd_t_align; } _PDCLIB_cnd_t;
+typedef union { unsigned char _PDCLIB_mtx_t_data[ 40 ]; long int _PDCLIB_mtx_t_align; } _PDCLIB_mtx_t;
+typedef unsigned int _PDCLIB_tss_t;
+typedef int _PDCLIB_once_flag;
+#define _PDCLIB_ONCE_FLAG_INIT 0
+#define _PDCLIB_RECURSIVE_MUTEX_INIT PTHREAD_MUTEX_INITIALIZER
+/* This one is actually hidden in <limits.h>, and only if __USE_POSIX is      */
+/* defined prior to #include <limits.h> (PTHREAD_DESTRUCTOR_ITERATIONS).      */
+#define _PDCLIB_TSS_DTOR_ITERATIONS 4
+/* The following are not made public in any header, but used internally for   */
+/* interfacing with the pthread API.                                          */
+typedef union { unsigned char _PDCLIB_cnd_attr_t_data[ 4 ]; int _PDCLIB_cnd_attr_t_align; } _PDCLIB_cnd_attr_t;
+typedef union { unsigned char _PDCLIB_mtx_attr_t_data[ 4 ]; int _PDCLIB_mtx_attr_t_align; } _PDCLIB_mtx_attr_t;
+typedef union { unsigned char _PDCLIB_thrd_attr_t_data[ 56 ]; long int _PDCLIB_thrd_attr_t_align; } _PDCLIB_thrd_attr_t;
+/* Static initialization of recursive mutex.                                  */
+#define _PDCLIB_MTX_RECURSIVE_INIT { {\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
+/* Static initialization of plain / timeout mutex (identical with pthread).   */
+#define _PDCLIB_MTX_PLAIN_INIT { {\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
+     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
 
 #endif

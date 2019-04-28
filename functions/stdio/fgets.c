@@ -10,18 +10,27 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+#endif
+
 char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     char * dest = s;
+
     if ( size == 0 )
     {
         return NULL;
     }
+
     if ( size == 1 )
     {
         *s = '\0';
         return s;
     }
+
+    _PDCLIB_LOCK( stream->mtx );
+
     if ( _PDCLIB_prepread( stream ) == EOF )
     {
         return NULL;
@@ -40,6 +49,9 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
             }
         }
     }
+
+    _PDCLIB_UNLOCK( stream->mtx );
+
     *dest = '\0';
     return ( dest == s ) ? NULL : s;
 }

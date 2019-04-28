@@ -10,14 +10,22 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+#endif
+
 extern char * _PDCLIB_eol;
 
 int puts( const char * s )
 {
+    _PDCLIB_LOCK( stdout->mtx );
+
     if ( _PDCLIB_prepwrite( stdout ) == EOF )
     {
+        _PDCLIB_UNLOCK( stdout->mtx );
         return EOF;
     }
+
     while ( *s != '\0' )
     {
         stdout->buffer[ stdout->bufidx++ ] = *s++;
@@ -25,18 +33,24 @@ int puts( const char * s )
         {
             if ( _PDCLIB_flushbuffer( stdout ) == EOF )
             {
+                _PDCLIB_UNLOCK( stdout->mtx );
                 return EOF;
             }
         }
     }
+
     stdout->buffer[ stdout->bufidx++ ] = '\n';
+
     if ( ( stdout->bufidx == stdout->bufsize ) ||
          ( stdout->status & ( _IOLBF | _IONBF ) ) )
     {
-        return _PDCLIB_flushbuffer( stdout );
+        int rc = _PDCLIB_flushbuffer( stdout );
+        _PDCLIB_UNLOCK( stdout->mtx );
+        return rc;
     }
     else
     {
+        _PDCLIB_UNLOCK( stdout->mtx );
         return 0;
     }
 }

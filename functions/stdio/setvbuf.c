@@ -10,6 +10,10 @@
 
 #ifndef REGTEST
 
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+#endif
+
 int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_restrict buf, int mode, size_t size )
 {
     switch ( mode )
@@ -19,6 +23,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                we don't want to e.g. flush the stream for every character of a
                stream being printed.
             */
+            _PDCLIB_LOCK( stream->mtx );
             break;
         case _IOFBF:
         case _IOLBF:
@@ -39,6 +44,8 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                    current buffer (i.e., do nothing), to save the malloc() /
                    free() overhead.
                 */
+                _PDCLIB_LOCK( stream->mtx );
+
                 if ( ( stream->bufsize < size ) || ( stream->bufsize > ( size << 1 ) ) )
                 {
                     /* Buffer too small, or much too large - allocate. */
@@ -47,6 +54,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                         /* Out of memory error. */
                         return -1;
                     }
+
                     /* This buffer must be free()d on fclose() */
                     stream->status |= _PDCLIB_FREEBUFFER;
                 }
@@ -62,6 +70,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
     stream->status &= ~( _IOFBF | _IOLBF | _IONBF );
     /* Set user-defined mode */
     stream->status |= mode;
+    _PDCLIB_UNLOCK( stream->mtx );
     return 0;
 }
 
