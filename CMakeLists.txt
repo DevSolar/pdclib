@@ -278,8 +278,8 @@ set( PDCLIB_PRIVATE_HEADERS
 
 # dlmalloc, compiled separately as its inclusion of system headers conflicts
 # with PDCLib headers (specifically, struct timespec).
-add_library( _dlmalloc OBJECT functions/_dlmalloc/malloc.c )
-add_library( _dlmallocs OBJECT functions/_dlmalloc/malloc.c )
+add_library( _dlmalloc OBJECT platform/example/functions/_dlmalloc/malloc.c )
+add_library( _dlmallocs OBJECT platform/example/functions/_dlmalloc/malloc.c )
 target_include_directories( _dlmalloc  PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
 target_include_directories( _dlmallocs PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
 

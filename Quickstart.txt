@@ -1,0 +1,76 @@
+Quickstart Manual
+-----------------
+
+A C standard library, primarily aimed at environments that do not have such
+a standard library (yet), like hobby OS projects.
+
+The library is subdivided in two parts:
+
+1) Generic code that should not require adjustment regardless of environment.
+2) Platform code that needs to be tailored to the host environment.
+
+The former is the code residing in the 'functions' and 'include' subdirs. It
+is generic and should "work" on any platform.
+
+The latter is the code for which there is an example implementation in the
+'platform/example' subdirectory. This 'example' platform is geared towards
+Linux environments, more specifically those the maintainer of the library is
+actually doing his development work on.
+
+The basic idea is this:
+
+1) Create a copy of 'platform/example', e.g. 'platform/mysuperos' if your
+   project is named "My Super OS".
+
+2) Do all the modifications and tailorings required to make those sources
+   work with your environment. Check this subdirectory into your project's
+   source repository. (You will find explanations for the _PDCLIB_* "glue"
+   functions, those that "glue" PDCLib's generic code to your environment,
+   in _'PDCLIB_glue.h'. Also, the programs errno_readout and pthread_readout
+   in the 'auxiliary' subdirectory are for your convenience, figuring out
+   the "correct" values to enter in _PDCLIB_config.h when setting up a new
+   platform for PDCLib.)
+
+3) For compiling, simply copy the contents of 'platform/mysuperos' over the
+   main source directory (ideally using the latest version of PDCLib). (This
+   means, among other things, that it would be very easy for you to *replace*
+   one of PDCLib's generic functions with an optimized one, as this copy
+   process would overwrite whatever PDCLib provided in 'functions'.)(*)
+
+4) Compile all the source files in 'functions' into a library (static or
+   shared, your choice).
+   * Ensure your compiler supports at least C99.
+   * Define _PDCLIB_BUILD when *building* PDCLib (as opposed to *using* it
+     when building applications that are expected to link with PDCLib).
+   * Define _PDCLIB_STATIC_DEFINE if compiling a static library.
+   * Define PDCLib's 'include' subdirectory to be first in the include path
+     ('-I include' for GCC).
+   * For _dlmalloc/malloc.c specifically (if you use that), you need to put
+     'include/pdclib' in the include path (so that _PDCLIB_config.h is
+     visible), *NOT* PDCLib's 'include' subdirectory (as _dlmalloc/malloc.c
+     needs the *system* includes, to avoid redefinition warnings). This might
+     require a two-run bootstrapping if you do not *have* a "previous" C
+     library (i.e., compiling PDCLib *without* _dlmalloc/malloc.c, install
+     that, *then* compile PDCLib a second time *with* _dlmalloc/malloc.c).
+   * If using PDCLib's example threading interface (which is a wrapper for
+     pthread), make sure you link against the pthread library (-pthread for
+     GCC).
+
+5) Install the library binary to where such a library would be expected in
+   your environment, and the contents of the 'include' directory to where
+   such includes would be expected in your environment.
+
+6) Enjoy.
+
+----
+
+(*): The somewhat involved build files maintained for PDCLib, which keep the
+contents of 'platform/example' in place instead of doing the described "copy
+over", are there to facilitate the PDCLib maintainer's work (which includes
+testing each function, both against the PDCLib implementation and the host
+system (Linux) implementation for reference, over and over again, and then
+checking in changes to the PDCLib repository). The PDCLib 'example' platform
+implementation is not intended to be distributed in binary form. You are
+expected to create your own "mysuperos" PDCLib binary, and you are not
+expected to use PDCLib's build facilities to do so -- rather, integrate the
+building of PDCLib into whatever build system *you* prefer for "mysuperos".
