@@ -77,9 +77,6 @@ enum
 
 /* Ensure that func is called only the first time call_once() is called
    for a given flag.
-   NOTE BY IMPLEMENTOR: Both the standard and the Pthread documentation are
-   not at all clear that any value of flag OTHER than ONCE_FLAG_INIT are
-   actually supported. It is possibly only safe to use that one flag value.
 */
 void call_once( once_flag * flag, void (*func)( void ) );
 
