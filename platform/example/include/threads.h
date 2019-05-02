@@ -23,7 +23,10 @@ extern "C" {
 #error __STDC_NO_THREADS__ defined but <threads.h> included. Something is wrong about your setup.
 #endif
 
+#if __STDC_VERSION__ >= 201112L
+/* The rest of <threads.h> can work with a pre-C11 compiler just fine. */
 #define thread_local _Thread_local
+#endif
 
 /* Initializing value for an object of type once_flag */
 #define ONCE_FLAG_INIT _PDCLIB_ONCE_FLAG_INIT
