@@ -434,9 +434,7 @@ _PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * fh, _PDCLIB_siz
 */
 extern int _PDCLIB_errno;
 
-/* A mechanism for delayed evaluation. (Not sure if this is really necessary, so
-   no detailed documentation on the "why".)
-*/
+/* A mechanism for delayed evaluation. */
 _PDCLIB_PUBLIC int * _PDCLIB_errno_func( void );
 
 /* -------------------------------------------------------------------------- */
