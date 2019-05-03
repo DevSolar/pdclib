@@ -22,10 +22,10 @@ extern "C" {
 
    The values for *_sep_by_space:
    0 - no space
-   1 - if symbol and sign are adjacent, a space seperates them from the value;
-       otherwise a space seperates the symbol from the value
-   2 - if symbol and sign are adjacent, a space seperates them; otherwise a
-       space seperates the sign from the value
+   1 - if symbol and sign are adjacent, a space separates them from the value;
+       otherwise a space separates the symbol from the value
+   2 - if symbol and sign are adjacent, a space separates them; otherwise a
+       space separates the sign from the value
 
    The values for *_sign_posn:
    0 - Parentheses surround value and symbol
@@ -37,7 +37,7 @@ extern "C" {
 struct lconv
 {
     char * decimal_point;      /* decimal point character                     */ /* LC_NUMERIC */
-    char * thousands_sep;      /* character for seperating groups of digits   */ /* LC_NUMERIC */
+    char * thousands_sep;      /* character for separating groups of digits   */ /* LC_NUMERIC */
     char * grouping;           /* string indicating the size of digit groups  */ /* LC_NUMERIC */
     char * mon_decimal_point;  /* decimal point for monetary quantities       */ /* LC_MONETARY */
     char * mon_thousands_sep;  /* thousands_sep for monetary quantities       */ /* LC_MONETARY */
@@ -49,8 +49,8 @@ struct lconv
     char frac_digits;          /* fractional digits in local monetary qty.    */ /* LC_MONETARY */
     char p_cs_precedes;        /* if currency_symbol precedes positive qty.   */ /* LC_MONETARY */
     char n_cs_precedes;        /* if currency_symbol precedes negative qty.   */ /* LC_MONETARY */
-    char p_sep_by_space;       /* if it is seperated by space from pos. qty.  */ /* LC_MONETARY */
-    char n_sep_by_space;       /* if it is seperated by space from neg. qty.  */ /* LC_MONETARY */
+    char p_sep_by_space;       /* if it is separated by space from pos. qty.  */ /* LC_MONETARY */
+    char n_sep_by_space;       /* if it is separated by space from neg. qty.  */ /* LC_MONETARY */
     char p_sign_posn;          /* positioning of positive_sign for mon. qty.  */ /* LC_MONETARY */
     char n_sign_posn;          /* positioning of negative_sign for mon. qty.  */ /* LC_MONETARY */
     char int_frac_digits;      /* Same as above, for international format     */ /* LC_MONETARY */

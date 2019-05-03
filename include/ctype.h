@@ -33,7 +33,7 @@ _PDCLIB_PUBLIC int isalnum( int c );
 */
 _PDCLIB_PUBLIC int isalpha( int c );
 
-/* Returns true if the character isspace() and used for seperating words within
+/* Returns true if the character isspace() and used for separating words within
    a line of text. In the "C" locale, only ' ' and '\t' are considered blanks.
 */
 _PDCLIB_PUBLIC int isblank( int c );

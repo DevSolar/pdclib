@@ -72,7 +72,7 @@ necessary, that is deferred to the internal files. This has been done
 so that the headers are actually educational as to what they provide
 (as opposed to how the library does it).
 
-There is a seperate implementation file (in ./function/{header}/) for
+There is a separate implementation file (in ./function/{header}/) for
 every function defined by the standard, named {function}.c. Not only
 does this avoid linking in huge amounts of unused code when you use
 but a single function, it also allows the optimization overlay to work
