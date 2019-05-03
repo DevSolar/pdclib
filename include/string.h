@@ -160,9 +160,9 @@ _PDCLIB_PUBLIC char * strstr( const char * s1, const char * s2 );
 /* In a series of subsequent calls, parse a C string into tokens.
    On the first call to strtok(), the first argument is a pointer to the to-be-
    parsed C string. On subsequent calls, the first argument is NULL unless you
-   want to start parsing a new string. s2 holds an array of seperator characters
-   which can differ from call to call. Leading seperators are skipped, the first
-   trailing seperator overwritten with '\0'.
+   want to start parsing a new string. s2 holds an array of separator characters
+   which can differ from call to call. Leading separators are skipped, the first
+   trailing separator overwritten with '\0'.
    Returns a pointer to the next token.
    WARNING: This function uses static storage, and as such is not reentrant.
 */

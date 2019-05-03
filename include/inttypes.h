@@ -223,7 +223,7 @@ _PDCLIB_PUBLIC intmax_t imaxabs( intmax_t j );
 */
 _PDCLIB_PUBLIC imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom );
 
-/* Seperate the character array nptr into three parts: A (possibly empty)
+/* Separate the character array nptr into three parts: A (possibly empty)
    sequence of whitespace characters, a character representation of an integer
    to the given base, and trailing invalid characters (including the terminating
    null character). If base is 0, assume it to be 10, unless the integer

@@ -7,7 +7,7 @@
 /* -------------------------------------------------------------------------- */
 /* Helper macros for printf() / scanf() tests                                 */
 /* -------------------------------------------------------------------------- */
-/* Tucked away in a seperate header because these are ugly, complex, and not  */
+/* Tucked away in a separate header because these are ugly, complex, and not  */
 /* needed in 95% of all test cases.                                           */
 /* -------------------------------------------------------------------------- */
 
