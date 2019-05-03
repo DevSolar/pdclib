@@ -427,14 +427,12 @@ _PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * fh, _PDCLIB_siz
 /* errno                                                                      */
 /* -------------------------------------------------------------------------- */
 
-/* If PDCLib would call its error number "errno" directly, there would be no way
+/* A mechanism for delayed evaluation.
+   If PDCLib would call its error number "errno" directly, there would be no way
    to catch its value from underlying system calls that also use it (i.e., POSIX
    operating systems). That is why we use an internal name, providing a means to
    access it through <errno.h>.
 */
-extern int _PDCLIB_errno;
-
-/* A mechanism for delayed evaluation. */
 _PDCLIB_PUBLIC int * _PDCLIB_errno_func( void );
 
 /* -------------------------------------------------------------------------- */
