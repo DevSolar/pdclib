@@ -32,7 +32,7 @@ _PDCLIB_PUBLIC double strtod( const char * _PDCLIB_restrict nptr, char * * _PDCL
 _PDCLIB_PUBLIC float strtof( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr );
 _PDCLIB_PUBLIC long double strtold( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr );
 
-/* Seperate the character array nptr into three parts: A (possibly empty)
+/* Separate the character array nptr into three parts: A (possibly empty)
    sequence of whitespace characters, a character representation of an integer
    to the given base, and trailing invalid characters (including the terminating
    null character). If base is 0, assume it to be 10, unless the integer

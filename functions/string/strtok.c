@@ -34,7 +34,7 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
     {
         if ( *s1 == *p )
         {
-            /* found seperator; skip and start over */
+            /* found separator; skip and start over */
             ++s1;
             p = s2;
             continue;
@@ -57,7 +57,7 @@ char * strtok( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
         {
             if ( *tmp == *p++ )
             {
-                /* found seperator; overwrite with '\0', position tmp, return */
+                /* found separator; overwrite with '\0', position tmp, return */
                 *tmp++ = '\0';
                 return s1;
             }
