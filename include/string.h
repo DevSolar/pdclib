@@ -187,6 +187,35 @@ _PDCLIB_PUBLIC char * strerror( int errnum );
 */
 _PDCLIB_PUBLIC size_t strlen( const char * s );
 
+/* Annex K -- Bounds-checking interfaces */
+
+#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+
+#ifndef _PDCLIB_ERRNO_T_DEFINED
+#define _PDCLIB_ERRNO_T_DEFINED _PDCLIB_ERRNO_T_DEFINED
+typedef int errno_t;
+#endif
+
+#ifndef _PDCLIB_RSIZE_T_DEFINED
+#define _PDCLIB_RSIZE_T_DEFINED _PDCLIB_RSIZE_T_DEFINED
+typedef _PDCLIB_size_t rsize_t;
+#endif
+
+/* None of these are implemented yet. Placeholder declarations. */
+_PDCLIB_PUBLIC errno_t memcpy_s( void * _PDCLIB_restrict s1, rsize_t s1max, const void * _PDCLIB_restrict s2, rsize_t n );
+_PDCLIB_PUBLIC errno_t memmove_s( void * _PDCLIB_restrict s1, rsize_t s1max, const void * _PDCLIB_restrict s2, rsize_t n );
+_PDCLIB_PUBLIC errno_t strcpy_s( char * _PDCLIB_restrict s1, rsize_t s1max, const char * _PDCLIB_restrict s2 );
+_PDCLIB_PUBLIC errno_t strncpy_s( char * _PDCLIB_restrict s1, rsize_t s1max, const char * _PDCLIB_restrict s2, rsize_t n );
+_PDCLIB_PUBLIC errno_t strcat_s( char * _PDCLIB_restrict s1, rsize_t s1max, const char * _PDCLIB_restrict s2 );
+_PDCLIB_PUBLIC errno_t strncat_s( char * _PDCLIB_restrict s1, rsize_t s1max, const char * _PDCLIB_restrict s2, rsize_t n );
+_PDCLIB_PUBLIC char * strtok_s( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char * * _PDCLIB_restrict ptr );
+_PDCLIB_PUBLIC errno_t memset_s( void * s, rsize_t smax, int c, rsize_t n );
+_PDCLIB_PUBLIC errno_t strerror_s( char * s, rsize_t maxsize, errno_t errnum );
+_PDCLIB_PUBLIC size_t strerrorlen_s( errno_t errnum );
+_PDCLIB_PUBLIC size_t strnlen_s( const char * s, size_t maxsize );
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif
