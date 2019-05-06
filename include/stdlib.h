@@ -246,6 +246,34 @@ _PDCLIB_PUBLIC size_t mbstowcs( wchar_t * _PDCLIB_restrict pwcs, const char * _P
 _PDCLIB_PUBLIC size_t wcstombs( char * _PDCLIB_restrict s, const wchar_t * _PDCLIB_restrict pwcs, size_t n );
 */
 
+/* Annex K -- Bounds-checking interfaces */
+
+#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+
+#ifndef _PDCLIB_ERRNO_T_DEFINED
+#define _PDCLIB_ERRNO_T_DEFINED _PDCLIB_ERRNO_T_DEFINED
+typedef int errno_t;
+#endif
+
+#ifndef _PDCLIB_RSIZE_T_DEFINED
+#define _PDCLIB_RSIZE_T_DEFINED _PDCLIB_RSIZE_T_DEFINED
+typedef size_t rsize_t;
+#endif
+
+typedef void (*constraint_handler_t)( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
+
+/* None of these are implemented yet. Placeholder declarations. */
+_PDCLIB_PUBLIC constraint_handler_t set_constraint_handler_s( constraint_handler_t handler );
+_PDCLIB_PUBLIC void abort_handler_s( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
+_PDCLIB_PUBLIC void ignore_handler_s( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
+_PDCLIB_PUBLIC errno_t getenv_s( size_t * _PDCLIB_restrict len, char * _PDCLIB_restrict value, rsize_t maxsize, const char * _PDCLIB_restrict name );
+_PDCLIB_PUBLIC void * bsearch_s( const void * key, const void * base, rsize_t nmemb, rsize_t size, int (*compar)(const void * k, const void * y, void * context ), void * context );
+_PDCLIB_PUBLIC errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const void * x, const void * y, void * context ), void * context );
+
+/* TODO: Multibyte / wide character functions */
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif

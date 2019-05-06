@@ -123,6 +123,26 @@ _PDCLIB_PUBLIC struct tm * localtime( const time_t * timer );
 */
 _PDCLIB_PUBLIC size_t strftime( char * _PDCLIB_restrict s, size_t maxsize, const char * _PDCLIB_restrict format, const struct tm * _PDCLIB_restrict timeptr );
 
+/* Annex K -- Bounds-checking interfaces */
+
+#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+
+#ifndef _PDCLIB_ERRNO_T_DEFINED
+#define _PDCLIB_ERRNO_T_DEFINED _PDCLIB_ERRNO_T_DEFINED
+typedef int errno_t;
+#endif
+
+#ifndef _PDCLIB_RSIZE_T_DEFINED
+#define _PDCLIB_RSIZE_T_DEFINED _PDCLIB_RSIZE_T_DEFINED
+typedef _PDCLIB_size_t rsize_t;
+#endif
+
+_PDCLIB_PUBLIC errno_t asctime_s( char * s, rsize_t maxsize, const struct tm * timeptr );
+_PDCLIB_PUBLIC errno_t ctime_s( char * s, rsize_t maxsize, const time_t * timer );
+_PDCLIB_PUBLIC errno_t gmtime_s( const time_t * _PDCLIB_restrict timer, struct tm * _PDCLIB_restrict result );
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif

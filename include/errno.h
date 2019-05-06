@@ -179,6 +179,15 @@ extern "C" {
 // Cross-device link
 #define EXDEV           _PDCLIB_EXDEV
 
+/* Annex K -- Bounds-checking interfaces */
+
+#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+#ifndef _PDCLIB_ERRNO_T_DEFINED
+#define _PDCLIB_ERRNO_T_DEFINED _PDCLIB_ERRNO_T_DEFINED
+typedef int errno_t;
+#endif
+#endif
+
 #ifdef __cplusplus
 }
 #endif

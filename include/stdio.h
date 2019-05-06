@@ -788,6 +788,46 @@ _PDCLIB_PUBLIC int ferror( FILE * stream );
 */
 _PDCLIB_PUBLIC void perror( const char * s );
 
+/* Annex K -- Bounds-checking interfaces */
+
+#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+
+#define L_tmpnam_s _PDCLIB_L_tmpnam
+#define TMP_MAX_S _PDCLIB_TMP_MAX
+
+#ifndef _PDCLIB_ERRNO_T_DEFINED
+#define _PDCLIB_ERRNO_T_DEFINED _PDCLIB_ERRNO_T_DEFINED
+typedef int errno_t;
+#endif
+
+#ifndef _PDCLIB_RSIZE_T_DEFINED
+#define _PDCLIB_RSIZE_T_DEFINED _PDCLIB_RSIZE_T_DEFINED
+typedef _PDCLIB_size_t rsize_t;
+#endif
+
+/* None of these are implemented yet. Placeholder declarations. */
+_PDCLIB_PUBLIC errno_t tmpfile_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict streamptr );
+_PDCLIB_PUBLIC errno_t tmpnam_s( char * s, rsize_t maxsize );
+_PDCLIB_PUBLIC errno_t fopen_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict streamptr, const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode );
+_PDCLIB_PUBLIC errno_t freopen_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict newstreamptr, const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, FILE * _PDCLIB_restrict stream );
+_PDCLIB_PUBLIC int fprintf_s( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
+_PDCLIB_PUBLIC int fscanf_s( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
+_PDCLIB_PUBLIC int printf_s( const char * _PDCLIB_restrict format, ... );
+_PDCLIB_PUBLIC int scanf_s( const char * _PDCLIB_restrict format, ... );
+_PDCLIB_PUBLIC int snprintf_s( char * _PDCLIB_restrict s, rsize_t n, const char * _PDCLIB_restrict format, ... );
+_PDCLIB_PUBLIC int sprintf_s( char * _PDCLIB_restrict s, rsize_t n, const char * _PDCLIB_restrict format, ... );
+_PDCLIB_PUBLIC int sscanf_s( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ... );
+_PDCLIB_PUBLIC int vfprintf_s( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+_PDCLIB_PUBLIC int vfscanf_s( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+_PDCLIB_PUBLIC int vprintf_s( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+_PDCLIB_PUBLIC int vscanf_s( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+_PDCLIB_PUBLIC int vsnprintf_s( char * _PDCLIB_restrict s, rsize_t n, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+_PDCLIB_PUBLIC int vsprintf_s( char * _PDCLIB_restrict s, rsize_t n, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+_PDCLIB_PUBLIC int vsscanf_s( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, _PDCLIB_va_list arg );
+_PDCLIB_PUBLIC char * gets_s( char * s, rsize_t n );
+
+#endif
+
 #ifdef __cplusplus
 }
 #endif
