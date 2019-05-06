@@ -5,13 +5,13 @@
 */
 
 #ifndef _PDCLIB_STDINT_H
+#define _PDCLIB_STDINT_H _PDCLIB_STDINT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define _PDCLIB_STDINT_H _PDCLIB_STDINT_H
-
+#include "pdclib/_PDCLIB_lib_ext1.h"
 #include "pdclib/_PDCLIB_int.h"
 
 /* 7.18.1.1 Exact-width integer types. */
