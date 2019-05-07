@@ -167,6 +167,7 @@ set( PDCLIB_SOURCES
      functions/stdlib/lldiv.c
      functions/stdlib/qsort.c
      functions/stdlib/rand.c
+     functions/stdlib/set_constraint_handler_s.c
      functions/stdlib/srand.c
      functions/stdlib/strtol.c
      functions/stdlib/strtoll.c
