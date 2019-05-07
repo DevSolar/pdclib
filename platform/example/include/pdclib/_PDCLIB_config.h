@@ -176,6 +176,10 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_SIG_ATOMIC INT
 
 /* Result type of the 'sizeof' operator (must be unsigned)                    */
+/* Note: In <stdint.h>, this is taken as the base for RSIZE_MAX, the limit    */
+/* for the bounds-checking interfaces of Annex K. The recommendation by the   */
+/* standard is to use ( SIZE_MAX >> 1 ) when "targeting machines with large   */
+/* addess spaces", whereas small address spaces should use SIZE_MAX directly. */
 #define _PDCLIB_size unsigned long
 #define _PDCLIB_SIZE ULONG
 
