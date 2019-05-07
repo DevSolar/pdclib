@@ -329,19 +329,6 @@ struct _PDCLIB_exitfunc_t
     void (*func)( void );
 };
 
-/* Structures required by malloc(), realloc(), and free(). */
-struct _PDCLIB_headnode_t
-{
-    struct _PDCLIB_memnode_t * first;
-    struct _PDCLIB_memnode_t * last;
-};
-
-struct _PDCLIB_memnode_t
-{
-    _PDCLIB_size_t size;
-    struct _PDCLIB_memnode_t * next;
-};
-
 /* Status structure required by _PDCLIB_print(). */
 struct _PDCLIB_status_t
 {
