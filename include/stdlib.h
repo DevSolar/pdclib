@@ -262,6 +262,8 @@ typedef size_t rsize_t;
 
 typedef void (*constraint_handler_t)( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
 
+extern constraint_handler_t _PDCLIB_constraint_handler;
+
 /* None of these are implemented yet. Placeholder declarations. */
 _PDCLIB_PUBLIC constraint_handler_t set_constraint_handler_s( constraint_handler_t handler );
 _PDCLIB_PUBLIC void abort_handler_s( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );

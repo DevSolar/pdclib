@@ -152,6 +152,7 @@ set( PDCLIB_SOURCES
      platform/example/functions/stdio/tmpfile.c
 
      functions/stdlib/abort.c
+     functions/stdlib/abort_handler_s.c
      functions/stdlib/abs.c
      functions/stdlib/atexit.c
      functions/stdlib/atoi.c
