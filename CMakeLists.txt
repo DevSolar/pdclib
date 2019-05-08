@@ -162,6 +162,7 @@ set( PDCLIB_SOURCES
      functions/stdlib/div.c
      functions/stdlib/exit.c
      functions/stdlib/_Exit.c
+     functions/stdlib/ignore_handler_s.c
      functions/stdlib/labs.c
      functions/stdlib/ldiv.c
      functions/stdlib/llabs.c
