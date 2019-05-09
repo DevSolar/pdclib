@@ -33,20 +33,13 @@ constraint_handler_t set_constraint_handler_s( constraint_handler_t handler )
 
 #include "_PDCLIB_test.h"
 
-#ifndef REGTEST
-static void new_constraint_handler( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t errno )
-{
-    abort();
-}
-#endif
-
 int main( void )
 {
 #ifndef REGTEST
     TESTCASE( _PDCLIB_constraint_handler == abort_handler_s );
-    TESTCASE( set_constraint_handler_s( new_constraint_handler ) == abort_handler_s );
-    TESTCASE( _PDCLIB_constraint_handler == new_constraint_handler );
-    TESTCASE( set_constraint_handler_s( NULL ) == new_constraint_handler );
+    TESTCASE( set_constraint_handler_s( ignore_handler_s ) == abort_handler_s );
+    TESTCASE( _PDCLIB_constraint_handler == ignore_handler_s );
+    TESTCASE( set_constraint_handler_s( NULL ) == ignore_handler_s );
     TESTCASE( _PDCLIB_constraint_handler == abort_handler_s );
 #endif
     return TEST_RESULTS;
