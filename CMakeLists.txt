@@ -75,6 +75,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_closeall.c
      functions/_PDCLIB/_PDCLIB_digits.c
      functions/_PDCLIB/_PDCLIB_filemode.c
+     functions/_PDCLIB/_PDCLIB_getstream.c
      functions/_PDCLIB/_PDCLIB_is_leap.c
      functions/_PDCLIB/_PDCLIB_load_lc_collate.c
      functions/_PDCLIB/_PDCLIB_load_lc_ctype.c
@@ -88,6 +89,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_print.c
      functions/_PDCLIB/_PDCLIB_scan.c
      functions/_PDCLIB/_PDCLIB_seed.c
+     functions/_PDCLIB/_PDCLIB_setstream.c
      functions/_PDCLIB/_PDCLIB_strtox_main.c
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
