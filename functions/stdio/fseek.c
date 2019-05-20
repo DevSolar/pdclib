@@ -35,6 +35,11 @@ int fseek( struct _PDCLIB_file_t * stream, long offset, int whence )
         stream->status &= ~ ( _PDCLIB_FREAD | _PDCLIB_FWRITE );
     }
 
+    if ( whence == SEEK_CUR )
+    {
+        offset -= ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx );
+    }
+
     rc = ( _PDCLIB_seek( stream, offset, whence ) != EOF ) ? 0 : EOF;
     _PDCLIB_UNLOCK( stream->mtx );
     return rc;
