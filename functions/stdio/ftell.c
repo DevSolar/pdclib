@@ -102,6 +102,9 @@ int main( void )
     TESTCASE_NOREG( fh->bufidx == 0 );
     /* Reading back first character after rewind for basic read check */
     TESTCASE( fgetc( fh ) == '1' );
+    /* Check that SEEK_CUR actually uses internal position */
+    TESTCASE( fseek( fh, 1l, SEEK_CUR ) == 0 );
+    TESTCASE( ftell( fh ) == 2l );
     /* TODO: t.b.c. */
     TESTCASE( fclose( fh ) == 0 );
     return TEST_RESULTS;
