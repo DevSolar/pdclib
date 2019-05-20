@@ -20,40 +20,15 @@ extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 int fclose( struct _PDCLIB_file_t * stream )
 {
-    struct _PDCLIB_file_t * current;
-    struct _PDCLIB_file_t * previous = NULL;
-
     _PDCLIB_LOCK( stream->mtx );
 
     /* Remove stream from list */
-    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
-
-    current = _PDCLIB_filelist;
-
-    while ( ( current != NULL ) && ( current != stream ) )
+    if ( _PDCLIB_getstream( stream ) )
     {
-        previous = current;
-        current = current->next;
-    }
-
-    if ( current == NULL )
-    {
-        *_PDCLIB_errno_func() = _PDCLIB_EBADF;
-        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
         _PDCLIB_UNLOCK( stream->mtx );
         return EOF;
     }
 
-    if ( previous != NULL )
-    {
-        previous->next = stream->next;
-    }
-    else
-    {
-        _PDCLIB_filelist = stream->next;
-    }
-
-    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
 
     /* Flush buffer */
     if ( stream->status & _PDCLIB_FWRITE )
