@@ -408,7 +408,16 @@ _PDCLIB_LOCAL int _PDCLIB_is_leap( int year_offset );
    allocated memory holding the lines (newlines replaced with zero terminators)
    or NULL in case of error.
 */
-_PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * fh, _PDCLIB_size_t lines );
+_PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * stream, _PDCLIB_size_t lines );
+
+/* Removes the given stream from the internal list of open files. Returns zero
+   if successful, non-zero otherwise. In case of error, sets errno to EBADF.
+*/
+_PDCLIB_LOCAL int _PDCLIB_getstream( struct _PDCLIB_file_t * stream );
+
+/* Insert the given stream into the internal list of open files.
+*/
+_PDCLIB_LOCAL void _PDCLIB_setstream( struct _PDCLIB_file_t * stream );
 
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */
