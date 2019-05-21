@@ -413,11 +413,11 @@ _PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * stream, _PDCLIB
 /* Removes the given stream from the internal list of open files. Returns zero
    if successful, non-zero otherwise. In case of error, sets errno to EBADF.
 */
-int _PDCLIB_getstream( struct _PDCLIB_file_t * stream );
+_PDCLIB_LOCAL int _PDCLIB_getstream( struct _PDCLIB_file_t * stream );
 
 /* Insert the given stream into the internal list of open files.
 */
-void _PDCLIB_setstream( struct _PDCLIB_file_t * stream );
+_PDCLIB_LOCAL void _PDCLIB_setstream( struct _PDCLIB_file_t * stream );
 
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */
