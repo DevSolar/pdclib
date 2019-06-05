@@ -790,7 +790,7 @@ _PDCLIB_PUBLIC void perror( const char * s );
 
 /* Annex K -- Bounds-checking interfaces */
 
-#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+#if ( __STDC_WANT_LIB_EXT1__ + 0 ) != 0
 
 #define L_tmpnam_s _PDCLIB_L_tmpnam
 #define TMP_MAX_S _PDCLIB_TMP_MAX
