@@ -8,11 +8,6 @@
 
 #ifndef REGTEST
 
-#ifdef __ANDROID__
-/* Getting the sigset_t typedef for Termux */
-#define _STRUCT_TIMESPEC
-#include "bits/signal_types.h"
-#endif
 #include "sys/time.h"
 
 /* See comments in time.h on the semantics of time_t. */
