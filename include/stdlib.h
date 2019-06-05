@@ -248,7 +248,7 @@ _PDCLIB_PUBLIC size_t wcstombs( char * _PDCLIB_restrict s, const wchar_t * _PDCL
 
 /* Annex K -- Bounds-checking interfaces */
 
-#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+#if ( __STDC_WANT_LIB_EXT1__ + 0 ) != 0
 
 #ifndef _PDCLIB_ERRNO_T_DEFINED
 #define _PDCLIB_ERRNO_T_DEFINED _PDCLIB_ERRNO_T_DEFINED

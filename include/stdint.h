@@ -211,7 +211,7 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* Annex K -- Bounds-checking interfaces */
 
-#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+#if ( __STDC_WANT_LIB_EXT1__ + 0 ) != 0
 #define RSIZE_MAX ( _PDCLIB_SIZE_MAX >> 1 )
 #endif
 
