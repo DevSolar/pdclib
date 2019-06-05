@@ -34,7 +34,7 @@ typedef _PDCLIB_wchar_t   wchar_t;
 
 /* Annex K -- Bounds-checking interfaces */
 
-#if ! ( defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 0 )
+#if ( __STDC_WANT_LIB_EXT1__ + 0 ) != 0
 #ifndef _PDCLIB_RSIZE_T_DEFINED
 #define _PDCLIB_RSIZE_T_DEFINED _PDCLIB_RSIZE_T_DEFINED
 typedef size_t rsize_t;
