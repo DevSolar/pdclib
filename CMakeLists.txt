@@ -203,6 +203,7 @@ set( PDCLIB_SOURCES
      functions/string/strspn.c
      functions/string/strstr.c
      functions/string/strtok.c
+     functions/string/strtok_s.c
      functions/string/strxfrm.c
 
      platform/example/functions/threads/call_once.c
