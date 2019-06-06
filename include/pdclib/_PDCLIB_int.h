@@ -419,6 +419,11 @@ _PDCLIB_LOCAL int _PDCLIB_getstream( struct _PDCLIB_file_t * stream );
 */
 _PDCLIB_LOCAL void _PDCLIB_setstream( struct _PDCLIB_file_t * stream );
 
+/* Backend for strtok and strtok_s (plus potential extensions like strtok_r).
+   strtok_r()).
+*/
+_PDCLIB_LOCAL char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, _PDCLIB_size_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char ** _PDCLIB_restrict ptr );
+
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */
 /* -------------------------------------------------------------------------- */

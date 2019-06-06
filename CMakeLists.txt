@@ -90,6 +90,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_scan.c
      functions/_PDCLIB/_PDCLIB_seed.c
      functions/_PDCLIB/_PDCLIB_setstream.c
+     functions/_PDCLIB/_PDCLIB_strtok.c
      functions/_PDCLIB/_PDCLIB_strtox_main.c
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
@@ -202,6 +203,7 @@ set( PDCLIB_SOURCES
      functions/string/strspn.c
      functions/string/strstr.c
      functions/string/strtok.c
+     functions/string/strtok_s.c
      functions/string/strxfrm.c
 
      platform/example/functions/threads/call_once.c
