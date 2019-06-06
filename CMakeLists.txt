@@ -90,6 +90,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_scan.c
      functions/_PDCLIB/_PDCLIB_seed.c
      functions/_PDCLIB/_PDCLIB_setstream.c
+     functions/_PDCLIB/_PDCLIB_strtok.c
      functions/_PDCLIB/_PDCLIB_strtox_main.c
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
