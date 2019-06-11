@@ -9,6 +9,7 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <string.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char ** _PDCLIB_restrict ptr )
 {
@@ -16,6 +17,7 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
 
     if ( s1max == NULL || s2 == NULL || ptr == NULL || ( s1 == NULL && *ptr == NULL ) || *s1max > RSIZE_MAX )
     {
+        _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
         return NULL;
     }
 
@@ -73,7 +75,6 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
     }
 
     /* parsed to end of string */
-    *ptr = NULL;
     return s1;
 }
 
@@ -118,6 +119,7 @@ int main( void )
     TESTCASE( s[4] == 'd' );
     TESTCASE( s[5] == '\0' );
     TESTCASE( _PDCLIB_strtok( NULL, &max, "_", &p ) == NULL );
+    TESTCASE( _PDCLIB_strtok( NULL, &max, "_", NULL ) == NULL );
 
     TESTCASE( _PDCLIB_strtok( str1, &max1, "?", &ptr1 ) == &str1[1] );
     TESTCASE( _PDCLIB_strtok( NULL, &max1, ",", &ptr1 ) == &str1[3] );
