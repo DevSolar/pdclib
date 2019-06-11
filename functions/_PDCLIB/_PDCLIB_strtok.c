@@ -9,6 +9,7 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <string.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char ** _PDCLIB_restrict ptr )
 {
@@ -73,7 +74,6 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
     }
 
     /* parsed to end of string */
-    *ptr = NULL;
     return s1;
 }
 
