@@ -119,7 +119,6 @@ int main( void )
     TESTCASE( s[4] == 'd' );
     TESTCASE( s[5] == '\0' );
     TESTCASE( _PDCLIB_strtok( NULL, &max, "_", &p ) == NULL );
-    TESTCASE( _PDCLIB_strtok( NULL, &max, "_", NULL ) == NULL );
 
     TESTCASE( _PDCLIB_strtok( str1, &max1, "?", &ptr1 ) == &str1[1] );
     TESTCASE( _PDCLIB_strtok( NULL, &max1, ",", &ptr1 ) == &str1[3] );
