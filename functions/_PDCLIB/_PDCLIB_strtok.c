@@ -46,6 +46,7 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
             if ( *s1max == 0 )
             {
                 _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
+                return NULL;
             }
             ++s1;
             --(*s1max);
@@ -75,6 +76,7 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
                 if ( *s1max == 0 )
                 {
                     _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
+                    return NULL;
                 }
                 --(*s1max);
                 *((*ptr)++) = '\0';
@@ -84,6 +86,7 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
         if ( *s1max == 0 )
         {
             _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
+            return NULL;
         }
         --(*s1max);
         ++(*ptr);
@@ -98,6 +101,17 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
 #ifdef TEST
 
 #include "_PDCLIB_test.h"
+
+#ifndef REGTEST
+
+static int HANDLER_CALLS = 0;
+
+static void test_handler( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error )
+{
+    ++HANDLER_CALLS;
+}
+
+#endif
 
 int main( void )
 {
@@ -134,6 +148,13 @@ int main( void )
     TESTCASE( s[4] == 'd' );
     TESTCASE( s[5] == '\0' );
     TESTCASE( _PDCLIB_strtok( NULL, &max, "_", &p ) == NULL );
+
+    /* Testing the constraint handling */
+    strcpy( s, "ab.cd" );
+    max = 2;
+    TESTCASE( set_constraint_handler_s( test_handler ) == abort_handler_s );
+    TESTCASE( _PDCLIB_strtok( s, &max, ".", &p ) == NULL );
+    TESTCASE( HANDLER_CALLS == 1 );
 
     {
     /* The strtok_s() example code from the standard */
