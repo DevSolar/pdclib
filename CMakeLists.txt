@@ -205,6 +205,15 @@ set( PDCLIB_SOURCES
      functions/string/strtok.c
      functions/string/strtok_s.c
      functions/string/strxfrm.c
+     functions/string/memcpy_s.c
+     functions/string/memmove_s.c
+     functions/string/memset_s.c
+     functions/string/strcat_s.c
+     functions/string/strcpy_s.c
+     functions/string/strerror_s.c
+     functions/string/strerrorlen_s.c
+     functions/string/strncat_s.c
+     functions/string/strncpy_s.c
 
      platform/example/functions/threads/call_once.c
      platform/example/functions/threads/cnd_broadcast.c
