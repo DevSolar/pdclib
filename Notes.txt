@@ -36,14 +36,18 @@ Rink Springer, for very precise bug reports including patches, a heads-up on
 the capabilities of PDCLib when I most needed it, and for pushing me back in
 the driver's seat, thanks.
 
-Giovanni Mascellani, for his finding a bug in the strto*l() functions.
+Giovanni Mascellani, for his finding a bug in the strto*l() functions, thanks.
+
+Stefan Schmidt, of the NXDK project, which adopted PDCLib as their system
+library, and who contributed several valuable bug reports, suggestions, and
+reminders to keep working on it, thanks.
 
 Everyone involved in the first, "public" attempt at PDCLib, for bearing with me
 when I restarted from scratch, thanks.
 
 Everyone bearing with me during the "stdio block", a period of many years in
 which PDCLib received not a single update because I was stuck and could not
-find the time and energy to work it out.
+find the time and energy to work it out, thanks.
 
 Lennart Frid�n and Sammy Nordstr�m, who have been great pals even after I sunk
 some other project that had eaten countless hours of work between the three of
