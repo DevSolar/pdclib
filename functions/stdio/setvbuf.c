@@ -52,6 +52,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                     if ( ( buf = (char *) malloc( size ) ) == NULL )
                     {
                         /* Out of memory error. */
+                        _PDCLIB_UNLOCK( stream->mtx );
                         return -1;
                     }
 
