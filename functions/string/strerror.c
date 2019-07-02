@@ -13,9 +13,9 @@
 /* TODO: Doing this via a static array is not the way to do it. */
 char * strerror( int errnum )
 {
-    if ( errnum >= _PDCLIB_ERRNO_MAX )
+    if ( errnum >= _PDCLIB_ERRNO_MAX || errnum < 0 )
     {
-        return (char *)"Unknown error";
+        return _PDCLIB_EUNKNOWN_TEXT;
     }
     else
     {

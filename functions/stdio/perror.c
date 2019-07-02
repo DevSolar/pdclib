@@ -24,9 +24,9 @@ void perror( const char * s )
         fprintf( stderr, "%s: ", s );
     }
 
-    if ( errno >= _PDCLIB_ERRNO_MAX )
+    if ( errno >= _PDCLIB_ERRNO_MAX || errno < 0 )
     {
-        fprintf( stderr, "Unknown error\n" );
+        fprintf( stderr, "%s\n", _PDCLIB_EUNKNOWN_TEXT );
     }
     else
     {
