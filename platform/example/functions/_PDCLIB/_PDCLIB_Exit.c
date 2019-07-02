@@ -1,10 +1,10 @@
-/* _PDCLIB_exit( int )
+/* _PDCLIB_Exit( int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-/* This is an example implementation of _PDCLIB_exit() fit for use with POSIX
+/* This is an example implementation of _PDCLIB_Exit() fit for use with POSIX
    kernels.
 */
 

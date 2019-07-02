@@ -351,6 +351,12 @@ typedef int _PDCLIB_fd_t;
 /* relying on this would rely on implementation-defined behaviour (not good). */
 #define _PDCLIB_UNGETCBUFSIZE 1
 
+/* The number of functions that can be registered with atexit(). Needs to be  */
+/* at least 33 (32 guaranteed by the standard, plus _PDCLIB_closeall() which  */
+/* is used internally by PDCLib to close all open streams).                   */
+/* TODO: Should expand dynamically.                                           */
+#define _PDCLIB_ATEXIT_SLOTS 40
+
 /* errno -------------------------------------------------------------------- */
 
 /* These are the values that _PDCLIB_errno can be set to by the library.      */
