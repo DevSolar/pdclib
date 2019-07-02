@@ -8,23 +8,18 @@
 
 #ifndef REGTEST
 
-/* TODO - "except that a function is called after any previously registered
-   functions that had already been called at the time it was registered.
+/* TODO - "...except that a function is called after any previously registered
+   functions that had already been called at the time it was registered."
 */
 
-/* TODO: 32 is guaranteed. This should be dynamic but ATM gives problems
-   with my malloc.
-*/
-#define NUMBER_OF_SLOTS 40
-
-void (*_PDCLIB_exitstack[ NUMBER_OF_SLOTS ])( void ) = { _PDCLIB_closeall };
-size_t _PDCLIB_exitptr = NUMBER_OF_SLOTS;
+void (*_PDCLIB_exitstack[ _PDCLIB_ATEXIT_SLOTS ])( void ) = { _PDCLIB_closeall };
+size_t _PDCLIB_exitptr = 1;
 
 void exit( int status )
 {
-    while ( _PDCLIB_exitptr < NUMBER_OF_SLOTS )
+    while ( _PDCLIB_exitptr != 0 )
     {
-        _PDCLIB_exitstack[ _PDCLIB_exitptr++ ]();
+        _PDCLIB_exitstack[ --_PDCLIB_exitptr ]();
     }
     _Exit( status );
 }
