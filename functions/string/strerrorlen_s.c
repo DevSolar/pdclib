@@ -9,9 +9,9 @@
 
 #ifndef REGTEST
 
-size_t strerrorlen_s( errno_t error )
+size_t strerrorlen_s( errno_t errnum )
 {
-    return 0;
+    return strlen( strerror( errnum ) );
 }
 
 #endif
