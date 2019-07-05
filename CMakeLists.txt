@@ -329,7 +329,7 @@ if ( CMAKE_COMPILER_IS_GNUCC )
     # GCC making statements about the standard library's capabilities,
     # specifically __STDC_NO_THREADS__ (by including stdc-predef.h). I
     # was unable to identify a more elegant way to achieve this.
-    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Winline -Wno-long-long -Wuninitialized -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H" )
+    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Winline -Wno-long-long -Wuninitialized -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H -nostdlib" )
 
     if ( NOT AS_CXX )
         string( APPEND FLAGS " -Wmissing-prototypes -Wnested-externs -Wstrict-prototypes -Wdeclaration-after-statement" )

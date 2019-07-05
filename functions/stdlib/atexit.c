@@ -13,13 +13,13 @@ extern size_t _PDCLIB_exitptr;
 
 int atexit( void (*func)( void ) )
 {
-    if ( _PDCLIB_exitptr == 0 )
+    if ( _PDCLIB_exitptr == _PDCLIB_ATEXIT_SLOTS )
     {
         return -1;
     }
     else
     {
-        _PDCLIB_exitstack[ --_PDCLIB_exitptr ] = func;
+        _PDCLIB_exitstack[ _PDCLIB_exitptr++ ] = func;
         return 0;
     }
 }
