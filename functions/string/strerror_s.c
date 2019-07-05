@@ -6,25 +6,43 @@
 
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <string.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifndef REGTEST
 
 #include <locale.h>
 
-/* TODO: Doing this via a static array is not the way to do it. */
 errno_t strerror_s( char * s, rsize_t maxsize, errno_t errnum )
 {
-    return 0;
-    /*
-    if ( errnum >= _PDCLIB_ERRNO_MAX )
+    size_t len = strerrorlen_s( errnum );
+
+    if ( s == NULL || maxsize > RSIZE_MAX || maxsize == 0 )
     {
-        return (char *)"Unknown error";
+        _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
+        return _PDCLIB_EINVAL;
+    }
+
+    if ( len < maxsize )
+    {
+        strcpy( s, strerror( errnum ) );
     }
     else
     {
-        return _PDCLIB_lc_messages.errno_texts[errnum];
+        strncpy( s, strerror( errnum ), maxsize - 1 );
+
+        if ( maxsize > 3 )
+        {
+            strcpy( &s[ maxsize - 4 ], "..." );
+        }
+        else
+        {
+            s[ maxsize - 1 ] = '\0';
+        }
     }
-    */
+
+    return 0;
 }
 
 #endif
@@ -38,7 +56,13 @@ errno_t strerror_s( char * s, rsize_t maxsize, errno_t errnum )
 
 int main( void )
 {
-    TESTCASE( strerror( ERANGE ) != strerror( EDOM ) );
+#ifndef REGTEST
+    char s[14];
+    TESTCASE( strerror_s( s, 14, _PDCLIB_ERRNO_MAX ) == 0 );
+    TESTCASE( strcmp( s, "unknown error" ) == 0 );
+    TESTCASE( strerror_s( s, 13, _PDCLIB_ERRNO_MAX ) == 0 );
+    TESTCASE( strcmp( s, "unknown e..." ) == 0 );
+#endif
     return TEST_RESULTS;
 }
 

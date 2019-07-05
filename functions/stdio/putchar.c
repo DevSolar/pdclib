@@ -22,6 +22,7 @@ int putchar( int c )
 int main( void )
 {
     /* Testing covered by ftell.c */
+    putchar( 'x' );
     return TEST_RESULTS;
 }
 
