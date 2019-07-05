@@ -56,7 +56,7 @@ errno_t strerror_s( char * s, rsize_t maxsize, errno_t errnum )
 
 int main( void )
 {
-#ifndef REGTEST
+#if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
     char s[14];
     TESTCASE( strerror_s( s, 14, _PDCLIB_ERRNO_MAX ) == 0 );
     TESTCASE( strcmp( s, "unknown error" ) == 0 );

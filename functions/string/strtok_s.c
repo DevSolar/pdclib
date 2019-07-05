@@ -22,7 +22,7 @@ char * strtok_s( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1max, c
 
 int main( void )
 {
-#ifndef REGTEST
+#if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
     char s[] = "_a_bc__d_";
     char str1[] = "?a???b,,,#c";
     char str2[] = "\t \t";

@@ -53,7 +53,7 @@ static void test_handler( const char * _PDCLIB_restrict msg, void * _PDCLIB_rest
 
 int main( void )
 {
-#ifndef REGTEST
+#if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
     char s[] = "xxxxxxxxx";
     set_constraint_handler_s( test_handler );
 
