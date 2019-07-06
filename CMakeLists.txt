@@ -162,6 +162,7 @@ set( PDCLIB_SOURCES
      functions/stdlib/atol.c
      functions/stdlib/atoll.c
      functions/stdlib/bsearch.c
+     functions/stdlib/bsearch_s.c
      functions/stdlib/div.c
      functions/stdlib/exit.c
      functions/stdlib/_Exit.c
@@ -171,6 +172,7 @@ set( PDCLIB_SOURCES
      functions/stdlib/llabs.c
      functions/stdlib/lldiv.c
      functions/stdlib/qsort.c
+     functions/stdlib/qsort_s.c
      functions/stdlib/rand.c
      functions/stdlib/set_constraint_handler_s.c
      functions/stdlib/srand.c
@@ -180,6 +182,7 @@ set( PDCLIB_SOURCES
      functions/stdlib/strtoull.c
 
      platform/example/functions/stdlib/getenv.c
+     platform/example/functions/stdlib/getenv_s.c
      platform/example/functions/stdlib/system.c
 
      functions/string/memchr.c
