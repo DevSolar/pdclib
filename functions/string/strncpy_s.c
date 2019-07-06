@@ -49,7 +49,7 @@ runtime_constraint_violation:
 
 #include "_PDCLIB_test.h"
 
-#ifndef REGTEST
+#if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
 
 static int HANDLER_CALLS = 0;
 
