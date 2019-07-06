@@ -40,7 +40,7 @@ errno_t memset_s( void * s, rsize_t smax, int c, rsize_t n )
 
 #include "_PDCLIB_test.h"
 
-#ifndef REGTEST
+#if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
 
 static int HANDLER_CALLS = 0;
 

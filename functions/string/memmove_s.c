@@ -55,7 +55,7 @@ errno_t memmove_s( void * s1, rsize_t s1max, const void * s2, rsize_t n )
 
 #include "_PDCLIB_test.h"
 
-#ifndef REGTEST
+#if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
 
 static int HANDLER_CALLS = 0;
 
