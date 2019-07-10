@@ -137,9 +137,52 @@ typedef int errno_t;
 typedef _PDCLIB_size_t rsize_t;
 #endif
 
+/* None of these are implemented yet. Placeholder declarations. */
+
+/* Converts the broken-down time pointed to by timeptr into a string in the
+   form "Sun Sep 16 01:03:52 1973\n\0", which is stored in buffer s of maxsize.
+   Returns zero if the time was successfully converted and stored, non-zero
+   otherwise.
+   The following conditions will be considered runtime constraint violations:
+   - s or timeptr being NULL.
+   - maxsize being < 26 or > RSIZE_MAX.
+   - the broken-down time pointed to by timeptr not being normalized.
+   - the year represented by the broken-down time pointed to by timeptr
+     being < 0 or > 9999.
+   In case of a constraint violation, the time will not be converted. If
+   s is not NULL and maxsize is neither zero nor > RSIZE_MAX, s[0] will be
+   set to '\0'.
+   The currently active constraint violation handler function will be called
+   (see set_constraint_handler_s()).
+*/
 _PDCLIB_PUBLIC errno_t asctime_s( char * s, rsize_t maxsize, const struct tm * timeptr );
+
+/* Equivalent to asctime_s( s, maxsize, localtime( timer ) ). */
 _PDCLIB_PUBLIC errno_t ctime_s( char * s, rsize_t maxsize, const time_t * timer );
+
+/* Converts the calender time pointed to by timer into a broken-down time
+   expressed as UTC, which gets stored in the result struct.
+   Returns zero if the time was successfully converted and stored, non-zero
+   otherwise.
+   The following conditions will be considered runtime constraint violations:
+   - timer or result being NULL.
+   In case of a constraint violation, the time will not be converted.
+   The currently active constraint violation handler function will be called
+   (see set_constraint_handler_s()).
+*/
 _PDCLIB_PUBLIC errno_t gmtime_s( const time_t * _PDCLIB_restrict timer, struct tm * _PDCLIB_restrict result );
+
+/* Converts the calender time pointed to by timer into a broken-down time
+   expressed as local time, which gets stored in the result struct.
+   Returns a pointer to the broken-down time, or a NULL pointer if if
+   cannot be represented or stored.
+   The following conditions will be considered runtime constraint violations:
+   - timer or result being NULL.
+   In case of a constraint violation, the time will not be converted.
+   The currently active constraint violation handler function will be called
+   (see set_constraint_handler_s()).
+*/
+_PDCLIB_PUBLIC struct tm * localtime_s( const time_t * _PDCLIB_restrict timer, struct tm * _PDCLIB_restrict result );
 
 #endif
 
