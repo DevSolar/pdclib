@@ -55,6 +55,11 @@ The basic idea is this:
    * If using PDCLib's example threading interface (which is a wrapper for
      pthread), make sure you link against the pthread library (-pthread for
      GCC).
+   * Ensure your C runtime support (the bit of code that actually calls
+     main()) calls PDCLib's exit() function with the return value from
+     main(). This is necessary so that PDCLib's cleanup code gets run:
+     Calling functions registered with atexit(), flushing unwritten buffers,
+     closing streams. The C runtime is not in scope for PDCLib.
 
 5) Install the library binary to where such a library would be expected in
    your environment, and the contents of the 'include' directory to where
