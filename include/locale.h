@@ -104,4 +104,11 @@ _PDCLIB_PUBLIC struct lconv * localeconv( void );
 }
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_LOCALE_H
+#include _PDCLIB_EXTEND_LOCALE_H
+#endif
+
 #endif

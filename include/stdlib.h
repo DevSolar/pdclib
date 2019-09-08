@@ -356,4 +356,11 @@ _PDCLIB_PUBLIC errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*
 }
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDLIB_H
+#include _PDCLIB_EXTEND_STDLIB_H
+#endif
+
 #endif

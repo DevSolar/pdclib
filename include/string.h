@@ -384,4 +384,11 @@ _PDCLIB_PUBLIC size_t strnlen_s( const char * s, size_t maxsize );
 }
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STRING_H
+#include _PDCLIB_EXTEND_STRING_H
+#endif
+
 #endif
