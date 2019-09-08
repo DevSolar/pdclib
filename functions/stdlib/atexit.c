@@ -44,7 +44,7 @@ static void counthandler( void )
 static void checkhandler( void )
 {
     int i;
-    for ( i = 0; i < 31; ++i )
+    for ( i = 0; i < 32; ++i )
     {
         assert( flags[ i ] == i );
     }
@@ -57,7 +57,7 @@ int main( void )
 #else
     int i;
     TESTCASE( atexit( &checkhandler ) == 0 );
-    for ( i = 0; i < 31; ++i )
+    for ( i = 0; i < 32; ++i )
     {
         TESTCASE( atexit( &counthandler ) == 0 );
     }
