@@ -28,7 +28,7 @@ option( IGNORE_NO_TESTDRIVER "Ignore NO_TESTDRIVER flags instead of reporting th
 option( AS_CXX "Compile as C++. (For testing purposes.) Default: OFF." OFF )
 
 # Setting compiler to C11 standard, no extensions.
-set( CMAKE_C_STANDARD 11 )
+set( CMAKE_C_STANDARD 99 )
 set( CMAKE_C_STANDARD_REQUIRED ON )
 set( CMAKE_C_EXTENSIONS OFF )
 

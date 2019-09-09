@@ -32,6 +32,8 @@ int at_quick_exit( void (*func)( void ) )
 
 #include <assert.h>
 
+#if ! defined( REGTEST ) || __STDC_VERSION__ >= 201112L
+
 static int flags[ 32 ];
 
 static void counthandler( void )
@@ -50,11 +52,11 @@ static void checkhandler( void )
     }
 }
 
+#endif
+
 int main( void )
 {
-#ifdef __ANDROID__
-    TESTCASE( NO_TESTDRIVER );
-#else
+#if ! defined( REGTEST ) || __STDC_VERSION__ >= 201112L
     int i;
     TESTCASE( at_quick_exit( &checkhandler ) == 0 );
     for ( i = 0; i < 32; ++i )
