@@ -141,14 +141,14 @@ _PDCLIB_PUBLIC void * realloc( void * ptr, size_t size );
    temporary files before exiting with EXIT_FAILURE.
    abort() does not return.
 */
-_PDCLIB_PUBLIC void abort( void );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void abort( void );
 
 /* Register a function that will be called on exit(), or when main() returns.
    At least 32 functions can be registered this way, and will be called in
    reverse order of registration (last-in, first-out).
    Returns zero if registration is successfull, nonzero if it failed.
 */
-_PDCLIB_PUBLIC int atexit( void (*func)( void ) );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn int atexit( void (*func)( void ) );
 
 /* Normal process termination. Functions registered by atexit() (see above) are
    called, streams flushed, files closed and temporary files removed before the
@@ -156,7 +156,7 @@ _PDCLIB_PUBLIC int atexit( void (*func)( void ) );
    and EXIT_FAILURE above.)
    exit() does not return.
 */
-_PDCLIB_PUBLIC void exit( int status );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void exit( int status );
 
 /* Normal process termination. Functions registered by atexit() (see above) are
    NOT CALLED. This implementation DOES flush streams, close files and removes
@@ -164,7 +164,7 @@ _PDCLIB_PUBLIC void exit( int status );
    comment for EXIT_SUCCESS and EXIT_FAILURE above.)
    _Exit() does not return.
 */
-_PDCLIB_PUBLIC void _Exit( int status );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void _Exit( int status );
 
 /* Search an environment-provided key-value map for the given key name, and
    return a pointer to the associated value string (or NULL if key name cannot
