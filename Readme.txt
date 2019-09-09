@@ -44,13 +44,12 @@ This is a C Standard Library. Nothing more, nothing less. No POSIX
 or other extensions, just what's defined in ISO/IEC 9899.
 
 (Well, this is what it will be when the 1.0 release comes out. Check
-http://pdclib.rootdirectory.de/source#status to see what is implemented
-so far.)
+http://pdclib.rootdirectory.de to see what is implemented so far.)
 
 Further Documentation
 ---------------------
 
-Check Quickstart.txt to get a "working" version of the library as soon
+Check Quickstart.txt to get a "working" version of the library as quick
 as possible.
 
 Check Internals.txt for an overview of technical intricacies.
