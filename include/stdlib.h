@@ -193,8 +193,8 @@ _PDCLIB_PUBLIC int system( const char * string );
    second parameter); the function should return a value less than, equal to,
    or greater than 0 if the key is considered to be less than, equal to, or
    greater than the array element, respectively.
-   The function returns a pointer to the first matching element found, or NULL
-   if no match is found.
+   The function returns a pointer to a matching element found, or NULL if no
+   match is found.
 */
 _PDCLIB_PUBLIC void * bsearch( const void * key, const void * base, size_t nmemb, size_t size, int (*compar)( const void *, const void * ) );
 
@@ -260,16 +260,92 @@ typedef int errno_t;
 typedef size_t rsize_t;
 #endif
 
+/* A function type that can serve as a constraint handler (see below). The
+   first parameter is an error message on the constraint violation, the
+   second parameter a pointer to an implementation-defined object, the
+   third an error code related to the constraint violation.
+   If the function calling the constraint handler is defined to return
+   errno_t, the third parameter will be identical to the return value of
+   that function.
+   This implementation sets the second parameter of the constraint handler
+   call to NULL.
+*/
 typedef void (*constraint_handler_t)( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
 
+/* The currently active constraint violation handler. This implementation
+   sets abort_handler_s as the default constraint violation handler.
+*/
 extern constraint_handler_t _PDCLIB_constraint_handler;
 
-/* None of these are implemented yet. Placeholder declarations. */
+/* Set the given function as the new constraint violation handler. */
 _PDCLIB_PUBLIC constraint_handler_t set_constraint_handler_s( constraint_handler_t handler );
+
+/* One of two predefined constraint violation handlers. When called, it will
+   print an error message (including the message passed as the first
+   parameter to the handler function) and call abort().
+*/
 _PDCLIB_PUBLIC void abort_handler_s( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
+
+/* One of two predefined constraint violation handlers. Simply returns,
+   ignoring the constraint violation.
+*/
 _PDCLIB_PUBLIC void ignore_handler_s( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
+
+/* Search an environment-provided key-value map for the given key name.
+   If the name is found,
+   - if len is not NULL, the length of the associated value string is stored
+     in that location.
+   - if len < maxsize, the value string is copied to the indicated location.
+   If the name is not found,
+   - if len is not NULL, a zero is stored in that location.
+   - if maxsize > 0, value[0] is set to the null character.
+   Details on the provided keys and how to set / change them are determined by
+   the hosting OS and its glue function.
+   The following conditions will be considered runtime constraint violations:
+   - value being a NULL pointer.
+   - maxsize == 0 or maxsize > RSIZE_MAX.
+   In case of a constraint violation, if len is not NULL a zero will be
+   stored at that location, and the environment key-value map not searched.
+   The currently active constraint violation handler function will be called
+   (see set_constraint_handler_s()).
+*/
 _PDCLIB_PUBLIC errno_t getenv_s( size_t * _PDCLIB_restrict len, char * _PDCLIB_restrict value, rsize_t maxsize, const char * _PDCLIB_restrict name );
+
+/* Do a binary search for a given key in the array with a given base pointer,
+   which consists of nmemb elements that are of the given size each. To compare
+   the given key with an element from the array, the given function compar is
+   called (with key as first parameter, a pointer to the array member as
+   second parameter, and the context parameter passed to bsearch_s() as third
+   parameter); the function should return a value less than, equal to,
+   or greater than 0 if the key is considered to be less than, equal to, or
+   greater than the array element, respectively.
+   The function returns a pointer to a matching element found, or NULL if no
+   match is found.
+   The following conditions will be considered runtime constraint violations:
+   - nmemb or size > RSIZE_MAX.
+   - nmemb > 0 and either of key, base, or compar being a null pointer.
+   In case of a constraint violation, the array will not be searched.
+   The currently active constraint violation handler function will be called
+   (see set_constraint_handler_s()).
+*/
 _PDCLIB_PUBLIC void * bsearch_s( const void * key, const void * base, rsize_t nmemb, rsize_t size, int (*compar)(const void * k, const void * y, void * context ), void * context );
+
+/* Do a quicksort on an array with a given base pointer, which consists of
+   nmemb elements that are of the given size each. To compare two elements from
+   the array, the given function compar is called, with the first two arguments
+   being pointers to the two objects to be compared, and the third argument
+   being the context parameter passed to qsort_s. The compar function should
+   return a value less than, equal to, or greater than 0 if the first argument
+   is considered to be less than, equal to, or greater than the second argument,
+   respectively. If two elements are compared equal, their order in the sorted
+   array is not specified.
+   The following conditions will be considered runtime constraint violations:
+   - nmemb or size > RSIZE_MAX.
+   - nmemb > 0 and either of base or compar being a null pointer.
+   In case of a constraint violation, the array will not be sorted.
+   The currently active constraint violation handler function will be called
+   (see set_constraint_handler_s()).
+*/
 _PDCLIB_PUBLIC errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const void * x, const void * y, void * context ), void * context );
 
 /* TODO: Multibyte / wide character functions */
@@ -278,6 +354,13 @@ _PDCLIB_PUBLIC errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*
 
 #ifdef __cplusplus
 }
+#endif
+
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDLIB_H
+#include _PDCLIB_EXTEND_STDLIB_H
 #endif
 
 #endif

@@ -180,7 +180,11 @@ int main( int argc, char * argv[] )
         return EXIT_FAILURE;
     }
 
+#ifdef TEST
     if ( argc != 4 )
+#else
+    if ( argc != 3 )
+#endif
     {
         printf( "\n"
                 "Usage: get-uctypes <UnicodeData.txt> <DerivedCoreProperties.txt>"
