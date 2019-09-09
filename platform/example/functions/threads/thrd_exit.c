@@ -8,7 +8,7 @@
 
 #include <threads.h>
 
-extern void pthread_exit( void * );
+extern void pthread_exit( void * ) _PDCLIB_NORETURN;
 
 void thrd_exit( int res )
 {

@@ -20,15 +20,15 @@
 # cpack -G <generator>
 # to create a package of your compiled version of PDCLib.
 
-cmake_minimum_required( VERSION 2.9 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.1.3 FATAL_ERROR )
 
 project( pdclib )
 
 option( IGNORE_NO_TESTDRIVER "Ignore NO_TESTDRIVER flags instead of reporting them as error. Default: OFF." OFF )
 option( AS_CXX "Compile as C++. (For testing purposes.) Default: OFF." OFF )
 
-# Setting compiler to C99 standard at minimum, no extensions.
-set( CMAKE_C_STANDARD 99 )
+# Setting compiler to C11 standard, no extensions.
+set( CMAKE_C_STANDARD 11 )
 set( CMAKE_C_STANDARD_REQUIRED ON )
 set( CMAKE_C_EXTENSIONS OFF )
 
@@ -157,6 +157,7 @@ set( PDCLIB_SOURCES
      functions/stdlib/abort.c
      functions/stdlib/abort_handler_s.c
      functions/stdlib/abs.c
+     functions/stdlib/at_quick_exit.c
      functions/stdlib/atexit.c
      functions/stdlib/atoi.c
      functions/stdlib/atol.c
@@ -173,6 +174,7 @@ set( PDCLIB_SOURCES
      functions/stdlib/lldiv.c
      functions/stdlib/qsort.c
      functions/stdlib/qsort_s.c
+     functions/stdlib/quick_exit.c
      functions/stdlib/rand.c
      functions/stdlib/set_constraint_handler_s.c
      functions/stdlib/srand.c
