@@ -70,7 +70,7 @@ typedef _PDCLIB_sig_atomic sig_atomic_t;
    SIG_DFL for all handlers.) If the request cannot be honored, SIG_ERR is
    returned and errno is set to an unspecified positive value.
 */
-void (*signal( int sig, void (*func)( int ) ) )( int );
+_PDCLIB_PUBLIC void (*signal( int sig, void (*func)( int ) ) )( int );
 
 /* Raises the given signal (executing the registered signal handler with the
    given signal number as parameter).
@@ -79,6 +79,6 @@ void (*signal( int sig, void (*func)( int ) ) )( int );
    handler (i.e., a second signal before the signal handler re-registers itself
    or SIG_IGN will end the program).
    Returns zero if successful, nonzero otherwise. */
-int raise( int sig );
+_PDCLIB_PUBLIC int raise( int sig );
 
 #endif
