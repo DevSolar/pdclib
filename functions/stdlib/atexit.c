@@ -52,16 +52,12 @@ static void checkhandler( void )
 
 int main( void )
 {
-#ifdef __ANDROID__
-    TESTCASE( NO_TESTDRIVER );
-#else
     int i;
     TESTCASE( atexit( &checkhandler ) == 0 );
     for ( i = 0; i < 32; ++i )
     {
         TESTCASE( atexit( &counthandler ) == 0 );
     }
-#endif
     return TEST_RESULTS;
 }
 
