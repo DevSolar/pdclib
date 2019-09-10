@@ -32,7 +32,7 @@ void quick_exit( int status )
 
 int main( void )
 {
-    /* Unwinding of regstack tested in atexit(). */
+    /* Unwinding of regstack tested in at_quick_exit(). */
     return TEST_RESULTS;
 }
 

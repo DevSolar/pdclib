@@ -12,8 +12,8 @@
    functions that had already been called at the time it was registered."
 */
 
-void (*_PDCLIB_exitstack[ _PDCLIB_ATEXIT_SLOTS ])( void ) = { _PDCLIB_closeall };
-size_t _PDCLIB_exitptr = 1;
+void (*_PDCLIB_exitstack[ _PDCLIB_ATEXIT_SLOTS ])( void );
+size_t _PDCLIB_exitptr = 0;
 
 void exit( int status )
 {
