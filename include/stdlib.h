@@ -165,15 +165,18 @@ _PDCLIB_PUBLIC int atexit( void (*func)( void ) );
 */
 _PDCLIB_PUBLIC _PDCLIB_Noreturn void exit( int status );
 
-/* TODO: Documentation.
+/* Normal process termination. Functions registered by at_quick_exit() (see
+   above) are called, streams flushed, files closed and temporary files removed
+   before the program is terminated with the given status. (See comment for
+   EXIT_SUCCESS and EXIT_FAILURE above.)
    quick_exit() does not return.
 */
 _PDCLIB_PUBLIC _PDCLIB_Noreturn void quick_exit( int status );
 
-/* Normal process termination. Functions registered by atexit() (see above) are
-   NOT CALLED. This implementation DOES flush streams, close files and removes
-   temporary files before the program is teminated with the given status. (See
-   comment for EXIT_SUCCESS and EXIT_FAILURE above.)
+/* Normal process termination. Functions registered by atexit()/at_quick_exit()
+   (see above) are NOT CALLED. This implementation DOES flush streams, close
+   files and removes temporary files before the program is teminated with the
+   given status. (See comment for EXIT_SUCCESS and EXIT_FAILURE above.)
    _Exit() does not return.
 */
 _PDCLIB_PUBLIC _PDCLIB_Noreturn void _Exit( int status );
