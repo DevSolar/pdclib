@@ -13,9 +13,7 @@
 
 void _Exit( int status )
 {
-    /* TODO: Flush and close open streams. Remove tmpfile() files. Make this
-       called on process termination automatically.
-    */
+    _PDCLIB_closeall();
     _PDCLIB_Exit( status );
 }
 
