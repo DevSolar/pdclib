@@ -188,6 +188,13 @@ typedef int errno_t;
 #endif
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_ERRNO_H
+#include _PDCLIB_EXTEND_ERRNO_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

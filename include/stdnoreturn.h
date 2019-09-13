@@ -16,4 +16,11 @@
 */
 #define noreturn _PDCLIB_Noreturn
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDNORETURN_H
+#include _PDCLIB_EXTEND_STDNORETURN_H
+#endif
+
 #endif

@@ -828,6 +828,13 @@ _PDCLIB_PUBLIC char * gets_s( char * s, rsize_t n );
 
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDIO_H
+#include _PDCLIB_EXTEND_STDIO_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

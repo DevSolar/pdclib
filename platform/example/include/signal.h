@@ -81,4 +81,11 @@ _PDCLIB_PUBLIC void (*signal( int sig, void (*func)( int ) ) )( int );
    Returns zero if successful, nonzero otherwise. */
 _PDCLIB_PUBLIC int raise( int sig );
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_SIGNAL_H
+#include _PDCLIB_EXTEND_SIGNAL_H
+#endif
+
 #endif

@@ -244,6 +244,13 @@ _PDCLIB_PUBLIC void * tss_get( tss_t key );
 */
 _PDCLIB_PUBLIC int tss_set( tss_t key, void * val );
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_THREADS_H
+#include _PDCLIB_EXTEND_THREADS_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

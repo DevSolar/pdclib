@@ -250,6 +250,13 @@ _PDCLIB_PUBLIC uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char * *
 
 /* TODO: wcstoimax(), wcstoumax() */
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_INTTYPES_H
+#include _PDCLIB_EXTEND_INTTYPES_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif
