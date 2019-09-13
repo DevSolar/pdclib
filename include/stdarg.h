@@ -20,6 +20,13 @@ typedef _PDCLIB_va_list va_list;
 #define va_end( ap )          _PDCLIB_va_end( ap )
 #define va_start( ap, parmN ) _PDCLIB_va_start( ap, parmN )
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDARG_H
+#include _PDCLIB_EXTEND_STDARG_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

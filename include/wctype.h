@@ -139,6 +139,13 @@ _PDCLIB_PUBLIC wint_t towctrans( wint_t wc, wctrans_t desc );
 */
 _PDCLIB_PUBLIC wctrans_t wctrans( const char * property );
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_WCTYPE_H
+#include _PDCLIB_EXTEND_WCTYPE_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

@@ -41,6 +41,13 @@ typedef size_t rsize_t;
 #endif
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDDEF_H
+#include _PDCLIB_EXTEND_STDDEF_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

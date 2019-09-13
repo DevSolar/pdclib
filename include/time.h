@@ -186,6 +186,13 @@ _PDCLIB_PUBLIC struct tm * localtime_s( const time_t * _PDCLIB_restrict timer, s
 
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_TIME_H
+#include _PDCLIB_EXTEND_TIME_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

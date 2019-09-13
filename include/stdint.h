@@ -215,6 +215,13 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 #define RSIZE_MAX ( _PDCLIB_SIZE_MAX >> 1 )
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDINT_H
+#include _PDCLIB_EXTEND_STDINT_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

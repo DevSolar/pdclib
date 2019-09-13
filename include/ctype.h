@@ -96,6 +96,13 @@ _PDCLIB_PUBLIC int tolower( int c );
 */
 _PDCLIB_PUBLIC int toupper( int c );
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_CTYPE_H
+#include _PDCLIB_EXTEND_CTYPE_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif
