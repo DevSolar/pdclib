@@ -72,4 +72,11 @@
    /* Maximum int x such that 10**x is a representable long double */
 #define LDBL_MAX_10_EXP __LDBL_MAX_10_EXP__
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_FLOAT_H
+#include _PDCLIB_EXTEND_FLOAT_H
+#endif
+
 #endif

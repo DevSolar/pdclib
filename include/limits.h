@@ -36,6 +36,13 @@ extern "C" {
 #define UINT_MAX   _PDCLIB_UINT_MAX
 #define ULONG_MAX  _PDCLIB_ULONG_MAX
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_LIMITS_H
+#include _PDCLIB_EXTEND_LIMITS_H
+#endif
+
 #ifdef __cplusplus
 }
 #endif

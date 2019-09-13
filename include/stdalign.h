@@ -15,5 +15,12 @@
 #define __alignas_is_defined 1
 #define __alignof_is_defined 1
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDALIGN_H
+#include _PDCLIB_EXTEND_STDALIGN_H
+#endif
+
 #endif
 

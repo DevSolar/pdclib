@@ -21,4 +21,11 @@
 #define xor_eq ^=
 #endif
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_ISO646_H
+#include _PDCLIB_EXTEND_ISO646_H
+#endif
+
 #endif

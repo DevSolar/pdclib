@@ -14,4 +14,11 @@
 #endif
 #define __bool_true_false_are_defined 1
 
+/* Extension hook for downstream projects that want to have non-standard
+   extensions to standard headers.
+*/
+#ifdef _PDCLIB_EXTEND_STDBOOL_H
+#include _PDCLIB_EXTEND_STDBOOL_H
+#endif
+
 #endif
