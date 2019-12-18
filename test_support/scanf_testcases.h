@@ -13,6 +13,9 @@
     /* * to skip assignment */
     SCANF_TEST( 1, "3xfoo", "%*dx%3c", buffer );
     TESTCASE( memcmp( buffer, "foo", 3 ) == 0 );
+    buffer[0] = '\0';
+    SCANF_TEST( 0, "foo", "%*s%n", &i );
+    TESTCASE( buffer[0] == '\0' );
 #endif
     /* domain testing on 'int' type */
     SCANF_TEST( 1, "-" INT_MIN_DEZ_STR, "%d", &i );
