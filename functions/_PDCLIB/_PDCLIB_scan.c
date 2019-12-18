@@ -254,7 +254,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             break;
         case 'c':
         {
-            char * c = va_arg( status->arg, char * );
+            char * c = NULL;
+            if ( ! status->flags & E_suppressed )
+            {
+                c = va_arg( status->arg, char * );
+            }
             /* for %c, default width is one */
             if ( status->width == SIZE_MAX )
             {
@@ -264,13 +268,19 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
-                *(c++) = rc;
+                if ( c != NULL )
+                {
+                    *(c++) = rc;
+                }
                 value_parsed = 1;
             }
             /* width or input exhausted */
             if ( value_parsed )
             {
-                ++status->n;
+                if ( c != NULL )
+                {
+                    ++status->n;
+                }
                 return ++spec;
             }
             else
@@ -285,7 +295,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         }
         case 's':
         {
-            char * c = va_arg( status->arg, char * );
+            char * c = NULL;
+            if ( ! status->flags & E_suppressed )
+            {
+                c = va_arg( status->arg, char * );
+            }
             while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
@@ -295,8 +309,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                     if ( value_parsed )
                     {
                         /* matching sequence terminated by whitespace */
-                        *c = '\0';
-                        ++status->n;
+                        if ( c != NULL )
+                        {
+                            *c = '\0';
+                            ++status->n;
+                        }
                         return ++spec;
                     }
                     else
@@ -308,15 +325,21 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 else
                 {
                     /* match */
+                    if ( c != NULL )
+                    {
+                        *(c++) = rc;
+                    }
                     value_parsed = 1;
-                    *(c++) = rc;
                 }
             }
             /* width or input exhausted */
             if ( value_parsed )
             {
-                *c = '\0';
-                ++status->n;
+                if ( c != NULL )
+                {
+                    *c = '\0';
+                    ++status->n;
+                }
                 return ++spec;
             }
             else
@@ -333,7 +356,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         {
             const char * endspec = spec;
             int negative_scanlist = 0;
-            char * c;
+            char * c = NULL;
+            if ( ! status->flags & E_suppressed )
+            {
+                c = va_arg( status->arg, char * );
+            }
             if ( *(++endspec) == '^' )
             {
                 negative_scanlist = 1;
@@ -346,7 +373,6 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 ++endspec;
             } while ( *endspec != ']' );
             /* read according to scanlist, equiv. to %s above */
-            c = va_arg( status->arg, char * );
             while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
@@ -366,13 +392,19 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                         break;
                     }
                 }
+                if ( c != NULL )
+                {
+                    *(c++) = rc;
+                }
                 value_parsed = 1;
-                *(c++) = rc;
             }
             if ( value_parsed )
             {
-                *c = '\0';
-                ++status->n;
+                if ( c != NULL )
+                {
+                    *c = '\0';
+                    ++status->n;
+                }
                 return ++endspec;
             }
             else
@@ -585,7 +617,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                     break;
 
                 default:
-                    puts( "UNSUPPORTED SCANF FLAG COMBINATION" );
+                    fputs( "UNSUPPORTED SCANF FLAG COMBINATIONi\n", stdout );
                     return NULL; /* behaviour unspecified */
             }
             ++(status->n);
