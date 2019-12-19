@@ -398,6 +398,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                 }
                 value_parsed = 1;
             }
+            /* width or input exhausted */
             if ( value_parsed )
             {
                 if ( c != NULL )
@@ -409,7 +410,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             }
             else
             {
-                if ( rc == EOF )
+                if ( status->n == 0 )
                 {
                     status->n = -1;
                 }
