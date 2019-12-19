@@ -17,30 +17,18 @@ extern mtx_t _PDCLIB_filelist_mtx;
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
-int _PDCLIB_getstream( struct _PDCLIB_file_t * stream )
+int _PDCLIB_isstream( struct _PDCLIB_file_t * stream, struct _PDCLIB_file_t ** previous )
 {
-    struct _PDCLIB_file_t * previous;
+    struct _PDCLIB_file_t * current = _PDCLIB_filelist;
+    *previous = NULL;
 
-    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
-
-    if ( ! _PDCLIB_isstream( stream, &previous ) )
+    while ( ( current != NULL ) && ( current != stream ) )
     {
-        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
-        *_PDCLIB_errno_func() = _PDCLIB_EBADF;
-        return EOF;
+        *previous = current;
+        current = current->next;
     }
 
-    if ( previous != NULL )
-    {
-        previous->next = stream->next;
-    }
-    else
-    {
-        _PDCLIB_filelist = stream->next;
-    }
-
-    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
-    return 0;
+    return current != NULL;
 }
 
 #endif

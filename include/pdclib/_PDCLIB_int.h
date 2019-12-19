@@ -266,7 +266,6 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_FBIN    (1u<<7)
 
 /* Internal flags, made to fit the same status field as the flags above. */
-/* FIXME: too many flags to work on a 16-bit machine */
 /* -------------------------------------------------------------------------- */
 /* free() the buffer memory on closing (false for user-supplied buffer) */
 #define _PDCLIB_FREEBUFFER  (1u<<8)
@@ -279,10 +278,8 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_BYTESTREAM  (1u<<12)
 /* file associated with stream should be remove()d on closing (tmpfile()) */
 #define _PDCLIB_DELONCLOSE  (1u<<13)
-/* stream handle should not be free()d on close (stdin, stdout, stderr) */
-#define _PDCLIB_STATIC      (1u<<14)
 /* stream filename allocated separately, and needs free()ing on fclode(). */
-#define _PDCLIB_FREENAME    (1u<<15)
+#define _PDCLIB_FREENAME    (1u<<14)
 
 /* Position / status structure for getpos() / fsetpos(). */
 struct _PDCLIB_fpos_t
@@ -409,6 +406,14 @@ _PDCLIB_LOCAL int _PDCLIB_is_leap( int year_offset );
    or NULL in case of error.
 */
 _PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * stream, _PDCLIB_size_t lines );
+
+/* Returns zero if the given stream is on the internal list of open files,
+   non-zero otherwise. Sets the second paramenter to the previous stream
+   on the list (or NULL if the given stream is the first on the list). This
+   function does not lock _PDCLIB_filelist_mtx, this needs to be done by
+   the calling function (_PDCLIB_getstream() or freopen()).
+*/
+_PDCLIB_LOCAL int _PDCLIB_isstream( struct _PDCLIB_file_t * stream, struct _PDCLIB_file_t ** previous );
 
 /* Removes the given stream from the internal list of open files. Returns zero
    if successful, non-zero otherwise. In case of error, sets errno to EBADF.

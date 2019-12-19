@@ -65,7 +65,7 @@ int fclose( struct _PDCLIB_file_t * stream )
     _PDCLIB_UNLOCK( stream->mtx );
 
     /* Free stream */
-    if ( ! ( stream->status & _PDCLIB_STATIC ) )
+    if ( stream != stdin && stream != stdout && stream != stderr )
     {
         free( stream );
     }
