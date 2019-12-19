@@ -56,8 +56,8 @@
 /* ...scanf() tests */
 #if defined( _PDCLIB_FILEIO )
     #define PREPARE_SOURCE( input_string ) \
-        rewind( source ); \
-        fwrite( input_string, 1, sizeof( input_string ), source ); \
+        source = freopen( NULL, "wb+", source ); \
+        fwrite( input_string, 1, strlen( input_string ), source ); \
         rewind( source );
 #elif defined( _PDCLIB_STRINGIO )
     #define PREPARE_SOURCE( input_string ) \

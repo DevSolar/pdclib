@@ -8,14 +8,19 @@
     TESTCASE( memcmp( buffer, "foo", 3 ) == 0 );
 #ifndef TEST_CONVERSION_ONLY
     /* %% for single % */
-    SCANF_TEST( 1, "%x", "%%%c", buffer );
+    SCANF_TEST( 1, "%x", "%%%c%n", buffer, &i );
+    TESTCASE( i == 2 );
     TESTCASE( buffer[0] == 'x' );
     /* * to skip assignment */
+    SCANF_TEST( 0, "abcdefg", "%*[cba]%n", &i );
+    TESTCASE( i == 3 );
+    SCANF_TEST( 0, "foo", "%*s%n", &i );
+    printf( "i == %d\n", i );
+    TESTCASE( i == 3 );
+    SCANF_TEST( 0, "abc", "%*c%n", &i );
+    TESTCASE( i == 1 );
     SCANF_TEST( 1, "3xfoo", "%*dx%3c", buffer );
     TESTCASE( memcmp( buffer, "foo", 3 ) == 0 );
-    buffer[0] = '\0';
-    SCANF_TEST( 0, "foo", "%*s%n", &i );
-    TESTCASE( buffer[0] == '\0' );
 #endif
     /* domain testing on 'int' type */
     SCANF_TEST( 1, "-" INT_MIN_DEZ_STR, "%d", &i );
@@ -64,11 +69,12 @@
     memset( buffer, '\0', 100 );
     SCANF_TEST( 1, "x", "%c", buffer );
     TESTCASE( memcmp( buffer, "x\0", 2 ) == 0 );
+#ifndef TEST_CONVERSION_ONLY
     /* testing %s */
     memset( buffer, '\0', 100 );
-    SCANF_TEST( 1, "foo bar", "%s", buffer );
+    SCANF_TEST( 1, "foo bar", "%s%n", buffer, &i );
     TESTCASE( memcmp( buffer, "foo\0", 4 ) == 0 );
-#ifndef TEST_CONVERSION_ONLY
+    TESTCASE( i == 3 );
     SCANF_TEST( 2, "foo bar  baz", "%s %s %n", buffer, buffer + 4, &u );
     TESTCASE( u == 9 );
     TESTCASE( memcmp( buffer, "foo\0bar\0", 8 ) == 0 );
