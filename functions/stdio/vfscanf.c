@@ -127,7 +127,7 @@ static int testscanf( FILE * stream, const char * format, ... )
 int main( void )
 {
     FILE * source;
-    TESTCASE( ( source = tmpfile() ) != NULL );
+    TESTCASE( ( source = fopen( testfile, "wb+" ) ) != NULL );
 #include "scanf_testcases.h"
     TESTCASE( fclose( source ) == 0 );
     return TEST_RESULTS;
