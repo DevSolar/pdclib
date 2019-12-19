@@ -82,6 +82,10 @@
     /* testing %[ */
     SCANF_TEST( 1, "abcdefg", "%[cba]", buffer );
     TESTCASE( memcmp( buffer, "abc\0", 4 ) == 0 );
+#ifndef TEST_CONVERSION_ONLY
+    SCANF_TEST( -1, "", "%[cba]", buffer );
+    SCANF_TEST( 1, "3", "%u%[cba]", &u, buffer );
+#endif
     /* testing %p */
     p = NULL;
     sprintf( buffer, "%p", p );
