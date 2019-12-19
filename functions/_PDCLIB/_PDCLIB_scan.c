@@ -422,8 +422,11 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             break;
         case 'n':
         {
-            int * val = va_arg( status->arg, int * );
-            *val = status->i;
+            if ( ! status->flags & E_suppressed )
+            {
+                int * val = va_arg( status->arg, int * );
+                *val = status->i;
+            }
             return ++spec;
         }
         default:
