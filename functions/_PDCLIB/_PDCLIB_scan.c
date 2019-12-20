@@ -621,7 +621,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                     break;
 
                 default:
-                    fputs( "UNSUPPORTED SCANF FLAG COMBINATIONi\n", stdout );
+                    fputs( "UNSUPPORTED SCANF FLAG COMBINATION\n", stdout );
                     return NULL; /* behaviour unspecified */
             }
             ++(status->n);
