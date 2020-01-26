@@ -407,6 +407,11 @@ _PDCLIB_LOCAL int _PDCLIB_is_leap( int year_offset );
 */
 _PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * stream, _PDCLIB_size_t lines );
 
+/* Returns the (locale dependent) error message associated with the argument
+   errno value.
+*/
+char * _PDCLIB_geterrtext( int errnum );
+
 /* Returns zero if the given stream is on the internal list of open files,
    non-zero otherwise. Sets the second paramenter to the previous stream
    on the list (or NULL if the given stream is the first on the list). This
@@ -417,12 +422,10 @@ _PDCLIB_LOCAL int _PDCLIB_isstream( struct _PDCLIB_file_t * stream, struct _PDCL
 
 /* Removes the given stream from the internal list of open files. Returns zero
    if successful, non-zero otherwise. In case of error, sets errno to EBADF.
+   This function does not lock _PDCLIB_filelist_mtx, this needs to be done by
+   the calling function (fclose()).
 */
 _PDCLIB_LOCAL int _PDCLIB_getstream( struct _PDCLIB_file_t * stream );
-
-/* Insert the given stream into the internal list of open files.
-*/
-_PDCLIB_LOCAL void _PDCLIB_setstream( struct _PDCLIB_file_t * stream );
 
 /* Backend for strtok and strtok_s (plus potential extensions like strtok_r). */
 _PDCLIB_LOCAL char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, _PDCLIB_size_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char ** _PDCLIB_restrict ptr );

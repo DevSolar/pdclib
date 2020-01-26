@@ -1,4 +1,4 @@
-/* _PDCLIB_getstream( FILE * )
+/* _PDCLIB_isstream( FILE *, FILE ** )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -9,11 +9,6 @@
 #ifndef REGTEST
 
 #include "pdclib/_PDCLIB_int.h"
-
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-extern mtx_t _PDCLIB_filelist_mtx;
-#endif
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
