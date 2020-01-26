@@ -12,20 +12,33 @@
 
 #include <string.h>
 
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+extern mtx_t _PDCLIB_filelist_mtx;
+#endif
+
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
 int rename( const char * oldpath, const char * newpath )
 {
-    struct _PDCLIB_file_t * current = _PDCLIB_filelist;
-    while ( current != NULL )
+    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
+
     {
-        if ( ( current->filename != NULL ) && ( strcmp( current->filename, oldpath ) == 0 ) )
+        struct _PDCLIB_file_t * current = _PDCLIB_filelist;
+
+        while ( current != NULL )
         {
-            /* File of that name currently open. Do not rename. */
-            return EOF;
+            if ( ( current->filename != NULL ) && ( strcmp( current->filename, oldpath ) == 0 ) )
+            {
+                /* File of that name currently open. Do not rename. */
+                _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
+                return EOF;
+            }
+            current = current->next;
         }
-        current = current->next;
     }
+
+    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
     return _PDCLIB_rename( oldpath, newpath );
 }
 

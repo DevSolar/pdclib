@@ -12,6 +12,7 @@
 
 #ifndef __STDC_NO_THREADS__
 #include <threads.h>
+extern mtx_t _PDCLIB_filelist_mtx;
 #endif
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
@@ -21,7 +22,9 @@ int fflush( struct _PDCLIB_file_t * stream )
     int rc = 0;
     if ( stream == NULL )
     {
+        _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
         stream = _PDCLIB_filelist;
+
         /* TODO: Check what happens when fflush( NULL ) encounters write errors, in other libs */
         while ( stream != NULL )
         {
@@ -39,6 +42,8 @@ int fflush( struct _PDCLIB_file_t * stream )
 
             stream = stream->next;
         }
+
+        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
     }
     else
     {

@@ -98,7 +98,10 @@ struct _PDCLIB_file_t * tmpfile( void )
     rc->ungetidx = 0;
     /* TODO: Setting mbstate */
     /* Adding to list of open files */
-    _PDCLIB_setstream( rc );
+    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
+    rc->next = _PDCLIB_filelist;
+    _PDCLIB_filelist = rc;
+    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
     return rc;
 }
 
