@@ -48,6 +48,7 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
                     _PDCLIB_UNLOCK( stream->mtx );
                     return nmemb_i;
                 }
+                offset = 0;
                 /* lineend = false; */
             }
         }
@@ -72,18 +73,19 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
             }
             break;
         case _IOLBF:
+            if ( offset > 0 )
             {
-            size_t bufidx = stream->bufidx;
-            stream->bufidx = offset;
-            if ( _PDCLIB_flushbuffer( stream ) == EOF )
-            {
-                /* See comment above. */
-                stream->bufidx = bufidx;
-                _PDCLIB_UNLOCK( stream->mtx );
-                return nmemb_i - 1;
-            }
-            stream->bufidx = bufidx - offset;
-            memmove( stream->buffer, stream->buffer + offset, stream->bufidx );
+                size_t bufidx = stream->bufidx;
+                stream->bufidx = offset;
+                if ( _PDCLIB_flushbuffer( stream ) == EOF )
+                {
+                    /* See comment above. */
+                    stream->bufidx = bufidx;
+                    _PDCLIB_UNLOCK( stream->mtx );
+                    return nmemb_i - 1;
+                }
+                stream->bufidx = bufidx - offset;
+                memmove( stream->buffer, stream->buffer + offset, stream->bufidx );
             }
     }
 
