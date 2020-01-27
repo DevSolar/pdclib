@@ -48,6 +48,7 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
                     _PDCLIB_UNLOCK( stream->mtx );
                     return nmemb_i;
                 }
+                offset = 0;
                 /* lineend = false; */
             }
         }
