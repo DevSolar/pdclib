@@ -255,7 +255,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         case 'c':
         {
             char * c = NULL;
-            if ( ! status->flags & E_suppressed )
+            if ( ! ( status->flags & E_suppressed ) )
             {
                 c = va_arg( status->arg, char * );
             }
@@ -296,7 +296,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         case 's':
         {
             char * c = NULL;
-            if ( ! status->flags & E_suppressed )
+            if ( ! ( status->flags & E_suppressed ) )
             {
                 c = va_arg( status->arg, char * );
             }
@@ -357,7 +357,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             const char * endspec = spec;
             int negative_scanlist = 0;
             char * c = NULL;
-            if ( ! status->flags & E_suppressed )
+            if ( ! ( status->flags & E_suppressed ) )
             {
                 c = va_arg( status->arg, char * );
             }
@@ -423,7 +423,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             break;
         case 'n':
         {
-            if ( ! status->flags & E_suppressed )
+            if ( ! ( status->flags & E_suppressed ) )
             {
                 int * val = va_arg( status->arg, int * );
                 *val = status->i;
