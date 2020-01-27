@@ -12,6 +12,11 @@
 
 #ifndef REGTEST
 
+#ifdef __ANDROID__
+// typedef sigset_t
+#include "bits/signal_types.h"
+#endif
+
 #include "pdclib/_PDCLIB_glue.h"
 
 #include "sys/types.h"
