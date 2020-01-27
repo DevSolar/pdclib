@@ -12,6 +12,11 @@
 
 #ifndef REGTEST
 
+#ifdef __ANDROID__
+// typedef sigset_t
+#include "bits/signal_types.h"
+#endif
+
 #include "pdclib/_PDCLIB_glue.h"
 
 #include "sys/types.h"
@@ -21,13 +26,13 @@
 
 #include "/usr/include/errno.h"
 
-int _PDCLIB_open( const char * const filename, unsigned int mode )
+_PDCLIB_fd_t _PDCLIB_open( const char * const filename, unsigned int mode )
 {
     /* This is an example implementation of _PDCLIB_open() fit for use with
        POSIX kernels.
     */
     int osmode;
-    int rc;
+    _PDCLIB_fd_t rc;
     switch ( mode & ( _PDCLIB_FREAD | _PDCLIB_FWRITE | _PDCLIB_FAPPEND | _PDCLIB_FRW ) )
     {
         case _PDCLIB_FREAD: /* "r" */
@@ -82,7 +87,7 @@ int main( void )
     /* This testdriver assumes POSIX, i.e. _PDCLIB_fd_t being int and being
        incremented by one on each successful open.
     */
-    int fh;
+    _PDCLIB_fd_t fh;
     char buffer[ 10 ];
     remove( testfile );
     /* Trying to read non-existent file. */

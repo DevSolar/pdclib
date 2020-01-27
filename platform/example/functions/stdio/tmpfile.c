@@ -8,6 +8,13 @@
 
 #ifndef REGTEST
 
+#ifdef __ANDROID__
+// typedef sigset_t
+#include "bits/signal_types.h"
+#define _STRUCT_TIMESPEC
+#include <time.h>
+#endif
+
 #include "pdclib/_PDCLIB_glue.h"
 
 #include <inttypes.h>
@@ -98,7 +105,10 @@ struct _PDCLIB_file_t * tmpfile( void )
     rc->ungetidx = 0;
     /* TODO: Setting mbstate */
     /* Adding to list of open files */
-    _PDCLIB_setstream( rc );
+    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
+    rc->next = _PDCLIB_filelist;
+    _PDCLIB_filelist = rc;
+    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
     return rc;
 }
 

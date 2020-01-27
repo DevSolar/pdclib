@@ -1,4 +1,4 @@
-/* _PDCLIB_setstream( FILE * )
+/* _PDCLIB_isstream( FILE *, FILE ** )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -10,19 +10,20 @@
 
 #include "pdclib/_PDCLIB_int.h"
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-extern mtx_t _PDCLIB_filelist_mtx;
-#endif
-
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
-void _PDCLIB_setstream( struct _PDCLIB_file_t * stream )
+int _PDCLIB_isstream( struct _PDCLIB_file_t * stream, struct _PDCLIB_file_t ** previous )
 {
-    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
-    stream->next = _PDCLIB_filelist;
-    _PDCLIB_filelist = stream;
-    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
+    struct _PDCLIB_file_t * current = _PDCLIB_filelist;
+    *previous = NULL;
+
+    while ( ( current != NULL ) && ( current != stream ) )
+    {
+        *previous = current;
+        current = current->next;
+    }
+
+    return current != NULL;
 }
 
 #endif

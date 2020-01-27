@@ -259,7 +259,9 @@ char * setlocale( int category, const char * locale )
 int main( void )
 {
     TESTCASE( strcmp( setlocale( LC_ALL, "C" ), "C" ) == 0 );
+#ifndef REGTEST
     TESTCASE( setlocale( LC_ALL, "" ) == NULL );
+#endif
     TESTCASE( strcmp( setlocale( LC_ALL, NULL ), "C" ) == 0 );
     return TEST_RESULTS;
 }

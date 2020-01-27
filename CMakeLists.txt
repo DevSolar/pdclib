@@ -77,6 +77,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_filemode.c
      functions/_PDCLIB/_PDCLIB_getstream.c
      functions/_PDCLIB/_PDCLIB_is_leap.c
+     functions/_PDCLIB/_PDCLIB_isstream.c
      functions/_PDCLIB/_PDCLIB_load_lc_collate.c
      functions/_PDCLIB/_PDCLIB_load_lc_ctype.c
      functions/_PDCLIB/_PDCLIB_load_lc_messages.c
@@ -89,7 +90,6 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_print.c
      functions/_PDCLIB/_PDCLIB_scan.c
      functions/_PDCLIB/_PDCLIB_seed.c
-     functions/_PDCLIB/_PDCLIB_setstream.c
      functions/_PDCLIB/_PDCLIB_strtok.c
      functions/_PDCLIB/_PDCLIB_strtox_main.c
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
@@ -101,6 +101,7 @@ set( PDCLIB_SOURCES
      platform/example/functions/_PDCLIB/_PDCLIB_flushbuffer.c
      platform/example/functions/_PDCLIB/_PDCLIB_open.c
      platform/example/functions/_PDCLIB/_PDCLIB_rename.c
+     platform/example/functions/_PDCLIB/_PDCLIB_remove.c
      platform/example/functions/_PDCLIB/_PDCLIB_seek.c
      platform/example/functions/_PDCLIB/_PDCLIB_stdinit.c
 
@@ -133,6 +134,7 @@ set( PDCLIB_SOURCES
      functions/stdio/putc.c
      functions/stdio/putchar.c
      functions/stdio/puts.c
+     functions/stdio/remove.c
      functions/stdio/rename.c
      functions/stdio/rewind.c
      functions/stdio/scanf.c
@@ -151,7 +153,6 @@ set( PDCLIB_SOURCES
      functions/stdio/vsprintf.c
      functions/stdio/vsscanf.c
 
-     platform/example/functions/stdio/remove.c
      platform/example/functions/stdio/tmpfile.c
 
      functions/stdlib/abort.c
