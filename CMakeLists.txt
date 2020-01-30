@@ -95,6 +95,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
 
+     platform/example/functions/_PDCLIB/_PDCLIB_changemode.c
      platform/example/functions/_PDCLIB/_PDCLIB_close.c
      platform/example/functions/_PDCLIB/_PDCLIB_Exit.c
      platform/example/functions/_PDCLIB/_PDCLIB_fillbuffer.c

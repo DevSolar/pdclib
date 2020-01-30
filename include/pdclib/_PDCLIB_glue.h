@@ -61,6 +61,14 @@ _PDCLIB_LOCAL _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDC
 */
 _PDCLIB_LOCAL int _PDCLIB_close( _PDCLIB_fd_t fd );
 
+/* A system call that changes the mode of a given stream to that passed as
+   argument (the argument being the value returned by _PDCLIB_filemode()),
+   *without* closing the stream. See comments in example implementation
+   for details. Return zero if the requested mode change is not supported
+   for this stream, non-zero on success.
+*/
+_PDCLIB_LOCAL int _PDCLIB_changemode( struct _PDCLIB_file_t * stream, unsigned int mode );
+
 /* A system call that removes a file. Return zero on success, non-zero
    otherwise.
 */
