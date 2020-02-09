@@ -52,7 +52,9 @@ int fclose( struct _PDCLIB_file_t * stream )
         _PDCLIB_remove( stream->filename );
     }
 
-    /* Free user buffer (setvbuf allocated) */
+    /* Free user buffer (setvbuf allocated -- user requested buffer size
+       but memory allocated by library)
+    */
     if ( stream->status & _PDCLIB_FREEBUFFER )
     {
         free( stream->buffer );
