@@ -23,7 +23,6 @@ extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
 {
     struct _PDCLIB_file_t * rc;
-    size_t filename_len;
     if ( mode == NULL || filename == NULL || filename[0] == '\0' )
     {
         /* Mode or filename invalid */
@@ -32,13 +31,11 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     /* To reduce the number of malloc calls, all data fields are concatenated:
        * the FILE structure itself,
        * ungetc buffer,
-       * filename buffer,
        * data buffer.
        Data buffer comes last because it might change in size ( setvbuf() ).
     */
-    filename_len = strlen( filename ) + 1;
     /* See tmpfile(), which does much of the same. */
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + filename_len + BUFSIZ ) ) == NULL )
+    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + BUFSIZ ) ) == NULL )
     {
         /* no memory */
         return NULL;
@@ -69,10 +66,9 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     }
     /* Setting pointers into the memory block allocated above */
     rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
-    rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
-    rc->buffer   = rc->filename + filename_len;
-    /* Copying filename to FILE structure */
-    strcpy( rc->filename, filename );
+    rc->buffer   = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
+    /* Getting absolute filename (for potential freopen()) */
+    rc->filename = _PDCLIB_realpath( filename );
     /* Initializing the rest of the structure */
     rc->bufsize = BUFSIZ;
     rc->bufidx = 0;

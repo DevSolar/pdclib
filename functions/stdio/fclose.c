@@ -60,11 +60,10 @@ int fclose( struct _PDCLIB_file_t * stream )
         free( stream->buffer );
     }
 
-    /* Free filename (freopen allocated) */
-    if ( stream->status & _PDCLIB_FREENAME )
-    {
-        free( stream->filename );
-    }
+    /* Free filename (standard streams do not have one, but free( NULL )
+       is a valid no-op)
+    */
+    free( stream->filename );
 
     _PDCLIB_UNLOCK( stream->mtx );
     _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );

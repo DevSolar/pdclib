@@ -278,8 +278,6 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_BYTESTREAM  (1u<<12)
 /* file associated with stream should be remove()d on closing (tmpfile()) */
 #define _PDCLIB_DELONCLOSE  (1u<<13)
-/* stream filename allocated separately, and needs free()ing on fclode(). */
-#define _PDCLIB_FREENAME    (1u<<14)
 
 /* Position / status structure for getpos() / fsetpos(). */
 struct _PDCLIB_fpos_t
