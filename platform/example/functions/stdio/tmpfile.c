@@ -43,7 +43,10 @@ struct _PDCLIB_file_t * tmpfile( void )
        appropriate.
     */
     FILE * randomsource = fopen( "/proc/sys/kernel/random/uuid", "rb" );
-    char filename[ L_tmpnam ];
+    /* Working under the assumption that the tempfile location is canonical
+       (absolute), and does not require going through _PDCLIB_realpath().
+    */
+    char * filename = (char *)malloc( L_tmpnam );
     _PDCLIB_fd_t fd;
     if ( randomsource == NULL )
     {
@@ -95,10 +98,9 @@ struct _PDCLIB_file_t * tmpfile( void )
     rc->handle = fd;
     /* Setting pointers into the memory block allocated above */
     rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
-    rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
-    rc->buffer   = rc->filename + L_tmpnam;
-    /* Copying filename to FILE structure */
-    strcpy( rc->filename, filename );
+    rc->buffer   = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
+    /* Filename (for potential freopen()) */
+    rc->filename = filename;
     /* Initializing the rest of the structure */
     rc->bufsize = BUFSIZ;
     rc->bufidx = 0;
