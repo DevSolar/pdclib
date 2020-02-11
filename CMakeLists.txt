@@ -101,6 +101,7 @@ set( PDCLIB_SOURCES
      platform/example/functions/_PDCLIB/_PDCLIB_fillbuffer.c
      platform/example/functions/_PDCLIB/_PDCLIB_flushbuffer.c
      platform/example/functions/_PDCLIB/_PDCLIB_open.c
+     platform/example/functions/_PDCLIB/_PDCLIB_realpath.c
      platform/example/functions/_PDCLIB/_PDCLIB_rename.c
      platform/example/functions/_PDCLIB/_PDCLIB_remove.c
      platform/example/functions/_PDCLIB/_PDCLIB_seek.c
