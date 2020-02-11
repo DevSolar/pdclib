@@ -69,6 +69,11 @@ _PDCLIB_LOCAL int _PDCLIB_close( _PDCLIB_fd_t fd );
 */
 _PDCLIB_LOCAL int _PDCLIB_changemode( struct _PDCLIB_file_t * stream, unsigned int mode );
 
+/* A system call that returns a canonicalized absolute filename in
+   dynamically allocated memory, or NULL if the file does not exist.
+*/
+_PDCLIB_LOCAL char * _PDCLIB_realpath( const char * path );
+
 /* A system call that removes a file. Return zero on success, non-zero
    otherwise.
 */
