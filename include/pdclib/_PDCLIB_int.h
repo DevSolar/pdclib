@@ -267,7 +267,7 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 
 /* Internal flags, made to fit the same status field as the flags above. */
 /* -------------------------------------------------------------------------- */
-/* free() the buffer memory on closing (false for user-supplied buffer) */
+/* free() the buffer memory on closing (setvbuf()) */
 #define _PDCLIB_FREEBUFFER  (1u<<8)
 /* stream has encountered error / EOF */
 #define _PDCLIB_ERRORFLAG   (1u<<9)
