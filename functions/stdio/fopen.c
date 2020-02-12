@@ -71,8 +71,11 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     rc->filename = _PDCLIB_realpath( filename );
     /* Initializing the rest of the structure */
     rc->bufsize = BUFSIZ;
+    /* Not necessary as we calloc()ed the memory for rc
     rc->bufidx = 0;
+    rc->bufend = 0;
     rc->ungetidx = 0;
+    */
     /* Setting buffer to _IOLBF because "when opened, a stream is fully
        buffered if and only if it can be determined not to refer to an
        interactive device."
