@@ -79,7 +79,7 @@ struct _PDCLIB_file_t * tmpfile( void )
     }
     fclose( randomsource );
     /* See fopen(), which does much of the same. */
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + L_tmpnam + BUFSIZ ) ) == NULL )
+    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + BUFSIZ ) ) == NULL )
     {
         /* No memory to set up FILE structure */
         close( fd );
