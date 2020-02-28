@@ -38,6 +38,13 @@
 
 int _PDCLIB_changemode( struct _PDCLIB_file_t * stream, unsigned int mode )
 {
+    if ( mode == 0 )
+    {
+        return 0;
+    }
+
+    /* Attempt mode change without closing the stream */
+
     return INT_MIN;
 }
 
