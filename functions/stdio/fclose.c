@@ -66,13 +66,18 @@ int fclose( struct _PDCLIB_file_t * stream )
     free( stream->filename );
 
     _PDCLIB_UNLOCK( stream->mtx );
-    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
+
+#ifndef __STDC_NO_THREADS__
+    mtx_destroy( &stream->mtx );
+#endif
 
     /* Free stream */
     if ( stream != stdin && stream != stdout && stream != stderr )
     {
         free( stream );
     }
+
+    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
 
     return 0;
 }
