@@ -296,7 +296,7 @@ struct _PDCLIB_file_t
     _PDCLIB_size_t          bufend;   /* Index of last pre-read character in buffer */
     struct _PDCLIB_fpos_t   pos;      /* Offset and multibyte parsing state */
     _PDCLIB_size_t          ungetidx; /* Number of ungetc()'ed characters */
-    unsigned char *         ungetbuf; /* ungetc() buffer */
+    unsigned char           ungetbuf[_PDCLIB_UNGETCBUFSIZE]; /* ungetc() buffer */
     unsigned int            status;   /* Status flags; see above */
     /* multibyte parsing status to be added later */
 #ifndef __STDC_NO_THREADS__

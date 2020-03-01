@@ -23,21 +23,17 @@ static char _PDCLIB_sin_buffer[BUFSIZ];
 static char _PDCLIB_sout_buffer[BUFSIZ];
 static char _PDCLIB_serr_buffer[BUFSIZ];
 
-static unsigned char _PDCLIB_sin_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
-static unsigned char _PDCLIB_sout_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
-static unsigned char _PDCLIB_serr_ungetbuf[_PDCLIB_UNGETCBUFSIZE];
-
-static struct _PDCLIB_file_t _PDCLIB_serr = { 2, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_serr_ungetbuf, _IONBF | _PDCLIB_FWRITE,
+static struct _PDCLIB_file_t _PDCLIB_serr = { 2, _PDCLIB_serr_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, { 0 }, _IONBF | _PDCLIB_FWRITE,
 #ifndef __STDC_NO_THREADS__
     _PDCLIB_MTX_RECURSIVE_INIT,
 #endif
    NULL, NULL };
-static struct _PDCLIB_file_t _PDCLIB_sout = { 1, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sout_ungetbuf, _IOLBF | _PDCLIB_FWRITE,
+static struct _PDCLIB_file_t _PDCLIB_sout = { 1, _PDCLIB_sout_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, { 0 }, _IOLBF | _PDCLIB_FWRITE,
 #ifndef __STDC_NO_THREADS__
     _PDCLIB_MTX_RECURSIVE_INIT,
 #endif
     NULL, &_PDCLIB_serr };
-static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, _PDCLIB_sin_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, _PDCLIB_sin_ungetbuf, _IOLBF | _PDCLIB_FREAD,
+static struct _PDCLIB_file_t _PDCLIB_sin  = { 0, _PDCLIB_sin_buffer, BUFSIZ, 0, 0, { 0, 0 }, 0, { 0 }, _IOLBF | _PDCLIB_FREAD,
 #ifndef __STDC_NO_THREADS__
     _PDCLIB_MTX_RECURSIVE_INIT,
 #endif
@@ -55,7 +51,7 @@ _PDCLIB_mtx_t _PDCLIB_filelist_mtx = _PDCLIB_MTX_PLAIN_INIT;
 
 /* "C" locale - defaulting to ASCII-7.
    1 kByte (+ 4 byte) of <ctype.h> data.
-   Each line: flags, lowercase, uppercase, collation.
+   Each line: flags, lowercase, uppercase.
 */
 static struct _PDCLIB_lc_ctype_entry_t _ctype_entries[ _PDCLIB_CHARSET_SIZE + 1 ] = {
     { /* EOF */    0,    0,    0 },

@@ -28,14 +28,8 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
         /* Mode or filename invalid */
         return NULL;
     }
-    /* To reduce the number of malloc calls, all data fields are concatenated:
-       * the FILE structure itself,
-       * ungetc buffer,
-       * data buffer.
-       Data buffer comes last because it might change in size ( setvbuf() ).
-    */
     /* See tmpfile(), which does much of the same. */
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + BUFSIZ ) ) == NULL )
+    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + BUFSIZ ) ) == NULL )
     {
         /* no memory */
         return NULL;
@@ -46,10 +40,18 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
         free( rc );
         return NULL;
     }
+    if ( ( rc->buffer = calloc( 1, BUFSIZ ) ) == NULL )
+    {
+        /* no memory */
+        free( rc );
+        return NULL;
+    }
+    rc->status |= _PDCLIB_FREEBUFFER;
 #ifndef __STDC_NO_THREADS__
     if ( mtx_init( &rc->mtx, mtx_plain | mtx_recursive ) != thrd_success )
     {
         /* could not initialize stream mutex */
+        free( rc->buffer );
         free( rc );
         return NULL;
     }
@@ -61,12 +63,10 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
 #ifndef __STDC_NO_THREADS__
         mtx_destroy( &rc->mtx );
 #endif
+        free( rc->buffer );
         free( rc );
         return NULL;
     }
-    /* Setting pointers into the memory block allocated above */
-    rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
-    rc->buffer   = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
     /* Getting absolute filename (for potential freopen()) */
     rc->filename = _PDCLIB_realpath( filename );
     /* Initializing the rest of the structure */
