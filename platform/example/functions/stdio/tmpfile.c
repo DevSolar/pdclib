@@ -79,26 +79,31 @@ struct _PDCLIB_file_t * tmpfile( void )
     }
     fclose( randomsource );
     /* See fopen(), which does much of the same. */
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + BUFSIZ ) ) == NULL )
+    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + BUFSIZ ) ) == NULL )
     {
         /* No memory to set up FILE structure */
         close( fd );
         return NULL;
     }
-    rc->status = _PDCLIB_filemode( "wb+" ) | _IOLBF | _PDCLIB_DELONCLOSE;
+    if ( ( rc->buffer = calloc( 1, BUFSIZ ) ) == NULL )
+    {
+        /* No memory */
+        free( rc );
+        close( fd );
+        return NULL;
+    }
+    rc->status = _PDCLIB_filemode( "wb+" ) | _IOLBF | _PDCLIB_DELONCLOSE | _PDCLIB_FREEBUFFER;
 #ifndef __STDC_NO_THREADS__
     if ( mtx_init( &rc->mtx, mtx_plain | mtx_recursive ) != thrd_success )
     {
         /* could not initialize stream mutex */
         close( fd );
+        free( rc->buffer );
         free( rc );
         return NULL;
     }
 #endif
     rc->handle = fd;
-    /* Setting pointers into the memory block allocated above */
-    rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
-    rc->buffer   = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
     /* Filename (for potential freopen()) */
     rc->filename = filename;
     /* Initializing the rest of the structure */
