@@ -23,65 +23,48 @@ extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode )
 {
     struct _PDCLIB_file_t * rc;
-    if ( mode == NULL || filename == NULL || filename[0] == '\0' )
+    unsigned int filemode = _PDCLIB_filemode( mode );
+
+    if ( filemode == 0 )
     {
-        /* Mode or filename invalid */
+        /* mode invalid */
         return NULL;
     }
+
+    if ( filename == NULL || filename[0] == '\0' )
+    {
+        /* filename invalid */
+        return NULL;
+    }
+
     /* See tmpfile(), which does much of the same. */
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + BUFSIZ ) ) == NULL )
+
+    if ( ( rc = _PDCLIB_init_file_t( NULL ) ) == NULL )
     {
-        /* no memory */
+        /* initializing FILE structure failed */
         return NULL;
     }
-    if ( ( rc->status = _PDCLIB_filemode( mode ) ) == 0 )
-    {
-        /* invalid mode */
-        free( rc );
-        return NULL;
-    }
-    if ( ( rc->buffer = calloc( 1, BUFSIZ ) ) == NULL )
-    {
-        /* no memory */
-        free( rc );
-        return NULL;
-    }
-    rc->status |= _PDCLIB_FREEBUFFER;
-#ifndef __STDC_NO_THREADS__
-    if ( mtx_init( &rc->mtx, mtx_plain | mtx_recursive ) != thrd_success )
-    {
-        /* could not initialize stream mutex */
-        free( rc->buffer );
-        free( rc );
-        return NULL;
-    }
-#endif
-    rc->handle = _PDCLIB_open( filename, rc->status );
-    if ( rc->handle == _PDCLIB_NOHANDLE )
+
+    /* Setting buffer to _IOLBF because "when opened, a stream is fully
+       buffered if and only if it can be determined not to refer to an
+       interactive device."
+    */
+    rc->status |= filemode | _IOLBF;
+
+    if ( ( rc->handle = _PDCLIB_open( filename, rc->status ) ) == _PDCLIB_NOHANDLE )
     {
         /* OS open() failed */
-#ifndef __STDC_NO_THREADS__
+#ifndef __STDC_NO_THREADS
         mtx_destroy( &rc->mtx );
 #endif
         free( rc->buffer );
         free( rc );
         return NULL;
     }
+
     /* Getting absolute filename (for potential freopen()) */
     rc->filename = _PDCLIB_realpath( filename );
-    /* Initializing the rest of the structure */
-    rc->bufsize = BUFSIZ;
-    /* Not necessary as we calloc()ed the memory for rc
-    rc->bufidx = 0;
-    rc->bufend = 0;
-    rc->ungetidx = 0;
-    */
-    /* Setting buffer to _IOLBF because "when opened, a stream is fully
-       buffered if and only if it can be determined not to refer to an
-       interactive device."
-    */
-    rc->status |= _IOLBF;
-    /* TODO: Setting mbstate */
+
     /* Adding to list of open files */
     _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
     rc->next = _PDCLIB_filelist;

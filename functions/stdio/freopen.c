@@ -4,6 +4,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,142 +21,189 @@ extern mtx_t _PDCLIB_filelist_mtx;
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
-/* ISO/IEC 9899:2011
-The freopen function opens the file whose name is the string pointed to by filename
-and associates the stream pointed to by stream with it. The mode argument is used just
-as in the fopen function. 272)
-If filename is a null pointer, the freopen function attempts to change the mode of
-the stream to that specified by mode, as if the name of the file currently associated with
-the stream had been used. It is implementation-defined which changes of mode are
-permitted (if any), and under what circumstances.
-The freopen function first attempts to close any file that is associated with the specified
-stream. Failure to close the file is ignored. The error and end-of-file indicators for the
-stream are cleared.
-The freopen function returns a null pointer if the open operation fails. Otherwise,
-freopen returns the value of stream.
-
-272) The primary use of the freopen function is to change the file associated with a standard text stream
-(stderr, stdin, or stdout), as those identifiers need not be modifiable lvalues to which the value
-returned by the fopen function may be assigned.
-*/
-
-/* IEEE Std 1003.1, 2004 Edition
-The freopen() function shall first attempt to flush the stream and close any
-file descriptor associated with stream. Failure to flush or close the file
-descriptor successfully shall be ignored. The error and end-of-file indicators
-for the stream shall be cleared.
-The freopen() function shall open the file whose pathname is the string pointed
-to by filename and associate the stream pointed to by stream with it. The mode
-argument shall be used just as in fopen().
-The original stream shall be closed regardless of whether the subsequent open
-succeeds.
-If filename is a null pointer, the freopen() function shall attempt to change
-the mode of the stream to that specified by mode, as if the name of the file
-currently associated with the stream had been used. In this case, the file
-descriptor associated with the stream need not be closed if the call to freopen()
-succeeds. It is implementation-defined which changes of mode are permitted (if
-any), and under what circumstances.
-After a successful call to the freopen() function, the orientation of the stream
-shall be cleared, the encoding rule shall be cleared, and the assocuated mbstate_t
-object shall be set to describe an initial conversion state.
-The largest value that can be represented correctly in an object of type off_t
-shall be established as the offset maximum in the open file description.
-Upon successful completion, freopen() shall return the value of stream.
-Otherwise, a null pointer shall be returned, and errno shall be set to indicate
-the error.
-EBADF The file descriptor underlying the stream is not a valid file descriptor
-      when filename is a null pointer.
-ENAMETOOLONG ...FILENAME_MAX...
-ENFILE ...FOPEN_MAX...
-ENOENT A component of filename does not name an existing file or filename is
-       an empty string.
-EOVERFLOW The named file is a regular file and the size of the file cannot be
-          represented correctly in an object of type off_t.
-EBADF The mode with which the file descriptor underlying the stream was opened
-      does not support the requested mode when filename is a null pointer.
-EINVAL The value of the mode argument is not valid.
-*/
-
 struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
-    unsigned int status = stream->status & ( _IONBF | _IOLBF | _IOFBF | _PDCLIB_FREEBUFFER | _PDCLIB_DELONCLOSE );
+    unsigned int filemode = _PDCLIB_filemode( mode );
 
-    /* TODO: This function can change wide orientation of a stream */
-    /* FIXME: While adding the mutex locks, the function seemed suspicious.
-       For one, it does not remove the FILE * from the filelist if the
-       reopening fails, leaving a closed file in the list of opened files.
-       Probably other broken paths as well. Have another look ASAP.
-    */
-
-    if ( ( filename == NULL ) && ( stream->filename == NULL ) )
+    if ( stream == NULL )
     {
-        /* TODO: Special handling for mode changes on std-streams */
-        /* Requires flushing (see next block), but as we do not actually do
-           anything, we shouldn't flush either, so this block was moved up.
-           Once functionality is added here, the block should move back
-           down below the _PDCLIB_flushbuffer (and the mutex lock!).
-        */
+        errno = EBADF;
         return NULL;
     }
 
-    _PDCLIB_LOCK( stream->mtx );
+    _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
 
-    if ( stream->status & _PDCLIB_FWRITE )
+    if ( _PDCLIB_isstream( stream, NULL ) )
     {
-        _PDCLIB_flushbuffer( stream );
-    }
+        /* May lock only after established that stream is valid */
+        _PDCLIB_LOCK( stream->mtx );
 
-    _PDCLIB_close( stream->handle );
+        /* Flush buffer */
+        if ( stream->status & _PDCLIB_FWRITE )
+        {
+            _PDCLIB_flushbuffer( stream );
+        }
 
-    /* TODO: It is not nice to do this on a stream we just closed.
-       It does not matter with the current implementation of clearerr(),
-       but it might start to matter if someone replaced that implementation.
-    */
-    clearerr( stream );
+        if ( filename == NULL )
+        {
+            /* Attempt to change mode without closing stream */
+            switch ( _PDCLIB_changemode( stream, filemode ) )
+            {
+                case INT_MIN:
+                    /* fail completely */
+                    _PDCLIB_UNLOCK( stream->mtx );
+                    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
+                    return NULL;
+                case 0:
+                    /* fail; try close / reopen */
+                    filename = stream->filename;
+                    /* Setting to NULL to make the free() below a non-op. */
+                    stream->filename = NULL;
+                    break;
+                default:
+                    /* success */
+                    _PDCLIB_UNLOCK( stream->mtx );
+                    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
+                    return stream;
+            }
+        }
 
-    /* The new filename might not fit the old buffer */
-    if ( filename == NULL )
-    {
-        /* Use previous filename */
-        filename = stream->filename;
-    }
-    else if ( ( stream->filename != NULL ) && ( strlen( stream->filename ) >= strlen( filename ) ) )
-    {
-        /* Copy new filename into existing buffer */
-        strcpy( stream->filename, filename );
+        /* Close handle */
+        _PDCLIB_close( stream->handle );
+
+        /* Remove stream from list */
+        _PDCLIB_getstream( stream );
+
+        /* Delete tmpfile() */
+        if ( stream->status & _PDCLIB_DELONCLOSE )
+        {
+            /* Have to switch here; stream->filename may have moved to
+               filename after failed in-place mode change above.
+            */
+            _PDCLIB_remove( ( stream->filename == NULL ) ? filename : stream->filename );
+            stream->status &= ~_PDCLIB_DELONCLOSE;
+        }
+
+        /* Free buffer */
+        if ( stream->status & _PDCLIB_FREEBUFFER )
+        {
+            free( stream->buffer );
+        }
+
+        if ( filename == NULL )
+        {
+            /* Input was filename NULL, stream->filename NULL.
+               No filename means there is nothing to reopen. In-place
+               mode change was already attempted (and failed) above.
+            */
+            return NULL;
+        }
+        else
+        {
+            /* We have a filename, either from input or (if filename
+               was NULL) from stream. We will attempt the re-open with
+               that, and will retrieve _PDCLIB_realpath() from that.
+               So stream->filename is no longer needed.
+            */
+            free( stream->filename );
+        }
     }
     else
     {
-        /* Allocate new buffer */
-        if ( ( stream->filename = (char *)malloc( strlen( filename ) ) ) == NULL )
+        /* Not a valid stream. As _PDCLIB_init_file_t() cannot tell the
+           difference, only knows that it has been called by freopen()
+           (by the non-NULL parameter), we need to initialize the mutex
+           here (so that either way, _PDCLIB_init_file_t() gets a pre-
+           initialized mutex).
+        */
+#ifndef __STDC_NO_THREADS__
+        if ( mtx_init( &stream->mtx, mtx_plain | mtx_recursive ) != thrd_success )
         {
-            _PDCLIB_UNLOCK( stream->mtx );
+            /* Could not initialize stream mutex */
+            _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
             return NULL;
         }
-        strcpy( stream->filename, filename );
+#endif
+
+        /* Locking the mutex, so we come out of the if-else with a locked
+           mutex either way.
+        */
+        _PDCLIB_LOCK( stream->mtx );
     }
-    if ( ( mode == NULL ) || ( filename[0] == '\0' ) )
+
+    /* Stream is closed, or never was open (even though its mutex exists
+       and is locked) at this point.
+       Now we check if we have the whereabouts to open it.
+    */
+
+    if ( filemode == 0 )
     {
+        /* Mode invalid */
         _PDCLIB_UNLOCK( stream->mtx );
+#ifndef __STDC_NO_THREADS__
+        mtx_destroy( &stream->mtx );
+#endif
+        free( stream->filename );
+        free( stream );
+        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
         return NULL;
     }
-    if ( ( stream->status = _PDCLIB_filemode( mode ) ) == 0 )
+
+    if ( filename == NULL || filename[0] == '\0' )
     {
+        /* No filename available (standard stream?) */
         _PDCLIB_UNLOCK( stream->mtx );
+#ifndef __STDC_NO_THREADS__
+        mtx_destroy( &stream->mtx );
+#endif
+        free( stream->filename );
+        free( stream );
+        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
         return NULL;
     }
-    /* Re-add the flags we saved above */
-    stream->status |= status;
-    stream->bufidx = 0;
-    stream->bufend = 0;
-    stream->ungetidx = 0;
-    /* TODO: Setting mbstate */
+
+    /* (Re-)initializing the structure. */
+    if ( _PDCLIB_init_file_t( stream ) == NULL )
+    {
+        /* Re-init failed. */
+        _PDCLIB_UNLOCK( stream->mtx );
+#ifndef __STDC_NO_THREADS__
+        mtx_destroy( &stream->mtx );
+#endif
+        free( stream->filename );
+        free( stream );
+        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
+        return NULL;
+    }
+
+    /* Resetting buffer mode and filemode */
+    stream->status |= filemode | _IOLBF;
+
+    /* Attempt open */
     if ( ( stream->handle = _PDCLIB_open( filename, stream->status ) ) == _PDCLIB_NOHANDLE )
     {
+        /* OS open() failed */
         _PDCLIB_UNLOCK( stream->mtx );
+#ifndef __STDC_NO_THREADS__
+        mtx_destroy( &stream->mtx );
+#endif
+        free( stream->filename );
+        free( stream->buffer );
+        free( stream );
+        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
         return NULL;
     }
+
+    /* Getting absolute filename */
+    stream->filename = _PDCLIB_realpath( filename );
+
+    /* Adding to list of open files */
+    stream->next = _PDCLIB_filelist;
+    _PDCLIB_filelist = stream;
+
     _PDCLIB_UNLOCK( stream->mtx );
+    _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
+
     return stream;
 }
 

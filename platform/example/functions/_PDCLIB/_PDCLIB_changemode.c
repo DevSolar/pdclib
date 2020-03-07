@@ -35,17 +35,27 @@
 #include "pdclib/_PDCLIB_glue.h"
 
 #include <limits.h>
+#include <stddef.h>
 
 int _PDCLIB_changemode( struct _PDCLIB_file_t * stream, unsigned int mode )
 {
     if ( mode == 0 )
     {
-        return 0;
+        return INT_MIN;
     }
 
     /* Attempt mode change without closing the stream */
 
-    return INT_MIN;
+    if ( stream->filename == NULL )
+    {
+        /* Standard stream, no filename for reopen */
+        return INT_MIN;
+    }
+    else
+    {
+        /* Stream with file associated, attempt reopen */
+        return 0;
+    }
 }
 
 #endif
