@@ -66,8 +66,9 @@ _PDCLIB_LOCAL int _PDCLIB_close( _PDCLIB_fd_t fd );
    *without* closing the stream. See comments in example implementation
    for details. Return zero if the requested mode change is not supported
    for this stream and freopen() should try to close and reopen the stream;
-   return INT_MIN if the change is not supported and freopen() should NOT
-   try to close / reopen (i.e., fail). Return any other value on success.
+   return INT_MIN if the change is not supported and freopen() should close
+   and NOT try to close / reopen (i.e., fail). Return any other value on
+   success.
 */
 _PDCLIB_LOCAL int _PDCLIB_changemode( struct _PDCLIB_file_t * stream, unsigned int mode );
 

@@ -16,7 +16,16 @@
 #include "pdclib/_PDCLIB_aux.h"
 
 /* null pointer constant */
+#ifdef __cplusplus
+#if __cplusplus >= 201103L
+#define _PDCLIB_NULL nullptr
+#else
 #define _PDCLIB_NULL 0
+#endif
+#else
+#define _PDCLIB_NULL ((void *)0)
+#endif
+
 
 /* -------------------------------------------------------------------------- */
 /* Limits of native datatypes                                                 */
@@ -379,6 +388,11 @@ _PDCLIB_LOCAL const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_statu
 /* Parsing any fopen() style filemode string into a number of flags. */
 _PDCLIB_LOCAL unsigned int _PDCLIB_filemode( const char * mode );
 
+/* Initialize a FILE structure. If the parameter is NULL, a new FILE structure
+   is malloc'ed. Returns a pointer to the stream if successful, NULL otherwise.
+*/
+_PDCLIB_LOCAL struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream );
+
 /* Sanity checking and preparing of read buffer, should be called first thing
    by any stdio read-data function.
    Returns 0 on success, EOF on error.
@@ -410,11 +424,11 @@ _PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * stream, _PDCLIB
 */
 char * _PDCLIB_geterrtext( int errnum );
 
-/* Returns zero if the given stream is on the internal list of open files,
-   non-zero otherwise. Sets the second paramenter to the previous stream
-   on the list (or NULL if the given stream is the first on the list). This
-   function does not lock _PDCLIB_filelist_mtx, this needs to be done by
-   the calling function (_PDCLIB_getstream() or freopen()).
+/* Returns non-zero if the given stream is on the internal list of open files,
+   zero otherwise. Sets the second paramenter to the previous stream on the
+   list (or NULL if the given stream is the first on the list). This function
+   does not lock _PDCLIB_filelist_mtx, this needs to be done by the calling
+   function (_PDCLIB_getstream() or freopen()).
 */
 _PDCLIB_LOCAL int _PDCLIB_isstream( struct _PDCLIB_file_t * stream, struct _PDCLIB_file_t ** previous );
 
