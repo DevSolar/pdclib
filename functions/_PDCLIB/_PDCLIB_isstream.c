@@ -15,11 +15,19 @@ extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 int _PDCLIB_isstream( struct _PDCLIB_file_t * stream, struct _PDCLIB_file_t ** previous )
 {
     struct _PDCLIB_file_t * current = _PDCLIB_filelist;
-    *previous = NULL;
+
+    if ( previous != NULL )
+    {
+        *previous = NULL;
+    }
 
     while ( ( current != NULL ) && ( current != stream ) )
     {
-        *previous = current;
+        if ( previous != NULL )
+        {
+            *previous = current;
+        }
+
         current = current->next;
     }
 

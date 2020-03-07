@@ -76,6 +76,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_digits.c
      functions/_PDCLIB/_PDCLIB_filemode.c
      functions/_PDCLIB/_PDCLIB_getstream.c
+     functions/_PDCLIB/_PDCLIB_init_file_t.c
      functions/_PDCLIB/_PDCLIB_is_leap.c
      functions/_PDCLIB/_PDCLIB_isstream.c
      functions/_PDCLIB/_PDCLIB_load_lc_collate.c
