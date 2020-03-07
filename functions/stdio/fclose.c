@@ -23,14 +23,6 @@ int fclose( struct _PDCLIB_file_t * stream )
     _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
     _PDCLIB_LOCK( stream->mtx );
 
-    /* Remove stream from list */
-    if ( _PDCLIB_getstream( stream ) )
-    {
-        _PDCLIB_UNLOCK( stream->mtx );
-        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
-        return EOF;
-    }
-
     /* Flush buffer */
     if ( stream->status & _PDCLIB_FWRITE )
     {
@@ -46,15 +38,21 @@ int fclose( struct _PDCLIB_file_t * stream )
     /* Close handle */
     _PDCLIB_close( stream->handle );
 
+    /* Remove stream from list */
+    if ( _PDCLIB_getstream( stream ) )
+    {
+        _PDCLIB_UNLOCK( stream->mtx );
+        _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
+        return EOF;
+    }
+
     /* Delete tmpfile() */
     if ( stream->status & _PDCLIB_DELONCLOSE )
     {
         _PDCLIB_remove( stream->filename );
     }
 
-    /* Free user buffer (setvbuf allocated -- user requested buffer size
-       but memory allocated by library)
-    */
+    /* Free buffer */
     if ( stream->status & _PDCLIB_FREEBUFFER )
     {
         free( stream->buffer );
