@@ -15,8 +15,8 @@ extern "C" {
 
 typedef _PDCLIB_wint_t wint_t;
 
-// wctrans_t
-// wctype_t
+/* wctrans_t */
+/* wctype_t */
 
 #ifndef _PDCLIB_WEOF_DEFINED
 #define _PDCLIB_WEOF_DEFINED _PDCLIB_WEOF_DEFINED

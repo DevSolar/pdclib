@@ -34,7 +34,20 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                 */
                 return -1;
             }
-            if ( buf == NULL )
+            if ( buf != NULL )
+            {
+                /* User provided buffer. Deallocate existing buffer, and mark
+                   the stream so that fclose() does not try to deallocate the
+                   user's buffer.
+                */
+                if ( stream->status & _PDCLIB_FREEBUFFER )
+                {
+                    free( stream->buffer );
+                }
+
+                stream->status &= ~_PDCLIB_FREEBUFFER;
+            }
+            else
             {
                 /* User requested buffer size, but leaves it to library to
                    allocate the buffer.
@@ -54,6 +67,11 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                         /* Out of memory error. */
                         _PDCLIB_UNLOCK( stream->mtx );
                         return -1;
+                    }
+
+                    if ( stream->status & _PDCLIB_FREEBUFFER )
+                    {
+                        free( stream->buffer );
                     }
 
                     /* This buffer must be free()d on fclose() */

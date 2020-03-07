@@ -61,6 +61,22 @@ _PDCLIB_LOCAL _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDC
 */
 _PDCLIB_LOCAL int _PDCLIB_close( _PDCLIB_fd_t fd );
 
+/* A system call that changes the mode of a given stream to that passed as
+   argument (the argument being the value returned by _PDCLIB_filemode()),
+   *without* closing the stream. See comments in example implementation
+   for details. Return zero if the requested mode change is not supported
+   for this stream and freopen() should try to close and reopen the stream;
+   return INT_MIN if the change is not supported and freopen() should close
+   and NOT try to close / reopen (i.e., fail). Return any other value on
+   success.
+*/
+_PDCLIB_LOCAL int _PDCLIB_changemode( struct _PDCLIB_file_t * stream, unsigned int mode );
+
+/* A system call that returns a canonicalized absolute filename in
+   dynamically allocated memory, or NULL if the file does not exist.
+*/
+_PDCLIB_LOCAL char * _PDCLIB_realpath( const char * path );
+
 /* A system call that removes a file. Return zero on success, non-zero
    otherwise.
 */

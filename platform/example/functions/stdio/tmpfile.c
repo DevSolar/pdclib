@@ -9,7 +9,7 @@
 #ifndef REGTEST
 
 #ifdef __ANDROID__
-// typedef sigset_t
+/* typedef sigset_t */
 #include "bits/signal_types.h"
 #define _STRUCT_TIMESPEC
 #include <time.h>
@@ -43,12 +43,17 @@ struct _PDCLIB_file_t * tmpfile( void )
        appropriate.
     */
     FILE * randomsource = fopen( "/proc/sys/kernel/random/uuid", "rb" );
-    char filename[ L_tmpnam ];
+    /* Working under the assumption that the tempfile location is canonical
+       (absolute), and does not require going through _PDCLIB_realpath().
+    */
+    char * filename = (char *)malloc( L_tmpnam );
     _PDCLIB_fd_t fd;
+
     if ( randomsource == NULL )
     {
         return NULL;
     }
+
     for ( ;; )
     {
         /* Get a filename candidate. What constitutes a valid filename and
@@ -67,43 +72,33 @@ struct _PDCLIB_file_t * tmpfile( void )
            appropriate.
         */
         fd = open( filename, O_CREAT | O_EXCL | O_RDWR, S_IRUSR | S_IWUSR );
+
         if ( fd != -1 )
         {
             /* Found a file that does not exist yet */
             break;
         }
+
         close( fd );
     }
+
     fclose( randomsource );
+
     /* See fopen(), which does much of the same. */
-    if ( ( rc = calloc( 1, sizeof( struct _PDCLIB_file_t ) + _PDCLIB_UNGETCBUFSIZE + L_tmpnam + BUFSIZ ) ) == NULL )
+
+    if ( ( rc = _PDCLIB_init_file_t( NULL ) ) == NULL )
     {
-        /* No memory to set up FILE structure */
+        /* initializing FILE structure failed */
         close( fd );
         return NULL;
     }
-    rc->status = _PDCLIB_filemode( "wb+" ) | _IOLBF | _PDCLIB_DELONCLOSE;
-#ifndef __STDC_NO_THREADS__
-    if ( mtx_init( &rc->mtx, mtx_plain | mtx_recursive ) != thrd_success )
-    {
-        /* could not initialize stream mutex */
-        close( fd );
-        free( rc );
-        return NULL;
-    }
-#endif
+
+    rc->status |= _PDCLIB_filemode( "wb+" ) | _IOLBF | _PDCLIB_DELONCLOSE;
     rc->handle = fd;
-    /* Setting pointers into the memory block allocated above */
-    rc->ungetbuf = (unsigned char *)rc + sizeof( struct _PDCLIB_file_t );
-    rc->filename = (char *)rc->ungetbuf + _PDCLIB_UNGETCBUFSIZE;
-    rc->buffer   = rc->filename + L_tmpnam;
-    /* Copying filename to FILE structure */
-    strcpy( rc->filename, filename );
-    /* Initializing the rest of the structure */
-    rc->bufsize = BUFSIZ;
-    rc->bufidx = 0;
-    rc->ungetidx = 0;
-    /* TODO: Setting mbstate */
+
+    /* Filename (for potential freopen()) */
+    rc->filename = filename;
+
     /* Adding to list of open files */
     _PDCLIB_LOCK( _PDCLIB_filelist_mtx );
     rc->next = _PDCLIB_filelist;

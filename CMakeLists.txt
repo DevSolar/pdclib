@@ -76,6 +76,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_digits.c
      functions/_PDCLIB/_PDCLIB_filemode.c
      functions/_PDCLIB/_PDCLIB_getstream.c
+     functions/_PDCLIB/_PDCLIB_init_file_t.c
      functions/_PDCLIB/_PDCLIB_is_leap.c
      functions/_PDCLIB/_PDCLIB_isstream.c
      functions/_PDCLIB/_PDCLIB_load_lc_collate.c
@@ -95,11 +96,13 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
 
+     platform/example/functions/_PDCLIB/_PDCLIB_changemode.c
      platform/example/functions/_PDCLIB/_PDCLIB_close.c
      platform/example/functions/_PDCLIB/_PDCLIB_Exit.c
      platform/example/functions/_PDCLIB/_PDCLIB_fillbuffer.c
      platform/example/functions/_PDCLIB/_PDCLIB_flushbuffer.c
      platform/example/functions/_PDCLIB/_PDCLIB_open.c
+     platform/example/functions/_PDCLIB/_PDCLIB_realpath.c
      platform/example/functions/_PDCLIB/_PDCLIB_rename.c
      platform/example/functions/_PDCLIB/_PDCLIB_remove.c
      platform/example/functions/_PDCLIB/_PDCLIB_seek.c

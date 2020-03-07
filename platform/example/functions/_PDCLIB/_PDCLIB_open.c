@@ -13,7 +13,7 @@
 #ifndef REGTEST
 
 #ifdef __ANDROID__
-// typedef sigset_t
+/* typedef sigset_t */
 #include "bits/signal_types.h"
 #endif
 
@@ -54,7 +54,7 @@ _PDCLIB_fd_t _PDCLIB_open( const char * const filename, unsigned int mode )
             osmode = O_RDWR | O_APPEND | O_CREAT;
             break;
         default: /* Invalid mode */
-            return -1;
+            return _PDCLIB_NOHANDLE;
     }
     if ( osmode & O_CREAT )
     {
@@ -64,7 +64,7 @@ _PDCLIB_fd_t _PDCLIB_open( const char * const filename, unsigned int mode )
     {
         rc = open( filename, osmode );
     }
-    if ( rc == -1 )
+    if ( rc == _PDCLIB_NOHANDLE )
     {
         /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
         *_PDCLIB_errno_func() = errno;

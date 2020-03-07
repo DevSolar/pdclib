@@ -16,7 +16,16 @@
 #include "pdclib/_PDCLIB_aux.h"
 
 /* null pointer constant */
+#ifdef __cplusplus
+#if __cplusplus >= 201103L
+#define _PDCLIB_NULL nullptr
+#else
 #define _PDCLIB_NULL 0
+#endif
+#else
+#define _PDCLIB_NULL ((void *)0)
+#endif
+
 
 /* -------------------------------------------------------------------------- */
 /* Limits of native datatypes                                                 */
@@ -267,7 +276,7 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 
 /* Internal flags, made to fit the same status field as the flags above. */
 /* -------------------------------------------------------------------------- */
-/* free() the buffer memory on closing (false for user-supplied buffer) */
+/* free() the buffer memory on closing (setvbuf()) */
 #define _PDCLIB_FREEBUFFER  (1u<<8)
 /* stream has encountered error / EOF */
 #define _PDCLIB_ERRORFLAG   (1u<<9)
@@ -278,8 +287,6 @@ typedef unsigned _PDCLIB_intmax _PDCLIB_uintmax_t;
 #define _PDCLIB_BYTESTREAM  (1u<<12)
 /* file associated with stream should be remove()d on closing (tmpfile()) */
 #define _PDCLIB_DELONCLOSE  (1u<<13)
-/* stream filename allocated separately, and needs free()ing on fclode(). */
-#define _PDCLIB_FREENAME    (1u<<14)
 
 /* Position / status structure for getpos() / fsetpos(). */
 struct _PDCLIB_fpos_t
@@ -298,7 +305,7 @@ struct _PDCLIB_file_t
     _PDCLIB_size_t          bufend;   /* Index of last pre-read character in buffer */
     struct _PDCLIB_fpos_t   pos;      /* Offset and multibyte parsing state */
     _PDCLIB_size_t          ungetidx; /* Number of ungetc()'ed characters */
-    unsigned char *         ungetbuf; /* ungetc() buffer */
+    unsigned char           ungetbuf[_PDCLIB_UNGETCBUFSIZE]; /* ungetc() buffer */
     unsigned int            status;   /* Status flags; see above */
     /* multibyte parsing status to be added later */
 #ifndef __STDC_NO_THREADS__
@@ -381,6 +388,11 @@ _PDCLIB_LOCAL const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_statu
 /* Parsing any fopen() style filemode string into a number of flags. */
 _PDCLIB_LOCAL unsigned int _PDCLIB_filemode( const char * mode );
 
+/* Initialize a FILE structure. If the parameter is NULL, a new FILE structure
+   is malloc'ed. Returns a pointer to the stream if successful, NULL otherwise.
+*/
+_PDCLIB_LOCAL struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream );
+
 /* Sanity checking and preparing of read buffer, should be called first thing
    by any stdio read-data function.
    Returns 0 on success, EOF on error.
@@ -412,10 +424,10 @@ _PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * stream, _PDCLIB
 */
 char * _PDCLIB_geterrtext( int errnum );
 
-/* Returns zero if the given stream is on the internal list of open files,
-   non-zero otherwise. Sets the second paramenter to the previous stream
-   on the list (or NULL if the given stream is the first on the list). This
-   function does not lock _PDCLIB_filelist_mtx, this needs to be done by
+/* Returns non-zero if the given stream is on the internal list of open files,
+   zero otherwise. Sets the second paramenter (if not NULL) to the previous
+   stream on the list (or NULL if the given stream is the first on the list).
+   This function does not lock _PDCLIB_filelist_mtx, this needs to be done by
    the calling function (_PDCLIB_getstream() or freopen()).
 */
 _PDCLIB_LOCAL int _PDCLIB_isstream( struct _PDCLIB_file_t * stream, struct _PDCLIB_file_t ** previous );
