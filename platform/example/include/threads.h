@@ -226,7 +226,7 @@ _PDCLIB_PUBLIC void thrd_yield( void );
 /* Thread-specific storage functions */
 
 /* Initialize thread-specific storage, with optional destructor
-   Returns thrs_success if successful, thrd_error otherwise (in this case
+   Returns thrd_success if successful, thrd_error otherwise (in this case
    key is set to an undefined value).
 */
 _PDCLIB_PUBLIC int tss_create( tss_t * key, tss_dtor_t dtor );

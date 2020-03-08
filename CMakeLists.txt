@@ -26,9 +26,15 @@ project( pdclib )
 
 option( IGNORE_NO_TESTDRIVER "Ignore NO_TESTDRIVER flags instead of reporting them as error. Default: OFF." OFF )
 option( AS_CXX "Compile as C++. (For testing purposes.) Default: OFF." OFF )
+option( AS_C11 "Compile as C11. (For testing purposes.) Default: OFF." OFF )
 
 # Setting compiler to C11 standard, no extensions.
-set( CMAKE_C_STANDARD 99 )
+if ( AS_C11 )
+    set( CMAKE_C_STANDARD 11 )
+else()
+    set( CMAKE_C_STANDARD 99 )
+endif()
+
 set( CMAKE_C_STANDARD_REQUIRED ON )
 set( CMAKE_C_EXTENSIONS OFF )
 
@@ -386,7 +392,7 @@ foreach( file ${PDCLIB_SOURCES} )
     add_test( ${basename}_t test_support/testdrivers/${basename}_t )
     add_dependencies( testdrivers ${basename}_t )
 
-    # Regression test driver, _t suffix, compiled with -DTEST -DREGTEST
+    # Regression test driver, _r suffix, compiled with -DTEST -DREGTEST
     # against system libc.
     add_executable( ${basename}_r ${file} )
     set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST ${FLAGS}" )
