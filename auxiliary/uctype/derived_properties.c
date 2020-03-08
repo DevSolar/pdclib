@@ -30,7 +30,7 @@ struct derived_properties_t * read_derived_properties( const char * filename )
         return NULL;
     }
 
-    if ( ( check_file( fh, LINE_BUFFER_SIZE, ';', sizeof( derived_properties_fields ) / sizeof( int ), derived_properties_fields ) ) != (size_t)-1 )
+    if ( ( check_file( fh, LINE_BUFFER_SIZE, ';', sizeof( derived_properties_fields ) / sizeof( int ), derived_properties_fields ) ) != ( size_t )-1 )
     {
         while ( fgets( buffer, LINE_BUFFER_SIZE, fh ) )
         {
@@ -66,6 +66,7 @@ struct derived_properties_t * read_derived_properties( const char * filename )
                         {
                             char * p;
                             char * range;
+
                             properties = 0; /* Re-using the variable */
                             code_points = 0; /* Re-using the variable */
 
@@ -215,7 +216,7 @@ struct derived_properties_t * read_derived_properties( const char * filename )
     return dp;
 }
 
-static int comp( const void * l, const void *  r )
+static int comp( const void * l, const void * r )
 {
     const size_t * lhs = l;
     const size_t * rhs = r;

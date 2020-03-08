@@ -1,4 +1,4 @@
-/* strtol( const char *, char * *, int )
+/* strtol( const char *, char **, int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -16,16 +16,26 @@ long int strtol( const char * s, char ** endptr, int base )
     long int rc;
     char sign = '+';
     const char * p = _PDCLIB_strtox_prelim( s, &sign, &base );
-    if ( base < 2 || base > 36 ) return 0;
+
+    if ( base < 2 || base > 36 )
+    {
+        return 0;
+    }
+
     if ( sign == '+' )
     {
-        rc = (long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LONG_MAX, (uintmax_t)( LONG_MAX / base ), (int)( LONG_MAX % base ), &sign );
+        rc = ( long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )LONG_MAX, ( uintmax_t )( LONG_MAX / base ), ( int )( LONG_MAX % base ), &sign );
     }
     else
     {
-        rc = (long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LONG_MIN, (uintmax_t)( LONG_MIN / -base ), (int)( -( LONG_MIN % base ) ), &sign );
+        rc = ( long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )LONG_MIN, ( uintmax_t )( LONG_MIN / -base ), ( int )( -( LONG_MIN % base ) ), &sign );
     }
-    if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;
+
+    if ( endptr != NULL )
+    {
+        *endptr = ( p != NULL ) ? ( char * ) p : ( char * ) s;
+    }
+
     return ( sign == '+' ) ? rc : -rc;
 }
 
@@ -98,7 +108,7 @@ int main( void )
     TESTCASE( strtol( "2147483648", NULL, 0 ) == LONG_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtol( "-2147483647", NULL, 0 ) == (long)0x80000001 );
+    TESTCASE( strtol( "-2147483647", NULL, 0 ) == ( long )0x80000001 );
     TESTCASE( errno == 0 );
     errno = 0;
     TESTCASE( strtol( "-2147483648", NULL, 0 ) == LONG_MIN );
@@ -115,7 +125,7 @@ int main( void )
     TESTCASE( strtol( "9223372036854775808", NULL, 0 ) == LONG_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtol( "-9223372036854775807", NULL, 0 ) == (long)0x8000000000000001 );
+    TESTCASE( strtol( "-9223372036854775807", NULL, 0 ) == ( long )0x8000000000000001 );
     TESTCASE( errno == 0 );
     errno = 0;
     TESTCASE( strtol( "-9223372036854775808", NULL, 0 ) == LONG_MIN );

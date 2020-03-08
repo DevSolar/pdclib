@@ -26,11 +26,13 @@ int fsetpos( struct _PDCLIB_file_t * stream, const struct _PDCLIB_fpos_t * pos )
             return EOF;
         }
     }
+
     if ( _PDCLIB_seek( stream, pos->offset, SEEK_SET ) == EOF )
     {
         _PDCLIB_UNLOCK( stream->mtx );
         return EOF;
     }
+
     stream->pos.status = pos->status;
     /* TODO: Add mbstate. */
 

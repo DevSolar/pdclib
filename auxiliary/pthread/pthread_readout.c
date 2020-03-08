@@ -24,18 +24,22 @@ struct _PDCLIB_timespec
 static void print_mutex( const char * define, pthread_mutex_t mutex )
 {
     printf( "%s { {", define );
+
     for ( size_t i = 0; i < sizeof( pthread_mutex_t ); ++i )
     {
         if ( i > 0 )
         {
             printf( "," );
         }
-        if ( ! ( i % 8 ) )
+
+        if ( !( i % 8 ) )
         {
             printf( "\\\n    " );
         }
-        printf( " 0x%02hhx", ((unsigned char *)&mutex)[i] );
+
+        printf( " 0x%02hhx", ( ( unsigned char * )&mutex )[i] );
     }
+
     printf( " } }\n" );
 }
 
@@ -92,6 +96,7 @@ int main( int argc, char * argv[] )
     */
     struct timespec ts;
     struct _PDCLIB_timespec pts;
+
     assert( sizeof( ts.tv_sec ) == sizeof( pts.tv_sec ) );
     assert( alignof( ts.tv_sec ) == alignof( pts.tv_sec ) );
     assert( sizeof( ts.tv_nsec ) == sizeof( pts.tv_nsec ) );
@@ -138,12 +143,12 @@ int main( int argc, char * argv[] )
     /* once_flag init */
     printf( "#define _PDCLIB_ONCE_FLAG_INIT %s\n", symbol2string( PTHREAD_ONCE_INIT ) );
 
-    printf( "#define _PDCLIB_RECURSIVE_MUTEX_INIT %s\n", symbol2value(PTHREAD_MUTEX_INITIALIZER) );
+    printf( "#define _PDCLIB_RECURSIVE_MUTEX_INIT %s\n", symbol2value( PTHREAD_MUTEX_INITIALIZER ) );
 
     /* _PDCLIB_TSS_DTOR_ITERATIONS */
     printf( "/* This one is actually hidden in <limits.h>, and only if __USE_POSIX is      */\n"
             "/* defined prior to #include <limits.h> (PTHREAD_DESTRUCTOR_ITERATIONS).      */\n"
-	    "#define _PDCLIB_TSS_DTOR_ITERATIONS %d\n", PTHREAD_DESTRUCTOR_ITERATIONS );
+            "#define _PDCLIB_TSS_DTOR_ITERATIONS %d\n", PTHREAD_DESTRUCTOR_ITERATIONS );
 
     /* Pthread attibutes */
 

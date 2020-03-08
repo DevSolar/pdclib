@@ -31,6 +31,7 @@ int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_rest
            buffer runs full.
         */
         stream->buffer[ stream->bufidx++ ] = *s;
+
         if ( ( stream->bufidx == stream->bufsize ) ||
              ( ( stream->status & _IOLBF ) && *s == '\n' )
            )
@@ -41,6 +42,7 @@ int fputs( const char * _PDCLIB_restrict s, struct _PDCLIB_file_t * _PDCLIB_rest
                 return EOF;
             }
         }
+
         ++s;
     }
 
@@ -72,10 +74,12 @@ int main( void )
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( fputs( message, fh ) >= 0 );
     rewind( fh );
+
     for ( i = 0; i < 23; ++i )
     {
         TESTCASE( fgetc( fh ) == message[i] );
     }
+
     TESTCASE( fclose( fh ) == 0 );
     return TEST_RESULTS;
 }

@@ -9,7 +9,7 @@
 
 #ifndef REGTEST
 
-char * strtok_s( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char * * _PDCLIB_restrict ptr )
+char * strtok_s( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char ** _PDCLIB_restrict ptr )
 {
     return _PDCLIB_strtok( s1, s1max, s2, ptr );
 }

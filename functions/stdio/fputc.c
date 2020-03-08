@@ -24,11 +24,12 @@ int fputc( int c, struct _PDCLIB_file_t * stream )
         return EOF;
     }
 
-    stream->buffer[stream->bufidx++] = (char)c;
+    stream->buffer[stream->bufidx++] = ( char )c;
+
     if ( ( stream->bufidx == stream->bufsize )                   /* _IOFBF */
-           || ( ( stream->status & _IOLBF ) && ( (char)c == '\n' ) ) /* _IOLBF */
+           || ( ( stream->status & _IOLBF ) && ( ( char )c == '\n' ) ) /* _IOLBF */
            || ( stream->status & _IONBF )                        /* _IONBF */
-    )
+       )
     {
         /* buffer filled, unbuffered stream, or end-of-line. */
         c = ( _PDCLIB_flushbuffer( stream ) == 0 ) ? c : EOF;

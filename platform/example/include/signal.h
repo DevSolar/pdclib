@@ -70,7 +70,7 @@ typedef _PDCLIB_sig_atomic sig_atomic_t;
    SIG_DFL for all handlers.) If the request cannot be honored, SIG_ERR is
    returned and errno is set to an unspecified positive value.
 */
-_PDCLIB_PUBLIC void (*signal( int sig, void (*func)( int ) ) )( int );
+_PDCLIB_PUBLIC void ( *signal( int sig, void ( *func )( int ) ) )( int );
 
 /* Raises the given signal (executing the registered signal handler with the
    given signal number as parameter).

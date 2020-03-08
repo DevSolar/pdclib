@@ -22,6 +22,7 @@ int timespec_get( struct timespec * ts, int base )
     {
         /* We can make do with a really thin wrapper here. */
         struct timeval tv;
+
         if ( gettimeofday( &tv, NULL ) == 0 )
         {
             ts->tv_sec = tv.tv_sec;
@@ -29,6 +30,7 @@ int timespec_get( struct timespec * ts, int base )
             return base;
         }
     }
+
     /* Not supporting any other time base than TIME_UTC for now. */
     return 0;
 }

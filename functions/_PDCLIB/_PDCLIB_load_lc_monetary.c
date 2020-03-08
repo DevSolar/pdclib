@@ -66,7 +66,7 @@ struct _PDCLIB_lc_lconv_monetary_t * _PDCLIB_load_lc_monetary( const char * path
                         rc->int_p_sep_by_space = buffer[ 10 ];
                         rc->int_n_sep_by_space = buffer[ 11 ];
                         rc->int_p_sign_posn = buffer[ 12 ];
-                        rc->int_n_sign_posn= buffer[ 13 ];
+                        rc->int_n_sign_posn = buffer[ 13 ];
                     }
                     else
                     {

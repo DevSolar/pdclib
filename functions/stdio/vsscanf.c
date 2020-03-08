@@ -19,7 +19,7 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
     status.n = 0;
     status.i = 0;
     status.current = 0;
-    status.s = (char *) s;
+    status.s = ( char * ) s;
     status.width = 0;
     status.prec = EOF;
     status.stream = NULL;
@@ -28,6 +28,7 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
     while ( *format != '\0' )
     {
         const char * rc;
+
         if ( ( *format != '%' ) || ( ( rc = _PDCLIB_scan( format, &status ) ) == format ) )
         {
             /* No conversion specifier, match verbatim */
@@ -51,6 +52,7 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
                         /* Early input error */
                         return EOF;
                     }
+
                     /* Matching error */
                     return status.n;
                 }
@@ -60,6 +62,7 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
                     ++status.i;
                 }
             }
+
             ++format;
         }
         else
@@ -71,12 +74,15 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
                 {
                     status.n = EOF;
                 }
+
                 break;
             }
+
             /* Continue parsing after conversion specifier */
             format = rc;
         }
     }
+
     va_end( status.arg );
     return status.n;
 }

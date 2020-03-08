@@ -10,7 +10,7 @@
 
 int atoi( const char * s )
 {
-    return (int) _PDCLIB_atomax( s );
+    return ( int ) _PDCLIB_atomax( s );
 }
 
 #endif

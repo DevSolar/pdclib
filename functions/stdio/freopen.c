@@ -54,12 +54,14 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
                     _PDCLIB_UNLOCK( stream->mtx );
                     _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
                     return NULL;
+
                 case 0:
                     /* fail; try close / reopen */
                     filename = stream->filename;
                     /* Setting to NULL to make the free() below a non-op. */
                     stream->filename = NULL;
                     break;
+
                 default:
                     /* success */
                     _PDCLIB_UNLOCK( stream->mtx );
@@ -123,6 +125,7 @@ struct _PDCLIB_file_t * freopen( const char * _PDCLIB_restrict filename, const c
             _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
             return NULL;
         }
+
 #endif
 
         /* Locking the mutex, so we come out of the if-else with a locked

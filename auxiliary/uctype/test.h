@@ -15,7 +15,15 @@
 
 static int TEST_RESULTS = 0;
 
-#define TESTCASE( x ) if ( x ) {} \
-                      else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - %s\n", __LINE__, #x ); }
+#define TESTCASE( x ) \
+    if ( x ) \
+    { \
+        /* EMPTY */ \
+    } \
+    else \
+    { \
+        TEST_RESULTS += 1; \
+        printf( "FAILED: " __FILE__ ", line %d - %s\n", __LINE__, #x ); \
+    }
 
 #endif

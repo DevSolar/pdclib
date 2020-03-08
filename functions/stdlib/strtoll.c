@@ -1,4 +1,4 @@
-/* strtoll( const char *, char * *, int )
+/* strtoll( const char *, char **, int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -16,16 +16,26 @@ long long int strtoll( const char * s, char ** endptr, int base )
     long long int rc;
     char sign = '+';
     const char * p = _PDCLIB_strtox_prelim( s, &sign, &base );
-    if ( base < 2 || base > 36 ) return 0;
+
+    if ( base < 2 || base > 36 )
+    {
+        return 0;
+    }
+
     if ( sign == '+' )
     {
-        rc = (long long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MAX, (uintmax_t)( LLONG_MAX / base ), (int)( LLONG_MAX % base ), &sign );
+        rc = ( long long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )LLONG_MAX, ( uintmax_t )( LLONG_MAX / base ), ( int )( LLONG_MAX % base ), &sign );
     }
     else
     {
-        rc = (long long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)LLONG_MIN, (uintmax_t)( LLONG_MIN / -base ), (int)( -( LLONG_MIN % base ) ), &sign );
+        rc = ( long long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )LLONG_MIN, ( uintmax_t )( LLONG_MIN / -base ), ( int )( -( LLONG_MIN % base ) ), &sign );
     }
-    if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;
+
+    if ( endptr != NULL )
+    {
+        *endptr = ( p != NULL ) ? ( char * ) p : ( char * ) s;
+    }
+
     return ( sign == '+' ) ? rc : -rc;
 }
 
@@ -97,7 +107,7 @@ int main( void )
     TESTCASE( strtoll( "9223372036854775808", NULL, 0 ) == LLONG_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtoll( "-9223372036854775807", NULL, 0 ) == (long long)0x8000000000000001 );
+    TESTCASE( strtoll( "-9223372036854775807", NULL, 0 ) == ( long long )0x8000000000000001 );
     TESTCASE( errno == 0 );
     TESTCASE( strtoll( "-9223372036854775808", NULL, 0 ) == LLONG_MIN );
     TESTCASE( errno == 0 );

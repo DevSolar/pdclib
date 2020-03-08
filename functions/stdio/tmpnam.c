@@ -16,10 +16,12 @@ char * tmpnam( char * s )
 {
     static char filename[ L_tmpnam ];
     FILE * file = tmpfile();
+
     if ( s == NULL )
     {
         s = filename;
     }
+
     strcpy( s, file->filename );
     fclose( file );
     return s;

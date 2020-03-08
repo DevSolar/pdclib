@@ -34,6 +34,7 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
             /* No old string, no new string, nothing to do */
             return NULL;
         }
+
         s1 = *ptr;
     }
 
@@ -48,11 +49,13 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
                 _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
                 return NULL;
             }
+
             ++s1;
-            --(*s1max);
+            --( *s1max );
             p = s2;
             continue;
         }
+
         ++p;
     }
 
@@ -65,9 +68,11 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
 
     /* skipping non-s2 characters */
     *ptr = s1;
+
     while ( **ptr )
     {
         p = s2;
+
         while ( *p )
         {
             if ( **ptr == *p++ )
@@ -78,18 +83,21 @@ char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1
                     _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
                     return NULL;
                 }
-                --(*s1max);
-                *((*ptr)++) = '\0';
+
+                --( *s1max );
+                *( ( *ptr )++ ) = '\0';
                 return s1;
             }
         }
+
         if ( *s1max == 0 )
         {
             _PDCLIB_constraint_handler( _PDCLIB_CONSTRAINT_VIOLATION( _PDCLIB_EINVAL ) );
             return NULL;
         }
-        --(*s1max);
-        ++(*ptr);
+
+        --( *s1max );
+        ++( *ptr );
     }
 
     /* parsed to end of string */
@@ -157,19 +165,19 @@ int main( void )
     TESTCASE( HANDLER_CALLS == 1 );
 
     {
-    /* The strtok_s() example code from the standard */
-    char str1[] = "?a???b,,,#c";
-    char str2[] = "\t \t";
-    rsize_t max1 = strlen( str1 );
-    rsize_t max2 = strlen( str2 );
-    char * ptr1;
-    char * ptr2;
+        /* The strtok_s() example code from the standard */
+        char str1[] = "?a???b,,,#c";
+        char str2[] = "\t \t";
+        rsize_t max1 = strlen( str1 );
+        rsize_t max2 = strlen( str2 );
+        char * ptr1;
+        char * ptr2;
 
-    TESTCASE( _PDCLIB_strtok( str1, &max1, "?", &ptr1 ) == &str1[1] );
-    TESTCASE( _PDCLIB_strtok( NULL, &max1, ",", &ptr1 ) == &str1[3] );
-    TESTCASE( _PDCLIB_strtok( str2, &max2, " \t", &ptr2 ) == NULL );
-    TESTCASE( _PDCLIB_strtok( NULL, &max1, "#,", &ptr1 ) == &str1[10] );
-    TESTCASE( _PDCLIB_strtok( NULL, &max1, "?", &ptr1 ) == NULL );
+        TESTCASE( _PDCLIB_strtok( str1, &max1, "?", &ptr1 ) == &str1[1] );
+        TESTCASE( _PDCLIB_strtok( NULL, &max1, ",", &ptr1 ) == &str1[3] );
+        TESTCASE( _PDCLIB_strtok( str2, &max2, " \t", &ptr2 ) == NULL );
+        TESTCASE( _PDCLIB_strtok( NULL, &max1, "#,", &ptr1 ) == &str1[10] );
+        TESTCASE( _PDCLIB_strtok( NULL, &max1, "?", &ptr1 ) == NULL );
     }
 #endif
     return TEST_RESULTS;

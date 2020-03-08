@@ -87,6 +87,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
                     ++status.i;
                 }
             }
+
             ++format;
         }
         else
@@ -96,6 +97,7 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
             {
                 break;
             }
+
             /* Continue parsing after conversion specifier */
             format = rc;
         }

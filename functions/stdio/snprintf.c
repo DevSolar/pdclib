@@ -9,7 +9,7 @@
 
 #ifndef REGTEST
 
-int snprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict format, ...)
+int snprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restrict format, ... )
 {
     int rc;
     va_list ap;

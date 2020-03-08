@@ -29,7 +29,7 @@ static _PDCLIB_inline void memswp( char * i, char * j, size_t size )
 #define T 7
 
 /* Macros for handling the QSort stack */
-#define PREPARE_STACK char * stack[STACKSIZE]; char * * stackptr = stack
+#define PREPARE_STACK char * stack[STACKSIZE]; char ** stackptr = stack
 #define PUSH( base, limit ) stackptr[0] = base; stackptr[1] = limit; stackptr += 2
 #define POP( base, limit ) stackptr -= 2; base = stackptr[0]; limit = stackptr[1]
 /* TODO: Stack usage is log2( nmemb ) (minus what T shaves off the worst case).
@@ -38,18 +38,18 @@ static _PDCLIB_inline void memswp( char * i, char * j, size_t size )
 */
 #define STACKSIZE 64
 
-void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *, const void * ) )
+void qsort( void * base, size_t nmemb, size_t size, int ( *compar )( const void *, const void * ) )
 {
     char * i;
     char * j;
     _PDCLIB_size_t thresh = T * size;
-    char * base_          = (char *)base;
+    char * base_          = ( char * )base;
     char * limit          = base_ + nmemb * size;
     PREPARE_STACK;
 
     for ( ;; )
     {
-        if ( (size_t)( limit - base_ ) > thresh ) /* QSort for more than T elements. */
+        if ( ( size_t )( limit - base_ ) > thresh ) /* QSort for more than T elements. */
         {
             /* We work from second to last - first will be pivot element. */
             i = base_ + size;
@@ -59,10 +59,23 @@ void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *,
                of the three - avoiding pathological pivots.
                TODO: Instead of middle element, chose one randomly.
             */
-            memswp( ( ( ( (size_t)( limit - base_ ) ) / size ) / 2 ) * size + base_, base_, size );
-            if ( compar( i, j ) > 0 ) memswp( i, j, size );
-            if ( compar( base_, j ) > 0 ) memswp( base_, j, size );
-            if ( compar( i, base_ ) > 0 ) memswp( i, base_, size );
+            memswp( ( ( ( ( size_t )( limit - base_ ) ) / size ) / 2 ) * size + base_, base_, size );
+
+            if ( compar( i, j ) > 0 )
+            {
+                memswp( i, j, size );
+            }
+
+            if ( compar( base_, j ) > 0 )
+            {
+                memswp( base_, j, size );
+            }
+
+            if ( compar( i, base_ ) > 0 )
+            {
+                memswp( i, base_, size );
+            }
+
             /* Now we have the median for pivot element, entering main Quicksort. */
             for ( ;; )
             {
@@ -71,21 +84,26 @@ void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *,
                     /* move i right until *i >= pivot */
                     i += size;
                 } while ( compar( i, base_ ) < 0 );
+
                 do
                 {
                     /* move j left until *j <= pivot */
                     j -= size;
                 } while ( compar( j, base_ ) > 0 );
+
                 if ( i > j )
                 {
                     /* break loop if pointers crossed */
                     break;
                 }
+
                 /* else swap elements, keep scanning */
                 memswp( i, j, size );
             }
+
             /* move pivot into correct place */
             memswp( base_, j, size );
+
             /* larger subfile base / limit to stack, sort smaller */
             if ( j - base_ > limit - i )
             {
@@ -107,12 +125,14 @@ void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *,
                 for ( ; compar( j, j + size ) > 0; j -= size )
                 {
                     memswp( j, j + size, size );
+
                     if ( j == base_ )
                     {
                         break;
                     }
                 }
             }
+
             if ( stackptr != stack )           /* if any entries on stack  */
             {
                 POP( base_, limit );
@@ -136,7 +156,7 @@ void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *,
 
 static int compare( const void * left, const void * right )
 {
-    return *( (unsigned char *)left ) - *( (unsigned char *)right );
+    return *( ( unsigned char * )left ) - *( ( unsigned char * )right );
 }
 
 int main( void )

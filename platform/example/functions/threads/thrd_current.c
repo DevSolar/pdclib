@@ -13,7 +13,7 @@ extern thrd_t pthread_self( void );
 
 thrd_t thrd_current( void )
 {
-    return (thrd_t)pthread_self();
+    return ( thrd_t )pthread_self();
 }
 
 #endif
@@ -30,7 +30,7 @@ unsigned g_index[COUNT] = { 0u, 1u, 2u, 3u, 4u, 5u, 6u, 7u, 8u, 9u };
 
 static int func( void * arg )
 {
-    TESTCASE( thrd_equal( g_thread[ *(unsigned *)arg ], thrd_current() ) != 0 );
+    TESTCASE( thrd_equal( g_thread[ *( unsigned * )arg ], thrd_current() ) != 0 );
     return 0;
 }
 
@@ -39,6 +39,7 @@ static int func( void * arg )
 int main( void )
 {
 #ifndef REGTEST
+
     for ( unsigned i = 0; i < COUNT; ++i )
     {
         TESTCASE( thrd_create( &g_thread[i], func, &g_index[i] ) == thrd_success );
@@ -48,6 +49,7 @@ int main( void )
     {
         TESTCASE( thrd_join( g_thread[i], NULL ) == thrd_success );
     }
+
 #endif
     return TEST_RESULTS;
 }

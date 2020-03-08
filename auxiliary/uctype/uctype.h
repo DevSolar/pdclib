@@ -24,6 +24,4 @@ size_t get_iswgraph( size_t codepoint, struct unicode_record_t * ur );
 size_t get_iswprint( size_t codepoint, struct unicode_record_t * ur );
 size_t get_iswpunct( size_t codepoint, struct unicode_record_t * ur, struct derived_properties_t * core );
 
-
 #endif
-

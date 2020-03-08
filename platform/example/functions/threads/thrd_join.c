@@ -14,7 +14,7 @@ extern int pthread_join( thrd_t, void ** );
 int thrd_join( thrd_t thr, int * res )
 {
     /* TODO: return value */
-    if ( pthread_join( thr, (void **)&res ) == 0 )
+    if ( pthread_join( thr, ( void ** )&res ) == 0 )
     {
         return thrd_success;
     }

@@ -46,7 +46,7 @@ struct _PDCLIB_file_t * tmpfile( void )
     /* Working under the assumption that the tempfile location is canonical
        (absolute), and does not require going through _PDCLIB_realpath().
     */
-    char * filename = (char *)malloc( L_tmpnam );
+    char * filename = ( char * )malloc( L_tmpnam );
     _PDCLIB_fd_t fd;
 
     if ( randomsource == NULL )

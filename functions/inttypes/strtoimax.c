@@ -1,4 +1,4 @@
-/* strtoimax( const char *, char * *, int )
+/* strtoimax( const char *, char **, int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -16,16 +16,26 @@ intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict
     intmax_t rc;
     char sign = '+';
     const char * p = _PDCLIB_strtox_prelim( nptr, &sign, &base );
-    if ( base < 2 || base > 36 ) return 0;
+
+    if ( base < 2 || base > 36 )
+    {
+        return 0;
+    }
+
     if ( sign == '+' )
     {
-        rc = (intmax_t)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)INTMAX_MAX, (uintmax_t)( INTMAX_MAX / base ), (int)( INTMAX_MAX % base ), &sign );
+        rc = ( intmax_t )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )INTMAX_MAX, ( uintmax_t )( INTMAX_MAX / base ), ( int )( INTMAX_MAX % base ), &sign );
     }
     else
     {
-        rc = (intmax_t)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)INTMAX_MIN, (uintmax_t)( INTMAX_MIN / -base ), (int)( -( INTMAX_MIN % base ) ), &sign );
+        rc = ( intmax_t )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )INTMAX_MIN, ( uintmax_t )( INTMAX_MIN / -base ), ( int )( -( INTMAX_MIN % base ) ), &sign );
     }
-    if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) nptr;
+
+    if ( endptr != NULL )
+    {
+        *endptr = ( p != NULL ) ? ( char * ) p : ( char * ) nptr;
+    }
+
     return ( sign == '+' ) ? rc : -rc;
 }
 
@@ -93,7 +103,7 @@ int main( void )
     TESTCASE( strtoimax( "9223372036854775808", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtoimax( "-9223372036854775807", NULL, 0 ) == (INTMAX_MIN + 1) );
+    TESTCASE( strtoimax( "-9223372036854775807", NULL, 0 ) == ( INTMAX_MIN + 1 ) );
     TESTCASE( errno == 0 );
     TESTCASE( strtoimax( "-9223372036854775808", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == 0 );
@@ -106,7 +116,7 @@ int main( void )
     TESTCASE( strtoimax( "0x8000000000000000", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtoimax( "-0x7fffffffffffffff", NULL, 0 ) == (INTMAX_MIN + 1) );
+    TESTCASE( strtoimax( "-0x7fffffffffffffff", NULL, 0 ) == ( INTMAX_MIN + 1 ) );
     TESTCASE( errno == 0 );
     TESTCASE( strtoimax( "-0x8000000000000000", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == 0 );
@@ -119,7 +129,7 @@ int main( void )
     TESTCASE( strtoimax( "170141183460469231731687303715884105729", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtoimax( "-170141183460469231731687303715884105728", NULL, 0 ) == (INTMAX_MIN + 1) );
+    TESTCASE( strtoimax( "-170141183460469231731687303715884105728", NULL, 0 ) == ( INTMAX_MIN + 1 ) );
     TESTCASE( errno == 0 );
     TESTCASE( strtoimax( "-170141183460469231731687303715884105729", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == 0 );
@@ -132,7 +142,7 @@ int main( void )
     TESTCASE( strtoimax( "0x80000000000000000000000000000000", NULL, 0 ) == INTMAX_MAX );
     TESTCASE( errno == ERANGE );
     errno = 0;
-    TESTCASE( strtoimax( "-0x7fffffffffffffffffffffffffffffff", NULL, 0 ) == (INTMAX_MIN + 1) );
+    TESTCASE( strtoimax( "-0x7fffffffffffffffffffffffffffffff", NULL, 0 ) == ( INTMAX_MIN + 1 ) );
     TESTCASE( errno == 0 );
     TESTCASE( strtoimax( "-0x80000000000000000000000000000000", NULL, 0 ) == INTMAX_MIN );
     TESTCASE( errno == 0 );

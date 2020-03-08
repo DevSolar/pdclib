@@ -36,6 +36,7 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
         _PDCLIB_UNLOCK( stream->mtx );
         return NULL;
     }
+
     while ( ( ( *dest++ = stream->buffer[stream->bufidx++] ) != '\n' ) && --size > 0 )
     {
         if ( stream->bufidx == stream->bufend )

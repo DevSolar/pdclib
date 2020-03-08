@@ -29,6 +29,7 @@ int puts( const char * s )
     while ( *s != '\0' )
     {
         stdout->buffer[ stdout->bufidx++ ] = *s++;
+
         if ( stdout->bufidx == stdout->bufsize )
         {
             if ( _PDCLIB_flushbuffer( stdout ) == EOF )

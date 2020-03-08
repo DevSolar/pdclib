@@ -21,14 +21,17 @@
 time_t time( time_t * timer )
 {
     struct timeval tv;
+
     if ( gettimeofday( &tv, NULL ) == 0 )
     {
         if ( timer != NULL )
         {
             *timer = tv.tv_sec;
         }
+
         return tv.tv_sec;
     }
+
     return -1;
 }
 
