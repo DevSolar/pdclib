@@ -13,7 +13,7 @@
 
 errno_t memset_s( void * s, rsize_t smax, int c, rsize_t n )
 {
-    unsigned char * p = (unsigned char *) s;
+    unsigned char * p = ( unsigned char * ) s;
 
     if ( s == NULL || smax > RSIZE_MAX || n > RSIZE_MAX || n > smax )
     {
@@ -28,7 +28,7 @@ errno_t memset_s( void * s, rsize_t smax, int c, rsize_t n )
 
     while ( n-- )
     {
-        *p++ = (unsigned char) c;
+        *p++ = ( unsigned char ) c;
     }
 
     return 0;
@@ -59,7 +59,7 @@ int main( void )
 
     TESTCASE( memset_s( s, 10, 'o', 10 ) == 0 );
     TESTCASE( s[9] == 'o' );
-    TESTCASE( memset_s( s, 10, '_', (0) ) == 0 );
+    TESTCASE( memset_s( s, 10, '_', ( 0 ) ) == 0 );
     TESTCASE( s[0] == 'o' );
     TESTCASE( memset_s( s, 10, '_', 1 ) == 0 );
     TESTCASE( s[0] == '_' );

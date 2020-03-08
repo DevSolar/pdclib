@@ -19,8 +19,10 @@ int cnd_timedwait( cnd_t * _PDCLIB_restrict cond, mtx_t * _PDCLIB_restrict mtx, 
     {
         case 0:
             return thrd_success;
+
         case ETIMEDOUT:
             return thrd_timedout;
+
         default:
             return thrd_error;
     }

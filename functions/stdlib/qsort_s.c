@@ -31,7 +31,7 @@ static _PDCLIB_inline void memswp( char * i, char * j, size_t size )
 #define T 7
 
 /* Macros for handling the QSort stack */
-#define PREPARE_STACK char * stack[STACKSIZE]; char * * stackptr = stack
+#define PREPARE_STACK char * stack[STACKSIZE]; char ** stackptr = stack
 #define PUSH( base, limit ) stackptr[0] = base; stackptr[1] = limit; stackptr += 2
 #define POP( base, limit ) stackptr -= 2; base = stackptr[0]; limit = stackptr[1]
 /* TODO: Stack usage is log2( nmemb ) (minus what T shaves off the worst case).
@@ -40,12 +40,12 @@ static _PDCLIB_inline void memswp( char * i, char * j, size_t size )
 */
 #define STACKSIZE 64
 
-errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const void *, const void *, void * ), void * context )
+errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int ( *compar )( const void *, const void *, void * ), void * context )
 {
     char * i;
     char * j;
     _PDCLIB_size_t thresh = T * size;
-    char * base_          = (char *)base;
+    char * base_          = ( char * )base;
     char * limit          = base_ + nmemb * size;
     PREPARE_STACK;
 
@@ -57,7 +57,7 @@ errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const 
 
     for ( ;; )
     {
-        if ( (size_t)( limit - base_ ) > thresh ) /* QSort for more than T elements. */
+        if ( ( size_t )( limit - base_ ) > thresh ) /* QSort for more than T elements. */
         {
             /* We work from second to last - first will be pivot element. */
             i = base_ + size;
@@ -67,10 +67,23 @@ errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const 
                of the three - avoiding pathological pivots.
                TODO: Instead of middle element, chose one randomly.
             */
-            memswp( ( ( ( (size_t)( limit - base_ ) ) / size ) / 2 ) * size + base_, base_, size );
-            if ( compar( i, j, context ) > 0 ) memswp( i, j, size );
-            if ( compar( base_, j, context ) > 0 ) memswp( base_, j, size );
-            if ( compar( i, base_, context ) > 0 ) memswp( i, base_, size );
+            memswp( ( ( ( ( size_t )( limit - base_ ) ) / size ) / 2 ) * size + base_, base_, size );
+
+            if ( compar( i, j, context ) > 0 )
+            {
+                memswp( i, j, size );
+            }
+
+            if ( compar( base_, j, context ) > 0 )
+            {
+                memswp( base_, j, size );
+            }
+
+            if ( compar( i, base_, context ) > 0 )
+            {
+                memswp( i, base_, size );
+            }
+
             /* Now we have the median for pivot element, entering main Quicksort. */
             for ( ;; )
             {
@@ -79,21 +92,26 @@ errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const 
                     /* move i right until *i >= pivot */
                     i += size;
                 } while ( compar( i, base_, context ) < 0 );
+
                 do
                 {
                     /* move j left until *j <= pivot */
                     j -= size;
                 } while ( compar( j, base_, context ) > 0 );
+
                 if ( i > j )
                 {
                     /* break loop if pointers crossed */
                     break;
                 }
+
                 /* else swap elements, keep scanning */
                 memswp( i, j, size );
             }
+
             /* move pivot into correct place */
             memswp( base_, j, size );
+
             /* larger subfile base / limit to stack, sort smaller */
             if ( j - base_ > limit - i )
             {
@@ -115,12 +133,14 @@ errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const 
                 for ( ; compar( j, j + size, context ) > 0; j -= size )
                 {
                     memswp( j, j + size, size );
+
                     if ( j == base_ )
                     {
                         break;
                     }
                 }
             }
+
             if ( stackptr != stack )           /* if any entries on stack  */
             {
                 POP( base_, limit );
@@ -148,7 +168,7 @@ errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const 
 
 static int compare( const void * left, const void * right, void * context )
 {
-    return *( (unsigned char *)left ) - *( (unsigned char *)right );
+    return *( ( unsigned char * )left ) - *( ( unsigned char * )right );
 }
 
 #endif

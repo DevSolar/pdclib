@@ -1,4 +1,4 @@
-/* strtoul( const char *, char * *, int )
+/* strtoul( const char *, char **, int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -16,9 +16,19 @@ unsigned long int strtoul( const char * s, char ** endptr, int base )
     unsigned long int rc;
     char sign = '+';
     const char * p = _PDCLIB_strtox_prelim( s, &sign, &base );
-    if ( base < 2 || base > 36 ) return 0;
-    rc = (unsigned long int)_PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)ULONG_MAX, (uintmax_t)( ULONG_MAX / base ), (int)( ULONG_MAX % base ), &sign );
-    if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;
+
+    if ( base < 2 || base > 36 )
+    {
+        return 0;
+    }
+
+    rc = ( unsigned long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )ULONG_MAX, ( uintmax_t )( ULONG_MAX / base ), ( int )( ULONG_MAX % base ), &sign );
+
+    if ( endptr != NULL )
+    {
+        *endptr = ( p != NULL ) ? ( char * ) p : ( char * ) s;
+    }
+
     return ( sign == '+' ) ? rc : -rc;
 }
 
@@ -83,7 +93,7 @@ int main( void )
     /* for one-complement and signed magnitude just as well. Anyone having */
     /* a platform to test this on?                                         */
     errno = 0;
-/* long -> 32 bit */
+    /* long -> 32 bit */
 #if ULONG_MAX >> 31 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoul( "4294967295", NULL, 0 ) == ULONG_MAX );
@@ -92,7 +102,7 @@ int main( void )
     TESTCASE( strtoul( "4294967296", NULL, 0 ) == ULONG_MAX );
     TESTCASE( errno == ERANGE );
     /* TODO: test "odd" overflow, i.e. base is not power of two */
-/* long -> 64 bit */
+    /* long -> 64 bit */
 #elif ULONG_MAX >> 63 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoul( "18446744073709551615", NULL, 0 ) == ULONG_MAX );

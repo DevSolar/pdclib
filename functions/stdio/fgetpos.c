@@ -41,7 +41,7 @@ int main( void )
     TESTCASE( fsetpos( fh, &pos1 ) == 0 );
     TESTCASE( ftell( fh ) == 0 );
     TESTCASE( fsetpos( fh, &pos2 ) == 0 );
-    TESTCASE( (size_t)ftell( fh ) == strlen( teststring ) );
+    TESTCASE( ( size_t )ftell( fh ) == strlen( teststring ) );
     TESTCASE( fclose( fh ) == 0 );
     return TEST_RESULTS;
 }

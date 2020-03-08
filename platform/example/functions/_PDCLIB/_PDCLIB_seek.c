@@ -22,6 +22,7 @@ extern long lseek( int fd, long offset, int whence );
 _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t offset, int whence )
 {
     _PDCLIB_int64_t rc;
+
     switch ( whence )
     {
         case SEEK_SET:
@@ -29,16 +30,19 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
         case SEEK_END:
             /* EMPTY - OK */
             break;
+
         default:
             *_PDCLIB_errno_func() = _PDCLIB_EINVAL;
             return EOF;
             break;
     }
+
 #ifdef __CYGWIN__
     rc = lseek( stream->handle, offset, whence );
 #else
     rc = lseek64( stream->handle, offset, whence );
 #endif
+
     if ( rc != EOF )
     {
         stream->ungetidx = 0;
@@ -47,6 +51,7 @@ _PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t of
         stream->pos.offset = rc;
         return rc;
     }
+
     /* The 1:1 mapping in _PDCLIB_config.h ensures that this works. */
     *_PDCLIB_errno_func() = errno;
     return EOF;

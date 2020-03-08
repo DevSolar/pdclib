@@ -12,7 +12,7 @@
    functions that had already been called at the time it was registered."
 */
 
-void (*_PDCLIB_quickexitstack[ _PDCLIB_ATEXIT_SLOTS ])( void );
+void ( *_PDCLIB_quickexitstack[ _PDCLIB_ATEXIT_SLOTS ] )( void );
 size_t _PDCLIB_quickexitptr = 0;
 
 void quick_exit( int status )
@@ -21,6 +21,7 @@ void quick_exit( int status )
     {
         _PDCLIB_quickexitstack[ --_PDCLIB_quickexitptr ]();
     }
+
     _Exit( status );
 }
 

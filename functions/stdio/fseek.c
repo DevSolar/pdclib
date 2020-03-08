@@ -32,12 +32,12 @@ int fseek( struct _PDCLIB_file_t * stream, long offset, int whence )
 
     if ( stream->status & _PDCLIB_FRW )
     {
-        stream->status &= ~ ( _PDCLIB_FREAD | _PDCLIB_FWRITE );
+        stream->status &= ~( _PDCLIB_FREAD | _PDCLIB_FWRITE );
     }
 
     if ( whence == SEEK_CUR )
     {
-        offset -= ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx );
+        offset -= ( ( ( int )stream->bufend - ( int )stream->bufidx ) + stream->ungetidx );
     }
 
     rc = ( _PDCLIB_seek( stream, offset, whence ) != EOF ) ? 0 : EOF;
@@ -59,10 +59,10 @@ int main( void )
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( fwrite( teststring, 1, strlen( teststring ), fh ) == strlen( teststring ) );
     /* General functionality */
-    TESTCASE( fseek( fh, -1, SEEK_END ) == 0  );
-    TESTCASE( (size_t)ftell( fh ) == strlen( teststring ) - 1 );
+    TESTCASE( fseek( fh, -1, SEEK_END ) == 0 );
+    TESTCASE( ( size_t )ftell( fh ) == strlen( teststring ) - 1 );
     TESTCASE( fseek( fh, 0, SEEK_END ) == 0 );
-    TESTCASE( (size_t)ftell( fh ) == strlen( teststring ) );
+    TESTCASE( ( size_t )ftell( fh ) == strlen( teststring ) );
     TESTCASE( fseek( fh, 0, SEEK_SET ) == 0 );
     TESTCASE( ftell( fh ) == 0 );
     TESTCASE( fseek( fh, 5, SEEK_CUR ) == 0 );

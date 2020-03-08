@@ -349,7 +349,7 @@ int main( void )
     TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0xFC, 0xFC ) );
     TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0xFD, 0xFD ) );
     TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0xFE, 0xFE ) );
-    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0xFF, 0xFF) );
+    TESTCASE( fprintf( fh, "%x %x %x\n", 0x00, 0xFF, 0xFF ) );
     fclose( fh );
     TESTCASE( _PDCLIB_load_lc_ctype( "./", "test" ) != NULL );
     remove( "test_ctype.dat" );

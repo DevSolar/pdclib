@@ -17,6 +17,7 @@ target_include_directories( pthread_readout BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/i
 set( CMAKE_THREAD_PREFER_PTHREAD 1 )
 set( THREADS_PREFER_PTHREAD_FLAG 1 )
 find_package( Threads )
+
 if ( NOT CMAKE_USE_PTHREADS_INIT )
     message( FATAL_ERROR "Cannot find pthread." )
 endif()

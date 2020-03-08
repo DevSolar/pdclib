@@ -102,19 +102,58 @@ static void print_codepoint_info( size_t codepoint, struct unicode_record_t * ur
     }
 
     printf( "U+%06zX ", codepoint );
-    rc = get_towupper( codepoint, ur );       equal &= ( (unsigned)rc == towupper( codepoint ) ); printf( "U+%06X ", rc );
-    rc = get_towlower( codepoint, ur );       equal &= ( (unsigned)rc == towlower( codepoint ) ); printf( "U+%06X ", rc );
-    rc = get_iswupper( codepoint, ur, core ); equal &= ( iswupper( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswlower( codepoint, ur, core ); equal &= ( iswlower( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswalpha( codepoint, ur, core ); equal &= ( iswalpha( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswdigit( codepoint );           equal &= ( iswdigit( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswblank( codepoint, ur );       equal &= ( iswblank( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswspace( codepoint, ur );       equal &= ( iswspace( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswcntrl( codepoint, ur );       equal &= ( iswcntrl( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswxdigit( codepoint );          equal &= ( iswxdigit( codepoint ) ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswgraph( codepoint, ur );       equal &= ( iswgraph( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswprint( codepoint, ur );       equal &= ( iswprint( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
-    rc = get_iswpunct( codepoint, ur, core ); equal &= ( iswpunct( codepoint )  ? 1 : 0 == rc );  printf( "%d", rc ? 1 : 0 );
+
+    rc = get_towupper( codepoint, ur );
+    equal &= ( ( unsigned )rc == towupper( codepoint ) );
+    printf( "U+%06X ", rc );
+
+    rc = get_towlower( codepoint, ur );
+    equal &= ( ( unsigned )rc == towlower( codepoint ) );
+    printf( "U+%06X ", rc );
+
+    rc = get_iswupper( codepoint, ur, core );
+    equal &= ( iswupper( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswlower( codepoint, ur, core );
+    equal &= ( iswlower( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswalpha( codepoint, ur, core );
+    equal &= ( iswalpha( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswdigit( codepoint );
+    equal &= ( iswdigit( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswblank( codepoint, ur );
+    equal &= ( iswblank( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswspace( codepoint, ur );
+    equal &= ( iswspace( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswcntrl( codepoint, ur );
+    equal &= ( iswcntrl( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswxdigit( codepoint );
+    equal &= ( iswxdigit( codepoint ) ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswgraph( codepoint, ur );
+    equal &= ( iswgraph( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswprint( codepoint, ur );
+    equal &= ( iswprint( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
+
+    rc = get_iswpunct( codepoint, ur, core );
+    equal &= ( iswpunct( codepoint )  ? 1 : 0 == rc );
+    printf( "%d", rc ? 1 : 0 );
 
     if ( codepoint != ur->code_point )
     {
@@ -214,7 +253,7 @@ int main( int argc, char * argv[] )
             {
                 size_t codepoint = 0;
                 size_t i = 0;
-                struct unicode_record_t * ur = &(ud->records[i]);
+                struct unicode_record_t * ur = &( ud->records[i] );
                 /* Name substring indicating a code point _range_ */
                 const char * last = ", Last>";
 
@@ -228,7 +267,7 @@ int main( int argc, char * argv[] )
 
                     while ( codepoint > ur->code_point )
                     {
-                        ur = &(ud->records[++i]);
+                        ur = &( ud->records[++i] );
                     }
 
                     if ( codepoint != ur->code_point && ( ur->name && ( strstr( ur->name, last ) != ( ur->name + strlen( ur->name ) - strlen( last ) ) ) ) )
@@ -259,7 +298,9 @@ int main( int argc, char * argv[] )
             {
                 fprintf( stderr, "Could not open 'ctype.dat' for writing.\n" );
             }
+
 #else
+
             if ( ( age = read_derived_properties( argv[ 3 ] ) ) != NULL )
             {
                 /* Print (to screen) raw data comparing our results
@@ -270,7 +311,7 @@ int main( int argc, char * argv[] )
                 */
                 size_t codepoint = 0;
                 size_t i = 0;
-                struct unicode_record_t * ur = &(ud->records[i]);
+                struct unicode_record_t * ur = &( ud->records[i] );
                 /* Name substring indicating a code point _range_ */
                 const char * last = ", Last>";
 
@@ -278,7 +319,7 @@ int main( int argc, char * argv[] )
                 {
                     while ( codepoint > ur->code_point )
                     {
-                        ur = &(ud->records[++i]);
+                        ur = &( ud->records[++i] );
                     }
 
                     if ( codepoint != ur->code_point && ! name_ends_with( ur, last ) )
@@ -292,6 +333,7 @@ int main( int argc, char * argv[] )
 
                 release_derived_properties( age );
             }
+
 #endif
 
             release_derived_properties( core );

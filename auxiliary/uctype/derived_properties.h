@@ -14,13 +14,14 @@
 struct derived_properties_t
 {
     size_t count;
-    char * * name;
+    char ** name;
     size_t * begin;
     size_t * end;
     size_t * code_points;
 };
 
-static const int derived_properties_fields[] = {
+static const int derived_properties_fields[] =
+{
     -1, /* code point or code point range */
     -1  /* property name */
 };

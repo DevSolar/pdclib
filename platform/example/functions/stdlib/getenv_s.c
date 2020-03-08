@@ -14,7 +14,7 @@
 
 #ifndef REGTEST
 
-extern char * * environ;
+extern char ** environ;
 
 /* The standard states (7.22.4.6 (3), "the implementation shall behave
    as if no library function calls the getenv function." That is,

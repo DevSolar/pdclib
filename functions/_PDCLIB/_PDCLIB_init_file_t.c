@@ -40,6 +40,7 @@ struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream )
     rc->status = _PDCLIB_FREEBUFFER;
 
 #ifndef __STDC_NO_THREADS
+
     if ( stream == NULL )
     {
         /* If called by freopen() (stream not NULL), mutex is already
@@ -53,6 +54,7 @@ struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream )
             return NULL;
         }
     }
+
 #endif
 
     /* TODO: Setting mbstate */
@@ -68,24 +70,6 @@ struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream )
 
 int main( void )
 {
-    FILE * source;
-    int i;
-    char buffer[100];
-
-    TESTCASE( ( source = freopen( testfile, "wb+", stdin ) ) != NULL );
-
-    source = freopen( NULL, "wb+", source );
-    fwrite( "foo", 1, 3, source );
-    rewind( source );
-    TESTCASE( scanf( "%3c", buffer ) == 1 );
-
-    source = freopen( NULL, "wb+", source );
-    fwrite( "%x", 1, 2, source );
-    rewind( source );
-    TESTCASE( scanf( "%%%c%n", buffer, &i ) == 1 );
-    TESTCASE( i == 2 );
-    TESTCASE( buffer[0] == 'x' );
-
 #ifndef REGTEST
     TESTCASE( NO_TESTDRIVER );
 #endif

@@ -19,8 +19,10 @@ int mtx_timedlock( mtx_t * _PDCLIB_restrict mtx, const struct timespec * _PDCLIB
     {
         case 0:
             return thrd_success;
+
         case ETIMEDOUT:
             return thrd_timedout;
+
         default:
             return thrd_error;
     }

@@ -330,7 +330,7 @@ typedef _PDCLIB_clock           _PDCLIB_clock_t;
 struct _PDCLIB_exitfunc_t
 {
     struct _PDCLIB_exitfunc_t * next;
-    void (*func)( void );
+    void ( *func )( void );
 };
 
 /* Status structure required by _PDCLIB_print(). */
@@ -591,7 +591,7 @@ _PDCLIB_static_assert( sizeof( long ) == _PDCLIB_LONG_BYTES, "Compiler disagrees
 _PDCLIB_static_assert( sizeof( long long ) == _PDCLIB_LLONG_BYTES, "Compiler disagrees on _PDCLIB_LLONG_BYTES." );
 
 /* Signed-ness of char and size_t */
-_PDCLIB_static_assert( ( (char)-1 < 0 ) == _PDCLIB_CHAR_SIGNED, "Compiler disagrees on _PDCLIB_CHAR_SIGNED." );
+_PDCLIB_static_assert( ( ( char )-1 < 0 ) == _PDCLIB_CHAR_SIGNED, "Compiler disagrees on _PDCLIB_CHAR_SIGNED." );
 
 /* size_t as the result of sizeof */
 _PDCLIB_static_assert( sizeof( sizeof( int ) ) == sizeof( _PDCLIB_size ), "Compiler disagrees on _PDCLIB_size." );

@@ -9,9 +9,9 @@
 #include <threads.h>
 
 /* Implicitly casting the parameter. */
-extern int pthread_once( once_flag *, void (*)( void ) );
+extern int pthread_once( once_flag *, void ( * )( void ) );
 
-void call_once( once_flag * flag, void (*func)( void ) )
+void call_once( once_flag * flag, void ( *func )( void ) )
 {
     pthread_once( flag, func );
 }

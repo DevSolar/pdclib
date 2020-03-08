@@ -14,14 +14,16 @@ int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
 {
     if ( ( stream->bufidx > stream->bufend ) ||
          ( stream->status & ( _PDCLIB_FWRITE | _PDCLIB_FAPPEND | _PDCLIB_ERRORFLAG | _PDCLIB_WIDESTREAM | _PDCLIB_EOFFLAG ) ) ||
-         ! ( stream->status & ( _PDCLIB_FREAD | _PDCLIB_FRW ) ) )
+         !( stream->status & ( _PDCLIB_FREAD | _PDCLIB_FRW ) ) )
     {
         /* Function called on illegal (e.g. output) stream. */
         *_PDCLIB_errno_func() = _PDCLIB_EBADF;
         stream->status |= _PDCLIB_ERRORFLAG;
         return EOF;
     }
+
     stream->status |= _PDCLIB_FREAD | _PDCLIB_BYTESTREAM;
+
     if ( ( stream->bufidx == stream->bufend ) && ( stream->ungetidx == 0 ) )
     {
         return _PDCLIB_fillbuffer( stream );

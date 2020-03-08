@@ -46,7 +46,7 @@ char * setlocale( int category, const char * locale )
     */
     if ( locale == NULL || ! strcmp( locale, "C" ) )
     {
-        return (char *)"C";
+        return ( char * )"C";
     }
     else
     {
@@ -68,7 +68,7 @@ char * setlocale( int category, const char * locale )
     struct _PDCLIB_lc_messages_t * messages = NULL;
     struct _PDCLIB_lc_time_t * time = NULL;
 
-    char * rc = (char *)locale;
+    char * rc = ( char * )locale;
 
     if ( category < 0 || category >= _PDCLIB_LC_COUNT )
     {
@@ -102,7 +102,7 @@ char * setlocale( int category, const char * locale )
     /* Run One -- get all the data for the new locale setting */
     if ( category == LC_COLLATE || category == LC_ALL )
     {
-        if ( ! ( collate = _PDCLIB_load_lc_collate( path, locale ) ) )
+        if ( !( collate = _PDCLIB_load_lc_collate( path, locale ) ) )
         {
             rc = NULL;
         }
@@ -110,7 +110,7 @@ char * setlocale( int category, const char * locale )
 
     if ( category == LC_CTYPE || category == LC_ALL )
     {
-        if ( ! ( ctype = _PDCLIB_load_lc_ctype( path, locale ) ) )
+        if ( !( ctype = _PDCLIB_load_lc_ctype( path, locale ) ) )
         {
             rc = NULL;
         }
@@ -118,7 +118,7 @@ char * setlocale( int category, const char * locale )
 
     if ( category == LC_MONETARY || category == LC_ALL )
     {
-        if ( ! ( monetary = _PDCLIB_load_lc_monetary( path, locale ) ) )
+        if ( !( monetary = _PDCLIB_load_lc_monetary( path, locale ) ) )
         {
             rc = NULL;
         }
@@ -126,7 +126,7 @@ char * setlocale( int category, const char * locale )
 
     if ( category == LC_NUMERIC || category == LC_ALL )
     {
-        if ( ! ( numeric = _PDCLIB_load_lc_numeric( path, locale ) ) )
+        if ( !( numeric = _PDCLIB_load_lc_numeric( path, locale ) ) )
         {
             rc = NULL;
         }
@@ -134,7 +134,7 @@ char * setlocale( int category, const char * locale )
 
     if ( category == LC_TIME || category == LC_ALL )
     {
-        if ( ! ( time = _PDCLIB_load_lc_time( path, locale ) ) )
+        if ( !( time = _PDCLIB_load_lc_time( path, locale ) ) )
         {
             rc = NULL;
         }
@@ -142,7 +142,7 @@ char * setlocale( int category, const char * locale )
 
     if ( category == LC_MESSAGES || category == LC_ALL )
     {
-        if ( ! ( messages = _PDCLIB_load_lc_messages( path, locale ) ) )
+        if ( !( messages = _PDCLIB_load_lc_messages( path, locale ) ) )
         {
             rc = NULL;
         }

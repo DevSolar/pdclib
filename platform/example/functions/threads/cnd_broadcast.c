@@ -9,7 +9,7 @@
 #include <threads.h>
 
 /* Implicitly casting the parameter. */
-extern int pthread_cond_broadcast( cnd_t *);
+extern int pthread_cond_broadcast( cnd_t * );
 
 int cnd_broadcast( cnd_t * cond )
 {

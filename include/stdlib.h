@@ -29,9 +29,9 @@ typedef _PDCLIB_size_t size_t;
 /* TODO: atof(), strtof(), strtod(), strtold() */
 
 _PDCLIB_PUBLIC double atof( const char * nptr );
-_PDCLIB_PUBLIC double strtod( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr );
-_PDCLIB_PUBLIC float strtof( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr );
-_PDCLIB_PUBLIC long double strtold( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr );
+_PDCLIB_PUBLIC double strtod( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
+_PDCLIB_PUBLIC float strtof( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
+_PDCLIB_PUBLIC long double strtold( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr );
 
 /* Separate the character array nptr into three parts: A (possibly empty)
    sequence of whitespace characters, a character representation of an integer
@@ -55,10 +55,10 @@ _PDCLIB_PUBLIC long double strtold( const char * _PDCLIB_restrict nptr, char * *
 /* There is strtoimax() and strtoumax() in <inttypes.h> operating on intmax_t /
    uintmax_t, if the long long versions do not suit your needs.
 */
-_PDCLIB_PUBLIC long int strtol( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
-_PDCLIB_PUBLIC long long int strtoll( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
-_PDCLIB_PUBLIC unsigned long int strtoul( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
-_PDCLIB_PUBLIC unsigned long long int strtoull( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
+_PDCLIB_PUBLIC long int strtol( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr, int base );
+_PDCLIB_PUBLIC long long int strtoll( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr, int base );
+_PDCLIB_PUBLIC unsigned long int strtoul( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr, int base );
+_PDCLIB_PUBLIC unsigned long long int strtoull( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr, int base );
 
 /* These functions are the equivalent of (int)strtol( nptr, NULL, 10 ),
    strtol( nptr, NULL, 10 ) and strtoll(nptr, NULL, 10 ) respectively, with the
@@ -148,14 +148,14 @@ _PDCLIB_PUBLIC _PDCLIB_Noreturn void abort( void );
    reverse order of registration (last-in, first-out).
    Returns zero if registration is successfull, nonzero if it failed.
 */
-_PDCLIB_PUBLIC int at_quick_exit( void (*func)( void ) );
+_PDCLIB_PUBLIC int at_quick_exit( void ( *func )( void ) );
 
 /* Register a function that will be called on exit(), or when main() returns.
    At least 32 functions can be registered this way, and will be called in
    reverse order of registration (last-in, first-out).
    Returns zero if registration is successfull, nonzero if it failed.
 */
-_PDCLIB_PUBLIC int atexit( void (*func)( void ) );
+_PDCLIB_PUBLIC int atexit( void ( *func )( void ) );
 
 /* Normal process termination. Functions registered by atexit() (see above) are
    called, streams flushed, files closed and temporary files removed before the
@@ -209,7 +209,7 @@ _PDCLIB_PUBLIC int system( const char * string );
    The function returns a pointer to a matching element found, or NULL if no
    match is found.
 */
-_PDCLIB_PUBLIC void * bsearch( const void * key, const void * base, size_t nmemb, size_t size, int (*compar)( const void *, const void * ) );
+_PDCLIB_PUBLIC void * bsearch( const void * key, const void * base, size_t nmemb, size_t size, int ( *compar )( const void *, const void * ) );
 
 /* Do a quicksort on an array with a given base pointer, which consists of
    nmemb elements that are of the given size each. To compare two elements from
@@ -219,7 +219,7 @@ _PDCLIB_PUBLIC void * bsearch( const void * key, const void * base, size_t nmemb
    If two elements are compared equal, their order in the sorted array is not
    specified.
 */
-_PDCLIB_PUBLIC void qsort( void * base, size_t nmemb, size_t size, int (*compar)( const void *, const void * ) );
+_PDCLIB_PUBLIC void qsort( void * base, size_t nmemb, size_t size, int ( *compar )( const void *, const void * ) );
 
 /* Integer arithmetic functions */
 
@@ -283,7 +283,7 @@ typedef size_t rsize_t;
    This implementation sets the second parameter of the constraint handler
    call to NULL.
 */
-typedef void (*constraint_handler_t)( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
+typedef void ( *constraint_handler_t )( const char * _PDCLIB_restrict msg, void * _PDCLIB_restrict ptr, errno_t error );
 
 /* The currently active constraint violation handler. This implementation
    sets abort_handler_s as the default constraint violation handler.
@@ -341,7 +341,7 @@ _PDCLIB_PUBLIC errno_t getenv_s( size_t * _PDCLIB_restrict len, char * _PDCLIB_r
    The currently active constraint violation handler function will be called
    (see set_constraint_handler_s()).
 */
-_PDCLIB_PUBLIC void * bsearch_s( const void * key, const void * base, rsize_t nmemb, rsize_t size, int (*compar)(const void * k, const void * y, void * context ), void * context );
+_PDCLIB_PUBLIC void * bsearch_s( const void * key, const void * base, rsize_t nmemb, rsize_t size, int ( *compar )( const void * k, const void * y, void * context ), void * context );
 
 /* Do a quicksort on an array with a given base pointer, which consists of
    nmemb elements that are of the given size each. To compare two elements from
@@ -359,7 +359,7 @@ _PDCLIB_PUBLIC void * bsearch_s( const void * key, const void * base, rsize_t nm
    The currently active constraint violation handler function will be called
    (see set_constraint_handler_s()).
 */
-_PDCLIB_PUBLIC errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int (*compar)( const void * x, const void * y, void * context ), void * context );
+_PDCLIB_PUBLIC errno_t qsort_s( void * base, rsize_t nmemb, rsize_t size, int ( *compar )( const void * x, const void * y, void * context ), void * context );
 
 /* TODO: Multibyte / wide character functions */
 

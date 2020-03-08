@@ -17,7 +17,7 @@
 
 size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
-    char * dest = (char *)ptr;
+    char * dest = ( char * )ptr;
     size_t nmemb_i;
 
     _PDCLIB_LOCK( stream->mtx );
@@ -43,6 +43,7 @@ size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PD
                     return nmemb_i;
                 }
             }
+
             dest[ nmemb_i * size + size_i ] = stream->buffer[ stream->bufidx++ ];
         }
     }

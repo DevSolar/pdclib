@@ -27,7 +27,7 @@ struct unicode_data_t * read_unicode_data( const char * filename )
         return NULL;
     }
 
-    if ( ( lines = check_file( fh, LINE_BUFFER_SIZE, ';', sizeof( unicode_record_fields ) / sizeof( int ), unicode_record_fields ) ) != (size_t)-1 )
+    if ( ( lines = check_file( fh, LINE_BUFFER_SIZE, ';', sizeof( unicode_record_fields ) / sizeof( int ), unicode_record_fields ) ) != ( size_t )-1 )
     {
         if ( ( ud = malloc( sizeof( struct unicode_data_t ) ) ) )
         {
@@ -39,13 +39,12 @@ struct unicode_data_t * read_unicode_data( const char * filename )
 
                 for ( i = 0; i < lines; ++i )
                 {
-                    char *  p;
+                    char * p;
 
                     fgets( buffer, LINE_BUFFER_SIZE, fh );
-
                     ud->records[ i ].code_point = strtoul( next_token( buffer, ';' ), NULL, 16 );
-
                     p = next_token( NULL, ';' );
+
                     if ( *p )
                     {
                         ud->records[ i ].name = malloc( strlen( p ) + 1 );
@@ -60,6 +59,7 @@ struct unicode_data_t * read_unicode_data( const char * filename )
                     strcpy( ud->records[ i ].bidi_class, next_token( NULL, ';' ) );
 
                     p = next_token( NULL, ';' );
+
                     if ( *p )
                     {
                         ud->records[ i ].decomposition = malloc( strlen( p ) + 1 );
@@ -73,6 +73,7 @@ struct unicode_data_t * read_unicode_data( const char * filename )
                     ud->records[ i ].numeric_digit = ( *p ) ? strtol( p, NULL, 10 ) : -1l;
 
                     p = next_token( NULL, ';' );
+
                     if ( *p )
                     {
                         ud->records[ i ].numeric_value = malloc( strlen( p ) + 1 );
@@ -203,18 +204,18 @@ int main( void )
     TESTCASE( ud->records[1].simple_lowercase_mapping == 0 );
     TESTCASE( ud->records[1].simple_titlecase_mapping == 0x2160 );
 
-    TESTCASE( is_general_category( &(ud->records[0]), "Cc" ) );
-    TESTCASE( ! is_general_category( &(ud->records[0]), "" ) );
-    TESTCASE( is_general_category( &(ud->records[1]), "Nl" ) );
-    TESTCASE( ! is_general_category( &(ud->records[1]), "Foo" ) );
+    TESTCASE( is_general_category( &( ud->records[0] ), "Cc" ) );
+    TESTCASE( ! is_general_category( &( ud->records[0] ), "" ) );
+    TESTCASE( is_general_category( &( ud->records[1] ), "Nl" ) );
+    TESTCASE( ! is_general_category( &( ud->records[1] ), "Foo" ) );
 
-    TESTCASE( decomposition_contains( &(ud->records[1]), "<compat>" ) );
-    TESTCASE( ! decomposition_contains( &(ud->records[1]), "Foo" ) );
+    TESTCASE( decomposition_contains( &( ud->records[1] ), "<compat>" ) );
+    TESTCASE( ! decomposition_contains( &( ud->records[1] ), "Foo" ) );
 
-    TESTCASE( ! towupper_differs( &(ud->records[0]), 0 ) );
-    TESTCASE( ! towlower_differs( &(ud->records[0]), 0 ) );
-    TESTCASE( towupper_differs( &(ud->records[1]), 0x2170 ) );
-    TESTCASE( ! towlower_differs( &(ud->records[1]), 0x2170 ) );
+    TESTCASE( ! towupper_differs( &( ud->records[0] ), 0 ) );
+    TESTCASE( ! towlower_differs( &( ud->records[0] ), 0 ) );
+    TESTCASE( towupper_differs( &( ud->records[1] ), 0x2170 ) );
+    TESTCASE( ! towlower_differs( &( ud->records[1] ), 0x2170 ) );
 
     release_unicode_data( ud );
 

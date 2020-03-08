@@ -33,16 +33,19 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
     _PDCLIB_size_t written = 0;
     int rc;
     unsigned int retries;
-    if ( ! ( stream->status & _PDCLIB_FBIN ) )
+
+    if ( !( stream->status & _PDCLIB_FBIN ) )
     {
         /* TODO: Text stream conversion here */
     }
+
     /* Keep trying to write data until everything is written, an error
        occurs, or the configured number of retries is exceeded.
     */
     for ( retries = _PDCLIB_IO_RETRIES; retries > 0; --retries )
     {
-        rc = (int)write( stream->handle, stream->buffer + written, stream->bufidx - written );
+        rc = ( int )write( stream->handle, stream->buffer + written, stream->bufidx - written );
+
         if ( rc < 0 )
         {
             /* The 1:1 mapping done in _PDCLIB_config.h ensures
@@ -56,8 +59,10 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
             memmove( stream->buffer, stream->buffer + written, stream->bufidx );
             return EOF;
         }
-        written += (_PDCLIB_size_t)rc;
+
+        written += ( _PDCLIB_size_t )rc;
         stream->pos.offset += rc;
+
         if ( written == stream->bufidx )
         {
             /* Buffer written completely. */
@@ -65,6 +70,7 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
             return 0;
         }
     }
+
     /* Number of retries exceeded. */
     *_PDCLIB_errno_func() = _PDCLIB_EAGAIN;
     stream->status |= _PDCLIB_ERRORFLAG;

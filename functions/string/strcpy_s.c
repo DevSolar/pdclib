@@ -20,15 +20,15 @@ errno_t strcpy_s( char * _PDCLIB_restrict s1, rsize_t s1max, const char * _PDCLI
     {
         while ( s1max-- )
         {
-           if ( dest == s2 || src == s1 )
-           {
-               goto runtime_constraint_violation;
-           }
+            if ( dest == s2 || src == s1 )
+            {
+                goto runtime_constraint_violation;
+            }
 
-           if ( ( *dest++ = *src++ ) == '\0' )
-           {
-               return 0;
-           }
+            if ( ( *dest++ = *src++ ) == '\0' )
+            {
+                return 0;
+            }
         }
     }
 
