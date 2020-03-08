@@ -40,6 +40,7 @@ struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream )
     rc->status = _PDCLIB_FREEBUFFER;
 
 #ifndef __STDC_NO_THREADS
+
     if ( stream == NULL )
     {
         /* If called by freopen() (stream not NULL), mutex is already
@@ -53,6 +54,7 @@ struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream )
             return NULL;
         }
     }
+
 #endif
 
     /* TODO: Setting mbstate */

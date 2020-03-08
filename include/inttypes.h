@@ -245,8 +245,8 @@ _PDCLIB_PUBLIC imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom );
 /* This function is equivalent to strtol() / strtoul() in <stdlib.h>, but on
    the potentially larger type.
 */
-_PDCLIB_PUBLIC intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
-_PDCLIB_PUBLIC uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char * * _PDCLIB_restrict endptr, int base );
+_PDCLIB_PUBLIC intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr, int base );
+_PDCLIB_PUBLIC uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict endptr, int base );
 
 /* TODO: wcstoimax(), wcstoumax() */
 

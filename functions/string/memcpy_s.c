@@ -13,8 +13,8 @@
 
 errno_t memcpy_s( void * _PDCLIB_restrict s1, rsize_t s1max, const void * _PDCLIB_restrict s2, rsize_t n )
 {
-    char * dest = (char *) s1;
-    const char * src = (const char *) s2;
+    char * dest = ( char * ) s1;
+    const char * src = ( const char * ) s2;
 
     if ( s1 != NULL && s2 != NULL && s1max <= RSIZE_MAX && n <= RSIZE_MAX && n <= s1max )
     {

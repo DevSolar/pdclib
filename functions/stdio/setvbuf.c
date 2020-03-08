@@ -25,6 +25,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
             */
             _PDCLIB_LOCK( stream->mtx );
             break;
+
         case _IOFBF:
         case _IOLBF:
             if ( size > INT_MAX || size == 0 )
@@ -34,6 +35,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                 */
                 return -1;
             }
+
             if ( buf != NULL )
             {
                 /* User provided buffer. Deallocate existing buffer, and mark
@@ -62,7 +64,7 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                 if ( ( stream->bufsize < size ) || ( stream->bufsize > ( size << 1 ) ) )
                 {
                     /* Buffer too small, or much too large - allocate. */
-                    if ( ( buf = (char *) malloc( size ) ) == NULL )
+                    if ( ( buf = ( char * ) malloc( size ) ) == NULL )
                     {
                         /* Out of memory error. */
                         _PDCLIB_UNLOCK( stream->mtx );
@@ -78,13 +80,16 @@ int setvbuf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, char * _PDCLIB_res
                     stream->status |= _PDCLIB_FREEBUFFER;
                 }
             }
+
             stream->buffer = buf;
             stream->bufsize = size;
             break;
+
         default:
             /* If mode is something else than _IOFBF, _IOLBF or _IONBF -> exit */
             return -1;
     }
+
     /* Deleting current buffer mode */
     stream->status &= ~( _IOFBF | _IOLBF | _IONBF );
     /* Set user-defined mode */

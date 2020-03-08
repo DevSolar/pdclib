@@ -17,18 +17,24 @@ int system( const char * string )
 {
     const char * argv[] = { "sh", "-c", NULL, NULL };
     argv[2] = string;
+
     if ( string != NULL )
     {
         int pid = fork();
+
         if ( pid == 0 )
         {
-            execve( "/bin/sh", (char * * const)argv, NULL );
+            execve( "/bin/sh", ( char ** const )argv, NULL );
         }
         else if ( pid > 0 )
         {
-            while( wait( NULL ) != pid );
+            while ( wait( NULL ) != pid )
+            {
+                /* EMPTY */
+            }
         }
     }
+
     return -1;
 }
 

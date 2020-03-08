@@ -21,7 +21,7 @@ double difftime( time_t time1, time_t time0 )
     */
     if ( sizeof( time_t ) < sizeof( double ) )
     {
-        return (double)time1 - (double)time0;
+        return ( double )time1 - ( double )time0;
     }
 
     /* The difference of two unsigned values cannot overflow if the
@@ -29,14 +29,14 @@ double difftime( time_t time1, time_t time0 )
     */
     if ( ! _PDCLIB_TYPE_SIGNED( time_t ) )
     {
-        return ( time1 >= time0 ) ? (double)( time1 - time0 ) : -(double)( time0 - time1 );
+        return ( time1 >= time0 ) ? ( double )( time1 - time0 ) : -( double )( time0 - time1 );
     }
 
     /* Use uintmax_t if wide enough. */
     if ( sizeof( time_t ) <= sizeof( _PDCLIB_uintmax_t ) )
     {
         _PDCLIB_uintmax_t t1 = time1, t0 = time0;
-        return ( time1 >= time0 ) ? t1 - t0 : -(double)( t0 - t1 );
+        return ( time1 >= time0 ) ? t1 - t0 : -( double )( t0 - t1 );
     }
 
     /* If both times have the same sign, their difference cannot overflow. */
@@ -50,8 +50,8 @@ double difftime( time_t time1, time_t time0 )
        by using long double temporaries.
     */
     {
-    long double t1 = time1, t0 = time0;
-    return t1 - t0;
+        long double t1 = time1, t0 = time0;
+        return t1 - t0;
     }
 }
 

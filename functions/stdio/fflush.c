@@ -20,6 +20,7 @@ extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 int fflush( struct _PDCLIB_file_t * stream )
 {
     int rc = 0;
+
     if ( stream == NULL )
     {
         _PDCLIB_LOCK( _PDCLIB_filelist_mtx );

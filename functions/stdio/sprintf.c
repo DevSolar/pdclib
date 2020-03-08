@@ -10,7 +10,7 @@
 
 #ifndef REGTEST
 
-int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ...)
+int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ... )
 {
     int rc;
     va_list ap;

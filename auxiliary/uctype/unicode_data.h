@@ -40,7 +40,8 @@ struct unicode_data_t
 };
 
 /* The assumed field widths, for use with check_file(). */
-static const int unicode_record_fields[] = {
+static const int unicode_record_fields[] =
+{
     -1, /* code_point */
     -1, /* name */
      3, /* general_category */

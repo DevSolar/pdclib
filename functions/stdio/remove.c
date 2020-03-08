@@ -23,19 +23,23 @@ int remove( const char * pathname )
 {
     int rc;
     struct _PDCLIB_file_t * current = _PDCLIB_filelist;
+
     while ( current != NULL )
     {
         if ( ( current->filename != NULL ) && ( strcmp( current->filename, pathname ) == 0 ) )
         {
             return EOF;
         }
+
         current = current->next;
     }
+
     if ( ( rc = unlink( pathname ) ) == -1 )
     {
         /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
         *_PDCLIB_errno_func() = errno;
     }
+
     return rc;
 }
 

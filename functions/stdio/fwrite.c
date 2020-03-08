@@ -29,17 +29,20 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
         _PDCLIB_UNLOCK( stream->mtx );
         return 0;
     }
+
     for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
     {
         size_t size_i;
+
         for ( size_i = 0; size_i < size; ++size_i )
         {
-            if ( ( stream->buffer[ stream->bufidx++ ] = ((char*)ptr)[ nmemb_i * size + size_i ] ) == '\n' )
+            if ( ( stream->buffer[ stream->bufidx++ ] = ( ( char * )ptr )[ nmemb_i * size + size_i ] ) == '\n' )
             {
                 /* Remember last newline, in case we have to do a partial line-buffered flush */
                 offset = stream->bufidx;
                 /* lineend = true; */
             }
+
             if ( stream->bufidx == stream->bufsize )
             {
                 if ( _PDCLIB_flushbuffer( stream ) == EOF )
@@ -48,11 +51,13 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
                     _PDCLIB_UNLOCK( stream->mtx );
                     return nmemb_i;
                 }
+
                 offset = 0;
                 /* lineend = false; */
             }
         }
     }
+
     /* Fully-buffered streams are OK. Non-buffered streams must be flushed,
        line-buffered streams only if there's a newline in the buffer.
     */
@@ -71,12 +76,15 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
                 _PDCLIB_UNLOCK( stream->mtx );
                 return nmemb_i - 1;
             }
+
             break;
+
         case _IOLBF:
             if ( offset > 0 )
             {
                 size_t bufidx = stream->bufidx;
                 stream->bufidx = offset;
+
                 if ( _PDCLIB_flushbuffer( stream ) == EOF )
                 {
                     /* See comment above. */
@@ -84,6 +92,7 @@ size_t fwrite( const void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, str
                     _PDCLIB_UNLOCK( stream->mtx );
                     return nmemb_i - 1;
                 }
+
                 stream->bufidx = bufidx - offset;
                 memmove( stream->buffer, stream->buffer + offset, stream->bufidx );
             }

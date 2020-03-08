@@ -48,10 +48,11 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
         {
             /* No conversion specifier, print verbatim */
             stream->buffer[ stream->bufidx++ ] = *format;
+
             if ( ( stream->bufidx == stream->bufsize )
                  || ( ( stream->status & _IOLBF ) && ( *format == '\n' ) )
                  || ( stream->status & _IONBF )
-            )
+               )
             {
                 if ( _PDCLIB_flushbuffer( stream ) != 0 )
                 {

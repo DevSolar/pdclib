@@ -27,12 +27,15 @@ unsigned int _PDCLIB_filemode( const char * const mode )
         case 'r':
             rc |= _PDCLIB_FREAD;
             break;
+
         case 'w':
             rc |= _PDCLIB_FWRITE;
             break;
+
         case 'a':
             rc |= _PDCLIB_FAPPEND | _PDCLIB_FWRITE;
             break;
+
         default:
             /* Other than read, write, or append - invalid */
             return 0;
@@ -43,21 +46,35 @@ unsigned int _PDCLIB_filemode( const char * const mode )
         switch ( mode[i] )
         {
             case '+':
-                if ( rc & _PDCLIB_FRW ) return 0; /* Duplicates are invalid */
+                if ( rc & _PDCLIB_FRW )
+                {
+                    /* Duplicates are invalid */
+                    return 0;
+                }
+
                 rc |= _PDCLIB_FRW;
                 break;
+
             case 'b':
-                if ( rc & _PDCLIB_FBIN ) return 0; /* Duplicates are invalid */
+                if ( rc & _PDCLIB_FBIN )
+                {
+                    /* Duplicates are invalid */
+                    return 0;
+                }
+
                 rc |= _PDCLIB_FBIN;
                 break;
+
             case '\0':
                 /* End of mode */
                 return rc;
+
             default:
                 /* Other than read/write or binary - invalid. */
                 return 0;
         }
     }
+
     /* Longer than three chars - invalid. */
     return 0;
 }

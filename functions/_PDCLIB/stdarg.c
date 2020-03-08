@@ -12,7 +12,7 @@
 
 #include "_PDCLIB_test.h"
 
-typedef int (*intfunc_t)( void );
+typedef int ( *intfunc_t )( void );
 
 enum tag_t
 {
@@ -37,7 +37,8 @@ static int test( enum tag_t s, ... )
     enum tag_t tag = s;
     va_list ap;
     va_start( ap, s );
-    for (;;)
+
+    for ( ;; )
     {
         switch ( tag )
         {
@@ -47,42 +48,49 @@ static int test( enum tag_t s, ... )
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
+
             case TAG_LONG:
             {
                 TESTCASE( va_arg( ap, long ) == LONG_MAX );
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
+
             case TAG_LLONG:
             {
                 TESTCASE( va_arg( ap, long long ) == LLONG_MAX );
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
+
             case TAG_DBL:
             {
                 TESTCASE( va_arg( ap, double ) == DBL_MAX );
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
+
             case TAG_LDBL:
             {
                 TESTCASE( va_arg( ap, long double ) == LDBL_MAX );
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
+
             case TAG_INTPTR:
             {
                 TESTCASE( *( va_arg( ap, int * ) ) == INT_MAX );
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
+
             case TAG_LDBLPTR:
             {
                 TESTCASE( *( va_arg( ap, long double * ) ) == LDBL_MAX );
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
+
             case TAG_FUNCPTR:
             {
                 intfunc_t function;
@@ -91,6 +99,7 @@ static int test( enum tag_t s, ... )
                 tag = va_arg( ap, enum tag_t );
                 break;
             }
+
             case TAG_END:
             {
                 va_end( ap );

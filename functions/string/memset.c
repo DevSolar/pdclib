@@ -10,11 +10,13 @@
 
 void * memset( void * s, int c, size_t n )
 {
-    unsigned char * p = (unsigned char *) s;
+    unsigned char * p = ( unsigned char * ) s;
+
     while ( n-- )
     {
-        *p++ = (unsigned char) c;
+        *p++ = ( unsigned char ) c;
     }
+
     return s;
 }
 
@@ -29,7 +31,7 @@ int main( void )
     char s[] = "xxxxxxxxx";
     TESTCASE( memset( s, 'o', 10 ) == s );
     TESTCASE( s[9] == 'o' );
-    TESTCASE( memset( s, '_', (0) ) == s );
+    TESTCASE( memset( s, '_', ( 0 ) ) == s );
     TESTCASE( s[0] == 'o' );
     TESTCASE( memset( s, '_', 1 ) == s );
     TESTCASE( s[0] == '_' );

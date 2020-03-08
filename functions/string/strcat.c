@@ -11,11 +11,20 @@
 char * strcat( char * _PDCLIB_restrict s1, const char * _PDCLIB_restrict s2 )
 {
     char * rc = s1;
+
     if ( *s1 )
     {
-        while ( *++s1 );
+        while ( *++s1 )
+        {
+            /* EMPTY */
+        }
     }
-    while ( (*s1++ = *s2++) );
+
+    while ( ( *s1++ = *s2++ ) )
+    {
+        /* EMPTY */
+    }
+
     return rc;
 }
 

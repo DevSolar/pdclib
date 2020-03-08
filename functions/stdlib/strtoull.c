@@ -1,4 +1,4 @@
-/* strtoull( const char *, char * *, int )
+/* strtoull( const char *, char **, int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -16,9 +16,19 @@ unsigned long long int strtoull( const char * s, char ** endptr, int base )
     unsigned long long int rc;
     char sign = '+';
     const char * p = _PDCLIB_strtox_prelim( s, &sign, &base );
-    if ( base < 2 || base > 36 ) return 0;
-    rc = _PDCLIB_strtox_main( &p, (unsigned)base, (uintmax_t)ULLONG_MAX, (uintmax_t)( ULLONG_MAX / base ), (int)( ULLONG_MAX % base ), &sign );
-    if ( endptr != NULL ) *endptr = ( p != NULL ) ? (char *) p : (char *) s;
+
+    if ( base < 2 || base > 36 )
+    {
+        return 0;
+    }
+
+    rc = _PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )ULLONG_MAX, ( uintmax_t )( ULLONG_MAX / base ), ( int )( ULLONG_MAX % base ), &sign );
+
+    if ( endptr != NULL )
+    {
+        *endptr = ( p != NULL ) ? ( char * ) p : ( char * ) s;
+    }
+
     return ( sign == '+' ) ? rc : -rc;
 }
 
@@ -80,7 +90,7 @@ int main( void )
     TESTCASE( strtoull( overflow, &endptr, 0 ) == 0 );
     TESTCASE( endptr == overflow );
     errno = 0;
-/* long long -> 64 bit */
+    /* long long -> 64 bit */
 #if ULLONG_MAX >> 63 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoull( "18446744073709551615", NULL, 0 ) == ULLONG_MAX );
@@ -88,7 +98,7 @@ int main( void )
     TESTCASE( strtoull( "18446744073709551616", NULL, 0 ) == ULLONG_MAX );
     TESTCASE( errno == ERANGE );
     /* TODO: test "odd" overflow, i.e. base is not power of two */
-/* long long -> 128 bit */
+    /* long long -> 128 bit */
 #elif ULLONG_MAX >> 127 == 1
     /* testing "even" overflow, i.e. base is power of two */
     TESTCASE( strtoull( "340282366920938463463374607431768211455", NULL, 0 ) == ULLONG_MAX );

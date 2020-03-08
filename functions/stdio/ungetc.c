@@ -24,7 +24,7 @@ int ungetc( int c, struct _PDCLIB_file_t * stream )
     }
     else
     {
-        rc = stream->ungetbuf[stream->ungetidx++] = (unsigned char) c;
+        rc = stream->ungetbuf[stream->ungetidx++] = ( unsigned char ) c;
     }
 
     _PDCLIB_UNLOCK( stream->mtx );

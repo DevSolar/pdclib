@@ -9,7 +9,7 @@
 #include <threads.h>
 
 /* Implicitly casting the first parameters. */
-extern int pthread_create( thrd_t *, const _PDCLIB_thrd_attr_t *, thrd_start_t, void *);
+extern int pthread_create( thrd_t *, const _PDCLIB_thrd_attr_t *, thrd_start_t, void * );
 
 int thrd_create( thrd_t * thr, thrd_start_t func, void * arg )
 {
@@ -46,6 +46,7 @@ static int func( void * arg )
 int main( void )
 {
 #ifndef REGTEST
+
     for ( unsigned i = 0; i < COUNT; ++i )
     {
         TESTCASE( thrd_create( &g_thread[i], func, NULL ) == thrd_success );

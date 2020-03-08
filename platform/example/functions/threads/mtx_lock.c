@@ -59,6 +59,7 @@ int main( void )
     {
         TESTCASE( thrd_join( g_thread[i], NULL ) == thrd_success );
     }
+
 #endif
     return TEST_RESULTS;
 }

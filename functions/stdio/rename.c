@@ -34,6 +34,7 @@ int rename( const char * oldpath, const char * newpath )
                 _PDCLIB_UNLOCK( _PDCLIB_filelist_mtx );
                 return EOF;
             }
+
             current = current->next;
         }
     }

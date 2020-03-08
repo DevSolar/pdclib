@@ -327,7 +327,7 @@ _PDCLIB_PUBLIC errno_t strncat_s( char * _PDCLIB_restrict s1, rsize_t s1max, con
    The currently active constraint violation handler function will be called
    (see set_constraint_handler_s()).
 */
-_PDCLIB_PUBLIC char * strtok_s( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char * * _PDCLIB_restrict ptr );
+_PDCLIB_PUBLIC char * strtok_s( char * _PDCLIB_restrict s1, rsize_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char ** _PDCLIB_restrict ptr );
 
 /* Write the character c (interpreted as unsigned char) to the first n
    characters of the memory area pointed to by s of size smax.

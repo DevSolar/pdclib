@@ -8,29 +8,32 @@
 
 #ifndef REGTEST
 
-void * bsearch( const void * key, const void * base, size_t nmemb, size_t size, int (*compar)( const void *, const void * ) )
+void * bsearch( const void * key, const void * base, size_t nmemb, size_t size, int ( *compar )( const void *, const void * ) )
 {
     const void * pivot;
     int rc;
     size_t corr;
+
     while ( nmemb )
     {
         /* algorithm needs -1 correction if remaining elements are an even number. */
         corr = nmemb % 2;
         nmemb /= 2;
-        pivot = (const char *)base + (nmemb * size);
+        pivot = ( const char * )base + ( nmemb * size );
         rc = compar( key, pivot );
+
         if ( rc > 0 )
         {
-            base = (const char *)pivot + size;
+            base = ( const char * )pivot + size;
             /* applying correction */
             nmemb -= ( 1 - corr );
         }
         else if ( rc == 0 )
         {
-            return (void *)pivot;
+            return ( void * )pivot;
         }
     }
+
     return NULL;
 }
 
@@ -42,7 +45,7 @@ void * bsearch( const void * key, const void * base, size_t nmemb, size_t size, 
 
 static int compare( const void * left, const void * right )
 {
-    return *( (unsigned char *)left ) - *( (unsigned char *)right );
+    return *( ( unsigned char * )left ) - *( ( unsigned char * )right );
 }
 
 int main( void )

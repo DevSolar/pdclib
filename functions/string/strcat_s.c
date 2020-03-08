@@ -32,8 +32,7 @@ errno_t strcat_s( char * _PDCLIB_restrict s1, rsize_t s1max, const char * _PDCLI
             {
                 goto runtime_constraint_violation;
             }
-        }
-        while ( ( *dest++ = *src++ ) );
+        } while ( ( *dest++ = *src++ ) );
 
         return 0;
     }

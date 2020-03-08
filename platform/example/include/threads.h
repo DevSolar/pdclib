@@ -47,10 +47,10 @@ typedef _PDCLIB_tss_t tss_t;
 typedef _PDCLIB_mtx_t mtx_t;
 
 /* TSS destructor */
-typedef void (*tss_dtor_t)( void * );
+typedef void ( *tss_dtor_t )( void * );
 
 /* Thread start function */
-typedef int (*thrd_start_t)( void * );
+typedef int ( *thrd_start_t )( void * );
 
 /* Flag for use with call_once() */
 typedef _PDCLIB_once_flag once_flag;
@@ -78,7 +78,7 @@ enum
 /* Ensure that func is called only the first time call_once() is called
    for a given flag.
 */
-_PDCLIB_PUBLIC void call_once( once_flag * flag, void (*func)( void ) );
+_PDCLIB_PUBLIC void call_once( once_flag * flag, void ( *func )( void ) );
 
 /* Condition variable functions */
 
@@ -117,7 +117,7 @@ _PDCLIB_PUBLIC int cnd_timedwait( cnd_t * _PDCLIB_restrict cond, mtx_t * _PDCLIB
 /* TODO: Documentation.
    Returns thrd_success if successful, thrd_error if the request could not
    be honored.
-*/ 
+*/
 int cnd_wait( cnd_t * cond, mtx_t * mtx );
 
 /* Mutex functions */

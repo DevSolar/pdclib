@@ -28,7 +28,7 @@ char * trim( char * s )
         ++p;
     }
 
-    while ( isspace( *(--p) ) )
+    while ( isspace( *( --p ) ) )
     {
         *p = '\0';
     }
@@ -122,7 +122,7 @@ size_t check_file( FILE * fh, size_t buffer_size, char delim, size_t fields, int
                     return -1;
                 }
 
-                if ( widths[ i ] >= 0 && strlen( p ) >= (unsigned)widths[ i ] )
+                if ( widths[ i ] >= 0 && strlen( p ) >= ( unsigned )widths[ i ] )
                 {
                     fprintf( stderr, "Line %zu: Field %zu '%s' will not fit in a %d character string.\n", lines, i + 1, p, widths[ i ] );
                     rewind( fh );
@@ -167,16 +167,16 @@ int main( void )
     TESTCASE( check_file( fh, 10, ';', 3, widths ) == 2 );
     /* Field 1 too long */
     TESTCASE( fprintf( fh, "%s;%s;%s\n", "", "1234", "1" ) == 8 );
-    TESTCASE( check_file( fh, 10, ';', 3, widths ) == (size_t)-1 );
+    TESTCASE( check_file( fh, 10, ';', 3, widths ) == ( size_t )-1 );
     /* Too few fields */
     TESTCASE( fprintf( fh, "%s;%s\n", "123", "123" ) == 8 );
-    TESTCASE( check_file( fh, 10, ';', 3, widths )== (size_t)-1 );
+    TESTCASE( check_file( fh, 10, ';', 3, widths ) == ( size_t )-1 );
     /* Too many fields */
     TESTCASE( fprintf( fh, "%s;%s;%s;%s\n", "1", "1", "1", "1" ) == 8 );
-    TESTCASE( check_file( fh, 10, ';', 3, widths )== (size_t)-1 );
+    TESTCASE( check_file( fh, 10, ';', 3, widths ) == ( size_t )-1 );
     /* Line too long */
     TESTCASE( fprintf( fh, "%s;%s;%s\n", "12", "123", "12" ) == 10 );
-    TESTCASE( check_file( fh, 10, ';', 3, widths )== (size_t)-1 );
+    TESTCASE( check_file( fh, 10, ';', 3, widths ) == ( size_t )-1 );
 
     fclose( fh );
     remove( "test.txt" );

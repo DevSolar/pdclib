@@ -44,7 +44,8 @@ long int ftell( struct _PDCLIB_file_t * stream )
         *_PDCLIB_errno_func() = _PDCLIB_ERANGE;
         return -1;
     }
-    rc = ( stream->pos.offset - ( ( (int)stream->bufend - (int)stream->bufidx ) + stream->ungetidx ) );
+
+    rc = ( stream->pos.offset - ( ( ( int )stream->bufend - ( int )stream->bufidx ) + stream->ungetidx ) );
     _PDCLIB_UNLOCK( stream->mtx );
     return rc;
 }
@@ -67,7 +68,7 @@ int main( void )
        fgetc fflush rewind fputc ungetc fseek
        flushbuffer seek fillbuffer prepread prepwrite
     */
-    char * buffer = (char*)malloc( 4 );
+    char * buffer = ( char * )malloc( 4 );
     FILE * fh;
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IOLBF, 4 ) == 0 );

@@ -19,9 +19,9 @@ static const char abcdx[] = "abcdx";
 static const char teststring[] = "1234567890\nABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n";
 
 /* Temporary file names */
-static const char testfile[]="test_support/testfile";
-static const char testfile1[]="test_support/testfile1";
-static const char testfile2[]="test_support/testfile2";
+static const char testfile[] = "test_support/testfile";
+static const char testfile1[] = "test_support/testfile1";
+static const char testfile2[] = "test_support/testfile2";
 
 #ifndef NO_TESTDRIVER
 #define NO_TESTDRIVER 0
@@ -30,8 +30,16 @@ static const char testfile2[]="test_support/testfile2";
 static int TEST_RESULTS = 0;
 
 /* TESTCASE() - generic test */
-#define TESTCASE( x ) if ( x ) {} \
-                      else { TEST_RESULTS += 1; printf( "FAILED: " __FILE__ ", line %d - %s\n", __LINE__, #x ); }
+#define TESTCASE( x ) \
+    if ( x ) \
+    { \
+        /* EMPTY */ \
+    } \
+    else \
+    { \
+       TEST_RESULTS += 1; \
+       printf( "FAILED: " __FILE__ ", line %d - %s\n", __LINE__, #x ); \
+    }
 
 /* TESTCASE_NOREG() - PDCLib-only test */
 #ifndef REGTEST

@@ -25,7 +25,13 @@
 /* qsort() in <stdlib.h> requires a function that swaps two memory areas.     */
 /* Below is a naive implementation that can be improved significantly for     */
 /* specific platforms, e.g. by swapping int instead of char.                  */
-#define _PDCLIB_memswp( i, j, size ) char tmp; do { tmp = *i; *i++ = *j; *j++ = tmp; } while ( --size );
+#define _PDCLIB_memswp( i, j, size ) \
+    char tmp; \
+    do { \
+        tmp = *i; \
+        *i++ = *j; \
+        *j++ = tmp; \
+    } while ( --size );
 
 /* Define this to some compiler directive that can be written after the       */
 /* parameter list of a function declaration to indicate the function does     */

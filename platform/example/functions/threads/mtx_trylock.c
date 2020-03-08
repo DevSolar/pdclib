@@ -19,8 +19,10 @@ int mtx_trylock( mtx_t * mtx )
     {
         case 0:
             return thrd_success;
+
         case EBUSY:
             return thrd_busy;
+
         default:
             return thrd_error;
     }
