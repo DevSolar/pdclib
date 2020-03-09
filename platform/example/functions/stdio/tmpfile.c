@@ -42,14 +42,14 @@ struct _PDCLIB_file_t * tmpfile( void )
     /* This is the chosen way to get high-quality randomness. Replace as
        appropriate.
     */
-    FILE * randomsource = fopen( "/proc/sys/kernel/random/uuid", "rb" );
+    int randomsource = open( "/dev/urandom", O_RDONLY );
     /* Working under the assumption that the tempfile location is canonical
        (absolute), and does not require going through _PDCLIB_realpath().
     */
     char * filename = ( char * )malloc( L_tmpnam );
     _PDCLIB_fd_t fd;
 
-    if ( randomsource == NULL )
+    if ( randomsource == -1 )
     {
         return NULL;
     }
@@ -64,7 +64,7 @@ struct _PDCLIB_file_t * tmpfile( void )
            generate the filename candidate, which is *also* platform-dependent.
         */
         unsigned int random;
-        fscanf( randomsource, "%u", &random );
+        read( randomsource, (void *)&random, sizeof( unsigned int ) );
         sprintf( filename, "/tmp/%u.tmp", random );
         /* Check if file of this name exists. Note that fopen() is a very weak
            check, which does not take e.g. access permissions into account
@@ -82,7 +82,7 @@ struct _PDCLIB_file_t * tmpfile( void )
         close( fd );
     }
 
-    fclose( randomsource );
+    close( randomsource );
 
     /* See fopen(), which does much of the same. */
 
