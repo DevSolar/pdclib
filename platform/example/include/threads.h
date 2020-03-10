@@ -199,6 +199,8 @@ _PDCLIB_PUBLIC int thrd_equal( thrd_t thr0, thrd_t thr1 );
 /* Terminate calling thread, set result code to res.
    When the last thread of a program terminates the program shall terminate
    normally as if by exit( EXIT_SUCCESS ).
+   FIXME: The result code setting is NOT implemented correctly at this point.
+   The value is indeterminate.
 */
 _PDCLIB_PUBLIC _PDCLIB_Noreturn void thrd_exit( int res );
 

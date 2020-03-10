@@ -6,14 +6,14 @@
 
 #ifndef REGTEST
 
+#include <stdint.h>
 #include <threads.h>
 
 extern void pthread_exit( void * ) _PDCLIB_NORETURN;
 
 void thrd_exit( int res )
 {
-    /* TODO: return value */
-    pthread_exit( &res );
+    pthread_exit( ( void * )( uintptr_t )res );
 }
 
 #endif

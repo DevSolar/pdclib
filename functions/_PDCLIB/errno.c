@@ -8,7 +8,11 @@
 
 #include "pdclib/_PDCLIB_int.h"
 
+#if __STDC_VERSION__ >= 201112L
+_Thread_local int _PDCLIB_errno = 0;
+#else
 static int _PDCLIB_errno = 0;
+#endif
 
 int * _PDCLIB_errno_func()
 {
@@ -23,6 +27,20 @@ int * _PDCLIB_errno_func()
 
 #include <errno.h>
 
+#if __STDC_VERSION__ >= 201112L
+
+#include <threads.h>
+
+static int thread_func( void * arg )
+{
+    TESTCASE( errno == 0 );
+    *_PDCLIB_errno_func() = 1;
+    TESTCASE( errno == 1 );
+    thrd_exit( 0 );
+}
+
+#endif
+
 int main( void )
 {
     errno = 0;
@@ -31,6 +49,22 @@ int main( void )
     TESTCASE( errno == EDOM );
     errno = ERANGE;
     TESTCASE( errno == ERANGE );
+
+#if __STDC_VERSION__ >= 201112L
+    {
+        thrd_t t;
+        struct timespec spec = { 1, 0 };
+        int rc;
+
+        TESTCASE( thrd_create( &t, thread_func, NULL ) == thrd_success );
+
+        TESTCASE( thrd_sleep( &spec, NULL ) == 0 );
+        TESTCASE( errno == ERANGE );
+        TESTCASE( thrd_join( t, &rc ) == thrd_success );
+        TESTCASE( rc == 0 );
+    }
+#endif
+
     return TEST_RESULTS;
 }
 
