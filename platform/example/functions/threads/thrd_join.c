@@ -6,6 +6,7 @@
 
 #ifndef REGTEST
 
+#include <stdint.h>
 #include <threads.h>
 
 /* Implicitly casting the first parameter. */
@@ -13,8 +14,15 @@ extern int pthread_join( thrd_t, void ** );
 
 int thrd_join( thrd_t thr, int * res )
 {
-    /* TODO: return value */
-    if ( pthread_join( thr, ( void ** )&res ) == 0 )
+    void * result;
+    int rc = pthread_join( thr, &result );
+
+    if ( res != NULL )
+    {
+        *res = ( int )( uintptr_t )result;
+    }
+
+    if ( rc == 0 )
     {
         return thrd_success;
     }
