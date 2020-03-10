@@ -54,12 +54,14 @@ int main( void )
     {
         thrd_t t;
         struct timespec spec = { 1, 0 };
+        int rc;
 
         TESTCASE( thrd_create( &t, thread_func, NULL ) == thrd_success );
 
         TESTCASE( thrd_sleep( &spec, NULL ) == 0 );
         TESTCASE( errno == ERANGE );
-        TESTCASE( thrd_join( t, NULL ) == thrd_success );
+        TESTCASE( thrd_join( t, &rc ) == thrd_success );
+        TESTCASE( rc == 0 );
     }
 #endif
 
