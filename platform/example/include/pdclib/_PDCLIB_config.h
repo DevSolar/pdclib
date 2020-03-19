@@ -191,7 +191,7 @@ struct _PDCLIB_lldiv_t
 
 /* Large enough an integer to hold all character codes of the widest          */
 /* supported locale.                                                          */
-#ifdef _WIN32 || __CYGWIN__
+#if defined _WIN32 || defined __CYGWIN__
 #define _PDCLIB_wchar unsigned short
 #define _PDCLIB_WCHAR USHRT
 #else
