@@ -14,6 +14,11 @@
 #define _STRUCT_TIMESPEC
 #endif
 
+#ifdef __CYGWIN__
+#define _CLOCK_T_DECLARED
+#define _SYS__TIMESPEC_H_
+#endif
+
 #include "sys/time.h"
 
 int timespec_get( struct timespec * ts, int base )
