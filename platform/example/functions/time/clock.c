@@ -8,6 +8,10 @@
 
 #ifndef REGTEST
 
+#ifdef __CYGWIN__
+#define _CLOCK_T_DECLARED
+#endif
+
 #include "sys/times.h"
 
 clock_t clock( void )
