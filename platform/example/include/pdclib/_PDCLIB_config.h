@@ -230,13 +230,21 @@ struct _PDCLIB_imaxdiv_t
 /* Time types                                                                 */
 /* -------------------------------------------------------------------------- */
 
-/* See <time.h> for a couple of comments on these types and their semantics. */
+/* _PDCLIB_time is the type for type_t; _PDCLIB_clock for clock_t. Both types */
+/* are defined as "real types capable of representing times". The "range and  */
+/* precision of times representable" is implementation-defined.               */
 
-#define _PDCLIB_time long
-
+/* For clock_t, the standard defines that dividing the result of clock() by   */
+/* CLOCKS_PER_SEC gives the seconds elapsed.                                  */
 #define _PDCLIB_clock long
 #define _PDCLIB_CLOCKS_PER_SEC 1000000
 
+/* For time_t, no such divider exists. Most implementations use a count of    */
+/* seconds since a specified epoch. While PDCLib really should support other  */
+/* encodings as well, for now "count of seconds" is the only supported one.   */
+#define _PDCLIB_time long
+
+/* Leave this alone for now.                                                  */
 #define _PDCLIB_TIME_UTC 1
 
 /* -------------------------------------------------------------------------- */
