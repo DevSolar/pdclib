@@ -78,6 +78,6 @@
 #define _PDCLIB_UNLOCK( mtx )
 #endif
 
-#define _PDCLIB_CONSTRAINT_VIOLATION( e ) _PDCLIB_lc_messages.errno_texts[e], NULL, e
+#define _PDCLIB_CONSTRAINT_VIOLATION( e ) _PDCLIB_lc_messages->errno_texts[e], NULL, e
 
 #endif
