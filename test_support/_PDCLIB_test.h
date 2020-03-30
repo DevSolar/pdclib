@@ -53,3 +53,7 @@ static int TEST_RESULTS = 0;
 #if defined( _PDCLIB_FILEIO ) || defined( _PDCLIB_STRINGIO )
 #include "_PDCLIB_iotest.h"
 #endif
+
+/* Helper macro to fill a struct tm */
+#define MKTIME( tm, sec, min, hour, day, month, year, wday, yday ) tm.tm_sec = sec; tm.tm_min = min; tm.tm_hour = hour; tm.tm_mday = day; tm.tm_mon = month; tm.tm_year = year; tm.tm_wday = wday; tm.tm_yday = yday; tm.tm_isdst = -1;
+
