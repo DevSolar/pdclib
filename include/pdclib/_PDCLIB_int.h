@@ -526,28 +526,31 @@ struct _PDCLIB_lc_collate_t
     /* 1..8, 18 collation elements of 3 16-bit integers */
 };
 
-extern struct _PDCLIB_lc_collate_t _PDCLIB_lc_collate;
+extern struct _PDCLIB_lc_collate_t _PDCLIB_lc_collate_C;
+extern struct _PDCLIB_lc_collate_t * _PDCLIB_lc_collate;
 
+/* One entry to the _PDCLIB_lc_ctype_t.entry data table */
 struct _PDCLIB_lc_ctype_entry_t
 {
-    _PDCLIB_uint16_t flags;
-    unsigned char upper;
-    unsigned char lower;
+    _PDCLIB_uint16_t flags;  /* Whether a character is of a given CTYPE */
+    unsigned char upper;     /* Result for toupper() */
+    unsigned char lower;     /* Result for tolower() */
 };
 
 struct _PDCLIB_lc_ctype_t
 {
-    int alloced;
-    int digits_low;
-    int digits_high;
-    int Xdigits_low;
-    int Xdigits_high;
-    int xdigits_low;
-    int xdigits_high;
-    struct _PDCLIB_lc_ctype_entry_t * entry;
+    int alloced;                             /* .entry dynamically allocated? */
+    int digits_low;                          /* Where decimal digits start */
+    int digits_high;                         /* Where decimal digits end */
+    int Xdigits_low;                         /* Where A..F start */
+    int Xdigits_high;                        /* Where A..F end */
+    int xdigits_low;                         /* Where a..f start */
+    int xdigits_high;                        /* Where a..f end */
+    struct _PDCLIB_lc_ctype_entry_t * entry; /* The data table */
 };
 
-extern struct _PDCLIB_lc_ctype_t _PDCLIB_lc_ctype;
+extern struct _PDCLIB_lc_ctype_t _PDCLIB_lc_ctype_C;
+extern struct _PDCLIB_lc_ctype_t * _PDCLIB_lc_ctype;
 
 struct _PDCLIB_lc_messages_t
 {
@@ -555,7 +558,8 @@ struct _PDCLIB_lc_messages_t
     char * errno_texts[_PDCLIB_ERRNO_MAX]; /* strerror() / perror()   */
 };
 
-extern struct _PDCLIB_lc_messages_t _PDCLIB_lc_messages;
+extern struct _PDCLIB_lc_messages_t _PDCLIB_lc_messages_C;
+extern struct _PDCLIB_lc_messages_t * _PDCLIB_lc_messages;
 
 struct _PDCLIB_lc_time_t
 {
@@ -571,7 +575,8 @@ struct _PDCLIB_lc_time_t
     char * am_pm[2];            /* AM / PM designation                        */
 };
 
-extern struct _PDCLIB_lc_time_t _PDCLIB_lc_time;
+extern struct _PDCLIB_lc_time_t _PDCLIB_lc_time_C;
+extern struct _PDCLIB_lc_time_t * _PDCLIB_lc_time;
 
 _PDCLIB_LOCAL struct _PDCLIB_lc_lconv_numeric_t * _PDCLIB_load_lc_numeric( const char * path, const char * locale );
 _PDCLIB_LOCAL struct _PDCLIB_lc_lconv_monetary_t * _PDCLIB_load_lc_monetary( const char * path, const char * locale );

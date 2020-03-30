@@ -153,23 +153,23 @@ char * setlocale( int category, const char * locale )
     {
         if ( category == LC_COLLATE || category == LC_ALL )
         {
-            if ( _PDCLIB_lc_collate.alloced )
+            if ( _PDCLIB_lc_collate->alloced )
             {
                 /* free resources */
             }
 
-            _PDCLIB_lc_collate = *collate;
+            *_PDCLIB_lc_collate = *collate;
             free( collate );
         }
 
         if ( category == LC_CTYPE || category == LC_ALL )
         {
-            if ( _PDCLIB_lc_ctype.alloced )
+            if ( _PDCLIB_lc_ctype->alloced )
             {
-                free( _PDCLIB_lc_ctype.entry - 1 );
+                free( _PDCLIB_lc_ctype->entry - 1 );
             }
 
-            _PDCLIB_lc_ctype = *ctype;
+            *_PDCLIB_lc_ctype = *ctype;
             free( ctype );
         }
 
@@ -225,23 +225,23 @@ char * setlocale( int category, const char * locale )
 
         if ( category == LC_TIME || category == LC_ALL )
         {
-            if ( _PDCLIB_lc_time.alloced )
+            if ( _PDCLIB_lc_time->alloced )
             {
-                free( _PDCLIB_lc_time.month_name_abbr[ 0 ] );
+                free( _PDCLIB_lc_time->month_name_abbr[ 0 ] );
             }
 
-            _PDCLIB_lc_time = *time;
+            *_PDCLIB_lc_time = *time;
             free( time );
         }
 
         if ( category == LC_MESSAGES || category == LC_ALL )
         {
-            if ( _PDCLIB_lc_messages.alloced )
+            if ( _PDCLIB_lc_messages->alloced )
             {
-                free( _PDCLIB_lc_messages.errno_texts[ 0 ] );
+                free( _PDCLIB_lc_messages->errno_texts[ 0 ] );
             }
 
-            _PDCLIB_lc_messages = *messages;
+            *_PDCLIB_lc_messages = *messages;
             free( messages );
         }
     }

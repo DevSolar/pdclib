@@ -12,7 +12,7 @@
 
 int isupper( int c )
 {
-    return ( _PDCLIB_lc_ctype.entry[c].flags & _PDCLIB_CTYPE_UPPER );
+    return ( _PDCLIB_lc_ctype->entry[c].flags & _PDCLIB_CTYPE_UPPER );
 }
 
 #endif

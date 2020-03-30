@@ -12,7 +12,7 @@
 
 int isdigit( int c )
 {
-    return ( c >= _PDCLIB_lc_ctype.digits_low && c <= _PDCLIB_lc_ctype.digits_high );
+    return ( c >= _PDCLIB_lc_ctype->digits_low && c <= _PDCLIB_lc_ctype->digits_high );
 }
 
 #endif

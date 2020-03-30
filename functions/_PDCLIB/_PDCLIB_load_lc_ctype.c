@@ -41,7 +41,7 @@ struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char
                     rc->entry = entry + 1;
                     rc->entry[ -1 ].flags = rc->entry[ -1 ].upper = rc->entry[ -1 ].lower =  0;
 
-                    if ( fscanf( fh, "%x %x %x %x %x %x", &rc->digits_low, &_PDCLIB_lc_ctype.digits_high, &_PDCLIB_lc_ctype.Xdigits_low, &_PDCLIB_lc_ctype.Xdigits_high, &_PDCLIB_lc_ctype.xdigits_low, &_PDCLIB_lc_ctype.xdigits_high ) == 6 )
+                    if ( fscanf( fh, "%x %x %x %x %x %x", &rc->digits_low, &_PDCLIB_lc_ctype->digits_high, &_PDCLIB_lc_ctype->Xdigits_low, &_PDCLIB_lc_ctype->Xdigits_high, &_PDCLIB_lc_ctype->xdigits_low, &_PDCLIB_lc_ctype->xdigits_high ) == 6 )
                     {
                         size_t i;
 
