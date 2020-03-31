@@ -160,9 +160,15 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_fast32 int
 #define _PDCLIB_FAST32_CONV
 
+#ifdef __LP64__
 #define _PDCLIB_FAST64 LONG
 #define _PDCLIB_fast64 long
 #define _PDCLIB_FAST64_CONV l
+#else
+#define _PDCLIB_FAST64 LLONG
+#define _PDCLIB_fast64 long long
+#define _PDCLIB_FAST64_CONV ll
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* What follows are a couple of "special" typedefs and their limits. Again,   */
@@ -211,7 +217,7 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_INTPTR LONG
 
 /* Largest supported integer type. Implementation note: see _PDCLIB_atomax(). */
-#define _PDCLIB_intmax long long int
+#define _PDCLIB_intmax long long
 #define _PDCLIB_INTMAX LLONG
 /* The appropriate printf()/scanf() conversion specifier width for the type.  */
 #define _PDCLIB_INTMAX_CONV ll
@@ -242,7 +248,11 @@ struct _PDCLIB_imaxdiv_t
 /* For time_t, no such divider exists. Most implementations use a count of    */
 /* seconds since a specified epoch. While PDCLib really should support other  */
 /* encodings as well, for now "count of seconds" is the only supported one.   */
+#ifdef __LP64__
 #define _PDCLIB_time long
+#else
+#define _PDCLIB_time long long
+#endif
 
 /* Leave this alone for now.                                                  */
 #define _PDCLIB_TIME_UTC 1
