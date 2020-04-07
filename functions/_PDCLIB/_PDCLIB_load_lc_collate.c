@@ -17,7 +17,7 @@ struct _PDCLIB_lc_collate_t * _PDCLIB_load_lc_collate( const char * path, const 
 {
     struct _PDCLIB_lc_collate_t * rc = NULL;
     const char * extension = "_collate.dat";
-    char * file = malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
+    char * file = (char *)malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
 
     if ( file )
     {
@@ -29,7 +29,7 @@ struct _PDCLIB_lc_collate_t * _PDCLIB_load_lc_collate( const char * path, const 
 
         if ( ( fh = fopen( file, "rb" ) ) != NULL )
         {
-            if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_collate_t ) ) ) != NULL )
+            if ( ( rc = (struct _PDCLIB_lc_collate_t *)malloc( sizeof( struct _PDCLIB_lc_collate_t ) ) ) != NULL )
             {
                 /* TODO: Collation data */
 

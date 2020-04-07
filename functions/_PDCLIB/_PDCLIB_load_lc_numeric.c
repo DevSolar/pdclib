@@ -17,7 +17,7 @@ struct _PDCLIB_lc_lconv_numeric_t * _PDCLIB_load_lc_numeric( const char * path, 
 {
     struct _PDCLIB_lc_lconv_numeric_t * rc = NULL;
     const char * extension = "_numeric.dat";
-    char * file = malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
+    char * file = (char *)malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
 
     if ( file )
     {
@@ -29,7 +29,7 @@ struct _PDCLIB_lc_lconv_numeric_t * _PDCLIB_load_lc_numeric( const char * path, 
 
         if ( ( fh = fopen( file, "rb" ) ) != NULL )
         {
-            if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_lconv_numeric_t ) ) ) != NULL )
+            if ( ( rc = (struct _PDCLIB_lc_lconv_numeric_t *)malloc( sizeof( struct _PDCLIB_lc_lconv_numeric_t ) ) ) != NULL )
             {
                 char * data = _PDCLIB_load_lines( fh, 3 );
 

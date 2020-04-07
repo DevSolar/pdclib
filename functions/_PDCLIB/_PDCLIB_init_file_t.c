@@ -17,14 +17,14 @@ struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream )
 
     if ( rc == NULL )
     {
-        if ( ( rc = malloc( sizeof( struct _PDCLIB_file_t ) ) ) == NULL )
+        if ( ( rc = (struct _PDCLIB_file_t *)malloc( sizeof( struct _PDCLIB_file_t ) ) ) == NULL )
         {
             /* No memory */
             return NULL;
         }
     }
 
-    if ( ( rc->buffer = malloc( BUFSIZ ) ) == NULL )
+    if ( ( rc->buffer = (char *)malloc( BUFSIZ ) ) == NULL )
     {
         /* No memory */
         free( rc );
