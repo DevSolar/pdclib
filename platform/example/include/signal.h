@@ -52,7 +52,7 @@
 #define SIG_ERR (void (*)( int ))-1
 #define SIG_IGN (void (*)( int ))1
 
-typedef _PDCLIB_sig_atomic sig_atomic_t;
+typedef _PDCLIB_sig_atomic_t sig_atomic_t;
 
 /* Installs a signal handler "func" for the given signal.
    A signal handler is a function that takes an integer as argument (the signal

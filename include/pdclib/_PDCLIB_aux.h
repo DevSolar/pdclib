@@ -65,7 +65,6 @@
 #define _PDCLIB_static_assert( e, m ) enum { _PDCLIB_concat( _PDCLIB_assert_, __LINE__ ) = 1 / ( !!(e) ) }
 
 #define _PDCLIB_TYPE_SIGNED( type ) (((type) -1) < 0)
-#define _PDCLIB_TWOS_COMPLEMENT( type ) ((type) ~ (type) 0 < 0 )
 
 #define _PDCLIB_symbol2value( x ) #x
 #define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )

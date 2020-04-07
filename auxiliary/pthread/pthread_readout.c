@@ -17,7 +17,7 @@
 
 struct _PDCLIB_timespec
 {
-    _PDCLIB_time tv_sec;
+    _PDCLIB_time_t tv_sec;
     long tv_nsec;
 };
 
