@@ -12,7 +12,7 @@
 
 int toupper( int c )
 {
-    return _PDCLIB_lc_ctype.entry[c].upper;
+    return _PDCLIB_lc_ctype->entry[c].upper;
 }
 
 #endif

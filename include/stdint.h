@@ -16,32 +16,43 @@ extern "C" {
 
 /* 7.18.1.1 Exact-width integer types. */
 
-typedef _PDCLIB_int8_t  int8_t;
-typedef _PDCLIB_int16_t int16_t;
-typedef _PDCLIB_int32_t int32_t;
-typedef _PDCLIB_int64_t int64_t;
+#if _PDCLIB_TWOS_COMPLEMENT == 1
 
-typedef _PDCLIB_uint8_t  uint8_t;
-typedef _PDCLIB_uint16_t uint16_t;
-typedef _PDCLIB_uint32_t uint32_t;
-typedef _PDCLIB_uint64_t uint64_t;
+#if _PDCLIB_INT_LEAST8_MAX == 0x7f
+typedef _PDCLIB_int_least8_t  int8_t;
+typedef _PDCLIB_uint_least8_t  uint8_t;
+#endif
+
+#if _PDCLIB_INT_LEAST16_MAX == 0x7fff
+typedef _PDCLIB_int_least16_t int16_t;
+typedef _PDCLIB_uint_least16_t uint16_t;
+#endif
+
+#if _PDCLIB_INT_LEAST32_MAX == 0x7fffffffl
+typedef _PDCLIB_int_least32_t int32_t;
+typedef _PDCLIB_uint_least32_t uint32_t;
+#endif
+
+#if _PDCLIB_INT_LEAST64_MAX == 0x7fffffffffffffffll
+typedef _PDCLIB_int_least64_t int64_t;
+typedef _PDCLIB_uint_least64_t uint64_t;
+#endif
+
+#endif
 
 /* 7.18.1.2 Minimum-width integer types */
 
-/* You are allowed to add more types here, e.g. int_least24_t. For the standard
-   types, int_leastN_t is equivalent to the corresponding exact type intN_t by
-   definition.
-*/
+/* You are allowed to add more types here, e.g. int_least24_t. */
 
-typedef int8_t  int_least8_t;
-typedef int16_t int_least16_t;
-typedef int32_t int_least32_t;
-typedef int64_t int_least64_t;
+typedef _PDCLIB_int_least8_t  int_least8_t;
+typedef _PDCLIB_int_least16_t int_least16_t;
+typedef _PDCLIB_int_least32_t int_least32_t;
+typedef _PDCLIB_int_least64_t int_least64_t;
 
-typedef uint8_t  uint_least8_t;
-typedef uint16_t uint_least16_t;
-typedef uint32_t uint_least32_t;
-typedef uint64_t uint_least64_t;
+typedef _PDCLIB_uint_least8_t  uint_least8_t;
+typedef _PDCLIB_uint_least16_t uint_least16_t;
+typedef _PDCLIB_uint_least32_t uint_least32_t;
+typedef _PDCLIB_uint_least64_t uint_least64_t;
 
 /* 7.18.1.3 Fastest minimum-width integer types */
 
@@ -69,7 +80,7 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* 7.18.2 Limits of specified-width integer types */
 
-#ifdef __cplusplus
+#if defined( __cplusplus ) && __cplusplus < 201103L
 #ifndef __STDC_LIMIT_MACROS
 #define _PDCLIB_NO_LIMIT_MACROS
 #endif
@@ -79,43 +90,51 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* 7.18.2.1 Limits of exact-width integer types */
 
-#define INT8_MIN  _PDCLIB_INT8_MIN
-#define INT8_MAX  _PDCLIB_INT8_MAX
-#define UINT8_MAX _PDCLIB_UINT8_MAX
+#if _PDCLIB_TWOS_COMPLEMENT == 1
 
-#define INT16_MIN  _PDCLIB_INT16_MIN
-#define INT16_MAX  _PDCLIB_INT16_MAX
-#define UINT16_MAX _PDCLIB_UINT16_MAX
+#if _PDCLIB_INT_LEAST8_MAX == 0x7f
+#define INT8_MAX _PDCLIB_INT_LEAST8_MAX
+#define INT8_MIN _PDCLIB_INT_LEAST8_MIN
+#define UINT8_MAX _PDCLIB_UINT_LEAST8_MAX
+#endif
 
-#define INT32_MIN  _PDCLIB_INT32_MIN
-#define INT32_MAX  _PDCLIB_INT32_MAX
-#define UINT32_MAX _PDCLIB_UINT32_MAX
+#if _PDCLIB_INT_LEAST16_MAX == 0x7fff
+#define INT16_MAX _PDCLIB_INT_LEAST16_MAX
+#define INT16_MIN _PDCLIB_INT_LEAST16_MIN
+#define UINT16_MAX _PDCLIB_UINT_LEAST16_MAX
+#endif
 
-#define INT64_MIN  _PDCLIB_INT64_MIN
-#define INT64_MAX  _PDCLIB_INT64_MAX
-#define UINT64_MAX _PDCLIB_UINT64_MAX
+#if _PDCLIB_INT_LEAST32_MAX == 0x7fffffffl
+#define INT32_MAX _PDCLIB_INT_LEAST32_MAX
+#define INT32_MIN _PDCLIB_INT_LEAST32_MIN
+#define UINT32_MAX _PDCLIB_UINT_LEAST32_MAX
+#endif
+
+#if _PDCLIB_INT_LEAST64_MAX == 0x7fffffffffffffffll
+#define INT64_MAX _PDCLIB_INT_LEAST64_MAX
+#define INT64_MIN _PDCLIB_INT_LEAST64_MIN
+#define UINT64_MAX _PDCLIB_UINT_LEAST64_MAX
+#endif
+
+#endif
 
 /* 7.18.2.2 Limits of minimum-width integer types */
 
-/* For the standard widths, least and exact types are equivalent.
-   You are allowed to add more types here, e.g. int_least24_t.
-*/
+#define INT_LEAST8_MIN  _PDCLIB_INT_LEAST8_MIN
+#define INT_LEAST8_MAX  _PDCLIB_INT_LEAST8_MAX
+#define UINT_LEAST8_MAX _PDCLIB_UINT_LEAST8_MAX
 
-#define INT_LEAST8_MIN  INT8_MIN
-#define INT_LEAST8_MAX  INT8_MAX
-#define UINT_LEAST8_MAX UINT8_MAX
+#define INT_LEAST16_MIN  _PDCLIB_INT_LEAST16_MIN
+#define INT_LEAST16_MAX  _PDCLIB_INT_LEAST16_MAX
+#define UINT_LEAST16_MAX _PDCLIB_UINT_LEAST16_MAX
 
-#define INT_LEAST16_MIN  INT16_MIN
-#define INT_LEAST16_MAX  INT16_MAX
-#define UINT_LEAST16_MAX UINT16_MAX
+#define INT_LEAST32_MIN  _PDCLIB_INT_LEAST32_MIN
+#define INT_LEAST32_MAX  _PDCLIB_INT_LEAST32_MAX
+#define UINT_LEAST32_MAX _PDCLIB_UINT_LEAST32_MAX
 
-#define INT_LEAST32_MIN  INT32_MIN
-#define INT_LEAST32_MAX  INT32_MAX
-#define UINT_LEAST32_MAX UINT32_MAX
-
-#define INT_LEAST64_MIN  INT64_MIN
-#define INT_LEAST64_MAX  INT64_MAX
-#define UINT_LEAST64_MAX UINT64_MAX
+#define INT_LEAST64_MIN  _PDCLIB_INT_LEAST64_MIN
+#define INT_LEAST64_MAX  _PDCLIB_INT_LEAST64_MAX
+#define UINT_LEAST64_MAX _PDCLIB_UINT_LEAST64_MAX
 
 /* 7.18.2.3 Limits of fastest minimum-width integer types */
 
@@ -167,7 +186,7 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* 7.18.4 Macros for integer constants */
 
-#ifdef __cplusplus
+#if defined( __cplusplus ) && __cplusplus < 201103L
 #ifndef __STDC_CONSTANT_MACROS
 #define _PDCLIB_NO_CONSTANT_MACROS
 #endif
@@ -187,17 +206,17 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* Expand to an integer constant of specified value and type int_leastN_t */
 
-#define INT8_C( value )  value
-#define INT16_C( value ) value
-#define INT32_C( value ) _PDCLIB_concat( value, _PDCLIB_INT32_LITERAL )
-#define INT64_C( value ) _PDCLIB_concat( value, _PDCLIB_INT64_LITERAL )
+#define INT8_C  _PDCLIB_INT_LEAST8_C
+#define INT16_C _PDCLIB_INT_LEAST16_C
+#define INT32_C _PDCLIB_INT_LEAST32_C
+#define INT64_C _PDCLIB_INT_LEAST64_C
 
 /* Expand to an integer constant of specified value and type uint_leastN_t */
 
-#define UINT8_C( value )  value
-#define UINT16_C( value ) value
-#define UINT32_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT32_LITERAL )
-#define UINT64_C( value ) _PDCLIB_concat( value, _PDCLIB_UINT64_LITERAL )
+#define UINT8_C  _PDCLIB_INT_LEAST8_C
+#define UINT16_C _PDCLIB_INT_LEAST16_C
+#define UINT32_C _PDCLIB_INT_LEAST32_C
+#define UINT64_C _PDCLIB_INT_LEAST64_C
 
 /* 7.18.4.2 Macros for greatest-width integer constants */
 

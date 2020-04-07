@@ -8,9 +8,6 @@
 
 #include <threads.h>
 
-/* Implicitly casting the first parameter. */
-extern int pthread_mutex_init( mtx_t *, const _PDCLIB_mtx_attr_t * );
-
 int mtx_init( mtx_t * mtx, int type )
 {
     /* As far as I could figure out from Pthread documentation, there is
@@ -22,16 +19,14 @@ int mtx_init( mtx_t * mtx, int type )
     {
         _PDCLIB_mtx_t recursive_mutex = _PDCLIB_MTX_RECURSIVE_INIT;
         *mtx = recursive_mutex;
-        return thrd_success;
     }
     else
     {
         _PDCLIB_mtx_t plain_mutex = _PDCLIB_MTX_PLAIN_INIT;
         *mtx = plain_mutex;
-        return thrd_success;
     }
 
-    return thrd_error;
+    return thrd_success;
 }
 
 #endif

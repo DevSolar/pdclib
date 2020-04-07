@@ -30,7 +30,7 @@ void perror( const char * s )
     }
     else
     {
-        fprintf( stderr, "%s\n", _PDCLIB_lc_messages.errno_texts[errno] );
+        fprintf( stderr, "%s\n", _PDCLIB_lc_messages->errno_texts[errno] );
     }
 
     _PDCLIB_UNLOCK( stderr->mtx );

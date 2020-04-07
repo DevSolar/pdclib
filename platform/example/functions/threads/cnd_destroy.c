@@ -13,6 +13,7 @@ extern int pthread_cond_destroy( cnd_t * );
 
 void cnd_destroy( cnd_t * cond )
 {
+    /* Could return EBUsY */
     pthread_cond_destroy( cond );
 }
 

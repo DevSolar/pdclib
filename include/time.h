@@ -24,15 +24,8 @@ typedef _PDCLIB_size_t size_t;
 #define NULL _PDCLIB_NULL
 #endif
 
-/* These are defined to be "real types capable of representing types", with
-   "range and precision of times representable in [them being] implementation-
-   defined".
-   As part of struct timespec (see below), time_t is further defined as "a
-   linear count of seconds", with potentially different semantics from a
-   "normal" time_t.
-   For sake of simplicity, we used just that (common) definition of "seconds
-   since epoch" as integer.
-*/
+/* See comments in _PDCLIB_config.h on the semantics of time_t and clock_t. */
+
 typedef _PDCLIB_time_t time_t;
 typedef _PDCLIB_clock_t clock_t;
 

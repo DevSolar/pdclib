@@ -14,9 +14,14 @@
 #define _STRUCT_TIMESPEC
 #endif
 
+#ifdef __CYGWIN__
+#define _CLOCK_T_DECLARED
+#define _SYS__TIMESPEC_H_
+#endif
+
 #include "sys/time.h"
 
-/* See comments in time.h on the semantics of time_t. */
+/* See comments in _PDCLIB_config.h on the semantics of time_t. */
 
 time_t time( time_t * timer )
 {
