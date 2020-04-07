@@ -181,6 +181,23 @@
 #error No matching native type for intptr_t. Please check your setup.
 #endif
 
+/* One *type* that requires this way of "identification by MAX value" (for    */
+/* clang at least which does not provide an appropriate predefine for it) is  */
+/* sig_atomic_t.                                                              */
+
+#if _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_SCHAR_MAX
+#define _PDCLIB_sig_atomic_t char
+#elif _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_SHRT_MAX
+#define _PDCLIB_sig_atomic_t short
+#elif _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_INT_MAX
+#define _PDCLIB_sig_atomic_t int
+#elif _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_LONG_MAX
+#define _PDCLIB_sig_atomic_t long
+#elif _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_LLONG_MAX
+#define _PDCLIB_sig_atomic_t long long
+#else
+#error No matching native type for sig_atomic_t. Please check your setup.
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Various <stdio.h> internals                                                */
