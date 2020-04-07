@@ -385,7 +385,7 @@ foreach( file ${PDCLIB_SOURCES} )
 
     # Test driver, _t suffix, compiled with -DTEST against static lib.
     add_executable( ${basename}_t ${file} )
-    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST ${FLAGS}" )
+    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -D_PDCLIB_BUILD ${FLAGS}" )
     set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers )
     target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
     target_link_libraries( ${basename}_t pdclibs )
