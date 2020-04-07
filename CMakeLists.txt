@@ -257,6 +257,7 @@ set( PDCLIB_SOURCES
      platform/example/functions/threads/tss_set.c
 
      functions/time/asctime.c
+     functions/time/asctime_s.c
      functions/time/ctime.c
      functions/time/difftime.c
      functions/time/gmtime.c
