@@ -14,10 +14,7 @@
 #define _STRUCT_TIMESPEC
 #endif
 
-#ifdef __CYGWIN__
-#define _CLOCK_T_DECLARED
-#define _SYS__TIMESPEC_H_
-#endif
+#include "pdclib/_PDCLIB_defguard.h"
 
 #include "sys/time.h"
 
