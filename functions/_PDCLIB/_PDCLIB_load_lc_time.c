@@ -18,7 +18,7 @@ struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char *
 {
     struct _PDCLIB_lc_time_t * rc = NULL;
     const char * extension = "_time.dat";
-    char * file = malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
+    char * file = (char *)malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
 
     if ( file )
     {
@@ -30,7 +30,7 @@ struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char *
 
         if ( ( fh = fopen( file, "rb" ) ) != NULL )
         {
-            if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_time_t ) ) ) != NULL )
+            if ( ( rc = (struct _PDCLIB_lc_time_t *)malloc( sizeof( struct _PDCLIB_lc_time_t ) ) ) != NULL )
             {
                 char * data = _PDCLIB_load_lines( fh, 44 );
 

@@ -17,7 +17,7 @@ struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, cons
 {
     struct _PDCLIB_lc_messages_t * rc = NULL;
     const char * extension = "_messages.dat";
-    char * file = malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
+    char * file = (char *)malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
 
     if ( file )
     {
@@ -29,7 +29,7 @@ struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, cons
 
         if ( ( fh = fopen( file, "rb" ) ) != NULL )
         {
-            if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_messages_t ) ) ) != NULL )
+            if ( ( rc = (struct _PDCLIB_lc_messages_t *)malloc( sizeof( struct _PDCLIB_lc_messages_t ) ) ) != NULL )
             {
                 char * data = _PDCLIB_load_lines( fh, _PDCLIB_ERRNO_MAX );
 
