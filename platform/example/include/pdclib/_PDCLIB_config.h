@@ -236,8 +236,9 @@ struct _PDCLIB_lldiv_t
 
 /* An integer type that can be accessed as atomic entity (think asynchronous  */
 /* interrupts). In a freestanding environment, the type itself need not be    */
-/* defined, but its limits must. (Don't ask.)                                 */
-#define _PDCLIB_sig_atomic_t   __SIG_ATOMIC_TYPE__
+/* defined, but its limits must. (Don't ask.) GCC is so kind to predefine it, */
+/* but clang is only giving us its MAX value, so we use that to identify the  */
+/* type in _PDCLIB_int.h.                                                     */
 #define _PDCLIB_SIG_ATOMIC_MAX __SIG_ATOMIC_MAX__
 #define _PDCLIB_SIG_ATOMIC_MIN _PDCLIB_MIN_CALC( __SIG_ATOMIC_MAX__ )
 
