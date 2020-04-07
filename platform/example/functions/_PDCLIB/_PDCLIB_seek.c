@@ -1,4 +1,4 @@
-/* int64_t _PDCLIB_seek( FILE *, int64_t, int )
+/* int_least64_t _PDCLIB_seek( FILE *, int_least64_t, int )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -8,20 +8,21 @@
    kernels.
  */
 
-#include <stdio.h>
-
 #ifndef REGTEST
+
+#include <stdio.h>
+#include <stdint.h>
 
 #include "pdclib/_PDCLIB_glue.h"
 
 #include "/usr/include/errno.h"
 
-extern _PDCLIB_int64_t lseek64( int fd, _PDCLIB_int64_t offset, int whence );
+extern int64_t lseek64( int fd, _PDCLIB_int_least64_t offset, int whence );
 extern long lseek( int fd, long offset, int whence );
 
-_PDCLIB_int64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int64_t offset, int whence )
+_PDCLIB_int_least64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int_least64_t offset, int whence )
 {
-    _PDCLIB_int64_t rc;
+    _PDCLIB_int_least64_t rc;
 
     switch ( whence )
     {
