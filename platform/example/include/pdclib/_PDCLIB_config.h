@@ -292,7 +292,7 @@ struct _PDCLIB_imaxdiv_t
 };
 
 /* -------------------------------------------------------------------------- */
-/* Time types                                                                 */
+/* Time types, limits, constants, and paths                                   */
 /* -------------------------------------------------------------------------- */
 
 /* _PDCLIB_time is the type for type_t; _PDCLIB_clock for clock_t. Both types */
@@ -311,14 +311,30 @@ struct _PDCLIB_imaxdiv_t
 /* For time_t, no such divider exists. Most implementations use a count of    */
 /* seconds since a specified epoch. While PDCLib really should support other  */
 /* encodings as well, for now "count of seconds" is the only supported one.   */
+/* MIN / MAX values for time_t are not required by the standard (and they are */
+/* not "exported" from the _PDCLIB namespace), but they are useful in support */
+/* of the _tzcode implementation.                                             */
 #ifdef __MINGW64__
 #define _PDCLIB_time_t long long
+#define _PDCLIB_TIME_MAX __LONG_LONG_MAX__
+#define _PDCLIB_TIME_MIN _PDCLIB_MIN_CALC( __LONG_LONG_MAX__ )
 #else
 #define _PDCLIB_time_t long
+#define _PDCLIB_TIME_MAX __LONG_MAX__
+#define _PDCLIB_TIME_MIN _PDCLIB_MIN_CALC( __LONG_MAX__ )
 #endif
 
 /* Leave this alone for now.                                                  */
 #define _PDCLIB_TIME_UTC 1
+
+/* Path to TZ data.                                                           */
+/* IMPORTANT: *Must* end with separator character!                            */
+/* It does make it much easier for the time data handling code if this detail */
+/* can be relied upon and need not be handled in code.                        */
+#define _PDCLIB_TZDIR "/usr/share/zoneinfo/"
+
+/* Path to default (local) timezone                                           */
+#define _PDCLIB_TZDEFAULT "/etc/localtime"
 
 /* -------------------------------------------------------------------------- */
 /* Floating Point                                                             */
