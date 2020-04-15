@@ -53,8 +53,6 @@
 /* _PDCLIB_static_assert( e, m ) does a compile-time assertion of expression  */
 /*                               e, with m as the failure message.            */
 /* _PDCLIB_TYPE_SIGNED( type ) resolves to true if type is signed.            */
-/* _PDCLIB_TWOS_COMPLEMENT( type ) resolves to true if two's complement is    */
-/*                                 used for type.                             */
 /* _PDCLIB_LOCK( mtx ) lock a mutex if library has threads support.           */
 /* _PDCLIB_UNLOCK( mtx ) unlock a mutex if library has threads support.       */
 /* -------------------------------------------------------------------------- */
