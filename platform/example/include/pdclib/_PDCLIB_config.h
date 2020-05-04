@@ -324,6 +324,12 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_TIME_MIN _PDCLIB_MIN_CALC( __LONG_MAX__ )
 #endif
 
+/* "Unix time" uses 1970-01-01T00:00:00 as "epoch". If your system uses a     */
+/* different "zero point" for its timestamps, set this to the offset between  */
+/* your epoch and Unix epoch. (For example, NTP uses 1900-01-01T00:00:00 as   */
+/* epoch, giving an offset of (70 * 365 + 17) * 86400 = 220898800 seconds.)   */
+#define _PDCLIB_EPOCH_BIAS INT64_C( 0 )
+
 /* Leave this alone for now.                                                  */
 #define _PDCLIB_TIME_UTC 1
 
