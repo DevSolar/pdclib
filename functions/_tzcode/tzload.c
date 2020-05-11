@@ -6,13 +6,12 @@
 
 #define _DEFAULT_SOURCE
 
-#include "_PDCLIB_config.h"
-
 #include "_PDCLIB_tzcode.h"
 
+#include "_PDCLIB_config.h"
+
 #include <errno.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +30,15 @@ int_fast64_t _PDCLIB_EPOCH_BIAS;
 #endif
 
 #define SECSPERDAY ((int_fast32_t)24 * 60 * 60)
+
+/* A "repeat" means the 400-year cycle of the Gregorian calendar. Over the
+   duration of a repeat, a year averages 365.2425 days, which is 31556952
+   seconds.
+*/
+#define AVGSECSPERYEAR     INT64_C( 31556952 )
+#define SECSPERREPEAT      (400 * AVGSECSPERYEAR)
+/* The number of bits required to store SECSPERREPEAT */
+#define SECSPERREPEAT_BITS 34
 
 #define TIME_T_LESS_THAN_INT64 ( _PDCLIB_TIME_MIN <= - INT64_C( 0x7fffffffffffffff ) && _PDCLIB_TIME_MAX >= INT64_C( 0x7fffffffffffffff ) )
 
@@ -181,39 +189,6 @@ static int tzread_time( time_t * time, FILE * tzfile )
     return 0;
 }
 
-struct tzdata_t
-{
-    unsigned char ver;
-    int_fast32_t leapcnt;
-    int_fast32_t timecnt;
-    int_fast32_t typecnt;
-    int_fast32_t charcnt;
-    /*
-    bool goback;
-    bool goahead;
-    */
-    struct transition_t
-    {
-        time_t        time;
-        unsigned char typeidx;
-    } * transition;
-    struct type_t
-    {
-        int_fast32_t utoff;
-        bool         isdst;
-        int          desigidx;
-        bool         isstd;
-        bool         isut;
-    } * type;
-    char * designations;
-    struct leapsecond_t
-    {
-        time_t       occur;
-        int_fast32_t corr;
-    } * leapsecond;
-    //int defaulttype;
-};
-
 static void free_tzdata( struct tzdata_t * data )
 {
     free( data->transition );
@@ -221,6 +196,55 @@ static void free_tzdata( struct tzdata_t * data )
     free( data->designations );
     free( data->leapsecond );
     free( data );
+}
+
+static void tzread_extension( struct tzdata_t * data, FILE * fh )
+{
+    long start;
+    long end;
+    char * buffer;
+
+    if ( fgetc( fh ) != '\n' )
+    {
+        return;
+    }
+
+    start = ftell( fh );
+
+    while ( ! feof( fh ) && ( fgetc( fh ) != '\n' ) )
+    {
+        /* EMPTY */
+    }
+
+    if ( feof( fh ) )
+    {
+        /* No complete extension found. */
+        return;
+    }
+
+    end = ftell( fh );
+
+    if ( ( buffer = (char *)malloc( end - start ) ) == NULL )
+    {
+        /* No memory. */
+        return;
+    }
+
+    if ( fseek( fh, start, SEEK_SET ) != 0 )
+    {
+        /* I/O error. */
+        return;
+    }
+
+    fgets( buffer, end - start, fh );
+
+#if 0
+    /* FIXME: tzparse() not yet implemented. */
+    if ( tzparse( buffer, data, false ) )
+    {
+        /* TODO */
+    }
+#endif
 }
 
 static struct tzdata_t * tzread_data( FILE * fh )
@@ -240,6 +264,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
     /* magic */
     if ( fread( magic, 1, 4, fh ) != 4 || memcmp( magic, "TZif", 4 ) != 0 )
     {
+        errno = EINVAL;
         return NULL;
     }
 
@@ -247,18 +272,21 @@ static struct tzdata_t * tzread_data( FILE * fh )
     if ( tzread_val( E_UCHAR, fh ) < '2' )
     {
         /* Minimum required version is version 2 (64-bit time values). */
+        errno = EINVAL;
         return NULL;
     }
 
     /* reserved */
     if ( fread( reserved, 1, 15, fh ) != 15 )
     {
+        errno = EINVAL;
         return NULL;
     }
 
     if ( ( data = (struct tzdata_t *)calloc( 1, sizeof( struct tzdata_t ) ) ) == NULL )
     {
         /* Memory allocation failed */
+        errno = ENOMEM;
         return NULL;
     }
 
@@ -283,6 +311,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
     if ( fseek( fh, (data->timecnt * 5) + (data->typecnt * 6) + data->charcnt + (data->leapcnt * 8) + isstdcnt + isutcnt, SEEK_CUR ) != 0 )
     {
         free_tzdata( data );
+        errno = EINVAL;
         return NULL;
     }
 
@@ -290,6 +319,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
     if ( fread( magic, 1, 4, fh ) != 4 || memcmp( magic, "TZif", 4 ) != 0 )
     {
         free_tzdata( data );
+        errno = EINVAL;
         return NULL;
     }
 
@@ -299,6 +329,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
     /* reserved */
     if ( fread( reserved, 1, 15, fh ) != 15 )
     {
+        errno = EINVAL;
         return NULL;
     }
 
@@ -320,6 +351,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
     if ( data->transition == NULL || data->type == NULL || data->leapsecond == NULL || data->designations == NULL )
     {
         free_tzdata( data );
+        errno = ENOMEM;
         return NULL;
     }
 
@@ -347,6 +379,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
                 if ( time < data->transition[ idx - 1 ].time )
                 {
                     free_tzdata( data );
+                    errno = EINVAL;
                     return NULL;
                 }
 
@@ -375,6 +408,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
         if ( type > data->typecnt )
         {
             free_tzdata( data );
+            errno = EINVAL;
             return NULL;
         }
 
@@ -396,6 +430,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
         if ( ( data->type[i].isdst = tzread_val( E_UCHAR, fh ) ) > 1 )
         {
             free_tzdata( data );
+            errno = EINVAL;
             return NULL;
         }
 
@@ -403,6 +438,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
         if ( ( data->type[i].desigidx = tzread_val( E_UCHAR, fh ) ) >= data->charcnt )
         {
             free_tzdata( data );
+            errno = EINVAL;
             return NULL;
         }
     }
@@ -423,6 +459,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
             if ( time < _PDCLIB_EPOCH_BIAS )
             {
                 free_tzdata( data );
+                errno = EINVAL;
                 return NULL;
             }
 
@@ -442,6 +479,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
         if ( ( data->type[i].isstd = tzread_val( E_UCHAR, fh ) ) > 1 )
         {
             free_tzdata( data );
+            errno = EINVAL;
             return NULL;
         }
     }
@@ -453,6 +491,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
         if ( ( data->type[i].isut = tzread_val( E_UCHAR, fh ) ) > 1 )
         {
             free_tzdata( data );
+            errno = EINVAL;
             return NULL;
         }
     }
@@ -460,13 +499,145 @@ static struct tzdata_t * tzread_data( FILE * fh )
     return data;
 }
 
+static bool typesequiv( struct tzdata_t const * data, int_fast32_t a, int_fast32_t b )
+{
+    if ( data == NULL || a < 0 || a >= data->typecnt || b < 0 || b >= data->typecnt )
+    {
+        return false;
+    }
+
+    struct type_t const * type_a = &data->type[ a ];
+    struct type_t const * type_b = &data->type[ b ];
+
+    return type_a->utoff == type_b->utoff &&
+           type_a->isdst == type_b->isdst &&
+           type_a->isstd == type_b->isstd &&
+           type_a->isut  == type_b->isut  &&
+           ( strcmp( &data->designations[ type_a->desigidx ], &data->designations[ type_b->desigidx ] ) == 0 );
+}
+
+static bool differ_by_repeat( time_t const t1, time_t const t0 )
+{
+    if ( ( sizeof( time_t ) * CHAR_BIT ) < SECSPERREPEAT_BITS )
+    {
+        return 0;
+    }
+
+    return t1 - t0 == SECSPERREPEAT;
+}
+
+/* Setting goback, goahead, and defaulttype fields based on file data. */
+static void tzdata_complete( struct tzdata_t * data )
+{
+    int_fast32_t i;
+
+    if ( data->timecnt > 1 )
+    {
+        for ( i = 1; i < data->timecnt; ++i )
+        {
+            /* Whether the current transition time and the first transition
+               time form a complete "repeat" of 400 years.
+            */
+            if ( typesequiv( data, i, 0 ) &&
+                 differ_by_repeat( data->transition[ i ].time, data->transition[ 0 ].time ) )
+            {
+                data->goback = true;
+                break;
+            }
+        }
+
+        for ( i = data->timecnt - 2; i >= 0; --i )
+        {
+            /* Whether the current transition time and the last transition
+               time form a complete "repeat" of 400 years.
+            */
+            if ( typesequiv( data, data->timecnt - 1, i ) &&
+                 differ_by_repeat( data->transition[ data->timecnt - 1 ].time, data->transition[ i ].time ) )
+            {
+                data->goahead = true;
+                break;
+            }
+        }
+    }
+
+    /* Infer defaulttype from the data.  Although this default
+       type is always zero for data from recent tzdb releases,
+       things are trickier for data from tzdb 2018e or earlier.
+
+       The first set of heuristics work around bugs in 32-bit data
+       generated by tzdb 2013c or earlier.  The workaround is for
+       zones like Australia/Macquarie where timestamps before the
+       first transition have a time type that is not the earliest
+       standard-time type.  See:
+
+       https://mm.icann.org/pipermail/tz/2013-May/019368.html
+    */
+
+    /* If type 0 is unused in transitions, it's the type to use for
+       early times.
+    */
+    for ( i = 0; i < data->timecnt; ++i )
+    {
+        if ( data->transition[ i ].typeidx == 0 )
+        {
+            break;
+        }
+    }
+
+    i = ( i < data->timecnt ) ? -1 : 0;
+
+    /* Absent the above, if there are transition times and the first
+       transition is to a daylight savings time, find the standard
+       type less than and closest to the type of the first transition.
+    */
+
+    if ( i < 0 && data->timecnt > 0 && data->type[ data->transition[0].typeidx ].isdst )
+    {
+        i = data->transition[0].typeidx;
+
+        while ( --i >= 0 )
+        {
+            if ( ! data->type[ i ].isdst )
+            {
+                break;
+            }
+        }
+    }
+
+    /* The next heuristics are for data generated by tzdb 2018e or earlie,
+       for zones like EST5EDT where the first transition is to DST.
+    */
+    /* If no result yet, find the first standard type. If there is
+       none, punt to type zero.
+    */
+
+    if ( i < 0 )
+    {
+        i = 0;
+
+        while ( data->type[ i ].isdst )
+        {
+            if ( ++i >= data->typecnt )
+            {
+                i = 0;
+                break;
+            }
+        }
+    }
+
+    /* A simple 'data->defaulttype = 0;' would suffice here if we did not
+       have to worry about 2018e-or-earlier data. Even simpler would be to
+       remove the defaulttype member and just use 0 in its place.
+    */
+    data->defaulttype = i;
+}
+
 
 /* Load tz data from the named file into the given structure. Read extended
    format if doextend is set. Return 0 on success, an errno value on failure.
 */
-int tzload( char const * name, struct state * sp, bool doextend )
+int tzload( char const * name, struct tzdata_t * data, bool doextend )
 {
-    struct tzdata_t * data;
     FILE * tzfile;
 
     if ( ( tzfile = tzopen( name ) ) == NULL )
@@ -480,12 +651,23 @@ int tzload( char const * name, struct state * sp, bool doextend )
         return errno;
     }
 
+    /* Read version 3 POSIX extensions, if present. */
     if ( doextend )
     {
-        /* TODO */
+        tzread_extension( data, tzfile );
+    }
+
+    if ( data->typecnt == 0 )
+    {
+        free_tzdata( data );
+        errno = EINVAL;
+        return errno;
     }
 
     fclose( tzfile );
+
+    tzdata_complete( data );
+
     return 0;
 }
 
