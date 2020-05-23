@@ -1,15 +1,30 @@
-/* tzparse( char const *, struct _PDCLIB_timezone *, bool )
+/* _PDCLIB_tzparse( char const *, struct _PDCLIB_timezone *, bool )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include "_PDCLIB_config.h"
-#include "_PDCLIB_tzcode.h"
+#ifndef REGTEST
 
+#include "pdclib/_PDCLIB_config.h"
+#include "pdclib/_PDCLIB_tzcode.h"
+
+#include <assert.h>
 #include <ctype.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
+#define SECSPERMIN    60
+#define MINSPERHOUR   60
+#define HOURSPERDAY   24
+#define DAYSPERWEEK    7
+#define SECSPERHOUR  (SECSPERMIN * MINSPERHOUR)
+#define SECSPERDAY   ((int_fast32_t)SECSPERHOUR * HOURSPERDAY)
+#define MONSPERYEAR   12
+#define DAYSPERNYEAR 365
+#define DAYSPERLYEAR 366
 
 #define isleap(y) (((y) % 4) == 0 && (((y) % 100) != 0 || ((y) % 400) == 0))
 
@@ -24,9 +39,6 @@
    (Minimum value is 2.)
 */
 #define _PDCLIB_EXPAND_BY 2
-
-
-static char const gmt[] = "GMT";
 
 static const int mon_lengths[2][MONSPERYEAR] =
 {
@@ -357,6 +369,9 @@ static int_fast32_t transtime( int year, struct rule const * rule, int_fast32_t 
 
             break;
         }
+        case INVALID:
+            assert( false );
+            break;
     }
 
     /* "value" is the year-relative time of 00:00:00 UT on the day in
@@ -368,7 +383,7 @@ static int_fast32_t transtime( int year, struct rule const * rule, int_fast32_t 
 }
 
 /* Initialize a given tzdata.type. */
-void init_tzdata_type( struct type_t * type, int_fast32_t utoff, bool isdst, int desigidx )
+static void init_tzdata_type( struct _PDCLIB_type_t * type, int_fast32_t utoff, bool isdst, int desigidx )
 {
     type->utoff    = utoff;
     type->isdst    = isdst;
@@ -394,7 +409,7 @@ static bool increment_overflow_time( time_t * t, int_fast32_t j )
 /* Given a POSIX section 8-style TZ string, fill in the rule tables of the
    given data structure as appropriate.
 */
-bool tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch )
+bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch )
 {
     char const * stdname;
     char const * dstname;
@@ -410,7 +425,7 @@ bool tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch 
 
     if ( lastditch )
     {
-        stdlen = sizeof( gmt ) - 1;
+        stdlen = sizeof( _PDCLIB_gmt ) - 1;
         name += stdlen;
         stdoffset = 0;
     }
@@ -458,7 +473,7 @@ bool tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch 
     }
 
     /* Loading default rules */
-    load_ok = tzload( TZDEFRULES, data, false ) == 0;
+    load_ok = _PDCLIB_tzload( TZDEFRULES, data, false ) == 0;
 
     if ( ! load_ok )
     {
@@ -602,11 +617,11 @@ bool tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch 
                             break;
                         }
 
-                        data->transition = (struct transition_t *)new;
+                        data->transition = (struct _PDCLIB_transition_t *)new;
                         data->timecap += _PDCLIB_EXPAND_BY;
                     }
 
-                    data->transition[ timecnt ].time - janfirst;
+                    data->transition[ timecnt ].time = janfirst;
 
                     if ( ! increment_overflow_time( &data->transition[ timecnt ].time, janoffset + starttime ) )
                     {
@@ -757,6 +772,8 @@ bool tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch 
     return true;
 }
 
+#endif
+
 #ifdef TEST
 
 #include <inttypes.h>
@@ -765,6 +782,7 @@ bool tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch 
 
 int main( void )
 {
+#ifndef REGTEST
     char test[100] = "123_";
     char const * str;
 
@@ -864,6 +882,7 @@ int main( void )
     rule.month = 12; rule.week = 5; rule.day = 7;
     TESTCASE( transtime( 2019, &rule, 0 ) == 31276800 );
     TESTCASE( transtime( 2020, &rule, 0 ) == 31190400 );
+#endif
 
     return TEST_RESULTS;
 }
