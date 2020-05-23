@@ -1,4 +1,4 @@
-/* tzload( char const *, struct state *, bool )
+/* tzload( char const *, struct _PDCLIB_timezone *, bool )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -16,6 +16,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+extern mtx_t _PDCLIB_time_mtx;
+#endif
+
+static struct _PDCLIB_timezone _PDCLIB_time_gmt;
+static struct _PDCLIB_timezone _PDCLIB_time_local;
+
 #ifdef TEST
 /* For test purposes, make epoch bias a modifiable value, and reduce the
    _PDCLIB_TIME_MIN / _PDCLIB_TIME_MAX range to small values known to fit
@@ -28,8 +36,6 @@ int_fast64_t _PDCLIB_EPOCH_BIAS;
 #define _PDCLIB_TIME_MIN -128
 #define _PDCLIB_TIME_MAX 127
 #endif
-
-#define SECSPERDAY ((int_fast32_t)24 * 60 * 60)
 
 /* A "repeat" means the 400-year cycle of the Gregorian calendar. Over the
    duration of a repeat, a year averages 365.2425 days, which is 31556952
@@ -189,7 +195,7 @@ static int tzread_time( time_t * time, FILE * tzfile )
     return 0;
 }
 
-static void free_tzdata( struct tzdata_t * data )
+static void free_tzdata( struct _PDCLIB_timezone * data )
 {
     free( data->transition );
     free( data->type );
@@ -198,7 +204,7 @@ static void free_tzdata( struct tzdata_t * data )
     free( data );
 }
 
-static void tzread_extension( struct tzdata_t * data, FILE * fh )
+static void tzread_extension( struct _PDCLIB_timezone * data, FILE * fh )
 {
     long start;
     long end;
@@ -237,19 +243,27 @@ static void tzread_extension( struct tzdata_t * data, FILE * fh )
     }
 
     fgets( buffer, end - start, fh );
+    buffer[ (end - start) - 1 ] = '\0';
 
-#if 0
-    /* FIXME: tzparse() not yet implemented. */
     if ( tzparse( buffer, data, false ) )
     {
+        /* Attempt to reuse existing abbreviations.
+           Without this, America/Anchorage would be right on
+           the edge after 2037 when TZ_MAX_CHARS is 50, as
+           sp->charcnt equals 40 (for LMT AST AWT APT AHST
+           AHDT YST AKDT AKST) and ts->charcnt equals 10
+           (for AKST AKDT).  Reusing means sp->charcnt can
+           stay 40 in this example.
+        */
+        int gotabbr = 0;
+        int charcnt = data->charcnt;
         /* TODO */
     }
-#endif
 }
 
-static struct tzdata_t * tzread_data( FILE * fh )
+static struct _PDCLIB_timezone * tzread_data( FILE * fh )
 {
-    struct tzdata_t * data;
+    struct _PDCLIB_timezone * data;
     char magic[4];
     char reserved[15];
     int_fast32_t i;
@@ -283,7 +297,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
         return NULL;
     }
 
-    if ( ( data = (struct tzdata_t *)calloc( 1, sizeof( struct tzdata_t ) ) ) == NULL )
+    if ( ( data = (struct _PDCLIB_timezone *)calloc( 1, sizeof( struct _PDCLIB_timezone ) ) ) == NULL )
     {
         /* Memory allocation failed */
         errno = ENOMEM;
@@ -347,6 +361,9 @@ static struct tzdata_t * tzread_data( FILE * fh )
     data->type = (struct type_t *)calloc( data->typecnt, sizeof( struct type_t ) );
     data->leapsecond = (struct leapsecond_t *)calloc( data->leapcnt, sizeof( struct leapsecond_t ) );
     data->designations = (char *)malloc( data->charcnt );
+
+    data->leapcap = data->leapcnt;
+    data->timecap = data->timecnt;
 
     if ( data->transition == NULL || data->type == NULL || data->leapsecond == NULL || data->designations == NULL )
     {
@@ -418,7 +435,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
         }
     }
 
-    /* TODO: data->timecnt versus idx -- realloc */
+    /* TODO: data->timecnt versus data->timecap -- realloc? */
     data->timecnt = idx;
 
     /* Read transition type info -- UT offset, DST, designation index */
@@ -469,7 +486,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
         }
     }
 
-    /* TODO: data->leapcnt versus idx -- realloc */
+    /* TODO: data->leapcnt versus data->leapcap -- realloc? */
     data->leapcnt = idx;
 
     /* Read isstd flags */
@@ -499,7 +516,7 @@ static struct tzdata_t * tzread_data( FILE * fh )
     return data;
 }
 
-static bool typesequiv( struct tzdata_t const * data, int_fast32_t a, int_fast32_t b )
+static bool typesequiv( struct _PDCLIB_timezone const * data, int_fast32_t a, int_fast32_t b )
 {
     if ( data == NULL || a < 0 || a >= data->typecnt || b < 0 || b >= data->typecnt )
     {
@@ -527,7 +544,7 @@ static bool differ_by_repeat( time_t const t1, time_t const t0 )
 }
 
 /* Setting goback, goahead, and defaulttype fields based on file data. */
-static void tzdata_complete( struct tzdata_t * data )
+static void tzdata_complete( struct _PDCLIB_timezone * data )
 {
     int_fast32_t i;
 
@@ -632,11 +649,30 @@ static void tzdata_complete( struct tzdata_t * data )
     data->defaulttype = i;
 }
 
+void gmtload( void )
+{
+    static bool gmt_is_set;
+    _PDCLIB_LOCK( _PDCLIB_time_mtx );
+
+    if ( ! gmt_is_set )
+    {
+        /* load file "GMT" */
+        if ( tzload( gmt, &_PDCLIB_time_gmt, true ) != 0 )
+        {
+            /* parse "GMT" as extension string */
+            tzparse( gmt, &_PDCLIB_time_gmt, true );
+        }
+
+        gmt_is_set = true;
+    }
+
+    _PDCLIB_UNLOCK( _PDCLIB_time_mtx );
+}
 
 /* Load tz data from the named file into the given structure. Read extended
    format if doextend is set. Return 0 on success, an errno value on failure.
 */
-int tzload( char const * name, struct tzdata_t * data, bool doextend )
+int tzload( char const * name, struct _PDCLIB_timezone * data, bool doextend )
 {
     FILE * tzfile;
 

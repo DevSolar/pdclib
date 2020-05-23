@@ -11,13 +11,26 @@
 #include <stdint.h>
 #include <time.h>
 
-struct tzdata_t
+#define SECSPERMIN    60
+#define MINSPERHOUR   60
+#define HOURSPERDAY   24
+#define DAYSPERWEEK    7
+#define SECSPERHOUR  (SECSPERMIN * MINSPERHOUR)
+#define SECSPERDAY   ((int_fast32_t)SECSPERHOUR * HOURSPERDAY)
+#define MONSPERYEAR   12
+#define DAYSPERNYEAR 365
+#define DAYSPERLYEAR 366
+
+struct _PDCLIB_timezone
 {
     unsigned char ver;
     int_fast32_t leapcnt;
     int_fast32_t timecnt;
     int_fast32_t typecnt;
     int_fast32_t charcnt;
+
+    int_fast32_t leapcap;
+    int_fast32_t timecap;
 
     struct transition_t
     {
@@ -52,6 +65,9 @@ struct tzdata_t
     unsigned char defaulttype;
 };
 
-int tzload( char const * name, struct tzdata_t * data, bool doextend );
+void init_tzdata_type( struct type_t * type, int_fast32_t utoff, bool isdst, int desigidx );
+void gmtload( void );
+int tzload( char const * name, struct _PDCLIB_timezone * data, bool doextend );
+bool tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch );
 
 #endif
