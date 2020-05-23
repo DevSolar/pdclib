@@ -720,6 +720,10 @@ int _PDCLIB_tzload( char const * name, struct _PDCLIB_timezone * data, bool doex
 
 #include "_PDCLIB_test.h"
 
+#ifndef REGTEST
+#include "pdclib/_PDCLIB_glue.h"
+#endif
+
 int main( void )
 {
 #ifndef REGTEST
@@ -767,7 +771,7 @@ int main( void )
     TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\x81", 1, 8, fh ) == 8 ); /* MIN + 1 */
 
     fclose( fh );
-    TESTCASE( ( path = realpath( path, NULL ) ) != NULL );
+    TESTCASE( ( path = _PDCLIB_realpath( path ) ) != NULL );
     fh = tzopen( path );
 
     /* Testing tzread_val() */
