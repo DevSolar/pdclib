@@ -785,6 +785,7 @@ int main( void )
 #ifndef REGTEST
     char test[100] = "123_";
     char const * str;
+    struct rule rule = { JULIAN_DAY, 0, 0, 0, 0 };
 
     /* getnum */
     str = test;
@@ -802,41 +803,41 @@ int main( void )
     strcpy( test, "00:00:60" );
     str = test;
     TESTCASE( getoffset( &str ) == 60 );
-    TESTCASE( str = test + 8 );
+    TESTCASE( str == ( test + 8 ) );
     strcpy( test, "00:01:01" );
     str = test;
     TESTCASE( getoffset( &str ) == 61 );
-    TESTCASE( str = test + 8 );
+    TESTCASE( str == ( test + 8 ) );
     strcpy( test, "01:01:01" );
     str = test;
     TESTCASE( getoffset( &str ) == 3661 );
-    TESTCASE( str = test + 8 );
+    TESTCASE( str == ( test + 8 ) );
     strcpy( test, "-00:00:01" );
     str = test;
     TESTCASE( getoffset( &str ) == -1 );
-    TESTCASE( str = test + 8 );
+    TESTCASE( str == ( test + 9 ) );
     strcpy( test, "-00:01:01" );
     str = test;
     TESTCASE( getoffset( &str ) == -61 );
-    TESTCASE( str = test + 8 );
+    TESTCASE( str == ( test + 9 ) );
     strcpy( test, "-01:01:01" );
     str = test;
     TESTCASE( getoffset( &str ) == -3661 );
-    TESTCASE( str = test + 8 );
+    TESTCASE( str == ( test + 9 ) );
     strcpy( test, "00:00:61" );
     str = test;
     TESTCASE( getoffset( &str ) == INT_FAST32_MIN );
     strcpy( test, "00:59:01" );
     str = test;
     TESTCASE( getoffset( &str ) == 3541 );
-    TESTCASE( str = test + 8 );
+    TESTCASE( str == ( test + 8 ) );
     strcpy( test, "00:60:01" );
     str = test;
     TESTCASE( getoffset( &str ) == INT_FAST32_MIN );
     strcpy( test, "167:00:00" );
     str = test;
     TESTCASE( getoffset( &str ) == 601200 );
-    TESTCASE( str = test + 8 );
+    TESTCASE( str == ( test + 9 ) );
     strcpy( test, "168:00:00" );
     str = test;
     TESTCASE( getoffset( &str ) == INT_FAST32_MIN );
@@ -854,7 +855,6 @@ int main( void )
     TESTCASE( str == test + 12 );
 
     /* transtime */
-    struct rule rule = { JULIAN_DAY, 0, 0, 0, 0 };
     /* February 28 -- same for non-leap and leap year */
     rule.day = 59;
     TESTCASE( transtime( 2019, &rule, 0 ) == 5011200 );

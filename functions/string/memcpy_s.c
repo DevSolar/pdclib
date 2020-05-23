@@ -83,9 +83,8 @@ int main( void )
     /* Overlapping */
     TESTCASE( memcpy_s( s, 4, s + 3, 4 ) != 0 );
     TESTCASE( memcpy_s( s + 3, 4, s, 4 ) != 0 );
-    TESTCASE( memcpy_s( s, 1, s, 1 ) != 0 );
 
-    TESTCASE( HANDLER_CALLS == 6 );
+    TESTCASE( HANDLER_CALLS == 5 );
 #endif
     return TEST_RESULTS;
 }
