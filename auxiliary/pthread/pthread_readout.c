@@ -172,7 +172,11 @@ int main( int argc, char * argv[] )
     printf( "#define _PDCLIB_ONCE_FLAG_INIT %s\n", symbol2string( PTHREAD_ONCE_INIT ) );
 #endif
 
+#ifdef __CYGWIN__
     printf( "#define _PDCLIB_RECURSIVE_MUTEX_INIT %s\n", symbol2string( PTHREAD_MUTEX_INITIALIZER ) );
+#else
+    printf( "#define _PDCLIB_RECURSIVE_MUTEX_INIT %s\n", symbol2value( PTHREAD_MUTEX_INITIALIZER ) );
+#endif
 
     /* _PDCLIB_TSS_DTOR_ITERATIONS */
     printf( "/* This one is actually hidden in <limits.h>, and only if __USE_POSIX is      */\n"
