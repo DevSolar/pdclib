@@ -322,7 +322,7 @@ add_library( pdclib  SHARED ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmalloc>  ${PDC
 add_library( pdclibs STATIC ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmallocs> ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
 
 # The example implementation makes use of pthread. We use CMake facilities
-# to locate the pthread library and header.
+# to locate the pthread library for linking.
 set( CMAKE_THREAD_PREFER_PTHREAD 1 )
 set( THREADS_PREFER_PTHREAD_FLAG 1 )
 find_package( Threads )
@@ -356,22 +356,26 @@ elseif( MSVC )
     set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
 endif()
 
+# Optionally, use C++ compiler instead of C compiler.
 if ( AS_CXX )
     set_source_files_properties( ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} PROPERTIES LANGUAGE CXX )
 endif()
 
+# Optionally, make TESTCASE( NO_TESTDRIVER ) succeed instead of fail.
 if ( IGNORE_NO_TESTDRIVER )
     string( APPEND FLAGS " -DNO_TESTDRIVER=1" )
 endif()
 
+# Setting symbol visibility (_PDCLIB_LOCAL / _PDCLIB_PUBLIC configuration
+# in _PDCLIB_config.h)
 set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
 set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
 
 # On Windows, both a dynamic .dll and a static .a library require their own
 # respective .lib file, which is why the static library has its distinctive
 # name pdclibs.a (note the "s").
-# On Unix-like OS', we can have both .so and .a with the same base
-# name, so we do away with the "s" suffix.
+# On Unix-like OS' (and Cygwin), we can have both .so and .a with the same
+# base name, so we do away with the "s" suffix.
 if ( UNIX )
     set_target_properties( pdclibs PROPERTIES OUTPUT_NAME pdclib )
 endif()
