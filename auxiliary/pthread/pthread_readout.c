@@ -120,30 +120,63 @@ int main( int argc, char * argv[] )
     puts( "/* Use this in _PDCLIB_config.h, 'threads' section, for interfacing pthread.  */" );
 
     /* Thread */
+#ifdef __CYGWIN__
+    assert( sizeof( pthread_t ) == sizeof( struct { char __dummy; } * ) );
+    printf( "typedef struct { char __dummy; } * _PDCLIB_thrd_t;\n" );
+#else
     assert( sizeof( pthread_t ) == sizeof( unsigned long int ) );
     printf( "typedef unsigned long int _PDCLIB_thrd_t;\n" );
+#endif
 
     /* Condition */
+#ifdef __CYGWIN__
+    assert( sizeof( pthread_cond_t ) == sizeof( struct { char __dummy; } * ) );
+    printf( "typedef struct { char __dummy; } * _PDCLIB_cnd_t;\n" );
+#else
     assert( sizeof( cond.__align ) == sizeof( long long int ) );
     printf( "typedef union { unsigned char _PDCLIB_cnd_t_data[ %zd ]; long long int _PDCLIB_cnd_t_align; } _PDCLIB_cnd_t;\n", sizeof( pthread_cond_t ) );
+#endif
 
     /* Mutex */
+#ifdef __CYGWIN__
+    assert( sizeof( pthread_mutex_t ) == sizeof( struct { char __dummy; } * ) );
+    printf( "typedef struct { char __dummy; } * _PDCLIB_mtx_t;\n" );
+#else
     assert( sizeof( mutex.__align ) == sizeof( long int ) );
     printf( "typedef union { unsigned char _PDCLIB_mtx_t_data[ %zd ]; long int _PDCLIB_mtx_t_align; } _PDCLIB_mtx_t;\n", sizeof( pthread_mutex_t ) );
+#endif
 
     /* Thread Specific Storage */
+#ifdef __CYGWIN__
+    assert( sizeof( pthread_key_t ) == sizeof( struct { char __dummy; } * ) );
+    printf( "typedef struct { char __dummy; } * _PDCLIB_tss_t;\n" );
+#else
     assert( sizeof( pthread_key_t ) == sizeof( unsigned int ) );
     printf( "typedef unsigned int _PDCLIB_tss_t;\n" );
+#endif
 
     /* once_flag */
+#ifdef __CYGWIN__
+    assert( sizeof( pthread_once_t ) == sizeof( struct { pthread_mutex_t __dummy1; int __dummy2; } ) );
+    printf( "typedef struct { _PDCLIB_mtx_t mutex; int state; } _PDCLIB_once_flag;\n" );
+#else
     assert( sizeof( pthread_once_t ) == sizeof( int ) );
     assert( alignof( pthread_once_t ) == alignof( int ) );
     printf( "typedef int _PDCLIB_once_flag;\n" );
+#endif
 
     /* once_flag init */
+#ifdef __CYGWIN__
+    printf( "#define _PDCLIB_ONCE_FLAG_INIT { %s, 0 }\n", symbol2string( PTHREAD_MUTEX_INITIALIZER ) );
+#else
     printf( "#define _PDCLIB_ONCE_FLAG_INIT %s\n", symbol2string( PTHREAD_ONCE_INIT ) );
+#endif
 
+#ifdef __CYGWIN__
+    printf( "#define _PDCLIB_RECURSIVE_MUTEX_INIT %s\n", symbol2string( PTHREAD_MUTEX_INITIALIZER ) );
+#else
     printf( "#define _PDCLIB_RECURSIVE_MUTEX_INIT %s\n", symbol2value( PTHREAD_MUTEX_INITIALIZER ) );
+#endif
 
     /* _PDCLIB_TSS_DTOR_ITERATIONS */
     printf( "/* This one is actually hidden in <limits.h>, and only if __USE_POSIX is      */\n"
@@ -155,14 +188,29 @@ int main( int argc, char * argv[] )
     printf( "/* The following are not made public in any header, but used internally for   */\n"
             "/* interfacing with the pthread API.                                          */\n" );
 
+#ifdef __CYGWIN__
+    assert( sizeof( pthread_condattr_t ) == sizeof( struct { char __dummy; } * ) );
+    printf( "typedef struct { char __dummy; } * _PDCLIB_cnd_attr_t;\n" );
+#else
     assert( sizeof( cnd_attr.__align ) == sizeof( int ) );
     printf( "typedef union { unsigned char _PDCLIB_cnd_attr_t_data[ %zd ]; int _PDCLIB_cnd_attr_t_align; } _PDCLIB_cnd_attr_t;\n", sizeof( pthread_condattr_t ) );
+#endif
 
+#ifdef __CYGWIN__
+    assert( sizeof( pthread_mutexattr_t ) == sizeof( struct { char __dummy; } * ) );
+    printf( "typedef struct { char __dummy; } * _PDCLIB_mtx_attr_t;\n" );
+#else
     assert( sizeof( mtx_attr.__align ) == sizeof( int ) );
     printf( "typedef union { unsigned char _PDCLIB_mtx_attr_t_data[ %zd ]; int _PDCLIB_mtx_attr_t_align; } _PDCLIB_mtx_attr_t;\n", sizeof( pthread_mutexattr_t ) );
+#endif
 
+#ifdef __CYGWIN__
+    assert( sizeof( pthread_attr_t ) == sizeof( struct { char __dummy; } * ) );
+    printf( "typedef struct { char __dummy; } * _PDCLIB_thrd_attr_t;\n" );
+#else
     assert( sizeof( thrd_attr.__align ) == sizeof( long int ) );
     printf( "typedef union { unsigned char _PDCLIB_thrd_attr_t_data[ %zd ]; long int _PDCLIB_thrd_attr_t_align; } _PDCLIB_thrd_attr_t;\n", sizeof( pthread_attr_t ) );
+#endif
 
     printf( "/* Static initialization of recursive mutex.                                  */\n" );
     print_recursive_mutex_data();

@@ -20,7 +20,7 @@ struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char
 {
     struct _PDCLIB_lc_ctype_t * rc = NULL;
     const char * extension = "_ctype.dat";
-    char * file = malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
+    char * file = (char *)malloc( strlen( path ) + strlen( locale ) + strlen( extension ) + 1 );
 
     if ( file )
     {
@@ -32,11 +32,11 @@ struct _PDCLIB_lc_ctype_t * _PDCLIB_load_lc_ctype( const char * path, const char
 
         if ( ( fh = fopen( file, "rb" ) ) != NULL )
         {
-            if ( ( rc = malloc( sizeof( struct _PDCLIB_lc_ctype_t ) ) ) != NULL )
+            if ( ( rc = (struct _PDCLIB_lc_ctype_t *)malloc( sizeof( struct _PDCLIB_lc_ctype_t ) ) ) != NULL )
             {
                 struct _PDCLIB_lc_ctype_entry_t * entry;
 
-                if ( ( entry = malloc( sizeof( struct _PDCLIB_lc_ctype_entry_t ) * _PDCLIB_CHARSET_SIZE + 1 ) ) != NULL )
+                if ( ( entry = (struct _PDCLIB_lc_ctype_entry_t *)malloc( sizeof( struct _PDCLIB_lc_ctype_entry_t ) * _PDCLIB_CHARSET_SIZE + 1 ) ) != NULL )
                 {
                     rc->entry = entry + 1;
                     rc->entry[ -1 ].flags = rc->entry[ -1 ].upper = rc->entry[ -1 ].lower =  0;

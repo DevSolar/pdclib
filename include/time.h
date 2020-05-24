@@ -130,8 +130,6 @@ typedef int errno_t;
 typedef _PDCLIB_size_t rsize_t;
 #endif
 
-/* None of these are implemented yet. Placeholder declarations. */
-
 /* Converts the broken-down time pointed to by timeptr into a string in the
    form "Sun Sep 16 01:03:52 1973\n\0", which is stored in buffer s of maxsize.
    Returns zero if the time was successfully converted and stored, non-zero
@@ -149,6 +147,8 @@ typedef _PDCLIB_size_t rsize_t;
    (see set_constraint_handler_s()).
 */
 _PDCLIB_PUBLIC errno_t asctime_s( char * s, rsize_t maxsize, const struct tm * timeptr );
+
+/* Those declared below are not implemented yet. Placeholder declarations. */
 
 /* Equivalent to asctime_s( s, maxsize, localtime( timer ) ). */
 _PDCLIB_PUBLIC errno_t ctime_s( char * s, rsize_t maxsize, const time_t * timer );

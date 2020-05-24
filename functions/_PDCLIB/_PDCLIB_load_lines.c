@@ -29,7 +29,7 @@ char * _PDCLIB_load_lines( FILE * fh, size_t lines )
 
     if ( ! feof( fh ) )
     {
-        if ( ( rc = malloc( required ) ) != NULL )
+        if ( ( rc = (char *)malloc( required ) ) != NULL )
         {
             size_t i;
 

@@ -75,45 +75,6 @@ set( PDCLIB_SOURCES
      functions/locale/localeconv.c
      functions/locale/setlocale.c
 
-     functions/_PDCLIB/assert.c
-     functions/_PDCLIB/errno.c
-     functions/_PDCLIB/_PDCLIB_atomax.c
-     functions/_PDCLIB/_PDCLIB_closeall.c
-     functions/_PDCLIB/_PDCLIB_digits.c
-     functions/_PDCLIB/_PDCLIB_filemode.c
-     functions/_PDCLIB/_PDCLIB_getstream.c
-     functions/_PDCLIB/_PDCLIB_init_file_t.c
-     functions/_PDCLIB/_PDCLIB_is_leap.c
-     functions/_PDCLIB/_PDCLIB_isstream.c
-     functions/_PDCLIB/_PDCLIB_load_lc_collate.c
-     functions/_PDCLIB/_PDCLIB_load_lc_ctype.c
-     functions/_PDCLIB/_PDCLIB_load_lc_messages.c
-     functions/_PDCLIB/_PDCLIB_load_lc_monetary.c
-     functions/_PDCLIB/_PDCLIB_load_lc_numeric.c
-     functions/_PDCLIB/_PDCLIB_load_lc_time.c
-     functions/_PDCLIB/_PDCLIB_load_lines.c
-     functions/_PDCLIB/_PDCLIB_prepread.c
-     functions/_PDCLIB/_PDCLIB_prepwrite.c
-     functions/_PDCLIB/_PDCLIB_print.c
-     functions/_PDCLIB/_PDCLIB_scan.c
-     functions/_PDCLIB/_PDCLIB_seed.c
-     functions/_PDCLIB/_PDCLIB_strtok.c
-     functions/_PDCLIB/_PDCLIB_strtox_main.c
-     functions/_PDCLIB/_PDCLIB_strtox_prelim.c
-     functions/_PDCLIB/stdarg.c
-
-     platform/example/functions/_PDCLIB/_PDCLIB_changemode.c
-     platform/example/functions/_PDCLIB/_PDCLIB_close.c
-     platform/example/functions/_PDCLIB/_PDCLIB_Exit.c
-     platform/example/functions/_PDCLIB/_PDCLIB_fillbuffer.c
-     platform/example/functions/_PDCLIB/_PDCLIB_flushbuffer.c
-     platform/example/functions/_PDCLIB/_PDCLIB_open.c
-     platform/example/functions/_PDCLIB/_PDCLIB_realpath.c
-     platform/example/functions/_PDCLIB/_PDCLIB_rename.c
-     platform/example/functions/_PDCLIB/_PDCLIB_remove.c
-     platform/example/functions/_PDCLIB/_PDCLIB_seek.c
-     platform/example/functions/_PDCLIB/_PDCLIB_stdinit.c
-
      platform/example/functions/signal/raise.c
      platform/example/functions/signal/signal.c
 
@@ -161,7 +122,6 @@ set( PDCLIB_SOURCES
      functions/stdio/vsnprintf.c
      functions/stdio/vsprintf.c
      functions/stdio/vsscanf.c
-
      platform/example/functions/stdio/tmpfile.c
 
      functions/stdlib/abort.c
@@ -192,7 +152,6 @@ set( PDCLIB_SOURCES
      functions/stdlib/strtoll.c
      functions/stdlib/strtoul.c
      functions/stdlib/strtoull.c
-
      platform/example/functions/stdlib/getenv.c
      platform/example/functions/stdlib/getenv_s.c
      platform/example/functions/stdlib/system.c
@@ -257,16 +216,58 @@ set( PDCLIB_SOURCES
      platform/example/functions/threads/tss_set.c
 
      functions/time/asctime.c
+     functions/time/asctime_s.c
      functions/time/ctime.c
      functions/time/difftime.c
      functions/time/gmtime.c
      functions/time/localtime.c
      functions/time/mktime.c
      functions/time/strftime.c
-
      platform/example/functions/time/clock.c
      platform/example/functions/time/time.c
      platform/example/functions/time/timespec_get.c
+
+     functions/_tzcode/_PDCLIB_tzparse.c
+     functions/_tzcode/_PDCLIB_tzload.c
+
+     functions/_PDCLIB/assert.c
+     functions/_PDCLIB/errno.c
+     functions/_PDCLIB/_PDCLIB_atomax.c
+     functions/_PDCLIB/_PDCLIB_closeall.c
+     functions/_PDCLIB/_PDCLIB_digits.c
+     functions/_PDCLIB/_PDCLIB_filemode.c
+     functions/_PDCLIB/_PDCLIB_getstream.c
+     functions/_PDCLIB/_PDCLIB_init_file_t.c
+     functions/_PDCLIB/_PDCLIB_is_leap.c
+     functions/_PDCLIB/_PDCLIB_isstream.c
+     functions/_PDCLIB/_PDCLIB_load_lc_collate.c
+     functions/_PDCLIB/_PDCLIB_load_lc_ctype.c
+     functions/_PDCLIB/_PDCLIB_load_lc_messages.c
+     functions/_PDCLIB/_PDCLIB_load_lc_monetary.c
+     functions/_PDCLIB/_PDCLIB_load_lc_numeric.c
+     functions/_PDCLIB/_PDCLIB_load_lc_time.c
+     functions/_PDCLIB/_PDCLIB_load_lines.c
+     functions/_PDCLIB/_PDCLIB_prepread.c
+     functions/_PDCLIB/_PDCLIB_prepwrite.c
+     functions/_PDCLIB/_PDCLIB_print.c
+     functions/_PDCLIB/_PDCLIB_scan.c
+     functions/_PDCLIB/_PDCLIB_seed.c
+     functions/_PDCLIB/_PDCLIB_strtok.c
+     functions/_PDCLIB/_PDCLIB_strtox_main.c
+     functions/_PDCLIB/_PDCLIB_strtox_prelim.c
+     functions/_PDCLIB/stdarg.c
+
+     platform/example/functions/_PDCLIB/_PDCLIB_changemode.c
+     platform/example/functions/_PDCLIB/_PDCLIB_close.c
+     platform/example/functions/_PDCLIB/_PDCLIB_Exit.c
+     platform/example/functions/_PDCLIB/_PDCLIB_fillbuffer.c
+     platform/example/functions/_PDCLIB/_PDCLIB_flushbuffer.c
+     platform/example/functions/_PDCLIB/_PDCLIB_open.c
+     platform/example/functions/_PDCLIB/_PDCLIB_realpath.c
+     platform/example/functions/_PDCLIB/_PDCLIB_rename.c
+     platform/example/functions/_PDCLIB/_PDCLIB_remove.c
+     platform/example/functions/_PDCLIB/_PDCLIB_seek.c
+     platform/example/functions/_PDCLIB/_PDCLIB_stdinit.c
 )
 
 # List of header files. Not required for actually building, but if they
@@ -304,6 +305,8 @@ set( PDCLIB_PRIVATE_HEADERS
      include/pdclib/_PDCLIB_aux.h
      include/pdclib/_PDCLIB_glue.h
      include/pdclib/_PDCLIB_int.h
+     include/pdclib/_PDCLIB_lib_ext1.h
+     include/pdclib/_PDCLIB_tzcode.h
      platform/example/include/pdclib/_PDCLIB_config.h
 )
 
@@ -385,7 +388,7 @@ foreach( file ${PDCLIB_SOURCES} )
 
     # Test driver, _t suffix, compiled with -DTEST against static lib.
     add_executable( ${basename}_t ${file} )
-    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST ${FLAGS}" )
+    set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -D_PDCLIB_BUILD ${FLAGS}" )
     set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers )
     target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
     target_link_libraries( ${basename}_t pdclibs )

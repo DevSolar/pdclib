@@ -17,12 +17,8 @@
 #include "bits/signal_types.h"
 #endif
 
-#ifdef __CYGWIN__
-#define _CLOCK_T_DECLARED
-#define _SYS__TIMESPEC_H_
-#endif
-
 #include "pdclib/_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_defguard.h"
 
 #include "sys/types.h"
 #include "sys/stat.h"

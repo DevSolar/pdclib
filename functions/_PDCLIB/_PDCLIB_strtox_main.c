@@ -17,7 +17,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
     int digit = -1;
     const char * x;
 
-    while ( ( x = memchr( _PDCLIB_digits, tolower( **p ), base ) ) != NULL )
+    while ( ( x = (const char *)memchr( _PDCLIB_digits, tolower( **p ), base ) ) != NULL )
     {
         digit = x - _PDCLIB_digits;
 

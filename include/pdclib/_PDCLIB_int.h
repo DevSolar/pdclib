@@ -181,6 +181,27 @@
 #error No matching native type for intptr_t. Please check your setup.
 #endif
 
+/* We might not have a type definition for sig_atomic_t at this point. The    */
+/* clang compiler does not provide an appropriate predefine for it. So if we  */
+/* do not have _PDCLIB_sig_atomic_t, identify the type trough its MAX value.  */
+
+#ifndef _PDCLIB_sig_atomic_t
+
+#if _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_SCHAR_MAX
+#define _PDCLIB_sig_atomic_t char
+#elif _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_SHRT_MAX
+#define _PDCLIB_sig_atomic_t short
+#elif _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_INT_MAX
+#define _PDCLIB_sig_atomic_t int
+#elif _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_LONG_MAX
+#define _PDCLIB_sig_atomic_t long
+#elif _PDCLIB_SIG_ATOMIC_MAX == _PDCLIB_LLONG_MAX
+#define _PDCLIB_sig_atomic_t long long
+#else
+#error No matching native type for sig_atomic_t. Please check your setup.
+#endif
+
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Various <stdio.h> internals                                                */
@@ -507,6 +528,7 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const cha
 _PDCLIB_static_assert( _PDCLIB_CHAR_MIN == ((((char) -1) < 0) ? _PDCLIB_SCHAR_MIN : 0), "Compiler disagrees on signed-ness of 'char'." );
 
 /* two's complement */
+#if _PDCLIB_TWOS_COMPLEMENT == 1
 #if _PDCLIB_CHAR_MIN < 0
 _PDCLIB_static_assert( ((char) ~ (char) 0 < 0), "Not two's complement on 'char'." );
 #endif
@@ -514,6 +536,7 @@ _PDCLIB_static_assert( ((short) ~ (short) 0 < 0), "Not two's complement on 'shor
 _PDCLIB_static_assert( ((int) ~ (int) 0 < 0), "Not two's complement on 'int'." );
 _PDCLIB_static_assert( ((long) ~ (long) 0 < 0), "Not two's complement on 'long'." );
 _PDCLIB_static_assert( ((long long) ~ (long long) 0 < 0), "Not two's complement on 'long long'." );
+#endif
 
 /* size_t as the result of sizeof */
 _PDCLIB_static_assert( sizeof( sizeof( int ) ) == sizeof( _PDCLIB_size_t ), "Compiler disagrees on size_t." );

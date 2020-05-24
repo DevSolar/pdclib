@@ -48,8 +48,10 @@ struct _PDCLIB_file_t * stderr = &_PDCLIB_serr;
 
 /* FIXME: This approach is a possible attack vector. */
 struct _PDCLIB_file_t * _PDCLIB_filelist = &_PDCLIB_sin;
+
 #ifndef __STDC_NO_THREADS__
 _PDCLIB_mtx_t _PDCLIB_filelist_mtx = _PDCLIB_MTX_PLAIN_INIT;
+_PDCLIB_mtx_t _PDCLIB_time_mtx = _PDCLIB_MTX_PLAIN_INIT;
 #endif
 
 /* "C" locale - defaulting to ASCII-7.

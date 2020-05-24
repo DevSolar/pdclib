@@ -87,6 +87,6 @@ _PDCLIB_LOCAL int _PDCLIB_remove( const char * pathname );
    must still be accessible by old name. Any handling of open files etc. is
    done by standard rename() already.
 */
-_PDCLIB_LOCAL int _PDCLIB_rename( const char * old, const char * new );
+_PDCLIB_LOCAL int _PDCLIB_rename( const char * oldpath, const char * newpath );
 
 #endif
