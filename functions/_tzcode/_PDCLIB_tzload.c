@@ -6,7 +6,26 @@
 
 #ifndef REGTEST
 
-#define _DEFAULT_SOURCE
+/* This implements the following parts from tzcode2019c:
+
+   - tzload() (as _PDCLIB_tzload()) -- load timezone definition from data file
+
+   It uses helper functions also present in tzcode2019c:
+
+   - differ_by_repeat() -- whether two timestamps differ by exactly 400 years
+   - typesequiv()       -- whether two timezone types are identical
+
+   It uses helper functions not present in / changed from tzcode2019c:
+
+   - tzread_val()       Higher-level abstraction of detzcode() / detzcode64()
+   - tzread_time()      Higher-level abstraction of detzcode() / detzcode64()
+
+   - tzopen()           First part of tzloadbody() -- path resolution, open file
+   - tzread_data()      Second part of tzloadbody() -- read main data
+   - tzread_extension() Third part of tzloadbody() -- read POSIX extension line
+   - tzdata_complete()  Fourth part of tzloadbody() -- inferred information
+   - free_tzdata()      Deallocate struct _PDCLIB_timezone (struct state)
+*/
 
 #include "pdclib/_PDCLIB_tzcode.h"
 #include "pdclib/_PDCLIB_config.h"
