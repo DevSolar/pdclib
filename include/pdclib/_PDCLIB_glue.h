@@ -23,13 +23,6 @@
 */
 _PDCLIB_LOCAL void _PDCLIB_Exit( int status ) _PDCLIB_NORETURN;
 
-/* A system call that adds n pages of memory to the process heap (if n is
-   positive), or releases n pages from the process heap (if n is negative).
-   Return a (void *) pointing to the *former* end-of-heap if successful, NULL
-   otherwise.
-*/
-_PDCLIB_LOCAL void * _PDCLIB_allocpages( int n );
-
 
 /* stdio.h */
 
