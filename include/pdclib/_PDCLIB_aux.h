@@ -48,10 +48,13 @@
 
 /* -------------------------------------------------------------------------- */
 /* Helper macros:                                                             */
-/* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending  */
+/* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending. */
 /* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
 /* _PDCLIB_static_assert( e, m ) does a compile-time assertion of expression  */
 /*                               e, with m as the failure message.            */
+/* _PDCLIB_symbol2string( x ) turn symbol into string literal (by adding ""). */
+/* _PDCLIB_value2string( x ) expands a preprocessor token and turns it into a */
+/*                           string literal (by adding "").                   */
 /* _PDCLIB_TYPE_SIGNED( type ) resolves to true if type is signed.            */
 /* _PDCLIB_LOCK( mtx ) lock a mutex if library has threads support.           */
 /* _PDCLIB_UNLOCK( mtx ) unlock a mutex if library has threads support.       */
@@ -64,8 +67,8 @@
 
 #define _PDCLIB_TYPE_SIGNED( type ) (((type) -1) < 0)
 
-#define _PDCLIB_symbol2value( x ) #x
-#define _PDCLIB_symbol2string( x ) _PDCLIB_symbol2value( x )
+#define _PDCLIB_symbol2string( x ) #x
+#define _PDCLIB_value2string( x ) _PDCLIB_symbol2string( x )
 
 #ifndef __STDC_NO_THREADS__
 #define _PDCLIB_LOCK( mtx ) mtx_lock( &mtx )

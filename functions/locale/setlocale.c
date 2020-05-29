@@ -88,9 +88,9 @@ char * setlocale( int category, const char * locale )
         locale = _PDCLIB_default_locale( category );
     }
 
-    if ( getenv( _PDCLIB_symbol2string( _PDCLIB_LOCALE_PATH_ENV ) ) != NULL )
+    if ( getenv( _PDCLIB_value2string( _PDCLIB_LOCALE_PATH_ENV ) ) != NULL )
     {
-        path = getenv( _PDCLIB_symbol2string( _PDCLIB_LOCALE_PATH_ENV ) );
+        path = getenv( _PDCLIB_value2string( _PDCLIB_LOCALE_PATH_ENV ) );
     }
 
     /* We have to do this in two runs. As we might be facing LC_ALL, we
