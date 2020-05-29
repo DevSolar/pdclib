@@ -227,8 +227,8 @@ set( PDCLIB_SOURCES
      platform/example/functions/time/time.c
      platform/example/functions/time/timespec_get.c
 
-     functions/_tzcode/_PDCLIB_tzparse.c
-     functions/_tzcode/_PDCLIB_tzload.c
+     #functions/_tzcode/_PDCLIB_tzparse.c
+     #functions/_tzcode/_PDCLIB_tzload.c
 
      functions/_PDCLIB/assert.c
      functions/_PDCLIB/errno.c
@@ -306,7 +306,7 @@ set( PDCLIB_PRIVATE_HEADERS
      include/pdclib/_PDCLIB_glue.h
      include/pdclib/_PDCLIB_int.h
      include/pdclib/_PDCLIB_lib_ext1.h
-     include/pdclib/_PDCLIB_tzcode.h
+     #include/pdclib/_PDCLIB_tzcode.h
      platform/example/include/pdclib/_PDCLIB_config.h
 )
 
