@@ -10,8 +10,6 @@
 
 #ifndef REGTEST
 
-#include "pdclib/_PDCLIB_aux.h"
-
 void _PDCLIB_assert99( const char * const message1, const char * const function, const char * const message2 )
 {
     fputs( message1, stderr );

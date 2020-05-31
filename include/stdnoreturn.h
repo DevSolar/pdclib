@@ -7,7 +7,7 @@
 #ifndef _PDCLIB_STDNORETURN_H
 #define _PDCLIB_STDNORETURN_H _PDCLIB_STDNORETURN_H
 
-#include "pdclib/_PDCLIB_aux.h"
+#include "pdclib/_PDCLIB_int.h"
 
 /* This basically breaks the letter of the standard (which states that
    noreturn be defined to _Noreturn). This defines noreturn -> _Noreturn
