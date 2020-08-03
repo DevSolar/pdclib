@@ -218,9 +218,12 @@ set( PDCLIB_SOURCES
      functions/time/asctime.c
      functions/time/asctime_s.c
      functions/time/ctime.c
+     functions/time/ctime_s.c
      functions/time/difftime.c
      functions/time/gmtime.c
+     functions/time/gmtime_s.c
      functions/time/localtime.c
+     functions/time/localtime_s.c
      functions/time/mktime.c
      functions/time/strftime.c
      platform/example/functions/time/clock.c
