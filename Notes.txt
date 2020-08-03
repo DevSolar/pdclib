@@ -16,6 +16,10 @@ Paul Edwards (author of the PDPCLIB), for inspirational code fragments, thanks.
 P.J. Plauger (author of "The Standard C Library"), for a book without which I
 would not have been able to create PDCLib at this quality, thanks.
 
+Arthur David Olson et al., for their work on the Time Zone Database and the
+tzcode reference implementation on which most of PDCLib's time functions are
+based, thanks.
+
 Paul Bourke (author of mathlib), for allowing me access to a complete math
 library under public domain terms so I could use it as a reference, thanks.
 

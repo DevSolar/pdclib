@@ -33,7 +33,7 @@ static int_fast32_t detzcode( const char * codep )
         /* Do two's-complement negation even on non-two's-complement machines.
            If the result would be minval - 1, return minval.
         */
-        result -= ! TWOS_COMPLEMENT( int_fast32_t ) && result != 0;
+        result -= ! _PDCLIB_TWOS_COMPLEMENT && result != 0;
         result += minval;
     }
 
@@ -47,7 +47,7 @@ static int_fast64_t detzcode64( const char * codep )
     int_fast64_t  one = 1;
     int_fast64_t  halfmaxval = one << ( 64 - 2 );
     int_fast64_t  maxval = halfmaxval - 1 + halfmaxval;
-    int_fast64_t  minval = -TWOS_COMPLEMENT( int_fast64_t ) - maxval;
+    int_fast64_t  minval = - _PDCLIB_TWOS_COMPLEMENT - maxval;
 
     result = codep[ 0 ] & 0x7f;
 
@@ -61,7 +61,7 @@ static int_fast64_t detzcode64( const char * codep )
         /* Do two's-complement negation even on non-two's-complement machines.
            If the result would be minval - 1, return minval.
         */
-      result -= ! TWOS_COMPLEMENT( int_fast64_t ) && result != 0;
+      result -= ! _PDCLIB_TWOS_COMPLEMENT && result != 0;
       result += minval;
     }
 
@@ -70,7 +70,7 @@ static int_fast64_t detzcode64( const char * codep )
 
 static bool differ_by_repeat( const time_t t1, const time_t t0 )
 {
-    if ( TYPE_BIT( time_t ) - TYPE_SIGNED( time_t ) < SECSPERREPEAT_BITS )
+    if ( TYPE_BIT( time_t ) - _PDCLIB_TYPE_SIGNED( time_t ) < SECSPERREPEAT_BITS )
     {
         return 0;
     }
@@ -317,7 +317,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
 
             if ( sp->types[ i ] )
             {
-                time_t attime = ( ( TYPE_SIGNED( time_t ) ? at < _PDCLIB_TIME_MIN : at < 0 ) ? _PDCLIB_TIME_MIN : at );
+                time_t attime = ( ( _PDCLIB_TYPE_SIGNED( time_t ) ? at < _PDCLIB_TIME_MIN : at < 0 ) ? _PDCLIB_TIME_MIN : at );
 
                 if ( timecnt && attime <= sp->ats[ timecnt - 1 ] )
                 {

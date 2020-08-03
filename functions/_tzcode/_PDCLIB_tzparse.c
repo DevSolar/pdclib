@@ -240,7 +240,7 @@ static int_fast32_t transtime( const int year, struct rule const * rulep, const 
     int          yy2;
     int          dow;
 
-    leapyear = isleap( year );
+    leapyear = _PDCLIB_is_leap( year );
 
     switch ( rulep->r_type )
     {
@@ -364,12 +364,12 @@ static const char * getqzname( const char *strp, const int delim )
 static bool increment_overflow_time( time_t * tp, int_fast32_t j )
 {
     /* This is like
-       'if (! (TIME_T_MIN <= *tp + j && *tp + j <= TIME_T_MAX)) ...',
+       'if (! (_PDCLIB_TIME_MIN <= *tp + j && *tp + j <= _PDCLIB_TIME_MAX)) ...',
        except that it does the right thing even if *tp + j would overflow.
     */
     if ( ! ( j < 0
-           ? ( TYPE_SIGNED( time_t ) ? TIME_T_MIN - j <= *tp : -1 - j < *tp )
-           : *tp <= TIME_T_MAX - j ) )
+           ? ( _PDCLIB_TYPE_SIGNED( time_t ) ? _PDCLIB_TIME_MIN - j <= *tp : -1 - j < *tp )
+           : *tp <= _PDCLIB_TIME_MAX - j ) )
     {
         return true;
     }
@@ -547,7 +547,7 @@ bool _PDCLIB_tzparse( const char * name, struct state * sp, bool lastditch )
 
             do
             {
-              int_fast32_t yearsecs = year_lengths[ isleap( yearbeg - 1 ) ] * SECSPERDAY;
+              int_fast32_t yearsecs = year_lengths[ _PDCLIB_is_leap( yearbeg - 1 ) ] * SECSPERDAY;
               yearbeg--;
 
               if ( increment_overflow_time( &janfirst, -yearsecs ) )
@@ -562,7 +562,7 @@ bool _PDCLIB_tzparse( const char * name, struct state * sp, bool lastditch )
             for ( year = yearbeg; year < yearlim; year++ )
             {
                 int_fast32_t starttime = transtime( year, &start, stdoffset ), endtime = transtime( year, &end, dstoffset );
-                int_fast32_t yearsecs = ( year_lengths[ isleap( year ) ] * SECSPERDAY );
+                int_fast32_t yearsecs = ( year_lengths[ _PDCLIB_is_leap( year ) ] * SECSPERDAY );
                 bool reversed = endtime < starttime;
 
                 if ( reversed )
