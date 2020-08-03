@@ -23,14 +23,16 @@ struct tm * localtime( const time_t * timer )
 
 int main( void )
 {
+    /* TODO: Timezone specific */
+
     time_t t;
     struct tm * time;
 
     t = -2147483648l;
-    time = gmtime( &t );
+    time = localtime( &t );
     TESTCASE( time->tm_sec == 52 );
     TESTCASE( time->tm_min == 45 );
-    TESTCASE( time->tm_hour == 20 );
+    TESTCASE( time->tm_hour == 21 );
     TESTCASE( time->tm_mday == 13 );
     TESTCASE( time->tm_mon == 11 );
     TESTCASE( time->tm_year == 1 );
@@ -38,10 +40,10 @@ int main( void )
     TESTCASE( time->tm_yday == 346 );
 
     t = 2147483647l;
-    time = gmtime( &t );
+    time = localtime( &t );
     TESTCASE( time->tm_sec == 7 );
     TESTCASE( time->tm_min == 14 );
-    TESTCASE( time->tm_hour == 3 );
+    TESTCASE( time->tm_hour == 4 );
     TESTCASE( time->tm_mday == 19 );
     TESTCASE( time->tm_mon == 0 );
     TESTCASE( time->tm_year == 138 );
