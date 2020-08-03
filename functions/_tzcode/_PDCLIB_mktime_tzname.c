@@ -134,12 +134,12 @@ static time_t time2sub( struct tm * tmp, struct tm *(*funcp)( struct state const
         }
 
         li = y + ( 1 < yourtm.tm_mon );
-        yourtm.tm_mday += year_lengths[ isleap( li ) ];
+        yourtm.tm_mday += year_lengths[ _PDCLIB_is_leap( li ) ];
     }
     while ( yourtm.tm_mday > DAYSPERLYEAR )
     {
         li = y + ( 1 < yourtm.tm_mon );
-        yourtm.tm_mday -= year_lengths[ isleap( li ) ];
+        yourtm.tm_mday -= year_lengths[ _PDCLIB_is_leap( li ) ];
 
         if ( increment_overflow32( &y, 1 ) )
         {
@@ -149,7 +149,7 @@ static time_t time2sub( struct tm * tmp, struct tm *(*funcp)( struct state const
 
     for ( ; ; )
     {
-        i = mon_lengths[ isleap( y ) ][ yourtm.tm_mon ];
+        i = mon_lengths[ _PDCLIB_is_leap( y ) ][ yourtm.tm_mon ];
 
         if ( yourtm.tm_mday <= i )
         {
@@ -209,8 +209,8 @@ static time_t time2sub( struct tm * tmp, struct tm *(*funcp)( struct state const
     }
 
     /* Do a binary search (this works whatever time_t's type is). */
-    lo = TIME_T_MIN;
-    hi = TIME_T_MAX;
+    lo = _PDCLIB_TIME_MIN;
+    hi = _PDCLIB_TIME_MAX;
 
     for ( ; ; )
     {
@@ -242,7 +242,7 @@ static time_t time2sub( struct tm * tmp, struct tm *(*funcp)( struct state const
         {
             if ( t == lo )
             {
-                if ( t == TIME_T_MAX )
+                if ( t == _PDCLIB_TIME_MAX )
                 {
                     return WRONG;
                 }
@@ -252,7 +252,7 @@ static time_t time2sub( struct tm * tmp, struct tm *(*funcp)( struct state const
             }
             else if ( t == hi )
             {
-                if ( t == TIME_T_MIN )
+                if ( t == _PDCLIB_TIME_MIN )
                 {
                     return WRONG;
                 }

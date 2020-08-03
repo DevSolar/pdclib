@@ -14,32 +14,15 @@
 #include <time.h>
 
 #define TYPE_BIT( type ) ( sizeof (type) * _PDCLIB_CHAR_BIT )
-#define TYPE_SIGNED( type ) ( ( (type ) -1 ) < 0 )
-#define TWOS_COMPLEMENT( type ) ( (type) ~ (type) 0 < 0)
 
 /* Max and min values of the integer type T, of which only the bottom
    B bits are used, and where the highest-order used bit is considered
    to be a sign bit if T is signed.  */
 #define MAXVAL( t, b ) \
-  ( ( t ) ( ( ( t ) 1 << ( ( b ) - 1 - TYPE_SIGNED( t ) ) ) \
-      - 1 + ( ( t ) 1 << ( ( b ) - 1 - TYPE_SIGNED( t ) ) ) ) )
+  ( ( t ) ( ( ( t ) 1 << ( ( b ) - 1 - _PDCLIB_TYPE_SIGNED( t ) ) ) \
+      - 1 + ( ( t ) 1 << ( ( b ) - 1 - _PDCLIB_TYPE_SIGNED( t ) ) ) ) )
 #define MINVAL( t, b )                        \
-  ( ( t ) ( TYPE_SIGNED( t ) ? - TWOS_COMPLEMENT( t ) - MAXVAL( t, b ) : 0 ) )
-
-/* The extreme time values, assuming no padding.  */
-#define TIME_T_MIN_NO_PADDING MINVAL( time_t, TYPE_BIT( time_t ) )
-#define TIME_T_MAX_NO_PADDING MAXVAL( time_t, TYPE_BIT( time_t ) )
-
-/* The extreme time values.  These are macros, not constants, so that
-   any portability problem occur only when compiling .c files that use
-   the macros, which is safer for applications that need only zdump and zic.
-   This implementation assumes no padding if time_t is signed and
-   either the compiler lacks support for _Generic or time_t is not one
-   of the standard signed integer types.  */
-#define TIME_T_MIN TIME_T_MIN_NO_PADDING
-#define TIME_T_MAX TIME_T_MAX_NO_PADDING
-
-#define isleap( y ) ( ( ( y ) % 4 ) == 0 && ( ( ( y ) % 100 ) != 0 || ( ( y ) % 400 ) == 0 ) )
+  ( ( t ) ( _PDCLIB_TYPE_SIGNED( t ) ? - _PDCLIB_TWOS_COMPLEMENT - MAXVAL( t, b ) : 0 ) )
 
 /* Handy macros that are independent of tzfile implementation. */
 #define YEARSPERREPEAT  400 /* years before a Gregorian repeat */
