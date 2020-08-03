@@ -6,562 +6,71 @@
 
 #ifndef REGTEST
 
-/* This implements the following parts from tzcode2019c:
-
-   - tzload() (as _PDCLIB_tzload()) -- load timezone definition from data file
-
-   It uses helper functions also present in tzcode2019c:
-
-   - differ_by_repeat() -- whether two timestamps differ by exactly 400 years
-   - typesequiv()       -- whether two timezone types are identical
-
-   It uses helper functions not present in / changed from tzcode2019c:
-
-   - tzread_val()       Higher-level abstraction of detzcode() / detzcode64()
-   - tzread_time()      Higher-level abstraction of detzcode() / detzcode64()
-
-   - tzopen()           First part of tzloadbody() -- path resolution, open file
-   - tzread_data()      Second part of tzloadbody() -- read main data
-   - tzread_extension() Third part of tzloadbody() -- read POSIX extension line
-   - tzdata_complete()  Fourth part of tzloadbody() -- inferred information
-   - free_tzdata()      Deallocate struct _PDCLIB_timezone (struct state)
-*/
-
 #include "pdclib/_PDCLIB_tzcode.h"
-#include "pdclib/_PDCLIB_config.h"
 
 #include <errno.h>
-#include <limits.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
 
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-extern mtx_t _PDCLIB_time_mtx;
-#endif
-
-static struct _PDCLIB_timezone _PDCLIB_time_gmt;
-/*static struct _PDCLIB_timezone _PDCLIB_time_local;*/
-
-#ifdef TEST
-/* For test purposes, make epoch bias a modifiable value, and reduce the
-   _PDCLIB_TIME_MIN / _PDCLIB_TIME_MAX range to small values known to fit
-   into any time_t definition.
-*/
-#undef _PDCLIB_EPOCH_BIAS
-#undef _PDCLIB_TIME_MIN
-#undef _PDCLIB_TIME_MAX
-int_fast64_t _PDCLIB_EPOCH_BIAS;
-#define _PDCLIB_TIME_MIN -128
-#define _PDCLIB_TIME_MAX 127
-#endif
-
-/* A "repeat" means the 400-year cycle of the Gregorian calendar. Over the
-   duration of a repeat, a year averages 365.2425 days, which is 31556952
-   seconds.
-*/
-#define AVGSECSPERYEAR     INT64_C( 31556952 )
-#define SECSPERREPEAT      (400 * AVGSECSPERYEAR)
-/* The number of bits required to store SECSPERREPEAT */
-#define SECSPERREPEAT_BITS 34
-
-#define TIME_T_LESS_THAN_INT64 ( _PDCLIB_TIME_MIN <= - INT64_C( 0x7fffffffffffffff ) && _PDCLIB_TIME_MAX >= INT64_C( 0x7fffffffffffffff ) )
-
-static FILE * tzopen( char const * name )
+static int_fast32_t detzcode( const char * codep )
 {
-    char * fullname;
-    FILE * rc;
+    int_fast32_t result;
+    int          i;
+    int_fast32_t one = 1;
+    int_fast32_t halfmaxval = one << ( 32 - 2 );
+    int_fast32_t maxval = halfmaxval - 1 + halfmaxval;
+    int_fast32_t minval = -1 - maxval;
 
-    if ( name == NULL )
+    result = codep[ 0 ] & 0x7f;
+
+    for ( i = 1; i < 4; ++i )
     {
-        name = _PDCLIB_TZDEFAULT;
-
-        if ( name == NULL )
-        {
-            errno = EINVAL;
-            return NULL;
-        }
+        result = ( result << 8 ) | ( codep[ i ] & 0xff );
     }
 
-    if ( name[0] == ':' )
+    if ( codep[ 0 ] & 0x80 )
     {
-        ++name;
-    }
-
-    if ( name[0] == '/' )
-    {
-        fullname = (char *)name;
-    }
-    else
-    {
-        if ( ( fullname = (char *)malloc( strlen( name ) + sizeof( _PDCLIB_TZDIR ) + 1 ) ) == NULL )
-        {
-            errno = ENOMEM;
-            return NULL;
-        }
-
-        strcpy( fullname, _PDCLIB_TZDIR );
-        strcat( fullname, name );
-    }
-
-    rc = fopen( fullname, "rb" );
-
-    if ( fullname != name )
-    {
-        free( fullname );
-    }
-
-    return rc;
-}
-
-enum width_t
-{
-    E_UCHAR = 1,
-    E_INT32 = 4,
-    E_INT64 = 8
-};
-
-static int_fast64_t tzread_val( enum width_t width, FILE * tzfile )
-{
-    int_fast64_t rc = 0;
-    unsigned char in[ width ];
-
-    if ( fread( in, 1, width, tzfile ) == width )
-    {
-        unsigned i;
-
-        if ( width == E_UCHAR )
-        {
-            return in[0];
-        }
-
-        /* Read network order (big-endian), masking out negative bit. */
-        rc = in[0] & 0x7f;
-
-        for ( i = 1; i < width; ++i )
-        {
-            rc = ( rc << 8 ) | ( in[i] & 0xff );
-        }
-
-        /* File data is encoded in two's complement. We ensure that we get
-           correct negative values even on non-two's-complement machines.
+        /* Do two's-complement negation even on non-two's-complement machines.
+           If the result would be minval - 1, return minval.
         */
-        if ( in[0] & 0x80 )
-        {
-            /* This is INTn_MIN on one's complement and signed magnitude,
-               and (INTn_MIN + 1) on two's complement; "minval" in the sense
-               that it's the minimum value that can be represented on any
-               architecture.
-            */
-            int_fast64_t const minval = ( ( width == 4 ) ? INT32_C( 0x7fffffff ) : INT64_C( 0x7fffffffffffffff ) ) * -1;
-
-            /* Two's complement negation would be to substract INTn_MIN from rc.
-               We substract the minval calculated above, and then substract one
-               more *if it can be represented in n bits on this architecture*.
-               This is always true on two's complement, and true on the other
-               architectures if rc is not zero.
-               Strictly speaking, two's complement INTn_MIN *would* be
-               representable on non-two's-complement as well if CHAR_BITS > 8,
-               but there's a limit to the complexity I'm willing to add here
-               for that case. The basis for this implementation, tzcode, does
-               not handle the case either.
-            */
-            rc += minval - ( _PDCLIB_TWOS_COMPLEMENT || rc > 0 );
-        }
+        result -= ! TWOS_COMPLEMENT( int_fast32_t ) && result != 0;
+        result += minval;
     }
 
-    return rc;
+    return result;
 }
 
-/* Returns -1 if value < _PDCLIB_TIME_MIN, 1 if value > _PDCLIB_TIME_MAX,
-   and 0 if value representable by time_t has been read.
-*/
-static int tzread_time( time_t * time, FILE * tzfile )
+static int_fast64_t detzcode64( const char * codep )
 {
-    int_fast64_t val = tzread_val( E_INT64, tzfile );
+    uint_fast64_t result;
+    int           i;
+    int_fast64_t  one = 1;
+    int_fast64_t  halfmaxval = one << ( 64 - 2 );
+    int_fast64_t  maxval = halfmaxval - 1 + halfmaxval;
+    int_fast64_t  minval = -TWOS_COMPLEMENT( int_fast64_t ) - maxval;
 
-    /* Avoid overflow when adding bias to (Unix time) value read from file. */
-    if ( _PDCLIB_EPOCH_BIAS >= 0 )
+    result = codep[ 0 ] & 0x7f;
+
+    for ( i = 1; i < 8; ++i )
     {
-        if ( val > ( _PDCLIB_TIME_MAX - _PDCLIB_EPOCH_BIAS ) )
-        {
-            *time = _PDCLIB_TIME_MAX;
-            return 1;
-        }
-
-        if ( ( val + _PDCLIB_EPOCH_BIAS ) < _PDCLIB_TIME_MIN )
-        {
-            *time = _PDCLIB_TIME_MIN;
-            return -1;
-        }
-    }
-    else /* _PDCLIB_EPOCH_BIAS < 0 */
-    {
-        if ( val < ( _PDCLIB_TIME_MIN - _PDCLIB_EPOCH_BIAS ) )
-        {
-            *time = _PDCLIB_TIME_MIN;
-            return -1;
-        }
-
-        if ( ( val + _PDCLIB_EPOCH_BIAS ) > _PDCLIB_TIME_MAX )
-        {
-            *time = _PDCLIB_TIME_MAX;
-            return 1;
-        }
+        result = ( result << 8 ) | ( codep[ i ] & 0xff );
     }
 
-    *time = val + _PDCLIB_EPOCH_BIAS;
-    return 0;
-}
-
-static void free_tzdata( struct _PDCLIB_timezone * data )
-{
-    free( data->transition );
-    free( data->type );
-    free( data->designations );
-    free( data->leapsecond );
-    free( data );
-}
-
-static void tzread_extension( struct _PDCLIB_timezone * data, FILE * fh )
-{
-    long start;
-    long end;
-    char * buffer;
-
-    if ( fgetc( fh ) != '\n' )
+    if ( codep[ 0 ] & 0x80 )
     {
-        return;
-    }
-
-    start = ftell( fh );
-
-    while ( ! feof( fh ) && ( fgetc( fh ) != '\n' ) )
-    {
-        /* EMPTY */
-    }
-
-    if ( feof( fh ) )
-    {
-        /* No complete extension found. */
-        return;
-    }
-
-    end = ftell( fh );
-
-    if ( ( buffer = (char *)malloc( end - start ) ) == NULL )
-    {
-        /* No memory. */
-        return;
-    }
-
-    if ( fseek( fh, start, SEEK_SET ) != 0 )
-    {
-        /* I/O error. */
-        return;
-    }
-
-    fgets( buffer, end - start, fh );
-    buffer[ (end - start) - 1 ] = '\0';
-
-    if ( _PDCLIB_tzparse( buffer, data, false ) )
-    {
-        /* Attempt to reuse existing abbreviations.
-           Without this, America/Anchorage would be right on
-           the edge after 2037 when TZ_MAX_CHARS is 50, as
-           sp->charcnt equals 40 (for LMT AST AWT APT AHST
-           AHDT YST AKDT AKST) and ts->charcnt equals 10
-           (for AKST AKDT).  Reusing means sp->charcnt can
-           stay 40 in this example.
+        /* Do two's-complement negation even on non-two's-complement machines.
+           If the result would be minval - 1, return minval.
         */
-        /*
-        int gotabbr = 0;
-        int charcnt = data->charcnt;
-        */
-        /* TODO */
+      result -= ! TWOS_COMPLEMENT( int_fast64_t ) && result != 0;
+      result += minval;
     }
+
+    return result;
 }
 
-static struct _PDCLIB_timezone * tzread_data( FILE * fh )
+static bool differ_by_repeat( const time_t t1, const time_t t0 )
 {
-    struct _PDCLIB_timezone * data;
-    char magic[4];
-    char reserved[15];
-    int_fast32_t i;
-    int_fast32_t idx;
-
-    /* These two counts are only needed during the actual read. The other
-       counts are stored in the tzdata_t structure.
-    */
-    int_fast32_t isutcnt;
-    int_fast32_t isstdcnt;
-
-    /* magic */
-    if ( fread( magic, 1, 4, fh ) != 4 || memcmp( magic, "TZif", 4 ) != 0 )
-    {
-        errno = EINVAL;
-        return NULL;
-    }
-
-    /* version -- \0, '2', or '3' */
-    if ( tzread_val( E_UCHAR, fh ) < '2' )
-    {
-        /* Minimum required version is version 2 (64-bit time values). */
-        errno = EINVAL;
-        return NULL;
-    }
-
-    /* reserved */
-    if ( fread( reserved, 1, 15, fh ) != 15 )
-    {
-        errno = EINVAL;
-        return NULL;
-    }
-
-    if ( ( data = (struct _PDCLIB_timezone *)calloc( 1, sizeof( struct _PDCLIB_timezone ) ) ) == NULL )
-    {
-        /* Memory allocation failed */
-        errno = ENOMEM;
-        return NULL;
-    }
-
-    /* counts */
-    isutcnt  = tzread_val( E_INT32, fh );
-    isstdcnt = tzread_val( E_INT32, fh );
-
-    data->leapcnt = tzread_val( E_INT32, fh );
-    data->timecnt = tzread_val( E_INT32, fh );
-    data->typecnt = tzread_val( E_INT32, fh );
-    data->charcnt = tzread_val( E_INT32, fh );
-
-    /* Skip v1 data block
-       (timecnt * 4)       transition times
-       (timecnt)           transition types
-       (typecnt * 6)       local time type records
-       (charcnt)           time zone designations
-       (leapcnt * (4 + 4)) leap-second records
-       (isstdcnt)          standard/wall indicators
-       (isutcnt)           UT/local indicators
-    */
-    if ( fseek( fh, (data->timecnt * 5) + (data->typecnt * 6) + data->charcnt + (data->leapcnt * 8) + isstdcnt + isutcnt, SEEK_CUR ) != 0 )
-    {
-        free_tzdata( data );
-        errno = EINVAL;
-        return NULL;
-    }
-
-    /* magic, v2 */
-    if ( fread( magic, 1, 4, fh ) != 4 || memcmp( magic, "TZif", 4 ) != 0 )
-    {
-        free_tzdata( data );
-        errno = EINVAL;
-        return NULL;
-    }
-
-    /* version -- '2' or '3' (we ruled out version 1 above) */
-    data->ver = tzread_val( E_UCHAR, fh );
-
-    /* reserved */
-    if ( fread( reserved, 1, 15, fh ) != 15 )
-    {
-        errno = EINVAL;
-        return NULL;
-    }
-
-    /* counts */
-    isutcnt  = tzread_val( E_INT32, fh );
-    isstdcnt = tzread_val( E_INT32, fh );
-
-    data->leapcnt = tzread_val( E_INT32, fh );
-    data->timecnt = tzread_val( E_INT32, fh );
-    data->typecnt = tzread_val( E_INT32, fh );
-    data->charcnt = tzread_val( E_INT32, fh );
-
-    /* Allocating memory */
-    data->transition = (struct _PDCLIB_transition_t *)calloc( data->timecnt, sizeof( struct _PDCLIB_transition_t ) );
-    data->type = (struct _PDCLIB_type_t *)calloc( data->typecnt, sizeof( struct _PDCLIB_type_t ) );
-    data->leapsecond = (struct _PDCLIB_leapsecond_t *)calloc( data->leapcnt, sizeof( struct _PDCLIB_leapsecond_t ) );
-    data->designations = (char *)malloc( data->charcnt );
-
-    data->leapcap = data->leapcnt;
-    data->timecap = data->timecnt;
-
-    if ( data->transition == NULL || data->type == NULL || data->leapsecond == NULL || data->designations == NULL )
-    {
-        free_tzdata( data );
-        errno = ENOMEM;
-        return NULL;
-    }
-
-    /* We check each time stamp in the file against the value range of
-       time_t. (Values in the file are 64 bit, time_t might be less, or
-       have a different epoch.)
-       Values too large are dropped wholesale. The last of the too-small
-       values gets floor()ed to the minimum representable value, so we
-       "enter" valid value ranges with a defined state. To store the
-       information which entries were in range or not (for when we read
-       in type information in the next loop and have to drop the same
-       indices as in this one), we temporarily use transition_t.typeidx
-       as bool.
-       i is the file entry index, idx the stored timestamp index.
-    */
-    for ( i = 0, idx = 0; i < data->timecnt; ++i )
-    {
-        time_t time;
-
-        if ( ( data->transition[ i ].typeidx = tzread_time( &time, fh ) ) < 1 )
-        {
-            if ( idx > 0 )
-            {
-                /* Sanity check. */
-                if ( time < data->transition[ idx - 1 ].time )
-                {
-                    free_tzdata( data );
-                    errno = EINVAL;
-                    return NULL;
-                }
-
-                /* Using the last entry floor()ed to _PDCLIB_TIME_MIN
-                   by tzread_time() as idx zero.
-                */
-                if ( time == data->transition[ idx - 1 ].time )
-                {
-                    data->transition[ i - 1 ].typeidx = -1;
-                    --idx;
-                }
-            }
-
-            data->transition[ idx++ ].time = time;
-        }
-    }
-
-    /* Now read the type indices corresponding to the timestamps that
-       checked out OK in the loop above.
-    */
-    for ( i = 0, idx = 0; i < data->timecnt; ++i )
-    {
-        unsigned char type = tzread_val( E_UCHAR, fh );
-
-        /* Sanity check. */
-        if ( type > data->typecnt )
-        {
-            free_tzdata( data );
-            errno = EINVAL;
-            return NULL;
-        }
-
-        if ( data->transition[ i ].typeidx == 0 )
-        {
-            data->transition[ idx++ ].typeidx = type;
-        }
-    }
-
-    /* TODO: data->timecnt versus data->timecap -- realloc? */
-    data->timecnt = idx;
-
-    /* Read transition type info -- UT offset, DST, designation index */
-    for ( i = 0; i < data->typecnt; ++i )
-    {
-        data->type[i].utoff = tzread_val( E_INT32, fh );
-
-        /* Sanity check -- expecting bool */
-        if ( ( data->type[i].isdst = tzread_val( E_UCHAR, fh ) ) > 1 )
-        {
-            free_tzdata( data );
-            errno = EINVAL;
-            return NULL;
-        }
-
-        /* Sanity check -- should be a pointer into designations array */
-        if ( ( data->type[i].desigidx = tzread_val( E_UCHAR, fh ) ) >= data->charcnt )
-        {
-            free_tzdata( data );
-            errno = EINVAL;
-            return NULL;
-        }
-    }
-
-    /* Read designations array */
-    fread( data->designations, 1, data->charcnt, fh );
-
-    /* Read leap second entries, again checking timestamps against time_t
-       value range.
-    */
-    for ( i = 0, idx = 0; i < data->leapcnt; ++i )
-    {
-        time_t time;
-
-        if ( tzread_time( &time, fh ) == 0 )
-        {
-            /* Sanity check -- no leap seconds before Unix epoch (1970) */
-            if ( time < _PDCLIB_EPOCH_BIAS )
-            {
-                free_tzdata( data );
-                errno = EINVAL;
-                return NULL;
-            }
-
-            data->leapsecond[ idx ].occur = time;
-            data->leapsecond[ idx ].corr = tzread_val( E_INT32, fh );
-            ++idx;
-        }
-    }
-
-    /* TODO: data->leapcnt versus data->leapcap -- realloc? */
-    data->leapcnt = idx;
-
-    /* Read isstd flags */
-    for ( i = 0; i < isstdcnt; ++i )
-    {
-        /* Sanity check -- expecting bool */
-        if ( ( data->type[i].isstd = tzread_val( E_UCHAR, fh ) ) > 1 )
-        {
-            free_tzdata( data );
-            errno = EINVAL;
-            return NULL;
-        }
-    }
-
-    /* Read isut flags */
-    for ( i = 0; i < isutcnt; ++i )
-    {
-        /* Sanity check -- expecting bool */
-        if ( ( data->type[i].isut = tzread_val( E_UCHAR, fh ) ) > 1 )
-        {
-            free_tzdata( data );
-            errno = EINVAL;
-            return NULL;
-        }
-    }
-
-    return data;
-}
-
-static bool typesequiv( struct _PDCLIB_timezone const * data, int_fast32_t a, int_fast32_t b )
-{
-    struct _PDCLIB_type_t const * type_a;
-    struct _PDCLIB_type_t const * type_b;
-
-    if ( data == NULL || a < 0 || a >= data->typecnt || b < 0 || b >= data->typecnt )
-    {
-        return false;
-    }
-
-    type_a = &data->type[ a ];
-    type_b = &data->type[ b ];
-
-    return type_a->utoff == type_b->utoff &&
-           type_a->isdst == type_b->isdst &&
-           type_a->isstd == type_b->isstd &&
-           type_a->isut  == type_b->isut  &&
-           ( strcmp( &data->designations[ type_a->desigidx ], &data->designations[ type_b->desigidx ] ) == 0 );
-}
-
-static bool differ_by_repeat( time_t const t1, time_t const t0 )
-{
-    if ( ( sizeof( time_t ) * CHAR_BIT ) < SECSPERREPEAT_BITS )
+    if ( TYPE_BIT( time_t ) - TYPE_SIGNED( time_t ) < SECSPERREPEAT_BITS )
     {
         return 0;
     }
@@ -569,41 +78,514 @@ static bool differ_by_repeat( time_t const t1, time_t const t0 )
     return ( t1 - t0 ) == SECSPERREPEAT;
 }
 
-/* Setting goback, goahead, and defaulttype fields based on file data. */
-static void tzdata_complete( struct _PDCLIB_timezone * data )
+static bool typesequiv( const struct state * sp, int a, int b )
 {
-    int_fast32_t i;
+    bool result;
 
-    if ( data->timecnt > 1 )
+    if ( sp == NULL ||
+         a < 0 || a >= sp->typecnt ||
+         b < 0 || b >= sp->typecnt )
     {
-        for ( i = 1; i < data->timecnt; ++i )
+        result = false;
+    }
+    else
+    {
+        const struct ttinfo *  ap = &sp->ttis[ a ];
+        const struct ttinfo *  bp = &sp->ttis[ b ];
+
+        result = ( ap->tt_utoff == bp->tt_utoff &&
+                   ap->tt_isdst == bp->tt_isdst &&
+                   ap->tt_ttisstd == bp->tt_ttisstd &&
+                   ap->tt_ttisut == bp->tt_ttisut &&
+                   ( strcmp( &sp->chars[ ap->tt_desigidx ], &sp->chars[ bp->tt_desigidx ] ) == 0 )
+                 );
+    }
+
+    return result;
+}
+
+#define TZ_MAGIC "TZif"
+
+struct tzhead
+{
+    char tzh_magic[ 4 ];       /* TZ_MAGIC */
+    char tzh_version[ 1 ];     /* '\0' or '2' or '3' as of 2013 */
+    char tzh_reserved[ 15 ];   /* reserved; must be zero */
+    char tzh_ttisutcnt[ 4 ];   /* coded number of trans. time flags */
+    char tzh_ttisstdcnt[ 4 ];  /* coded number of trans. time flags */
+    char tzh_leapcnt[ 4 ];     /* coded number of leap seconds */
+    char tzh_timecnt[ 4 ];     /* coded number of transition times */
+    char tzh_typecnt[ 4 ];     /* coded number of local time types */
+    char tzh_charcnt[ 4 ];     /* coded number of abbr. chars */
+};
+
+/* Input buffer for data read from a compiled tz file.  */
+union input_buffer
+{
+    /* The first part of the buffer, interpreted as a header.  */
+    struct tzhead tzhead;
+
+    /* The entire buffer.  */
+    char buf[ 2 * sizeof ( struct tzhead ) + 2 * sizeof ( struct state ) + 4 * TZ_MAX_TIMES ];
+};
+
+/* _PDCLIB_TZDIR with a trailing '/' rather than a trailing '\0'.  */
+static char const tzdirslash[ sizeof _PDCLIB_TZDIR ] = _PDCLIB_TZDIR "/";
+
+/* Local storage needed for 'tzloadbody'.  */
+union local_storage
+{
+    /* The results of analyzing the file's contents after it is opened.  */
+    struct file_analysis
+    {
+        /* The input buffer.  */
+        union input_buffer u;
+
+        /* A temporary state used for parsing a TZ string in the file.  */
+        struct state st;
+    } u;
+
+    /* The file name to be opened.  */
+    char fullname[ BIGGEST ( sizeof ( struct file_analysis ), sizeof tzdirslash + 1024 ) ];
+};
+
+static int_fast64_t leapcorr( struct state const * sp, time_t t )
+{
+    struct lsinfo const * lp;
+    int i;
+
+    i = sp->leapcnt;
+
+    while ( --i >= 0 )
+    {
+        lp = &sp->lsis[ i ];
+
+        if ( t >= lp->ls_trans )
         {
-            /* Whether the current transition time and the first transition
-               time form a complete "repeat" of 400 years.
-            */
-            if ( typesequiv( data, i, 0 ) &&
-                 differ_by_repeat( data->transition[ i ].time, data->transition[ 0 ].time ) )
+            return lp->ls_corr;
+        }
+    }
+
+    return 0;
+}
+
+/* Load tz data from the file named NAME into *SP.  Read extended
+   format if DOEXTEND.  Use *LSP for temporary storage.  Return 0 on
+   success, an errno value on failure.  */
+static int tzloadbody( char const * name, struct state * sp, bool doextend, union local_storage * lsp )
+{
+    int    i;
+    FILE * fid;
+    int    stored;
+    size_t nread;
+    bool   doaccess;
+    union  input_buffer * up = &lsp->u.u;
+    size_t tzheadsize = sizeof ( struct tzhead );
+
+    sp->goback = sp->goahead = false;
+
+    if ( ! name )
+    {
+        name = _PDCLIB_TZDEFAULT;
+
+        if ( ! name )
+        {
+            return _PDCLIB_EINVAL;
+        }
+    }
+
+    if ( name[ 0 ] == ':' )
+    {
+        ++name;
+    }
+
+    doaccess = name[ 0 ] == '/';
+
+    if ( ! doaccess )
+    {
+        char const * dot;
+        size_t namelen = strlen( name );
+
+        if ( sizeof lsp->fullname - sizeof tzdirslash <= namelen )
+        {
+            return _PDCLIB_ENAMETOOLONG;
+        }
+
+        /* Create a string "TZDIR/NAME".  Using sprintf here
+           would pull in stdio (and would fail if the
+           resulting string length exceeded INT_MAX!).
+        */
+        memcpy( lsp->fullname, tzdirslash, sizeof tzdirslash );
+        strcpy( lsp->fullname + sizeof tzdirslash, name );
+
+        /* Set doaccess if NAME contains a ".." file name
+           component, as such a name could read a file outside
+           the TZDIR virtual subtree.
+        */
+        for ( dot = name; ( dot = strchr( dot, '.' ) ); ++dot )
+        {
+            if ( ( dot == name || dot[ -1 ] == '/' ) && dot[ 1 ] == '.' && ( dot[ 2 ] == '/' || ! dot[ 2 ] ) )
             {
-                data->goback = true;
+                doaccess = true;
                 break;
             }
         }
 
-        for ( i = data->timecnt - 2; i >= 0; --i )
+        name = lsp->fullname;
+    }
+
+    fid = fopen( name, "rb" );
+
+    if ( fid == NULL )
+    {
+        return errno;
+    }
+
+    nread = fread( up->buf, 1, sizeof up->buf, fid );
+
+    if ( nread < tzheadsize )
+    {
+        int err = errno;
+
+        if ( ! ferror( fid ) )
         {
-            /* Whether the current transition time and the last transition
-               time form a complete "repeat" of 400 years.
-            */
-            if ( typesequiv( data, data->timecnt - 1, i ) &&
-                 differ_by_repeat( data->transition[ data->timecnt - 1 ].time, data->transition[ i ].time ) )
+            err = _PDCLIB_EINVAL;
+        }
+
+        fclose( fid );
+        return err;
+    }
+
+    if ( fclose( fid ) == EOF )
+    {
+        return errno;
+    }
+
+    for ( stored = 4; stored <= 8; stored *= 2 )
+    {
+        int_fast32_t ttisstdcnt = detzcode( up->tzhead.tzh_ttisstdcnt );
+        int_fast32_t ttisutcnt = detzcode( up->tzhead.tzh_ttisutcnt );
+        int_fast64_t prevtr = 0;
+        int_fast32_t prevcorr = 0;
+        int_fast32_t leapcnt = detzcode( up->tzhead.tzh_leapcnt );
+        int_fast32_t timecnt = detzcode( up->tzhead.tzh_timecnt );
+        int_fast32_t typecnt = detzcode( up->tzhead.tzh_typecnt );
+        int_fast32_t charcnt = detzcode( up->tzhead.tzh_charcnt );
+        char const *p = up->buf + tzheadsize;
+        /* Although tzfile(5) currently requires typecnt to be nonzero,
+           support future formats that may allow zero typecnt
+           in files that have a TZ string and no transitions.
+        */
+        if ( ! ( 0 <= leapcnt && leapcnt < TZ_MAX_LEAPS
+               && 0 <= typecnt && typecnt < TZ_MAX_TYPES
+               && 0 <= timecnt && timecnt < TZ_MAX_TIMES
+               && 0 <= charcnt && charcnt < TZ_MAX_CHARS
+               && ( ttisstdcnt == typecnt || ttisstdcnt == 0 )
+               && ( ttisutcnt == typecnt || ttisutcnt == 0 ) ) )
+        {
+            return _PDCLIB_EINVAL;
+        }
+
+        if ( nread
+            < ( tzheadsize       /* struct tzhead */
+              + timecnt * stored   /* ats */
+              + timecnt        /* types */
+              + typecnt * 6        /* ttinfos */
+              + charcnt        /* chars */
+              + leapcnt * ( stored + 4 ) /* lsinfos */
+              + ttisstdcnt     /* ttisstds */
+              + ttisutcnt ) )        /* ttisuts */
+        {
+            return _PDCLIB_EINVAL;
+        }
+
+        sp->leapcnt = leapcnt;
+        sp->timecnt = timecnt;
+        sp->typecnt = typecnt;
+        sp->charcnt = charcnt;
+
+        /* Read transitions, discarding those out of time_t range.
+           But pretend the last transition before _PDCLIB_TIME_MIN
+           occurred at _PDCLIB_TIME_MIN.
+        */
+        timecnt = 0;
+
+        for ( i = 0; i < sp->timecnt; ++i )
+        {
+            int_fast64_t at = stored == 4 ? detzcode( p ) : detzcode64( p );
+            sp->types[ i ] = at <= _PDCLIB_TIME_MAX;
+
+            if ( sp->types[ i ] )
             {
-                data->goahead = true;
+                time_t attime = ( ( TYPE_SIGNED( time_t ) ? at < _PDCLIB_TIME_MIN : at < 0 ) ? _PDCLIB_TIME_MIN : at );
+
+                if ( timecnt && attime <= sp->ats[ timecnt - 1 ] )
+                {
+                    if ( attime < sp->ats[ timecnt - 1 ] )
+                    {
+                        return _PDCLIB_EINVAL;
+                    }
+
+                    sp->types[ i - 1 ] = 0;
+                    timecnt--;
+                }
+
+                sp->ats[ timecnt++ ] = attime;
+            }
+
+            p += stored;
+        }
+
+        timecnt = 0;
+
+        for ( i = 0; i < sp->timecnt; ++i )
+        {
+            unsigned char typ = *p++;
+
+            if ( sp->typecnt <= typ )
+            {
+                return _PDCLIB_EINVAL;
+            }
+
+            if ( sp->types[ i ] )
+            {
+                sp->types[ timecnt++ ] = typ;
+            }
+        }
+
+        sp->timecnt = timecnt;
+
+        for ( i = 0; i < sp->typecnt; ++i )
+        {
+            struct ttinfo * ttisp;
+            unsigned char isdst, desigidx;
+
+            ttisp = &sp->ttis[ i ];
+            ttisp->tt_utoff = detzcode( p );
+            p += 4;
+            isdst = *p++;
+
+            if ( ! ( isdst < 2 ) )
+            {
+                return _PDCLIB_EINVAL;
+            }
+
+            ttisp->tt_isdst = isdst;
+            desigidx = *p++;
+
+            if ( ! ( desigidx < sp->charcnt ) )
+            {
+                return _PDCLIB_EINVAL;
+            }
+
+            ttisp->tt_desigidx = desigidx;
+        }
+
+        for ( i = 0; i < sp->charcnt; ++i )
+        {
+            sp->chars[ i ] = *p++;
+        }
+
+        sp->chars[ i ] = '\0';    /* ensure '\0' at end */
+
+        /* Read leap seconds, discarding those out of time_t range.  */
+        leapcnt = 0;
+
+        for ( i = 0; i < sp->leapcnt; ++i )
+        {
+            int_fast64_t tr = stored == 4 ? detzcode( p ) : detzcode64( p );
+            int_fast32_t corr = detzcode( p + stored );
+            p += stored + 4;
+
+            /* Leap seconds cannot occur before the Epoch.  */
+            if ( tr < 0 )
+            {
+                return _PDCLIB_EINVAL;
+            }
+
+            if ( tr <= _PDCLIB_TIME_MAX )
+            {
+                /* Leap seconds cannot occur more than once per UTC month,
+                   and UTC months are at least 28 days long (minus 1
+                   second for a negative leap second).  Each leap second's
+                   correction must differ from the previous one's by 1
+                   second.
+                */
+                if ( tr - prevtr < 28 * SECSPERDAY - 1 || ( corr != prevcorr - 1 && corr != prevcorr + 1 ) )
+                {
+                    return _PDCLIB_EINVAL;
+                }
+
+                sp->lsis[ leapcnt ].ls_trans = prevtr = tr;
+                sp->lsis[ leapcnt ].ls_corr = prevcorr = corr;
+                ++leapcnt;
+            }
+        }
+
+        sp->leapcnt = leapcnt;
+
+        for ( i = 0; i < sp->typecnt; ++i )
+        {
+            struct ttinfo * ttisp;
+
+            ttisp = &sp->ttis[ i ];
+
+            if ( ttisstdcnt == 0 )
+            {
+                ttisp->tt_ttisstd = false;
+            }
+            else
+            {
+                if ( *p != true && *p != false )
+                {
+                    return _PDCLIB_EINVAL;
+                }
+
+                ttisp->tt_ttisstd = *p++;
+            }
+        }
+
+        for ( i = 0; i < sp->typecnt; ++i )
+        {
+            struct ttinfo * ttisp;
+
+            ttisp = &sp->ttis[ i ];
+
+            if ( ttisutcnt == 0 )
+            {
+                ttisp->tt_ttisut = false;
+            }
+            else
+            {
+                if ( *p != true && *p != false )
+                {
+                    return _PDCLIB_EINVAL;
+                }
+
+                ttisp->tt_ttisut = *p++;
+            }
+        }
+
+        /* If this is an old file, we're done. */
+        if ( up->tzhead.tzh_version[ 0 ] == '\0' )
+        {
+            break;
+        }
+
+        nread -= p - up->buf;
+        memmove( up->buf, p, nread );
+    }
+
+    if ( doextend && nread > 2 && up->buf[ 0 ] == '\n' && up->buf[ nread - 1 ] == '\n' && sp->typecnt + 2 <= TZ_MAX_TYPES )
+    {
+        struct state    *ts = &lsp->u.st;
+
+        up->buf[ nread - 1 ] = '\0';
+
+        if ( _PDCLIB_tzparse( &up->buf[ 1 ], ts, false ) )
+        {
+            /* Attempt to reuse existing abbreviations.
+               Without this, America/Anchorage would be right on
+               the edge after 2037 when TZ_MAX_CHARS is 50, as
+               sp->charcnt equals 40 (for LMT AST AWT APT AHST
+               AHDT YST AKDT AKST) and ts->charcnt equals 10
+               (for AKST AKDT).  Reusing means sp->charcnt can
+               stay 40 in this example.  */
+            int gotabbr = 0;
+            int charcnt = sp->charcnt;
+
+            for ( i = 0; i < ts->typecnt; ++i )
+            {
+                char * tsabbr = ts->chars + ts->ttis[ i ].tt_desigidx;
+                int j;
+
+                for ( j = 0; j < charcnt; ++j )
+                {
+                    if ( strcmp( sp->chars + j, tsabbr ) == 0 )
+                    {
+                        ts->ttis[ i ].tt_desigidx = j;
+                        ++gotabbr;
+                        break;
+                    }
+                }
+
+                if ( ! ( j < charcnt ) )
+                {
+                    int tsabbrlen = strlen( tsabbr );
+
+                    if ( j + tsabbrlen < TZ_MAX_CHARS )
+                    {
+                        strcpy( sp->chars + j, tsabbr );
+                        charcnt = j + tsabbrlen + 1;
+                        ts->ttis[ i ].tt_desigidx = j;
+                        ++gotabbr;
+                    }
+                }
+            }
+
+            if ( gotabbr == ts->typecnt )
+            {
+                sp->charcnt = charcnt;
+
+                /* Ignore any trailing, no-op transitions generated
+                   by zic as they don't help here and can run afoul
+                   of bugs in zic 2016j or earlier.  */
+                while ( 1 < sp->timecnt && ( sp->types[ sp->timecnt - 1 ] == sp->types[ sp->timecnt - 2 ] ) )
+                {
+                    sp->timecnt--;
+                }
+
+                for ( i = 0; i < ts->timecnt; ++i )
+                {
+                    if ( sp->timecnt == 0 || ( sp->ats[ sp->timecnt - 1 ] < ts->ats[ i ] + leapcorr( sp, ts->ats[ i ] ) ) )
+                    {
+                        break;
+                    }
+                }
+
+                while ( i < ts->timecnt && sp->timecnt < TZ_MAX_TIMES )
+                {
+                    sp->ats[ sp->timecnt ] = ts->ats[ i ] + leapcorr( sp, ts->ats[ i ] );
+                    sp->types[ sp->timecnt ] = ( sp->typecnt + ts->types[ i ] );
+                    sp->timecnt++;
+                    ++i;
+                }
+
+                for ( i = 0; i < ts->typecnt; ++i )
+                {
+                    sp->ttis[ sp->typecnt++ ] = ts->ttis[ i ];
+                }
+            }
+        }
+    }
+
+    if ( sp->typecnt == 0 )
+    {
+        return _PDCLIB_EINVAL;
+    }
+
+    if ( sp->timecnt > 1 )
+    {
+        for ( i = 1; i < sp->timecnt; ++i )
+        {
+            if ( typesequiv( sp, sp->types[ i ], sp->types[ 0 ] ) && differ_by_repeat( sp->ats[ i ], sp->ats[ 0 ] ) )
+            {
+                sp->goback = true;
+                break;
+            }
+        }
+
+        for ( i = sp->timecnt - 2; i >= 0; --i )
+        {
+            if ( typesequiv( sp, sp->types[ sp->timecnt - 1 ], sp->types[ i ] ) && differ_by_repeat( sp->ats[ sp->timecnt - 1 ], sp->ats[ i ] ) )
+            {
+                sp->goahead = true;
                 break;
             }
         }
     }
 
-    /* Infer defaulttype from the data.  Although this default
+    /* Infer sp->defaulttype from the data.  Although this default
        type is always zero for data from recent tzdb releases,
        things are trickier for data from tzdb 2018e or earlier.
 
@@ -612,55 +594,52 @@ static void tzdata_complete( struct _PDCLIB_timezone * data )
        zones like Australia/Macquarie where timestamps before the
        first transition have a time type that is not the earliest
        standard-time type.  See:
-
        https://mm.icann.org/pipermail/tz/2013-May/019368.html
     */
-
-    /* If type 0 is unused in transitions, it's the type to use for
-       early times.
-    */
-    for ( i = 0; i < data->timecnt; ++i )
+    /* If type 0 is unused in transitions, it's the type to use for early times. */
+    for ( i = 0; i < sp->timecnt; ++i )
     {
-        if ( data->transition[ i ].typeidx == 0 )
+        if ( sp->types[ i ] == 0 )
         {
             break;
         }
     }
 
-    i = ( i < data->timecnt ) ? -1 : 0;
+    i = i < sp->timecnt ? -1 : 0;
 
-    /* Absent the above, if there are transition times and the first
-       transition is to a daylight savings time, find the standard
-       type less than and closest to the type of the first transition.
+    /* Absent the above,
+       if there are transition times
+       and the first transition is to a daylight time
+       find the standard type less than and closest to
+       the type of the first transition.
     */
-
-    if ( i < 0 && data->timecnt > 0 && data->type[ data->transition[0].typeidx ].isdst )
+    if ( i < 0 && sp->timecnt > 0 && sp->ttis[ sp->types[ 0 ] ].tt_isdst )
     {
-        i = data->transition[0].typeidx;
+        i = sp->types[ 0 ];
 
         while ( --i >= 0 )
         {
-            if ( ! data->type[ i ].isdst )
+            if ( ! sp->ttis[ i ].tt_isdst )
             {
                 break;
             }
         }
     }
 
-    /* The next heuristics are for data generated by tzdb 2018e or earlie,
-       for zones like EST5EDT where the first transition is to DST.
+    /* The next heuristics are for data generated by tzdb 2018e or
+       earlier, for zones like EST5EDT where the first transition
+       is to DST.
     */
-    /* If no result yet, find the first standard type. If there is
-       none, punt to type zero.
+    /* If no result yet, find the first standard type.
+       If there is none, punt to type zero.
     */
-
     if ( i < 0 )
     {
         i = 0;
 
-        while ( data->type[ i ].isdst )
+        while ( sp->ttis[ i ].tt_isdst )
         {
-            if ( ++i >= data->typecnt )
+            if ( ++i >= sp->typecnt )
             {
                 i = 0;
                 break;
@@ -668,69 +647,23 @@ static void tzdata_complete( struct _PDCLIB_timezone * data )
         }
     }
 
-    /* A simple 'data->defaulttype = 0;' would suffice here if we did not
-       have to worry about 2018e-or-earlier data. Even simpler would be to
-       remove the defaulttype member and just use 0 in its place.
+    /* A simple 'sp->defaulttype = 0;' would suffice here if we
+       didn't have to worry about 2018e-or-earlier data.  Even
+       simpler would be to remove the defaulttype member and just
+       use 0 in its place.
     */
-    data->defaulttype = i;
-}
-
-void _PDCLIB_gmtload( void )
-{
-    static bool gmt_is_set;
-    _PDCLIB_LOCK( _PDCLIB_time_mtx );
-
-    if ( ! gmt_is_set )
-    {
-        /* load file "GMT" */
-        if ( _PDCLIB_tzload( _PDCLIB_gmt, &_PDCLIB_time_gmt, true ) != 0 )
-        {
-            /* parse "GMT" as extension string */
-            _PDCLIB_tzparse( _PDCLIB_gmt, &_PDCLIB_time_gmt, true );
-        }
-
-        gmt_is_set = true;
-    }
-
-    _PDCLIB_UNLOCK( _PDCLIB_time_mtx );
-}
-
-/* Load tz data from the named file into the given structure. Read extended
-   format if doextend is set. Return 0 on success, an errno value on failure.
-*/
-int _PDCLIB_tzload( char const * name, struct _PDCLIB_timezone * data, bool doextend )
-{
-    FILE * tzfile;
-
-    if ( ( tzfile = tzopen( name ) ) == NULL )
-    {
-        return errno;
-    }
-
-    if ( feof( tzfile ) || ( data = tzread_data( tzfile ) ) == NULL )
-    {
-        fclose( tzfile );
-        return errno;
-    }
-
-    /* Read version 3 POSIX extensions, if present. */
-    if ( doextend )
-    {
-        tzread_extension( data, tzfile );
-    }
-
-    if ( data->typecnt == 0 )
-    {
-        free_tzdata( data );
-        errno = EINVAL;
-        return errno;
-    }
-
-    fclose( tzfile );
-
-    tzdata_complete( data );
+    sp->defaulttype = i;
 
     return 0;
+}
+
+/* Load tz data from the file named NAME into *SP.  Read extended
+   format if DOEXTEND.  Return 0 on success, an errno value on failure.
+*/
+int _PDCLIB_tzload( char const * name, struct state * sp, bool doextend )
+{
+    union local_storage ls;
+    return tzloadbody( name, sp, doextend, &ls );
 }
 
 #endif
@@ -739,123 +672,9 @@ int _PDCLIB_tzload( char const * name, struct _PDCLIB_timezone * data, bool doex
 
 #include "_PDCLIB_test.h"
 
-#ifndef REGTEST
-#include "pdclib/_PDCLIB_glue.h"
-#endif
-
 int main( void )
 {
 #ifndef REGTEST
-    char * path = "testfile";
-    FILE * fh = fopen( path, "wb+" );
-    time_t time;
-    TESTCASE( fh != NULL );
-
-    /* Test values for tzread_val() */
-    /* UCHAR as bool */
-    TESTCASE( fwrite( "\x00\x01\xff\x80", 1, 4, fh ) == 4 ); /* false, true, true, true */
-    /* UCHAR as value */
-    TESTCASE( fwrite( "\x00\x01\xff\x80", 1, 4, fh ) == 4 ); /* 0, 1, 255, 128 (because unsigned) */
-    /* int32 */
-    TESTCASE( fwrite( "\x00\x00\x00\x00", 1, 4, fh ) == 4 ); /* 0 */
-    TESTCASE( fwrite( "\x7f\xff\xff\xff", 1, 4, fh ) == 4 ); /* MAX */
-    TESTCASE( fwrite( "\x80\x00\x00\x00", 1, 4, fh ) == 4 ); /* MIN */
-    TESTCASE( fwrite( "\xff\xff\xff\xff", 1, 4, fh ) == 4 ); /* -1 */
-    /* int64 */
-    TESTCASE( fwrite( "\x00\x00\x00\x00\x00\x00\x00\x00", 1, 8, fh ) == 8 ); /* 0 */
-    TESTCASE( fwrite( "\x7f\xff\xff\xff\xff\xff\xff\xff", 1, 8, fh ) == 8 ); /* MAX */
-    TESTCASE( fwrite( "\x80\x00\x00\x00\x00\x00\x00\x00", 1, 8, fh ) == 8 ); /* MIN */
-    TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\xff", 1, 8, fh ) == 8 ); /* -1 */
-
-    /* Test values for tzread_time() -- note we artificially reduced the
-       _PDCLIB_TIME_MIN / _PDCLIB_TIME_MAX range to 8 bit to be independent
-       from the actual width of time_t for testing.
-    */
-    /* ...reading with BIAS 0... */
-    TESTCASE( fwrite( "\x00\x00\x00\x00\x00\x00\x00\x7f", 1, 8, fh ) == 8 ); /* MAX */
-    TESTCASE( fwrite( "\x00\x00\x00\x00\x00\x00\x00\x80", 1, 8, fh ) == 8 ); /* MAX + 1 */
-    TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\x80", 1, 8, fh ) == 8 ); /* MIN */
-    TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\x7f", 1, 8, fh ) == 8 ); /* MIN - 1 */
-    /* ...reading with BIAS 1... */
-    TESTCASE( fwrite( "\x00\x00\x00\x00\x00\x00\x00\x7e", 1, 8, fh ) == 8 ); /* MAX - 1 */
-    TESTCASE( fwrite( "\x00\x00\x00\x00\x00\x00\x00\x7f", 1, 8, fh ) == 8 ); /* MAX */
-    TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\x7e", 1, 8, fh ) == 8 ); /* MIN - 2 */
-    TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\x7f", 1, 8, fh ) == 8 ); /* MIN - 1 */
-    TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\x80", 1, 8, fh ) == 8 ); /* MIN */
-    /* ...reading with BIAS -1... */
-    TESTCASE( fwrite( "\x00\x00\x00\x00\x00\x00\x00\x81", 1, 8, fh ) == 8 ); /* MAX + 2 */
-    TESTCASE( fwrite( "\x00\x00\x00\x00\x00\x00\x00\x80", 1, 8, fh ) == 8 ); /* MAX + 1 */
-    TESTCASE( fwrite( "\x00\x00\x00\x00\x00\x00\x00\x7f", 1, 8, fh ) == 8 ); /* MAX */
-    TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\x80", 1, 8, fh ) == 8 ); /* MIN */
-    TESTCASE( fwrite( "\xff\xff\xff\xff\xff\xff\xff\x81", 1, 8, fh ) == 8 ); /* MIN + 1 */
-
-    fclose( fh );
-    TESTCASE( ( path = _PDCLIB_realpath( path ) ) != NULL );
-    fh = tzopen( path );
-
-    /* Testing tzread_val() */
-    /* UCHAR as bool */
-    TESTCASE( ! tzread_val( E_UCHAR, fh ) );
-    TESTCASE(   tzread_val( E_UCHAR, fh ) );
-    TESTCASE(   tzread_val( E_UCHAR, fh ) );
-    TESTCASE(   tzread_val( E_UCHAR, fh ) );
-    /* UCCHAR as value */
-    TESTCASE( tzread_val( E_UCHAR, fh ) == 0 );
-    TESTCASE( tzread_val( E_UCHAR, fh ) == 1 );
-    TESTCASE( tzread_val( E_UCHAR, fh ) == 255 );
-    TESTCASE( tzread_val( E_UCHAR, fh ) == 128 );
-    /* int32 */
-    TESTCASE( tzread_val( E_INT32, fh ) == INT32_C(           0 ) );
-    TESTCASE( tzread_val( E_INT32, fh ) == INT32_C(  2147483647 ) );
-    TESTCASE( tzread_val( E_INT32, fh ) == INT32_C( -2147483648 ) );
-    TESTCASE( tzread_val( E_INT32, fh ) == INT32_C(          -1 ) );
-    /* int64 */
-    TESTCASE( tzread_val( E_INT64, fh ) == INT64_C(                    0 ) );
-    TESTCASE( tzread_val( E_INT64, fh ) == INT64_C(  9223372036854775807 ) );
-    TESTCASE( tzread_val( E_INT64, fh ) == INT64_C( -9223372036854775807 ) - 1 );
-    TESTCASE( tzread_val( E_INT64, fh ) == INT64_C(                   -1 ) );
-
-    /* Testing tzread_time() */
-    /* FIXME: Reduce _PDCLIB_TIME_MIN / _PDCLIB_TIME_MAX so testing is not
-       depending on time_t 64bit-ness.
-    */
-    _PDCLIB_EPOCH_BIAS = 0;
-    TESTCASE( tzread_time( &time, fh ) == 0 );
-    TESTCASE( time == 127 );
-    TESTCASE( tzread_time( &time, fh ) == 1 );
-    TESTCASE( time == 127 );
-    TESTCASE( tzread_time( &time, fh ) == 0 );
-    TESTCASE( time == -128 );
-    TESTCASE( tzread_time( &time, fh ) == -1 );
-    TESTCASE( time == -128 );
-
-    _PDCLIB_EPOCH_BIAS = 1;
-    TESTCASE( tzread_time( &time, fh ) == 0 );
-    TESTCASE( time == 127 );
-    TESTCASE( tzread_time( &time, fh ) == 1 );
-    TESTCASE( time == 127 );
-    TESTCASE( tzread_time( &time, fh ) == -1 );
-    TESTCASE( time == -128 );
-    TESTCASE( tzread_time( &time, fh ) == 0 );
-    TESTCASE( time == -128 );
-    TESTCASE( tzread_time( &time, fh ) == 0 );
-    TESTCASE( time == -127 );
-
-    _PDCLIB_EPOCH_BIAS = -1;
-    TESTCASE( tzread_time( &time, fh ) == 1 );
-    TESTCASE( time == 127 );
-    TESTCASE( tzread_time( &time, fh ) == 0 );
-    TESTCASE( time == 127 );
-    TESTCASE( tzread_time( &time, fh ) == 0 );
-    TESTCASE( time == 126 );
-    TESTCASE( tzread_time( &time, fh ) == -1 );
-    TESTCASE( time == -128 );
-    TESTCASE( tzread_time( &time, fh ) == 0 );
-    TESTCASE( time == -128 );
-
-    fclose( fh );
-    remove( path );
-    free( path );
 #endif
 
     return TEST_RESULTS;

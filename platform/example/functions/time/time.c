@@ -45,6 +45,8 @@ time_t time( time_t * timer )
 
 int main( void )
 {
+    time_t t = time( NULL );
+    printf( "%d\n", (int)t );
     TESTCASE( NO_TESTDRIVER );
     return TEST_RESULTS;
 }
