@@ -15,6 +15,8 @@
 
 #ifndef REGTEST
 
+#include "pdclib/_PDCLIB_tzcode.h"
+
 /* In a POSIX system, stdin / stdout / stderr are equivalent to the (int) file
    descriptors 0, 1, and 2 respectively.
 */
@@ -567,6 +569,17 @@ struct _PDCLIB_lc_time_t _PDCLIB_lc_time_C =
 };
 
 struct _PDCLIB_lc_time_t * _PDCLIB_lc_time = &_PDCLIB_lc_time_C;
+
+struct state _PDCLIB_lclmem;
+struct state _PDCLIB_gmtmem;
+
+/* Section 4.12.3 of X3.159-1989 requires that
+    Except for the strftime function, these functions [asctime,
+    ctime, gmtime, localtime] return values in one of two static
+    objects: a broken-down time structure and an array of char.
+   Thanks to Paul Eggert for noting this.
+*/
+struct tm _PDCLIB_tm;
 
 #endif
 

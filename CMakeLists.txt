@@ -218,17 +218,30 @@ set( PDCLIB_SOURCES
      functions/time/asctime.c
      functions/time/asctime_s.c
      functions/time/ctime.c
+     functions/time/ctime_s.c
      functions/time/difftime.c
      functions/time/gmtime.c
+     functions/time/gmtime_s.c
      functions/time/localtime.c
+     functions/time/localtime_s.c
      functions/time/mktime.c
      functions/time/strftime.c
      platform/example/functions/time/clock.c
      platform/example/functions/time/time.c
      platform/example/functions/time/timespec_get.c
 
-     #functions/_tzcode/_PDCLIB_tzparse.c
-     #functions/_tzcode/_PDCLIB_tzload.c
+     functions/_tzcode/_PDCLIB_gmtcheck.c
+     functions/_tzcode/_PDCLIB_gmtsub.c
+     functions/_tzcode/_PDCLIB_increment_overflow.c
+     functions/_tzcode/_PDCLIB_init_ttinfo.c
+     functions/_tzcode/_PDCLIB_localsub.c
+     functions/_tzcode/_PDCLIB_localtime_tzset.c
+     functions/_tzcode/_PDCLIB_mktime_tzname.c
+     functions/_tzcode/_PDCLIB_timesub.c
+     functions/_tzcode/_PDCLIB_tzload.c
+     functions/_tzcode/_PDCLIB_tzparse.c
+     functions/_tzcode/_PDCLIB_tzset_unlocked.c
+     functions/_tzcode/_PDCLIB_update_tzname_etc.c
 
      functions/_PDCLIB/assert.c
      functions/_PDCLIB/errno.c
@@ -302,12 +315,17 @@ set( PDCLIB_HEADERS
 # These get installed in a "pdclib" subdirectory of your system's default
 # "include" directory.
 set( PDCLIB_PRIVATE_HEADERS
-     include/pdclib/_PDCLIB_aux.h
      include/pdclib/_PDCLIB_glue.h
      include/pdclib/_PDCLIB_int.h
      include/pdclib/_PDCLIB_lib_ext1.h
-     #include/pdclib/_PDCLIB_tzcode.h
      platform/example/include/pdclib/_PDCLIB_config.h
+)
+
+# These do not get installed on your system at all, they are for building
+# PDCLib only, not for using it.
+set( PDCLIB_NOINSTALL_HEADERS
+     include/pdclib/_PDCLIB_glue.h
+     #include/pdclib/_PDCLIB_tzcode.h
 )
 
 # dlmalloc, compiled separately as its inclusion of system headers conflicts
@@ -318,8 +336,8 @@ target_include_directories( _dlmalloc  PRIVATE ${CMAKE_SOURCE_DIR}/platform/exam
 target_include_directories( _dlmallocs PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
 
 # Two libraries, one for dynamic linking, one for static linking.
-add_library( pdclib  SHARED ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmalloc>  ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
-add_library( pdclibs STATIC ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmallocs> ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} )
+add_library( pdclib  SHARED ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmalloc>  ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} )
+add_library( pdclibs STATIC ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmallocs> ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} )
 
 # The example implementation makes use of pthread. We use CMake facilities
 # to locate the pthread library for linking.
@@ -358,7 +376,7 @@ endif()
 
 # Optionally, use C++ compiler instead of C compiler.
 if ( AS_CXX )
-    set_source_files_properties( ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} PROPERTIES LANGUAGE CXX )
+    set_source_files_properties( ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} PROPERTIES LANGUAGE CXX )
 endif()
 
 # Optionally, make TESTCASE( NO_TESTDRIVER ) succeed instead of fail.

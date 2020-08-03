@@ -7,4 +7,4 @@ The latest version of tzcode can be downloaded at:
 
     https://www.iana.org/time-zones/repository/tzcode-latest.tar.gz
 
-At the time of this writing, the latest tzcode version used as basis is 2019c.
+At the time of this writing, the latest tzcode version used as basis is 2020a.
