@@ -148,22 +148,20 @@ typedef _PDCLIB_size_t rsize_t;
 */
 _PDCLIB_PUBLIC errno_t asctime_s( char * s, rsize_t maxsize, const struct tm * timeptr );
 
-/* Those declared below are not implemented yet. Placeholder declarations. */
-
 /* Equivalent to asctime_s( s, maxsize, localtime( timer ) ). */
 _PDCLIB_PUBLIC errno_t ctime_s( char * s, rsize_t maxsize, const time_t * timer );
 
 /* Converts the calender time pointed to by timer into a broken-down time
    expressed as UTC, which gets stored in the result struct.
-   Returns zero if the time was successfully converted and stored, non-zero
-   otherwise.
+   Returns a pointer to the broken-down time, or a NULL pointer if if
+   cannot be represented or stored.
    The following conditions will be considered runtime constraint violations:
    - timer or result being NULL.
    In case of a constraint violation, the time will not be converted.
    The currently active constraint violation handler function will be called
    (see set_constraint_handler_s()).
 */
-_PDCLIB_PUBLIC errno_t gmtime_s( const time_t * _PDCLIB_restrict timer, struct tm * _PDCLIB_restrict result );
+_PDCLIB_PUBLIC struct tm * gmtime_s( const time_t * _PDCLIB_restrict timer, struct tm * _PDCLIB_restrict result );
 
 /* Converts the calender time pointed to by timer into a broken-down time
    expressed as local time, which gets stored in the result struct.

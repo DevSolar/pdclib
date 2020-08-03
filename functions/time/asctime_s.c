@@ -1,4 +1,4 @@
-/* asctime_s( const struct tm * )
+/* asctime_s( char *, rsize_t, const struct tm * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -15,7 +15,7 @@
 
 errno_t asctime_s( char * s, rsize_t maxsize, const struct tm * timeptr )
 {
-    if ( s == NULL || timeptr == NULL || maxsize < 26 || maxsize > RSIZE_MAX || timeptr->tm_year < -1900 || timeptr->tm_year > 8099 /* || not normalized */ )
+    if ( s == NULL || timeptr == NULL || maxsize < 26 || maxsize > RSIZE_MAX || timeptr->tm_year < -1900 || timeptr->tm_year > 8099 /* TODO: || not normalized */ )
     {
         if ( s != NULL && maxsize > 0 && maxsize <= RSIZE_MAX )
         {
@@ -48,6 +48,8 @@ errno_t asctime_s( char * s, rsize_t maxsize, const struct tm * timeptr )
 
 int main( void )
 {
+    /* TODO: Constraint handling */
+
     struct tm time;
     MKTIME( time, 52, 3, 1, 16, 8, 73, 0, 0 );
     TESTCASE( strcmp( asctime( &time ), "Sun Sep 16 01:03:52 1973\n" ) == 0 );
