@@ -6,81 +6,40 @@
 
 #ifndef REGTEST
 
-#include "pdclib/_PDCLIB_config.h"
 #include "pdclib/_PDCLIB_tzcode.h"
 
-#include <assert.h>
 #include <ctype.h>
-#include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
-#define SECSPERMIN    60
-#define MINSPERHOUR   60
-#define HOURSPERDAY   24
-#define DAYSPERWEEK    7
-#define SECSPERHOUR  (SECSPERMIN * MINSPERHOUR)
-#define SECSPERDAY   ((int_fast32_t)SECSPERHOUR * HOURSPERDAY)
-#define MONSPERYEAR   12
-#define DAYSPERNYEAR 365
-#define DAYSPERLYEAR 366
-
-#define isleap(y) (((y) % 4) == 0 && (((y) % 100) != 0 || ((y) % 400) == 0))
-
-/* Name of the time zone data file with the default definitions */
-#define TZDEFRULES "posixrules"
+/* The DST rules to use if TZ has no rules and we can't load TZDEFRULES.
+   Default to US rules as of 2017-05-07.
+   POSIX does not specify the default DST rules;
+   for historical reasons, US rules are a common default.
+*/
+#ifndef TZDEFRULESTRING
 #define TZDEFRULESTRING ",M3.2.0,M11.1.0"
+#endif
 
-#define EPOCH_YEAR 1970
-#define YEARSPERREPEAT 400
+#ifndef TZDEFRULES
+#define TZDEFRULES "posixrules"
+#endif
 
-/* Number of entries added to transitions each time space runs out.
-   (Minimum value is 2.)
+/* Given a pointer into a timezone string, extract a number from that string.
+   Check that the number is within a specified range; if it is not, return
+   NULL.
+   Otherwise, return a pointer to the first character not part of the number.
 */
-#define _PDCLIB_EXPAND_BY 2
-
-static const int mon_lengths[2][MONSPERYEAR] =
-{
-    { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
-    { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
-};
-
-static int const year_lengths[ 2 ] = { DAYSPERNYEAR, DAYSPERLYEAR };
-
-enum r_type
-{
-    INVALID,
-    JULIAN_DAY,           /* Jn = Julian day */
-    DAY_OF_YEAR,          /* n = day of year */
-    MONTH_NTH_DAY_OF_WEEK /* Mm.n.d = month, week, day of week */
-};
-
-struct rule
-{
-    enum r_type  type;  /* type of rule */
-    int_fast32_t day;   /* day number of rule */
-    int_fast32_t week;  /* week number of rule */
-    int_fast32_t month; /* month number of rule */
-    int_fast32_t time;  /* transition time of rule */
-};
-
-/* Given the address of a string, extract a number within the given min..max
-   range.
-   Return the extracted number and advance the string to the first character
-   after the number. Return INT_FAST32_MIN if there is no address, no string
-   at that address, no number, or the number is out of range -- in this case
-   the position of the string will be indeterminate.
-*/
-static int_fast32_t getnum( char const ** str, int min, int max )
+static const char * getnum( const char * strp, int * nump, int min, int max )
 {
     char c;
-    int num = 0;
+    int  num;
 
-    if ( str == NULL || *str == NULL || ! isdigit( (unsigned char)(c = **str) ) )
+    if ( strp == NULL || ! isdigit( (unsigned char)( c = *strp ) ) )
     {
-        return INT_FAST32_MIN;
+        return NULL;
     }
+
+    num = 0;
 
     do
     {
@@ -88,223 +47,213 @@ static int_fast32_t getnum( char const ** str, int min, int max )
 
         if ( num > max )
         {
-            return INT_FAST32_MIN;
+            return NULL;    /* illegal value */
         }
 
-        c = *(++(*str));
-    } while ( isdigit( c ) );
+        c = *++strp;
+    } while ( isdigit( (unsigned char)c ) );
 
     if ( num < min )
     {
-        return INT_FAST32_MIN;
+        return NULL;        /* illegal value */
     }
 
-    return num;
+    *nump = num;
+    return strp;
 }
 
-/* Given the address of a string, extract a time offset in [+-]HH[:MM[:SS]]
-   notation.
-   Return the extracted offset in seconds and advance the string to the first
-   character after the number. Return INT_FAST32_MIN if there is no address,
-   no string at that address, or no number -- in this case the position of the
-   string will be indeterminate.
+/* Given a pointer into a timezone string, extract a number of seconds,
+   in hh[:mm[:ss]] form, from the string.
+   If any error occurs, return NULL.
+   Otherwise, return a pointer to the first character not part of the number
+   of seconds.
 */
-static int_fast32_t getoffset( char const ** str )
+static const char * getsecs( const char * strp, int_fast32_t * secsp )
 {
-    int_fast32_t seconds = 0;
-    int_fast32_t num;
-    bool neg = false;
+    int num;
 
-    if ( str == NULL || *str == NULL )
+    /* 'HOURSPERDAY * DAYSPERWEEK - 1' allows quasi-Posix rules like
+       "M10.4.6/26", which does not conform to Posix,
+       but which specifies the equivalent of
+       "02:00 on the first Sunday on or after 23 Oct".
+    */
+    strp = getnum( strp, &num, 0, HOURSPERDAY * DAYSPERWEEK - 1 );
+
+    if ( strp == NULL )
     {
-        return INT_FAST32_MIN;
+        return NULL;
     }
 
-    if ( **str == '-' )
-    {
-        neg = true;
-        ++*str;
-    }
-    else if ( **str == '+' )
-    {
-        ++*str;
-    }
+    *secsp = num * (int_fast32_t) SECSPERHOUR;
 
-    if ( ( num = getnum( str, 0, HOURSPERDAY * DAYSPERWEEK - 1 ) ) == INT_FAST32_MIN )
+    if ( *strp == ':' )
     {
-        return INT_FAST32_MIN;
-    }
+        ++strp;
+        strp = getnum( strp, &num, 0, MINSPERHOUR - 1 );
 
-    seconds = num * SECSPERHOUR;
-
-    if ( **str == ':' )
-    {
-        ++*str;
-
-        if ( ( num = getnum( str, 0, MINSPERHOUR - 1 ) ) == INT_FAST32_MIN )
+        if ( strp == NULL )
         {
-            return INT_FAST32_MIN;
+            return NULL;
         }
 
-        seconds += num * SECSPERMIN;
+        *secsp += num * SECSPERMIN;
 
-        if ( **str == ':' )
+        if ( *strp == ':' )
         {
-            ++*str;
+            ++strp;
+            /* 'SECSPERMIN' allows for leap seconds.  */
+            strp = getnum( strp, &num, 0, SECSPERMIN );
 
-            if ( ( num = getnum( str, 0, SECSPERMIN ) ) == INT_FAST32_MIN )
+            if ( strp == NULL )
             {
-                return INT_FAST32_MIN;
+                return NULL;
             }
 
-            seconds += num;
+            *secsp += num;
         }
+    }
+
+    return strp;
+}
+
+/* Given a pointer into a timezone string, extract an offset, in
+   [+-]hh[:mm[:ss]] form, from the string.
+   If any error occurs, return NULL.
+   Otherwise, return a pointer to the first character not part of the time.
+*/
+static const char * getoffset( const char * strp, int_fast32_t * offsetp )
+{
+    bool neg = false;
+
+    if ( *strp == '-' )
+    {
+        neg = true;
+        ++strp;
+    }
+    else if ( *strp == '+' )
+    {
+        ++strp;
+    }
+
+    strp = getsecs( strp, offsetp );
+
+    if ( strp == NULL )
+    {
+        return NULL;        /* illegal time */
     }
 
     if ( neg )
     {
-        seconds = -seconds;
+        *offsetp = - *offsetp;
     }
 
-    return seconds;
+    return strp;
 }
 
-/* Given the address of a string, extract a timezone rule in the format
-   [JM]nnn[/time].
-   Return the extracted rule and advance the string to the first character
-   after the number. Return a rule with rule.type == INVALID if there is no
-   address, no string at that address, or a malformed timezone rule -- in
-   this case the position of the string will be indeterminate.
+/* Given a pointer into a timezone string, extract a rule in the form
+   date[/time]. See POSIX section 8 for the format of "date" and "time".
+   If a valid rule is not found, return NULL.
+   Otherwise, return a pointer to the first character not part of the rule.
 */
-static struct rule getrule( char const ** str )
+static const char * getrule( const char * strp, struct rule * rulep )
 {
-    /* Default initialization */
-    struct rule rule = { INVALID, 0, 0, 0, 2 * SECSPERHOUR };
-
-    if ( **str == 'J' )
+    if ( *strp == 'J' )
     {
-        /* Julian day */
-        ++*str;
-
-        if ( ( rule.day = getnum( str, 1, DAYSPERNYEAR ) ) == INT_FAST32_MIN )
-        {
-            return rule;
-        }
-
-        rule.type = JULIAN_DAY;
+        /* Julian day. */
+        rulep->r_type = JULIAN_DAY;
+        ++strp;
+        strp = getnum( strp, &rulep->r_day, 1, DAYSPERNYEAR );
     }
-    else if ( **str == 'M' )
+    else if ( *strp == 'M' )
     {
-        /* Month.week.day */
-        ++*str;
+        /* Month, week, day. */
+        rulep->r_type = MONTH_NTH_DAY_OF_WEEK;
+        ++strp;
+        strp = getnum( strp, &rulep->r_mon, 1, MONSPERYEAR );
 
-        if ( ( rule.month = getnum( str, 1, MONSPERYEAR ) ) == INT_FAST32_MIN )
+        if ( strp == NULL )
         {
-            return rule;
+            return NULL;
         }
 
-        if ( *(*str++) != '.' )
+        if ( *strp++ != '.' )
         {
-            return rule;
+            return NULL;
         }
 
-        if ( ( rule.week = getnum( str, 1, 5 ) ) == INT_FAST32_MIN )
+        strp = getnum( strp, &rulep->r_week, 1, 5 );
+
+        if ( strp == NULL )
         {
-            return rule;
+            return NULL;
         }
 
-        if ( *(*str++) != '.' )
+        if ( *strp++ != '.' )
         {
-            return rule;
+            return NULL;
         }
 
-        if ( ( rule.day = getnum( str, 0, DAYSPERWEEK - 1 ) ) == INT_FAST32_MIN )
-        {
-            return rule;
-        }
-
-        rule.type = MONTH_NTH_DAY_OF_WEEK;
+        strp = getnum( strp, &rulep->r_day, 0, DAYSPERWEEK - 1 );
     }
-    else if ( isdigit( **str ) )
+    else if ( isdigit( (unsigned char)*strp ) )
     {
-        /* Day of year */
-        if ( ( rule.day = getnum( str, 0, DAYSPERLYEAR - 1 ) ) == INT_FAST32_MIN )
-        {
-            return rule;
-        }
-
-        rule.type = DAY_OF_YEAR;
+        /* Day of year. */
+        rulep->r_type = DAY_OF_YEAR;
+        strp = getnum( strp, &rulep->r_day, 0, DAYSPERLYEAR - 1 );
     }
     else
     {
-        /* Invalid format */
-        return rule;
+        return NULL;        /* invalid format */
     }
 
-    if ( **str == '/' )
+    if ( strp == NULL )
     {
-        /* Time specified */
-        ++str;
-        rule.time = getoffset( str );
+        return NULL;
     }
 
-    return rule;
-}
-
-/* Given the address of a string, scan until a character that is not valid
-   in a time zone abbreviation is found, and advance the string to that
-   character.
-*/
-static void skipzname( char const ** str )
-{
-    char c;
-
-    while ( ( c = **str ) != '\0' &&
-            ! isdigit( (unsigned char)c ) &&
-            c != ',' &&
-            c != '-' &&
-            c != '+' )
+    if ( *strp == '/' )
     {
-        ++(*str);
+        /* Time specified. */
+        ++strp;
+        strp = getoffset( strp, &rulep->r_time );
     }
-}
-
-/* Given the address of a string, scan until the given delimiter is found,
-   and advance the string to that character.
-   Return true if the delimiter was found, false otherwise.
-*/
-static bool skipuntil( char const ** str, int delim )
-{
-    int c;
-
-    while ( ( c = **str ) != '\0' &&
-            c != delim )
+    else
     {
-        ++(*str);
+        rulep->r_time = 2 * SECSPERHOUR;    /* default = 2:00:00 */
     }
 
-    return c == delim;
+    return strp;
 }
 
 /* Given a year, a rule, and the offset from UT at the time that rule takes
    effect, calculate the year-relative time that rule takes effect.
 */
-static int_fast32_t transtime( int year, struct rule const * rule, int_fast32_t offset )
+static int_fast32_t transtime( const int year, struct rule const * rulep, const int_fast32_t offset )
 {
+    bool         leapyear;
     int_fast32_t value = 0;
-    bool leapyear = isleap( year );
+    int          i;
+    int          d;
+    int          m1;
+    int          yy0;
+    int          yy1;
+    int          yy2;
+    int          dow;
 
-    switch ( rule->type )
+    leapyear = isleap( year );
+
+    switch ( rulep->r_type )
     {
         case JULIAN_DAY:
-            /* Jn - Julian day. 1 == January 1, 60 == March 1 even in leap
-               years. It is impossible to explicitly refer to the occasional
-               February 29. So on leap years, we need to add another day's
-               worth of seconds for any day from March 1 onwards.
+            /* Jn - Julian day, 1 == January 1, 60 == March 1 even in leap
+               years.
+               In non-leap years, or if the day number is 59 or less, just
+               add SECSPERDAY times the day number-1 to the time of
+               January 1, midnight, to get the day.
             */
-            value = ( rule->day - 1 ) * SECSPERDAY;
+            value = ( rulep->r_day - 1 ) * SECSPERDAY;
 
-            if ( leapyear && rule->day >= 60 )
+            if ( leapyear && rulep->r_day >= 60 )
             {
                 value += SECSPERDAY;
             }
@@ -316,22 +265,20 @@ static int_fast32_t transtime( int year, struct rule const * rule, int_fast32_t 
                Just add SECSPERDAY times the day number to the time of
                January 1, midnight, to get the day.
             */
-            value = rule->day * SECSPERDAY;
+            value = rulep->r_day * SECSPERDAY;
             break;
 
         case MONTH_NTH_DAY_OF_WEEK:
-        {
-            int i, d, m, dow;
-            div_t yy;
+            /* Mm.n.d - nth "dth day" of month m.  */
 
-            /* Mm.n.d -- nth "dth day" of month m.
-               Use Zeller's Congruence to get day-of-week of first day of
+            /* Use Zeller's Congruence to get day-of-week of first day of
                month.
             */
-            yy = div( ( rule->month <= 2 ) ? ( year - 1 ) : year, 100 );
-            m = ( rule->month + 9 ) % 12 + 1;
-            dow = ( ( 26 * m - 2 ) / 10 +
-                    1 + yy.rem + yy.rem / 4 + yy.quot / 4 - 2 * yy.quot ) % 7;
+            m1 = ( rulep->r_mon + 9 ) % 12 + 1;
+            yy0 = ( rulep->r_mon <= 2 ) ? ( year - 1 ) : year;
+            yy1 = yy0 / 100;
+            yy2 = yy0 % 100;
+            dow = ( ( 26 * m1 - 2 ) / 10 + 1 + yy2 + yy2 / 4 + yy1 / 4 - 2 * yy1 ) % 7;
 
             if ( dow < 0 )
             {
@@ -342,16 +289,16 @@ static int_fast32_t transtime( int year, struct rule const * rule, int_fast32_t 
                the day-of-month (zero-origin) of the first "dow" day of the
                month.
             */
-            d = rule->day - dow;
+            d = rulep->r_day - dow;
 
             if ( d < 0 )
             {
                 d += DAYSPERWEEK;
             }
 
-            for ( i = 1; i < rule->week; ++i )
+            for ( i = 1; i < rulep->r_week; ++i )
             {
-                if ( d + DAYSPERWEEK >= mon_lengths[ leapyear ][ rule->month - 1 ] )
+                if ( d + DAYSPERWEEK >= mon_lengths[ leapyear ][ rulep->r_mon - 1 ] )
                 {
                     break;
                 }
@@ -362,15 +309,11 @@ static int_fast32_t transtime( int year, struct rule const * rule, int_fast32_t 
             /* "d" is the day-of-month (zero-origin) of the day we want. */
             value = d * SECSPERDAY;
 
-            for ( i = 0; i < rule->month - 1; ++i )
+            for ( i = 0; i < rulep->r_mon - 1; ++i )
             {
                 value += mon_lengths[ leapyear ][ i ] * SECSPERDAY;
             }
 
-            break;
-        }
-        case INVALID:
-            assert( false );
             break;
     }
 
@@ -379,40 +322,69 @@ static int_fast32_t transtime( int year, struct rule const * rule, int_fast32_t 
        time on that day, add the transition time and the current offset
        from UT.
     */
-    return value + rule->time + offset;
+    return value + rulep->r_time + offset;
 }
 
-/* Initialize a given tzdata.type. */
-static void init_tzdata_type( struct _PDCLIB_type_t * type, int_fast32_t utoff, bool isdst, int desigidx )
-{
-    type->utoff    = utoff;
-    type->isdst    = isdst;
-    type->desigidx = desigidx;
-    type->isstd    = false;
-    type->isut     = false;
-}
-
-/* Add given value to given time_t. Return true if the addition would
-   overflow, false if addition is successful.
+/* Given a pointer into a timezone string, scan until a character that is not
+   a valid character in a time zone abbreviation is found.
+   Return a pointer to that character.
 */
-static bool increment_overflow_time( time_t * t, int_fast32_t j )
+static const char * getzname( const char * strp )
 {
-    if ( ( j < 0 ) ? _PDCLIB_TIME_MIN - j <= *t : *t <= _PDCLIB_TIME_MAX - j )
+    char c;
+
+    while ( ( c = *strp ) != '\0' && ! isdigit( (unsigned char)c ) && c != ',' && c != '-' && c != '+' )
+    {
+        ++strp;
+    }
+
+    return strp;
+}
+
+/* Given a pointer into an extended timezone string, scan until the ending
+   delimiter of the time zone abbreviation is located.
+   Return a pointer to the delimiter.
+
+   As with getzname above, the legal character set is actually quite
+   restricted, with other characters producing undefined results.
+   We don't do any checking here; checking is done later in common-case code.
+*/
+static const char * getqzname( const char *strp, const int delim )
+{
+    int c;
+
+    while ( ( c = *strp ) != '\0' && c != delim )
+    {
+        ++strp;
+    }
+
+    return strp;
+}
+
+static bool increment_overflow_time( time_t * tp, int_fast32_t j )
+{
+    /* This is like
+       'if (! (TIME_T_MIN <= *tp + j && *tp + j <= TIME_T_MAX)) ...',
+       except that it does the right thing even if *tp + j would overflow.
+    */
+    if ( ! ( j < 0
+           ? ( TYPE_SIGNED( time_t ) ? TIME_T_MIN - j <= *tp : -1 - j < *tp )
+           : *tp <= TIME_T_MAX - j ) )
     {
         return true;
     }
 
-    *t += j;
+    *tp += j;
     return false;
 }
 
-/* Given a POSIX section 8-style TZ string, fill in the rule tables of the
-   given data structure as appropriate.
+/* Given a POSIX section 8-style TZ string, fill in the rule tables as
+   appropriate.
 */
-bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool lastditch )
+bool _PDCLIB_tzparse( const char * name, struct state * sp, bool lastditch )
 {
-    char const * stdname;
-    char const * dstname;
+    const char * stdname;
+    const char * dstname;
     size_t       stdlen;
     size_t       dstlen;
     size_t       charcnt;
@@ -425,7 +397,7 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
 
     if ( lastditch )
     {
-        stdlen = sizeof( _PDCLIB_gmt ) - 1;
+        stdlen = sizeof gmt - 1;
         name += stdlen;
         stdoffset = 0;
     }
@@ -433,22 +405,21 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
     {
         if ( *name == '<' )
         {
-            /* <+01>, <-05> etc. */
-            ++name;
+            name++;
             stdname = name;
+            name = getqzname( name, '>' );
 
-            if ( ! skipuntil( &name, '>' ) )
+            if ( *name != '>' )
             {
                 return false;
             }
 
             stdlen = name - stdname;
-            ++name;
+            name++;
         }
         else
         {
-            /* GMT, MET etc. */
-            skipzname( &name );
+            name = getzname( name );
             stdlen = name - stdname;
         }
 
@@ -457,8 +428,9 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
             return false;
         }
 
-        /* -9, 3:30 etc. */
-        if ( ( stdoffset = getoffset( &name ) ) == INT_FAST32_MIN )
+        name = getoffset( name, &stdoffset );
+
+        if ( name == NULL )
         {
             return false;
         }
@@ -466,18 +438,16 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
 
     charcnt = stdlen + 1;
 
-    /* FIXME: dynamic */
-    if ( sizeof( data->charcnt ) < charcnt )
+    if ( sizeof sp->chars < charcnt )
     {
         return false;
     }
 
-    /* Loading default rules */
-    load_ok = _PDCLIB_tzload( TZDEFRULES, data, false ) == 0;
+    load_ok = _PDCLIB_tzload( TZDEFRULES, sp, false ) == 0;
 
     if ( ! load_ok )
     {
-        data->leapcnt = 0; /* so, we are off a little */
+        sp->leapcnt = 0;        /* so, we're off a little */
     }
 
     if ( *name != '\0' )
@@ -485,19 +455,20 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
         if ( *name == '<' )
         {
             dstname = ++name;
+            name = getqzname( name, '>' );
 
-            if ( ! skipuntil( &name, '>' ) )
+            if ( *name != '>' )
             {
                 return false;
             }
 
             dstlen = name - dstname;
-            ++name;
+            name++;
         }
         else
         {
             dstname = name;
-            skipzname( &name );
+            name = getzname( name );
             dstlen = name - dstname; /* length of DST abbr. */
         }
 
@@ -508,14 +479,16 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
 
         charcnt += dstlen + 1;
 
-        if ( sizeof( data->charcnt ) < charcnt )
+        if ( sizeof sp->chars < charcnt )
         {
             return false;
         }
 
         if ( *name != '\0' && *name != ',' && *name != ';' )
         {
-            if ( ( dstoffset = getoffset( &name ) ) == INT_FAST32_MIN )
+            name = getoffset( name, &dstoffset );
+
+            if ( name == NULL )
             {
                 return false;
             }
@@ -532,20 +505,18 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
 
         if ( *name == ',' || *name == ';' )
         {
-            struct rule start;
-            struct rule end;
-            int year;
-            int yearlim;
-            int timecnt;
-            time_t janfirst;
+            struct rule  start;
+            struct rule  end;
+            int          year;
+            int          yearlim;
+            int          timecnt;
+            time_t       janfirst;
             int_fast32_t janoffset = 0;
-            int yearbeg;
+            int          yearbeg;
 
             ++name;
 
-            start = getrule( &name );
-
-            if ( start.type == INVALID )
+            if ( ( name = getrule( name, &start ) ) == NULL )
             {
                 return false;
             }
@@ -555,9 +526,7 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
                 return false;
             }
 
-            end = getrule( &name );
-
-            if ( end.type == INVALID )
+            if ( ( name = getrule( name, &end ) ) == NULL )
             {
                 return false;
             }
@@ -567,34 +536,32 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
                 return false;
             }
 
-            data->typecnt = 2; /* standard time and DST */
-
-            /* Two transitions per year, from EPOCH_YEAR forward */
-            init_tzdata_type( &data->type[0], -stdoffset, false, 0 );
-            init_tzdata_type( &data->type[1], -dstoffset, true, stdlen + 1 );
-            data->defaulttype = 0;
+            sp->typecnt = 2;    /* standard time and DST */
+            /* Two transitions per year, from EPOCH_YEAR forward. */
+            _PDCLIB_init_ttinfo( &sp->ttis[ 0 ], -stdoffset, false, 0 );
+            _PDCLIB_init_ttinfo( &sp->ttis[ 1 ], -dstoffset, true, stdlen + 1 );
+            sp->defaulttype = 0;
             timecnt = 0;
             janfirst = 0;
             yearbeg = EPOCH_YEAR;
 
             do
             {
-                int_fast32_t yearsecs = year_lengths[ isleap( yearbeg - 1 ) ] * SECSPERDAY;
-                --yearbeg;
+              int_fast32_t yearsecs = year_lengths[ isleap( yearbeg - 1 ) ] * SECSPERDAY;
+              yearbeg--;
 
-                if ( increment_overflow_time( &janfirst, -yearsecs ) )
-                {
-                    janoffset = -yearsecs;
-                    break;
-                }
+              if ( increment_overflow_time( &janfirst, -yearsecs ) )
+              {
+                  janoffset = -yearsecs;
+                  break;
+              }
             } while ( EPOCH_YEAR - YEARSPERREPEAT / 2 < yearbeg );
 
             yearlim = yearbeg + YEARSPERREPEAT + 1;
 
-            for ( year = yearbeg; year < yearlim; ++year )
+            for ( year = yearbeg; year < yearlim; year++ )
             {
-                int_fast32_t starttime = transtime( year, &start, stdoffset );
-                int_fast32_t endtime = transtime( year, &end, dstoffset );
+                int_fast32_t starttime = transtime( year, &start, stdoffset ), endtime = transtime( year, &end, dstoffset );
                 int_fast32_t yearsecs = ( year_lengths[ isleap( year ) ] * SECSPERDAY );
                 bool reversed = endtime < starttime;
 
@@ -605,39 +572,34 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
                     endtime = swap;
                 }
 
-                if ( reversed || ( starttime < endtime && ( endtime - starttime < ( yearsecs + ( stdoffset - dstoffset ) ) ) ) )
+                if ( reversed
+                    || ( starttime < endtime
+                    && ( endtime - starttime
+                        < ( yearsecs
+                           + ( stdoffset - dstoffset ) ) ) ) )
                 {
-                    if ( ( data->timecap - data->timecnt ) < 2 )
+                    if ( TZ_MAX_TIMES - 2 < timecnt )
                     {
-                        /* Not enough storage; expand */
-                        void * new = realloc( data->transition, data->timecap + _PDCLIB_EXPAND_BY );
-
-                        if ( new == NULL )
-                        {
-                            break;
-                        }
-
-                        data->transition = (struct _PDCLIB_transition_t *)new;
-                        data->timecap += _PDCLIB_EXPAND_BY;
+                        break;
                     }
 
-                    data->transition[ timecnt ].time = janfirst;
+                    sp->ats[ timecnt ] = janfirst;
 
-                    if ( ! increment_overflow_time( &data->transition[ timecnt ].time, janoffset + starttime ) )
+                    if ( ! increment_overflow_time( &sp->ats[ timecnt ], janoffset + starttime ) )
                     {
-                        data->transition[ timecnt++ ].typeidx = ! reversed;
+                        sp->types[ timecnt++ ] = ! reversed;
                     }
 
-                    data->transition[ timecnt ].time = janfirst;
+                    sp->ats[ timecnt ] = janfirst;
 
-                    if ( ! increment_overflow_time( &data->transition[ timecnt ].time, janoffset + endtime ) )
+                    if ( ! increment_overflow_time( &sp->ats[ timecnt ], janoffset + endtime ) )
                     {
-                        data->transition[ timecnt++ ].typeidx = reversed;
+                        sp->types[ timecnt++ ] = reversed;
                         yearlim = year + YEARSPERREPEAT + 1;
                     }
                 }
 
-                if ( increment_overflow_time( &janfirst, janoffset + yearsecs ) )
+                if ( increment_overflow_time ( &janfirst, janoffset + yearsecs ) )
                 {
                     break;
                 }
@@ -645,93 +607,101 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
                 janoffset = 0;
             }
 
-            data->timecnt = timecnt;
+            sp->timecnt = timecnt;
 
             if ( ! timecnt )
             {
-                data->type[ 0 ] = data->type[ 1 ];
-                data->typecnt = 1; /* Perpetual DST */
+                sp->ttis[ 0 ] = sp->ttis[ 1 ];
+                sp->typecnt = 1;    /* Perpetual DST.  */
             }
             else if ( YEARSPERREPEAT < year - yearbeg )
             {
-                data->goback = data->goahead = true;
+                sp->goback = sp->goahead = true;
             }
         }
         else
         {
-            int_fast32_t theirstdoffset = 0;
-            int_fast32_t theirdstoffset = 0;
+            int_fast32_t theirstdoffset;
+            int_fast32_t theirdstoffset;
             int_fast32_t theiroffset;
-            bool isdst = false;
-            int i;
-            int j;
+            bool         isdst;
+            int          i;
+            int          j;
 
             if ( *name != '\0' )
             {
                 return false;
             }
 
-            /* Initial values of theirstdoffset and theirdstoffset */
-            for ( i = 0; i < data->timecnt; ++i )
-            {
-                j = data->transition[ i ].typeidx;
+            /* Initial values of theirstdoffset and theirdstoffset. */
+            theirstdoffset = 0;
 
-                if ( ! data->type[ j ].isdst )
+            for ( i = 0; i < sp->timecnt; ++i )
+            {
+                j = sp->types[ i ];
+
+                if ( ! sp->ttis[ j ].tt_isdst )
                 {
-                    theirstdoffset = data->type[j].utoff;
+                    theirstdoffset = - sp->ttis[ j ].tt_utoff;
                     break;
                 }
             }
 
-            for ( i = 0; i < data->timecnt; ++i )
-            {
-                j = data->transition[ i ].typeidx;
+            theirdstoffset = 0;
 
-                if ( data->type[ j ].isdst )
+            for ( i = 0; i < sp->timecnt; ++i )
+            {
+                j = sp->types[ i ];
+                if ( sp->ttis[ j ].tt_isdst )
                 {
-                    theirdstoffset = data->type[ j ].utoff;
+                    theirdstoffset = - sp->ttis[ j ].tt_utoff;
                     break;
                 }
             }
 
-            /* Initially we assume to be in standard time */
+            /* Initially we're assumed to be in standard time. */
+            isdst = false;
             theiroffset = theirstdoffset;
 
-            /* Now juggle transition times and types tracking offsets */
-            for ( i = 0; i < data->timecnt; ++i )
+            /* Now juggle transition times and types
+               tracking offsets as you do.
+            */
+            for ( i = 0; i < sp->timecnt; ++i )
             {
-                j = data->transition[ i ].typeidx;
-                data->transition[ i ].typeidx = data->type[ j ].isdst;
+                j = sp->types[ i ];
+                sp->types[ i ] = sp->ttis[ j ].tt_isdst;
 
-                if ( data->type[ j ].isut )
+                if ( sp->ttis[ j ].tt_ttisut )
                 {
-                    /* TODO -- Empty? */
                     /* No adjustment to transition time */
                 }
                 else
                 {
-                    /* If daylight saving time is in effect, and the
-                       transition time was not specified as standard time,
-                       add the daylight saving time offset to the transition
-                       time; otherwise, add the standard time offset to the
+                    /* If daylight saving time is in
+                       effect, and the transition time was
+                       not specified as standard time, add
+                       the daylight saving time offset to
+                       the transition time; otherwise, add
+                       the standard time offset to the
                        transition time.
                     */
-                    /* Transitions from DST to DDST will effectively
-                       disappear since POSIX provides for only one DST offset.
+                    /* Transitions from DST to DDST
+                       will effectively disappear since
+                       POSIX provides for only one DST
+                       offset.
                     */
-                    if ( isdst && ! data->type[ j ].isstd )
+                    if ( isdst && ! sp->ttis[ j ].tt_ttisstd )
                     {
-                        data->transition[ i ].time += dstoffset - theirdstoffset;
+                        sp->ats[ i ] += dstoffset - theirdstoffset;
                     }
                     else
                     {
-                        data->transition[ i ].time += stdoffset - theirstdoffset;
+                        sp->ats[ i ] += stdoffset - theirstdoffset;
                     }
                 }
 
-                theiroffset = -data->type[ j ].utoff;
-
-                if ( data->type[ j ].isdst )
+                theiroffset = -sp->ttis[ j ].tt_utoff;
+                if ( sp->ttis[ j ].tt_isdst )
                 {
                     theirdstoffset = theiroffset;
                 }
@@ -741,24 +711,24 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
                 }
             }
 
-            /* Finally, fill in type */
-            init_tzdata_type( &data->type[ 0 ], -stdoffset, false, 0 );
-            init_tzdata_type( &data->type[ 1 ], -dstoffset, true, stdlen + 1 );
-            data->typecnt = 2;
-            data->defaulttype = 0;
+            /* Finally, fill in ttis. */
+            _PDCLIB_init_ttinfo( &sp->ttis[ 0 ], -stdoffset, false, 0 );
+            _PDCLIB_init_ttinfo( &sp->ttis[ 1 ], -dstoffset, true, stdlen + 1 );
+            sp->typecnt = 2;
+            sp->defaulttype = 0;
         }
     }
     else
     {
         dstlen = 0;
-        data->typecnt = 1; /* only standard time */
-        data->timecnt = 0;
-        init_tzdata_type( &data->type[ 0 ], -stdoffset, false, 0 );
-        data->defaulttype = 0;
+        sp->typecnt = 1;        /* only standard time */
+        sp->timecnt = 0;
+        _PDCLIB_init_ttinfo( &sp->ttis[ 0 ], -stdoffset, false, 0 );
+        sp->defaulttype = 0;
     }
 
-    data->charcnt = charcnt;
-    cp = data->designations;
+    sp->charcnt = charcnt;
+    cp = sp->chars;
     memcpy( cp, stdname, stdlen );
     cp += stdlen;
     *cp++ = '\0';
@@ -766,7 +736,7 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
     if ( dstlen != 0 )
     {
         memcpy( cp, dstname, dstlen );
-        *(cp + dstlen ) = '\0';
+        *( cp + dstlen ) = '\0';
     }
 
     return true;
@@ -776,112 +746,11 @@ bool _PDCLIB_tzparse( char const * name, struct _PDCLIB_timezone * data, bool la
 
 #ifdef TEST
 
-#include <inttypes.h>
-
 #include "_PDCLIB_test.h"
 
 int main( void )
 {
 #ifndef REGTEST
-    char test[100] = "123_";
-    char const * str;
-    struct rule rule = { JULIAN_DAY, 0, 0, 0, 0 };
-
-    /* getnum */
-    str = test;
-    TESTCASE( getnum( &str, 0, 123 ) == 123 );
-    TESTCASE( str == test + 3 );
-    str = test;
-    TESTCASE( getnum( &str, 0, 122 ) == INT_FAST32_MIN );
-    str = test;
-    TESTCASE( getnum( &str, 123, 200 ) == 123 );
-    TESTCASE( str == test + 3 );
-    str = test;
-    TESTCASE( getnum( &str, 124, 200 ) == INT_FAST32_MIN );
-
-    /* getoffset */
-    strcpy( test, "00:00:60" );
-    str = test;
-    TESTCASE( getoffset( &str ) == 60 );
-    TESTCASE( str == ( test + 8 ) );
-    strcpy( test, "00:01:01" );
-    str = test;
-    TESTCASE( getoffset( &str ) == 61 );
-    TESTCASE( str == ( test + 8 ) );
-    strcpy( test, "01:01:01" );
-    str = test;
-    TESTCASE( getoffset( &str ) == 3661 );
-    TESTCASE( str == ( test + 8 ) );
-    strcpy( test, "-00:00:01" );
-    str = test;
-    TESTCASE( getoffset( &str ) == -1 );
-    TESTCASE( str == ( test + 9 ) );
-    strcpy( test, "-00:01:01" );
-    str = test;
-    TESTCASE( getoffset( &str ) == -61 );
-    TESTCASE( str == ( test + 9 ) );
-    strcpy( test, "-01:01:01" );
-    str = test;
-    TESTCASE( getoffset( &str ) == -3661 );
-    TESTCASE( str == ( test + 9 ) );
-    strcpy( test, "00:00:61" );
-    str = test;
-    TESTCASE( getoffset( &str ) == INT_FAST32_MIN );
-    strcpy( test, "00:59:01" );
-    str = test;
-    TESTCASE( getoffset( &str ) == 3541 );
-    TESTCASE( str == ( test + 8 ) );
-    strcpy( test, "00:60:01" );
-    str = test;
-    TESTCASE( getoffset( &str ) == INT_FAST32_MIN );
-    strcpy( test, "167:00:00" );
-    str = test;
-    TESTCASE( getoffset( &str ) == 601200 );
-    TESTCASE( str == ( test + 9 ) );
-    strcpy( test, "168:00:00" );
-    str = test;
-    TESTCASE( getoffset( &str ) == INT_FAST32_MIN );
-
-    /* skipzname */
-    strcpy( test, "MET1MEST,MET" );
-    str = test;
-    skipzname( &str );
-    TESTCASE( str == test + 3 );
-    ++str;
-    skipzname( &str );
-    TESTCASE( str == test + 8 );
-    ++str;
-    skipzname( &str );
-    TESTCASE( str == test + 12 );
-
-    /* transtime */
-    /* February 28 -- same for non-leap and leap year */
-    rule.day = 59;
-    TESTCASE( transtime( 2019, &rule, 0 ) == 5011200 );
-    TESTCASE( transtime( 2020, &rule, 0 ) == 5011200 );
-    /* March 1 -- leap year adds two day's worth in seconds */
-    rule.day = 60;
-    TESTCASE( transtime( 2019, &rule, 0 ) == 5097600 );
-    TESTCASE( transtime( 2020, &rule, 0 ) == 5184000 );
-    /* March 2 */
-    rule.day = 61;
-    TESTCASE( transtime( 2019, &rule, 0 ) == 5184000 );
-    TESTCASE( transtime( 2020, &rule, 0 ) == 5270400 );
-    /* Mm.n.d */
-    /* Only a couple of random samples */
-    rule.type = MONTH_NTH_DAY_OF_WEEK;
-    rule.month = 3; rule.week = 3; rule.day = 3;
-    TESTCASE( transtime( 2019, &rule, 0 ) == 6739200 );
-    TESTCASE( transtime( 2020, &rule, 0 ) == 6652800 );
-    rule.month = 9; rule.week = 2; rule.day = 4;
-    TESTCASE( transtime( 2019, &rule, 0 ) == 21945600 );
-    TESTCASE( transtime( 2020, &rule, 0 ) == 21859200 );
-    rule.month = 1; rule.week = 1; rule.day = 0;
-    TESTCASE( transtime( 2019, &rule, 0 ) == 432000 );
-    TESTCASE( transtime( 2020, &rule, 0 ) == 345600 );
-    rule.month = 12; rule.week = 5; rule.day = 7;
-    TESTCASE( transtime( 2019, &rule, 0 ) == 31276800 );
-    TESTCASE( transtime( 2020, &rule, 0 ) == 31190400 );
 #endif
 
     return TEST_RESULTS;

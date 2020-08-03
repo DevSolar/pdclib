@@ -227,8 +227,19 @@ set( PDCLIB_SOURCES
      platform/example/functions/time/time.c
      platform/example/functions/time/timespec_get.c
 
-     #functions/_tzcode/_PDCLIB_tzparse.c
-     #functions/_tzcode/_PDCLIB_tzload.c
+     functions/_tzcode/_PDCLIB_gmtcheck.c
+     functions/_tzcode/_PDCLIB_gmtsub.c
+     functions/_tzcode/_PDCLIB_gmtime_r.c
+     functions/_tzcode/_PDCLIB_increment_overflow.c
+     functions/_tzcode/_PDCLIB_init_ttinfo.c
+     functions/_tzcode/_PDCLIB_localsub.c
+     functions/_tzcode/_PDCLIB_localtime_tzset.c
+     functions/_tzcode/_PDCLIB_mktime_tzname.c
+     functions/_tzcode/_PDCLIB_timesub.c
+     functions/_tzcode/_PDCLIB_tzload.c
+     functions/_tzcode/_PDCLIB_tzparse.c
+     functions/_tzcode/_PDCLIB_tzset_unlocked.c
+     functions/_tzcode/_PDCLIB_update_tzname_etc.c
 
      functions/_PDCLIB/assert.c
      functions/_PDCLIB/errno.c
