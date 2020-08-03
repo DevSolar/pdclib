@@ -177,7 +177,6 @@ extern struct state _PDCLIB_gmtmem;
 #define _PDCLIB_gmtptr (&_PDCLIB_gmtmem)
 
 void        _PDCLIB_gmtcheck(void);
-struct tm * _PDCLIB_gmtime_r( const time_t *timep, struct tm * tmp );
 struct tm * _PDCLIB_gmtsub( struct state const * sp, time_t const * timep, int_fast32_t offset, struct tm * tmp );
 bool        _PDCLIB_increment_overflow( int * ip, int j );
 void        _PDCLIB_init_ttinfo( struct ttinfo * s, int_fast32_t utoff, bool isdst, int desigidx );

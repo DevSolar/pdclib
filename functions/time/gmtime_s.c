@@ -21,7 +21,8 @@ struct tm * gmtime_s( const time_t * _PDCLIB_restrict timer, struct tm * _PDCLIB
         return NULL;
     }
 
-    return _PDCLIB_gmtime_r( timer, result );
+    _PDCLIB_gmtcheck();
+    return _PDCLIB_gmtsub( _PDCLIB_gmtptr, timer, 0, result );
 }
 
 #endif
