@@ -232,7 +232,6 @@ set( PDCLIB_SOURCES
 
      functions/_tzcode/_PDCLIB_gmtcheck.c
      functions/_tzcode/_PDCLIB_gmtsub.c
-     functions/_tzcode/_PDCLIB_gmtime_r.c
      functions/_tzcode/_PDCLIB_increment_overflow.c
      functions/_tzcode/_PDCLIB_init_ttinfo.c
      functions/_tzcode/_PDCLIB_localsub.c
