@@ -130,7 +130,7 @@ union input_buffer
 };
 
 /* _PDCLIB_TZDIR with a trailing '/' rather than a trailing '\0'.  */
-static char const tzdirslash[ sizeof _PDCLIB_TZDIR ] = _PDCLIB_TZDIR "/";
+static char const tzdirslash[ sizeof _PDCLIB_TZDIR + 1 ] = _PDCLIB_TZDIR "/";
 
 /* Local storage needed for 'tzloadbody'.  */
 union local_storage
