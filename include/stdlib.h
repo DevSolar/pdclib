@@ -141,7 +141,7 @@ _PDCLIB_PUBLIC void * realloc( void * ptr, size_t size );
    temporary files before exiting with EXIT_FAILURE.
    abort() does not return.
 */
-_PDCLIB_PUBLIC _PDCLIB_Noreturn void abort( void );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void abort( void ) _PDCLIB_NORETURN;
 
 /* Register a function that will be called on quick_exit().
    At least 32 functions can be registered this way, and will be called in
@@ -163,7 +163,7 @@ _PDCLIB_PUBLIC int atexit( void ( *func )( void ) );
    and EXIT_FAILURE above.)
    exit() does not return.
 */
-_PDCLIB_PUBLIC _PDCLIB_Noreturn void exit( int status );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void exit( int status ) _PDCLIB_NORETURN;
 
 /* Normal process termination. Functions registered by at_quick_exit() (see
    above) are called, streams flushed, files closed and temporary files removed
@@ -171,7 +171,7 @@ _PDCLIB_PUBLIC _PDCLIB_Noreturn void exit( int status );
    EXIT_SUCCESS and EXIT_FAILURE above.)
    quick_exit() does not return.
 */
-_PDCLIB_PUBLIC _PDCLIB_Noreturn void quick_exit( int status );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void quick_exit( int status ) _PDCLIB_NORETURN;
 
 /* Normal process termination. Functions registered by atexit()/at_quick_exit()
    (see above) are NOT CALLED. This implementation DOES flush streams, close
@@ -179,7 +179,7 @@ _PDCLIB_PUBLIC _PDCLIB_Noreturn void quick_exit( int status );
    given status. (See comment for EXIT_SUCCESS and EXIT_FAILURE above.)
    _Exit() does not return.
 */
-_PDCLIB_PUBLIC _PDCLIB_Noreturn void _Exit( int status );
+_PDCLIB_PUBLIC _PDCLIB_Noreturn void _Exit( int status ) _PDCLIB_NORETURN;
 
 /* Search an environment-provided key-value map for the given key name, and
    return a pointer to the associated value string (or NULL if key name cannot

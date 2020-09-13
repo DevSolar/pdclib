@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_TZCODE_H
 #define _PDCLIB_TZCODE_H _PDCLIB_TZCODE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <pdclib/_PDCLIB_config.h>
 
 #include <stdbool.h>
@@ -171,5 +175,9 @@ int         _PDCLIB_tzload( char const * name, struct state * sp, bool doextend 
 bool        _PDCLIB_tzparse(char const *, struct state *, bool);
 void        _PDCLIB_tzset_unlocked( void );
 void        _PDCLIB_update_tzname_etc( struct state const * sp, struct ttinfo const * ttisp );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

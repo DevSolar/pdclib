@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the parameter */
 extern int pthread_detach( thrd_t );
+
+#ifdef __cplusplus
+}
+#endif
 
 int thrd_detach( thrd_t thr )
 {

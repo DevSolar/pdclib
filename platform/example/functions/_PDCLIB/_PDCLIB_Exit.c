@@ -14,7 +14,15 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void _exit( int status ) _PDCLIB_NORETURN;
+
+#ifdef __cplusplus
+}
+#endif
 
 void _PDCLIB_Exit( int status )
 {

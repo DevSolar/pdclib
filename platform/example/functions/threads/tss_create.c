@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the parameters. */
 extern int pthread_key_create( tss_t *, tss_dtor_t );
+
+#ifdef __cplusplus
+}
+#endif
 
 int tss_create( tss_t * key, tss_dtor_t dtor )
 {

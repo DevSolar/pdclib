@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the return type. */
 extern thrd_t pthread_self( void );
+
+#ifdef __cplusplus
+}
+#endif
 
 thrd_t thrd_current( void )
 {

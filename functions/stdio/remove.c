@@ -17,7 +17,15 @@
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int unlink( const char * pathname );
+
+#ifdef __cplusplus
+}
+#endif
 
 int remove( const char * pathname )
 {

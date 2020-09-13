@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the parameters. */
 extern int pthread_equal( thrd_t, thrd_t );
+
+#ifdef __cplusplus
+}
+#endif
 
 int thrd_equal( thrd_t thr0, thrd_t thr1 )
 {

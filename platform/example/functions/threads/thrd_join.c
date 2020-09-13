@@ -9,8 +9,16 @@
 #include <stdint.h>
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the first parameter. */
 extern int pthread_join( thrd_t, void ** );
+
+#ifdef __cplusplus
+}
+#endif
 
 int thrd_join( thrd_t thr, int * res )
 {

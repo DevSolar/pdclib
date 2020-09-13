@@ -36,7 +36,8 @@
 /* Define this to some compiler directive that can be written after the       */
 /* parameter list of a function declaration to indicate the function does     */
 /* never return. If your compiler does not support such a directive, define   */
-/* to nothing. (This is to avoid warnings with the exit functions under GCC.) */
+/* to nothing. (This is to avoid warnings with the exit functions under GCC   */
+/* when compiling with C99/C++ settings, where C11 _Noreturn is unavailable.) */
 #define _PDCLIB_NORETURN __attribute__(( noreturn ))
 
 /* -------------------------------------------------------------------------- */
