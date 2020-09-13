@@ -9,7 +9,15 @@
 #include <stdint.h>
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void pthread_exit( void * ) _PDCLIB_NORETURN;
+
+#ifdef __cplusplus
+}
+#endif
 
 void thrd_exit( int res )
 {

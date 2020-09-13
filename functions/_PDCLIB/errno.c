@@ -27,7 +27,7 @@ int * _PDCLIB_errno_func()
 
 #include <errno.h>
 
-#if __STDC_VERSION__ >= 201112L
+#if ! defined( REGTEST ) && __STDC_VERSION__ >= 201112L
 
 #include <threads.h>
 
@@ -50,7 +50,7 @@ int main( void )
     errno = ERANGE;
     TESTCASE( errno == ERANGE );
 
-#if __STDC_VERSION__ >= 201112L
+#if ! defined( REGTEST ) && __STDC_VERSION__ >= 201112L
     {
         thrd_t t;
         struct timespec spec = { 1, 0 };

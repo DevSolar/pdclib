@@ -14,9 +14,8 @@ extern "C" {
 #include "pdclib/_PDCLIB_int.h"
 
 typedef _PDCLIB_wint_t wint_t;
-
-/* wctrans_t */
-/* wctype_t */
+typedef int wctrans_t;
+typedef int wctype_t;
 
 #ifndef _PDCLIB_WEOF_DEFINED
 #define _PDCLIB_WEOF_DEFINED _PDCLIB_WEOF_DEFINED

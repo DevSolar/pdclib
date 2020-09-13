@@ -15,21 +15,23 @@
 #include <time.h>
 #endif
 
+#ifndef __STDC_NO_THREADS__
+#include <threads.h>
+extern mtx_t _PDCLIB_filelist_mtx;
+#endif
+
 #include "pdclib/_PDCLIB_glue.h"
 #include "pdclib/_PDCLIB_defguard.h"
 
 #include <stdlib.h>
 #include <string.h>
 
+#define _STRUCT_TIMESPEC
+
 #include "sys/types.h"
 #include "sys/stat.h"
 #include "fcntl.h"
 #include "unistd.h"
-
-#ifndef __STDC_NO_THREADS__
-#include <threads.h>
-extern mtx_t _PDCLIB_filelist_mtx;
-#endif
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 

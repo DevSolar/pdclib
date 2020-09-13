@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the parameter. */
 extern int pthread_cond_broadcast( cnd_t * );
+
+#ifdef __cplusplus
+}
+#endif
 
 int cnd_broadcast( cnd_t * cond )
 {

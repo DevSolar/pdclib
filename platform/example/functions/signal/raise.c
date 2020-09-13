@@ -97,8 +97,12 @@ static void test_handler( int sig )
 
 int main( void )
 {
+    void ( *sighandler )( int );
     /* Could be other than SIG_DFL if you changed the implementation. */
-    TESTCASE( signal( SIGABRT, SIG_IGN ) == SIG_DFL );
+    sighandler = signal( SIGABRT, SIG_IGN );
+#ifndef REGTEST
+    TESTCASE( sighandler == SIG_DFL );
+#endif
     /* Should be ignored. */
     TESTCASE( raise( SIGABRT ) == 0 );
     /* Installing test handler, old handler should be returned */
@@ -109,7 +113,10 @@ int main( void )
     TESTCASE( flag == 1 );
     /* Re-installing test handler, should have been reset to default */
     /* Could be other than SIG_DFL if you changed the implementation. */
-    TESTCASE( signal( SIGABRT, test_handler ) == SIG_DFL );
+    sighandler = signal( SIGABRT, test_handler );
+#ifndef REGTEST
+    TESTCASE( sighandler == SIG_DFL );
+#endif
     /* Raising and checking SIGABRT */
     flag = 0;
     TESTCASE( raise( SIGABRT ) == 0 );
@@ -120,6 +127,8 @@ int main( void )
     expected_signal = SIGTERM;
     TESTCASE( raise( SIGTERM ) == 0 );
     TESTCASE( flag == 1 );
+    /* void expression to avoid "unused" warning in regtest */
+    (void)sighandler;
     return TEST_RESULTS;
 }
 

@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the parameter. */
 extern void * pthread_getspecific( tss_t );
+
+#ifdef __cplusplus
+}
+#endif
 
 void * tss_get( tss_t key )
 {

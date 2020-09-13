@@ -376,7 +376,7 @@ endif()
 
 # Optionally, use C++ compiler instead of C compiler.
 if ( AS_CXX )
-    set_source_files_properties( ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} PROPERTIES LANGUAGE CXX )
+    set_source_files_properties( ${PDCLIB_SOURCES} PROPERTIES LANGUAGE CXX )
 endif()
 
 # Optionally, make TESTCASE( NO_TESTDRIVER ) succeed instead of fail.

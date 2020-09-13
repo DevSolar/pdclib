@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the parameter. */
 extern int pthread_mutex_lock( mtx_t * );
+
+#ifdef __cplusplus
+}
+#endif
 
 int mtx_lock( mtx_t * mtx )
 {
