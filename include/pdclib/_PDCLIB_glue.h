@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_GLUE_H
 #define _PDCLIB_GLUE_H _PDCLIB_GLUE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pdclib/_PDCLIB_int.h"
 
 /* -------------------------------------------------------------------------- */
@@ -81,5 +85,9 @@ _PDCLIB_LOCAL int _PDCLIB_remove( const char * pathname );
    done by standard rename() already.
 */
 _PDCLIB_LOCAL int _PDCLIB_rename( const char * oldpath, const char * newpath );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

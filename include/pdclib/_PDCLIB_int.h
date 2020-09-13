@@ -7,6 +7,10 @@
 #ifndef _PDCLIB_INT_H
 #define _PDCLIB_INT_H _PDCLIB_INT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* -------------------------------------------------------------------------- */
 /* You should not have to edit anything in this file; if you DO have to, it   */
 /* would be considered a bug / missing feature: notify the author(s).         */
@@ -425,7 +429,7 @@ _PDCLIB_LOCAL char * _PDCLIB_load_lines( struct _PDCLIB_file_t * stream, _PDCLIB
 /* Returns the (locale dependent) error message associated with the argument
    errno value.
 */
-char * _PDCLIB_geterrtext( int errnum );
+_PDCLIB_LOCAL char * _PDCLIB_geterrtext( int errnum );
 
 /* Returns non-zero if the given stream is on the internal list of open files,
    zero otherwise. Sets the second paramenter (if not NULL) to the previous
@@ -621,5 +625,9 @@ _PDCLIB_static_assert( sizeof( void * ) == sizeof( _PDCLIB_uintptr_t ), "Compile
 
 /* ptrdiff_t as the result of pointer arithmetic */
 _PDCLIB_static_assert( sizeof( &_PDCLIB_digits[1] - &_PDCLIB_digits[0] ) == sizeof( _PDCLIB_ptrdiff_t ), "Compiler disagrees on ptrdiff_t." );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

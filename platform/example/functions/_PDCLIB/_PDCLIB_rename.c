@@ -16,8 +16,16 @@
 
 #include "/usr/include/errno.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int unlink( const char * pathname );
 extern int link( const char * oldpath, const char * newpath );
+
+#ifdef __cplusplus
+}
+#endif
 
 int _PDCLIB_rename( const char * oldpath, const char * newpath )
 {

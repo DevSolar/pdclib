@@ -17,8 +17,16 @@
 
 #include "/usr/include/errno.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int64_t lseek64( int fd, _PDCLIB_int_least64_t offset, int whence );
 extern long lseek( int fd, long offset, int whence );
+
+#ifdef __cplusplus
+}
+#endif
 
 _PDCLIB_int_least64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int_least64_t offset, int whence )
 {

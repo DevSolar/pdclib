@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the first parameters. */
 extern int pthread_create( thrd_t *, const _PDCLIB_thrd_attr_t *, thrd_start_t, void * );
+
+#ifdef __cplusplus
+}
+#endif
 
 int thrd_create( thrd_t * thr, thrd_start_t func, void * arg )
 {

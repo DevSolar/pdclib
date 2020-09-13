@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the parameters. */
 extern int pthread_cond_wait( cnd_t *, mtx_t * );
+
+#ifdef __cplusplus
+}
+#endif
 
 int cnd_wait( cnd_t * cond, mtx_t * mtx )
 {

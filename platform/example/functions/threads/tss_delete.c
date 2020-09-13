@@ -8,8 +8,16 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Implicitly casting the parameter. */
 extern int pthread_key_delete( tss_t );
+
+#ifdef __cplusplus
+}
+#endif
 
 void tss_delete( tss_t key )
 {

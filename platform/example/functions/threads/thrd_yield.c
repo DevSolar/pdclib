@@ -8,7 +8,15 @@
 
 #include <threads.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern int pthread_yield( void );
+
+#ifdef __cplusplus
+}
+#endif
 
 void thrd_yield( void )
 {
