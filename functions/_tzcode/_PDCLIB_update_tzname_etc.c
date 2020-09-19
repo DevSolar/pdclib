@@ -11,18 +11,18 @@
 void _PDCLIB_update_tzname_etc( struct state const * sp, struct ttinfo const * ttisp )
 {
 #if HAVE_TZNAME
-    tzname[ ttisp->tt_isdst ] = (char *) &sp->chars[ ttisp->tt_desigidx ];
+    tzname[ ttisp->isdst ] = (char *) &sp->chars[ ttisp->desigidx ];
 #endif
 #if USG_COMPAT
-    if ( ! ttisp->tt_isdst )
+    if ( ! ttisp->isdst )
     {
-        timezone = - ttisp->tt_utoff;
+        timezone = - ttisp->utoff;
     }
 #endif
 #if ALTZONE
-    if ( ttisp->tt_isdst )
+    if ( ttisp->isdst )
     {
-        altzone = - ttisp->tt_utoff;
+        altzone = - ttisp->utoff;
     }
 #endif
 }

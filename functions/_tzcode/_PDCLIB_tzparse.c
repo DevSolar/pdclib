@@ -24,6 +24,22 @@
 #define TZDEFRULES "posixrules"
 #endif
 
+enum rule_t
+{
+    JULIAN_DAY,           /* Jn = Julian day                   */
+    DAY_OF_YEAR,          /* n = day of year                   */
+    MONTH_NTH_DAY_OF_WEEK /* Mm.n.d = month, week, day of week */
+};
+
+struct rule
+{
+    enum rule_t  type; /* type of rule            */
+    int          day;  /* day number of rule      */
+    int          week; /* week number of rule     */
+    int          mon;  /* month number of rule    */
+    int_fast32_t time; /* transition time of rule */
+};
+
 /* Given a pointer into a timezone string, extract a number from that string.
    Check that the number is within a specified range; if it is not, return
    NULL.
@@ -160,16 +176,16 @@ static const char * getrule( const char * strp, struct rule * rulep )
     if ( *strp == 'J' )
     {
         /* Julian day. */
-        rulep->r_type = JULIAN_DAY;
+        rulep->type = JULIAN_DAY;
         ++strp;
-        strp = getnum( strp, &rulep->r_day, 1, DAYSPERNYEAR );
+        strp = getnum( strp, &rulep->day, 1, DAYSPERNYEAR );
     }
     else if ( *strp == 'M' )
     {
         /* Month, week, day. */
-        rulep->r_type = MONTH_NTH_DAY_OF_WEEK;
+        rulep->type = MONTH_NTH_DAY_OF_WEEK;
         ++strp;
-        strp = getnum( strp, &rulep->r_mon, 1, MONSPERYEAR );
+        strp = getnum( strp, &rulep->mon, 1, MONSPERYEAR );
 
         if ( strp == NULL )
         {
@@ -181,7 +197,7 @@ static const char * getrule( const char * strp, struct rule * rulep )
             return NULL;
         }
 
-        strp = getnum( strp, &rulep->r_week, 1, 5 );
+        strp = getnum( strp, &rulep->week, 1, 5 );
 
         if ( strp == NULL )
         {
@@ -193,13 +209,13 @@ static const char * getrule( const char * strp, struct rule * rulep )
             return NULL;
         }
 
-        strp = getnum( strp, &rulep->r_day, 0, DAYSPERWEEK - 1 );
+        strp = getnum( strp, &rulep->day, 0, DAYSPERWEEK - 1 );
     }
     else if ( isdigit( (unsigned char)*strp ) )
     {
         /* Day of year. */
-        rulep->r_type = DAY_OF_YEAR;
-        strp = getnum( strp, &rulep->r_day, 0, DAYSPERLYEAR - 1 );
+        rulep->type = DAY_OF_YEAR;
+        strp = getnum( strp, &rulep->day, 0, DAYSPERLYEAR - 1 );
     }
     else
     {
@@ -215,11 +231,11 @@ static const char * getrule( const char * strp, struct rule * rulep )
     {
         /* Time specified. */
         ++strp;
-        strp = getoffset( strp, &rulep->r_time );
+        strp = getoffset( strp, &rulep->time );
     }
     else
     {
-        rulep->r_time = 2 * SECSPERHOUR;    /* default = 2:00:00 */
+        rulep->time = 2 * SECSPERHOUR;    /* default = 2:00:00 */
     }
 
     return strp;
@@ -242,7 +258,7 @@ static int_fast32_t transtime( const int year, struct rule const * rulep, const 
 
     leapyear = _PDCLIB_is_leap( year );
 
-    switch ( rulep->r_type )
+    switch ( rulep->type )
     {
         case JULIAN_DAY:
             /* Jn - Julian day, 1 == January 1, 60 == March 1 even in leap
@@ -251,9 +267,9 @@ static int_fast32_t transtime( const int year, struct rule const * rulep, const 
                add SECSPERDAY times the day number-1 to the time of
                January 1, midnight, to get the day.
             */
-            value = ( rulep->r_day - 1 ) * SECSPERDAY;
+            value = ( rulep->day - 1 ) * SECSPERDAY;
 
-            if ( leapyear && rulep->r_day >= 60 )
+            if ( leapyear && rulep->day >= 60 )
             {
                 value += SECSPERDAY;
             }
@@ -265,7 +281,7 @@ static int_fast32_t transtime( const int year, struct rule const * rulep, const 
                Just add SECSPERDAY times the day number to the time of
                January 1, midnight, to get the day.
             */
-            value = rulep->r_day * SECSPERDAY;
+            value = rulep->day * SECSPERDAY;
             break;
 
         case MONTH_NTH_DAY_OF_WEEK:
@@ -274,8 +290,8 @@ static int_fast32_t transtime( const int year, struct rule const * rulep, const 
             /* Use Zeller's Congruence to get day-of-week of first day of
                month.
             */
-            m1 = ( rulep->r_mon + 9 ) % 12 + 1;
-            yy0 = ( rulep->r_mon <= 2 ) ? ( year - 1 ) : year;
+            m1 = ( rulep->mon + 9 ) % 12 + 1;
+            yy0 = ( rulep->mon <= 2 ) ? ( year - 1 ) : year;
             yy1 = yy0 / 100;
             yy2 = yy0 % 100;
             dow = ( ( 26 * m1 - 2 ) / 10 + 1 + yy2 + yy2 / 4 + yy1 / 4 - 2 * yy1 ) % 7;
@@ -289,16 +305,16 @@ static int_fast32_t transtime( const int year, struct rule const * rulep, const 
                the day-of-month (zero-origin) of the first "dow" day of the
                month.
             */
-            d = rulep->r_day - dow;
+            d = rulep->day - dow;
 
             if ( d < 0 )
             {
                 d += DAYSPERWEEK;
             }
 
-            for ( i = 1; i < rulep->r_week; ++i )
+            for ( i = 1; i < rulep->week; ++i )
             {
-                if ( d + DAYSPERWEEK >= mon_lengths[ leapyear ][ rulep->r_mon - 1 ] )
+                if ( d + DAYSPERWEEK >= mon_lengths[ leapyear ][ rulep->mon - 1 ] )
                 {
                     break;
                 }
@@ -309,7 +325,7 @@ static int_fast32_t transtime( const int year, struct rule const * rulep, const 
             /* "d" is the day-of-month (zero-origin) of the day we want. */
             value = d * SECSPERDAY;
 
-            for ( i = 0; i < rulep->r_mon - 1; ++i )
+            for ( i = 0; i < rulep->mon - 1; ++i )
             {
                 value += mon_lengths[ leapyear ][ i ] * SECSPERDAY;
             }
@@ -322,7 +338,7 @@ static int_fast32_t transtime( const int year, struct rule const * rulep, const 
        time on that day, add the transition time and the current offset
        from UT.
     */
-    return value + rulep->r_time + offset;
+    return value + rulep->time + offset;
 }
 
 /* Given a pointer into a timezone string, scan until a character that is not
@@ -640,9 +656,9 @@ bool _PDCLIB_tzparse( const char * name, struct state * sp, bool lastditch )
             {
                 j = sp->types[ i ];
 
-                if ( ! sp->ttis[ j ].tt_isdst )
+                if ( ! sp->ttis[ j ].isdst )
                 {
-                    theirstdoffset = - sp->ttis[ j ].tt_utoff;
+                    theirstdoffset = - sp->ttis[ j ].utoff;
                     break;
                 }
             }
@@ -652,9 +668,9 @@ bool _PDCLIB_tzparse( const char * name, struct state * sp, bool lastditch )
             for ( i = 0; i < sp->timecnt; ++i )
             {
                 j = sp->types[ i ];
-                if ( sp->ttis[ j ].tt_isdst )
+                if ( sp->ttis[ j ].isdst )
                 {
-                    theirdstoffset = - sp->ttis[ j ].tt_utoff;
+                    theirdstoffset = - sp->ttis[ j ].utoff;
                     break;
                 }
             }
@@ -669,9 +685,9 @@ bool _PDCLIB_tzparse( const char * name, struct state * sp, bool lastditch )
             for ( i = 0; i < sp->timecnt; ++i )
             {
                 j = sp->types[ i ];
-                sp->types[ i ] = sp->ttis[ j ].tt_isdst;
+                sp->types[ i ] = sp->ttis[ j ].isdst;
 
-                if ( sp->ttis[ j ].tt_ttisut )
+                if ( sp->ttis[ j ].ttisut )
                 {
                     /* No adjustment to transition time */
                 }
@@ -690,7 +706,7 @@ bool _PDCLIB_tzparse( const char * name, struct state * sp, bool lastditch )
                        POSIX provides for only one DST
                        offset.
                     */
-                    if ( isdst && ! sp->ttis[ j ].tt_ttisstd )
+                    if ( isdst && ! sp->ttis[ j ].ttisstd )
                     {
                         sp->ats[ i ] += dstoffset - theirdstoffset;
                     }
@@ -700,8 +716,8 @@ bool _PDCLIB_tzparse( const char * name, struct state * sp, bool lastditch )
                     }
                 }
 
-                theiroffset = -sp->ttis[ j ].tt_utoff;
-                if ( sp->ttis[ j ].tt_isdst )
+                theiroffset = -sp->ttis[ j ].utoff;
+                if ( sp->ttis[ j ].isdst )
                 {
                     theirdstoffset = theiroffset;
                 }

@@ -20,7 +20,7 @@ time_t mktime( struct tm * timeptr )
     time_t t;
     _PDCLIB_LOCK( _PDCLIB_time_mtx );
     _PDCLIB_tzset_unlocked();
-    t = _PDCLIB_mktime_tzname( _PDCLIB_lclptr, timeptr, true );
+    t = _PDCLIB_mktime_tzname( &_PDCLIB_lclmem, timeptr, true );
     _PDCLIB_UNLOCK( _PDCLIB_time_mtx );
     return t;
 }
