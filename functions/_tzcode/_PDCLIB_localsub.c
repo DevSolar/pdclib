@@ -32,7 +32,7 @@ struct tm * _PDCLIB_localsub( struct state const * sp, time_t const * timep, int
     if ( sp == NULL )
     {
         /* Don't bother to set tzname etc.; tzset has already done it.  */
-        return _PDCLIB_gmtsub( _PDCLIB_gmtptr, timep, 0, tmp );
+        return _PDCLIB_gmtsub( &_PDCLIB_gmtmem, timep, 0, tmp );
     }
 
     if ( ( sp->goback && t < sp->ats[ 0 ] ) || ( sp->goahead && t > sp->ats[ sp->timecnt - 1 ] ) )
@@ -126,16 +126,16 @@ struct tm * _PDCLIB_localsub( struct state const * sp, time_t const * timep, int
 
     /* To get (wrong) behavior that's compatible with System V Release 2.0
        you'd replace the statement below with
-       t += ttisp->tt_utoff;
+       t += ttisp->utoff;
        timesub( &t, 0L, sp, tmp );
     */
-    result = _PDCLIB_timesub( &t, ttisp->tt_utoff, sp, tmp );
+    result = _PDCLIB_timesub( &t, ttisp->utoff, sp, tmp );
 
     if ( result )
     {
-        result->tm_isdst = ttisp->tt_isdst;
+        result->tm_isdst = ttisp->isdst;
 #ifdef TM_ZONE
-        result->TM_ZONE = (char *) &sp->chars[ ttisp->tt_desigidx ];
+        result->TM_ZONE = (char *) &sp->chars[ ttisp->desigidx ];
 #endif /* defined TM_ZONE */
 
         if ( setname )

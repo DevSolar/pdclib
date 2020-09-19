@@ -24,7 +24,7 @@ struct tm * _PDCLIB_localtime_tzset( time_t const * timep, struct tm * tmp, bool
         _PDCLIB_tzset_unlocked();
     }
 
-    tmp = _PDCLIB_localsub( _PDCLIB_lclptr, timep, setname, tmp );
+    tmp = _PDCLIB_localsub( &_PDCLIB_lclmem, timep, setname, tmp );
     _PDCLIB_UNLOCK( _PDCLIB_time_mtx );
     return tmp;
 }

@@ -42,10 +42,10 @@ struct tm * _PDCLIB_timesub( const time_t * timep, int_fast32_t offset, const st
     while ( --i >= 0 )
     {
         lp = &sp->lsis[ i ];
-        if ( *timep >= lp->ls_trans )
+        if ( *timep >= lp->trans )
         {
-            corr = lp->ls_corr;
-            hit = ( *timep == lp->ls_trans && ( i == 0 ? 0 : lp[ -1 ].ls_corr ) < corr );
+            corr = lp->corr;
+            hit = ( *timep == lp->trans && ( i == 0 ? 0 : lp[ -1 ].corr ) < corr );
             break;
         }
     }

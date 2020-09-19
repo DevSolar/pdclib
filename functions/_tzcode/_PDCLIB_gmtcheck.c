@@ -29,7 +29,7 @@ void _PDCLIB_gmtcheck( void )
 
     if ( ! gmt_is_set )
     {
-        gmtload( _PDCLIB_gmtptr );
+        gmtload( &_PDCLIB_gmtmem );
         gmt_is_set = true;
     }
 

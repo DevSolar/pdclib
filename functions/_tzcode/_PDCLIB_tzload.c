@@ -70,7 +70,7 @@ static int_fast64_t detzcode64( const char * codep )
 
 static bool differ_by_repeat( const time_t t1, const time_t t0 )
 {
-    if ( TYPE_BIT( time_t ) - _PDCLIB_TYPE_SIGNED( time_t ) < SECSPERREPEAT_BITS )
+    if ( ( sizeof( time_t ) * _PDCLIB_CHAR_BIT ) - _PDCLIB_TYPE_SIGNED( time_t ) < SECSPERREPEAT_BITS )
     {
         return 0;
     }
@@ -93,11 +93,11 @@ static bool typesequiv( const struct state * sp, int a, int b )
         const struct ttinfo *  ap = &sp->ttis[ a ];
         const struct ttinfo *  bp = &sp->ttis[ b ];
 
-        result = ( ap->tt_utoff == bp->tt_utoff &&
-                   ap->tt_isdst == bp->tt_isdst &&
-                   ap->tt_ttisstd == bp->tt_ttisstd &&
-                   ap->tt_ttisut == bp->tt_ttisut &&
-                   ( strcmp( &sp->chars[ ap->tt_desigidx ], &sp->chars[ bp->tt_desigidx ] ) == 0 )
+        result = ( ap->utoff == bp->utoff &&
+                   ap->isdst == bp->isdst &&
+                   ap->ttisstd == bp->ttisstd &&
+                   ap->ttisut == bp->ttisut &&
+                   ( strcmp( &sp->chars[ ap->desigidx ], &sp->chars[ bp->desigidx ] ) == 0 )
                  );
     }
 
@@ -160,9 +160,9 @@ static int_fast64_t leapcorr( struct state const * sp, time_t t )
     {
         lp = &sp->lsis[ i ];
 
-        if ( t >= lp->ls_trans )
+        if ( t >= lp->trans )
         {
-            return lp->ls_corr;
+            return lp->corr;
         }
     }
 
@@ -361,7 +361,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
             unsigned char isdst, desigidx;
 
             ttisp = &sp->ttis[ i ];
-            ttisp->tt_utoff = detzcode( p );
+            ttisp->utoff = detzcode( p );
             p += 4;
             isdst = *p++;
 
@@ -370,7 +370,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
                 return _PDCLIB_EINVAL;
             }
 
-            ttisp->tt_isdst = isdst;
+            ttisp->isdst = isdst;
             desigidx = *p++;
 
             if ( ! ( desigidx < sp->charcnt ) )
@@ -378,7 +378,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
                 return _PDCLIB_EINVAL;
             }
 
-            ttisp->tt_desigidx = desigidx;
+            ttisp->desigidx = desigidx;
         }
 
         for ( i = 0; i < sp->charcnt; ++i )
@@ -416,8 +416,8 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
                     return _PDCLIB_EINVAL;
                 }
 
-                sp->lsis[ leapcnt ].ls_trans = prevtr = tr;
-                sp->lsis[ leapcnt ].ls_corr = prevcorr = corr;
+                sp->lsis[ leapcnt ].trans = prevtr = tr;
+                sp->lsis[ leapcnt ].corr = prevcorr = corr;
                 ++leapcnt;
             }
         }
@@ -432,7 +432,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
 
             if ( ttisstdcnt == 0 )
             {
-                ttisp->tt_ttisstd = false;
+                ttisp->ttisstd = false;
             }
             else
             {
@@ -441,7 +441,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
                     return _PDCLIB_EINVAL;
                 }
 
-                ttisp->tt_ttisstd = *p++;
+                ttisp->ttisstd = *p++;
             }
         }
 
@@ -453,7 +453,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
 
             if ( ttisutcnt == 0 )
             {
-                ttisp->tt_ttisut = false;
+                ttisp->ttisut = false;
             }
             else
             {
@@ -462,7 +462,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
                     return _PDCLIB_EINVAL;
                 }
 
-                ttisp->tt_ttisut = *p++;
+                ttisp->ttisut = *p++;
             }
         }
 
@@ -496,14 +496,14 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
 
             for ( i = 0; i < ts->typecnt; ++i )
             {
-                char * tsabbr = ts->chars + ts->ttis[ i ].tt_desigidx;
+                char * tsabbr = ts->chars + ts->ttis[ i ].desigidx;
                 int j;
 
                 for ( j = 0; j < charcnt; ++j )
                 {
                     if ( strcmp( sp->chars + j, tsabbr ) == 0 )
                     {
-                        ts->ttis[ i ].tt_desigidx = j;
+                        ts->ttis[ i ].desigidx = j;
                         ++gotabbr;
                         break;
                     }
@@ -517,7 +517,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
                     {
                         strcpy( sp->chars + j, tsabbr );
                         charcnt = j + tsabbrlen + 1;
-                        ts->ttis[ i ].tt_desigidx = j;
+                        ts->ttis[ i ].desigidx = j;
                         ++gotabbr;
                     }
                 }
@@ -613,13 +613,13 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
        find the standard type less than and closest to
        the type of the first transition.
     */
-    if ( i < 0 && sp->timecnt > 0 && sp->ttis[ sp->types[ 0 ] ].tt_isdst )
+    if ( i < 0 && sp->timecnt > 0 && sp->ttis[ sp->types[ 0 ] ].isdst )
     {
         i = sp->types[ 0 ];
 
         while ( --i >= 0 )
         {
-            if ( ! sp->ttis[ i ].tt_isdst )
+            if ( ! sp->ttis[ i ].isdst )
             {
                 break;
             }
@@ -637,7 +637,7 @@ static int tzloadbody( char const * name, struct state * sp, bool doextend, unio
     {
         i = 0;
 
-        while ( sp->ttis[ i ].tt_isdst )
+        while ( sp->ttis[ i ].isdst )
         {
             if ( ++i >= sp->typecnt )
             {

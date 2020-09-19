@@ -50,7 +50,7 @@ static void scrub_abbrs( struct state * sp )
     for ( i = 0; i < sp->typecnt; ++i )
     {
         const struct ttinfo * const ttisp = &sp->ttis[ i ];
-        char * cp = &sp->chars[ ttisp->tt_desigidx ];
+        char * cp = &sp->chars[ ttisp->desigidx ];
 
         if ( strlen( cp ) > TZ_ABBR_MAX_LEN && strcmp( cp, GRANDPARENTED ) != 0 )
         {
@@ -97,7 +97,7 @@ static int zoneinit( struct state * sp, char const * name )
 
 static void settzname( void )
 {
-    struct state * const sp = _PDCLIB_lclptr;
+    struct state * const sp = &_PDCLIB_lclmem;
     int                  i;
 
 #if HAVE_TZNAME
@@ -126,7 +126,7 @@ static void settzname( void )
         const struct ttinfo * const ttisp = &sp->ttis[ sp->types[ i ] ];
         _PDCLIB_update_tzname_etc( sp, ttisp );
 #if USG_COMPAT
-        if ( ttisp->tt_isdst )
+        if ( ttisp->isdst )
         {
             daylight = 1;
         }
@@ -136,7 +136,7 @@ static void settzname( void )
 
 static void tzsetlcl( char const * name )
 {
-    struct state * sp = _PDCLIB_lclptr;
+    struct state * sp = &_PDCLIB_lclmem;
     int lcl = name ? strlen( name ) < sizeof lcl_TZname : -1;
 
     if ( lcl < 0
