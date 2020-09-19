@@ -20,8 +20,8 @@
 #include "pdclib/_PDCLIB_glue.h"
 #include "pdclib/_PDCLIB_defguard.h"
 
-#include "sys/types.h"
 #include "sys/stat.h"
+#include "sys/types.h"
 #include "fcntl.h"
 #include "unistd.h"
 
