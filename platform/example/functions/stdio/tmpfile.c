@@ -26,8 +26,6 @@ extern mtx_t _PDCLIB_filelist_mtx;
 #include <stdlib.h>
 #include <string.h>
 
-#define _STRUCT_TIMESPEC
-
 #include "sys/types.h"
 #include "sys/stat.h"
 #include "fcntl.h"
