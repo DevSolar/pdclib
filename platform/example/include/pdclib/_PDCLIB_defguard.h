@@ -22,4 +22,8 @@
 #define _TIMESPEC_DEFINED
 #endif
 
+#if defined( __CYGWIN__ )
+#define _STRUCT_TIMESPEC
+#endif
+
 #endif

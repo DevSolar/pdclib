@@ -16,8 +16,6 @@
 
 #include "pdclib/_PDCLIB_defguard.h"
 
-#define _STRUCT_TIMESPEC
-
 #include "sys/time.h"
 
 /* See comments in _PDCLIB_config.h on the semantics of time_t. */
