@@ -23,7 +23,7 @@ struct tm * localtime( const time_t * timer )
 
 int main( void )
 {
-    /* TODO: Timezone specific */
+    /* TODO: System Clock DST */
 
     time_t t;
     struct tm * time;

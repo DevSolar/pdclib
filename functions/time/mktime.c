@@ -35,6 +35,7 @@ time_t mktime( struct tm * timeptr )
 
 int main( void )
 {
+    /* System Clock DST */
     struct tm time;
     time_t t;
 
