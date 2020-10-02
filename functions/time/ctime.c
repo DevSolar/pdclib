@@ -29,6 +29,7 @@ char * ctime( const time_t * timer )
 
 int main( void )
 {
+    /* TODO: System Clock DST */
     time_t t;
 
     t = -2147483648l;
