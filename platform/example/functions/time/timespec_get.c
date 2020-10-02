@@ -8,12 +8,6 @@
 
 #ifndef REGTEST
 
-#ifdef __ANDROID__
-/* typedef sigset_t */
-#include "bits/signal_types.h"
-#define _STRUCT_TIMESPEC
-#endif
-
 #include "pdclib/_PDCLIB_defguard.h"
 
 #include "sys/time.h"
