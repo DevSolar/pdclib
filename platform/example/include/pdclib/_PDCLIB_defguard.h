@@ -7,21 +7,15 @@
 #ifndef _PDCLIB_DEFGUARD_H
 #define _PDCLIB_DEFGUARD_H _PDCLIB_DEFGUARD_H
 
-#if defined( __CYGWIN__ ) || defined( __ARMEL__ )
-/* sys/stat.h (for open()) and sys/time.h (for gettimeofday()) each include
-   sys/_timespec.h, which redefines struct timespec. (sys/stat.h includes
-   <time.h> itself, finding PDCLib's version, and PDCLib's time.c includes
-   <time.h> as well for obvious reasons.)
-   This define knocks out the sys/_timespec.h include by setting its include
-   guard.
-*/
-#include <time.h>
-#define _SYS__TIMESPEC_H_
-#define _STRUCT_TIMESPEC
+#if defined( __ANDROID__ )
+/* typedef sigset_t */
+#include "bits/signal_types.h"
 #endif
 
-#if defined( __MINGW32__ ) || defined ( __MINGW64__ )
 #define _TIMESPEC_DEFINED
-#endif
+#define _SYS__TIMESPEC_H_
+#define _STRUCT_TIMESPEC
+
+#include <time.h>
 
 #endif
