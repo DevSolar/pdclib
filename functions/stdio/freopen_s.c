@@ -51,6 +51,35 @@ static void test_handler( const char * _PDCLIB_restrict msg, void * _PDCLIB_rest
 int main( void )
 {
 #if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
+    FILE * fin;
+    FILE * fout;
+    FILE * dummy;
+    set_constraint_handler_s( test_handler );
+
+    TESTCASE( ( fin = fopen( testfile1, "wb+" ) ) != NULL );
+    TESTCASE( fputc( 'x', fin ) == 'x' );
+    TESTCASE( fclose( fin ) == 0 );
+    TESTCASE( freopen_s( &fin, testfile1, "rb", stdin ) == 0 );
+    TESTCASE( getchar() == 'x' );
+
+    TESTCASE( freopen_s( &fout, testfile2, "wb+", stdout ) == 0 );
+    TESTCASE( putchar( 'x' ) == 'x' );
+    rewind( fout );
+    TESTCASE( fgetc( fout ) == 'x' );
+
+    dummy = fin;
+    TESTCASE( freopen_s( &dummy, testfile1, "rb", NULL ) != 0 );
+    dummy = fin;
+    TESTCASE( freopen_s( &dummy, testfile1, NULL, stdin ) != 0 );
+    TESTCASE( freopen_s( NULL, testfile1, "rb", fin ) != 0 );
+
+    TESTCASE( fclose( fin ) == 0 );
+    TESTCASE( fclose( fout ) == 0 );
+    TESTCASE( remove( testfile1 ) == 0 );
+    TESTCASE( remove( testfile2 ) == 0 );
+
+    TESTCASE( HANDLER_CALLS == 3 );
+#else
     TESTCASE( NO_TESTDRIVER );
 #endif
     return TEST_RESULTS;
