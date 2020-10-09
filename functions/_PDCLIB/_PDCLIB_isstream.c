@@ -8,7 +8,7 @@
 
 #ifndef REGTEST
 
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 

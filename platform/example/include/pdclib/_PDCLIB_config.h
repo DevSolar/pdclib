@@ -140,9 +140,9 @@
 /* The minimum width types have a fifth define, a macro taking a value and    */
 /* expanding to an integer constant of that value, and the corresponding      */
 /* minimum width type.                                                        */
-/* The *are* predefines provided for the printf()/scanf() length specifiers,  */
+/* There *are* predefines provided for the printf()/scanf() length specifiers */
 /* but tunneling them through here would have added many lines of repetitive  */
-/* and mostly redundant defines, so these are determined in <_PDCLIB_int.h>.  */
+/* and mostly redundant defines. They are determined in <_PDCLIB_internal.h>. */
 /* -------------------------------------------------------------------------- */
 
 #define _PDCLIB_int_fast8_t        __INT_FAST8_TYPE__

@@ -1,11 +1,11 @@
-/* PDCLib internal logic <_PDCLIB_int.h>
+/* PDCLib internal logic <_PDCLIB_internal.h>
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#ifndef _PDCLIB_INT_H
-#define _PDCLIB_INT_H _PDCLIB_INT_H
+#ifndef _PDCLIB_INTERNAL_H
+#define _PDCLIB_INTERNAL_H _PDCLIB_INTERNAL_H
 
 #ifdef __cplusplus
 extern "C" {

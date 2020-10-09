@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 #include "pdclib/_PDCLIB_lib_ext1.h"
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 typedef _PDCLIB_ptrdiff_t ptrdiff_t;
 
