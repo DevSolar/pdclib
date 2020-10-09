@@ -91,7 +91,7 @@ int main( void )
     TESTCASE( fopen( NULL, "w" ) == NULL );
     TESTCASE_NOREG( fopen( "", NULL ) == NULL );
     TESTCASE( fopen( "", "w" ) == NULL );
-    TESTCASE( fopen( "foo", "" ) == NULL );
+    TESTCASE( fopen( testfile, "" ) == NULL );
     TESTCASE_NOREG( fopen( testfile, "wq" ) == NULL ); /* Undefined mode */
     TESTCASE_NOREG( fopen( testfile, "wr" ) == NULL ); /* Undefined mode */
     TESTCASE( ( fh = fopen( testfile, "w" ) ) != NULL );
