@@ -155,5 +155,5 @@ will be required in the future is already in place though.
 localeconv() function, holding all the numerical and monetary formatting
 options). There are also references to _PDCLIB_lc_* structures holding
 the other types of locale-dependent information. The definition of the
-structures is in _PDCLIB_int.h, with initialization (for the "C" locale)
+structures is in _PDCLIB_internal.h, with initialization (for the "C" locale)
 in _PDCLIB_stdinit.c.

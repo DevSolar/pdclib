@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 struct _PDCLIB_lc_collate_t * _PDCLIB_load_lc_collate( const char * path, const char * locale )
 {

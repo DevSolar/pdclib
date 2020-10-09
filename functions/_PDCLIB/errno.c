@@ -6,7 +6,7 @@
 
 #ifndef REGTEST
 
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 #if __STDC_VERSION__ >= 201112L
 _Thread_local int _PDCLIB_errno = 0;

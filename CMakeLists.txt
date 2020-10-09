@@ -319,7 +319,7 @@ set( PDCLIB_HEADERS
 # "include" directory.
 set( PDCLIB_PRIVATE_HEADERS
      include/pdclib/_PDCLIB_glue.h
-     include/pdclib/_PDCLIB_int.h
+     include/pdclib/_PDCLIB_internal.h
      include/pdclib/_PDCLIB_lib_ext1.h
      platform/example/include/pdclib/_PDCLIB_config.h
 )
