@@ -166,6 +166,8 @@ _PDCLIB_PUBLIC FILE * fopen( const char * _PDCLIB_restrict filename, const char 
    of the standard streams with files. It does *not* support mode changes on
    standard streams.
    (Primary use of this function is to redirect stdin, stdout, and stderr.)
+
+   Returns a pointer to the stream handle if successfull, NULL otherwise.
 */
 _PDCLIB_PUBLIC FILE * freopen( const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, FILE * _PDCLIB_restrict stream );
 
@@ -805,11 +807,102 @@ typedef int errno_t;
 typedef _PDCLIB_size_t rsize_t;
 #endif
 
-/* None of these are implemented yet. Placeholder declarations. */
+/* Open a temporary file with mode "wb+", i.e. binary-update. Remove the file
+   automatically if it is closed or the program exits normally (by returning
+   from main() or calling exit()).
+   If successful, the FILE * pointed to by streamptr will be set to point at
+   the opened file handle, and the function returns zero. If unsuccessful,
+   the FILE * pointed to by streamptr will be set to NULL and a non-zero
+   value is returned.
+   The following conditions will be considered runtime constraint violations:
+   - streamptr being NULL.
+   In case of a constraint violation, no file is being created.
+   This implementation does not remove temporary files if the process aborts
+   abnormally (e.g. abort()).
+*/
 _PDCLIB_PUBLIC errno_t tmpfile_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict streamptr );
-_PDCLIB_PUBLIC errno_t tmpnam_s( char * s, rsize_t maxsize );
+
+/* Open the file with the given filename in the given mode, and sets the given
+   streamptr to point at the file handle for that file, in which error and
+   end-of-file indicator are cleared. Defined values for mode are:
+
+   READ MODES
+                      text files        binary files
+   without update     "r"               "rb"
+   with update        "r+"              "rb+" or "r+b"
+
+   Opening in read mode fails if no file with the given filename exists, or if
+   cannot be read.
+
+   WRITE MODES
+                      text files        binary files
+   without update     "w"               "wb"
+   with update        "w+"              "wb+" or "w+b"
+
+   With write modes, if a file with the given filename already exists, it is
+   truncated to zero length.
+
+   APPEND MODES
+                      text files        binary files
+   without update     "a"               "ab"
+   with update        "a+"              "ab+" or "a+b"
+
+   With update modes, if a file with the given filename already exists, it is
+   not truncated to zero length, but all writes are forced to end-of-file (this
+   regardless to fseek() calls). Note that binary files opened in append mode
+   might have their end-of-file padded with '\0' characters.
+
+   Update modes mean that both input and output functions can be performed on
+   the stream, but output must be terminated with a call to either fflush(),
+   fseek(), fsetpos(), or rewind() before input is performed, and input must
+   be terminated with a call to either fseek(), fsetpos(), or rewind() before
+   output is performed, unless input encountered end-of-file.
+
+   If a text file is opened with update mode, the implementation is at liberty
+   to open a binary stream instead. This implementation honors the exact mode
+   given.
+
+   The stream is fully buffered if and only if it can be determined not to
+   refer to an interactive device.
+
+   If the mode string begins with but is longer than one of the above sequences
+   the implementation is at liberty to ignore the additional characters, or do
+   implementation-defined things. This implementation only accepts the exact
+   modes above.
+
+   The following conditions will be considered runtime constraint violations:
+   - streamptr being NULL.
+   - filename being NULL.
+   - mode being NULL.
+   In case of a constraint violation, no file is opened. If streamptr is not
+   NULL, *streamptr is set to NULL.
+
+   Returns zero if successful, non-zero otherwise.
+*/
 _PDCLIB_PUBLIC errno_t fopen_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict streamptr, const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode );
+
+/* Close any file currently associated with the given stream. Open the file
+   identified by the given filename with the given mode (equivalent to fopen()),
+   and associate it with the given stream. If filename is a NULL pointer,
+   attempt to change the mode of the given stream.
+   This implementation allows any mode changes on "real" files, and associating
+   of the standard streams with files. It does *not* support mode changes on
+   standard streams.
+   (Primary use of this function is to redirect stdin, stdout, and stderr.)
+
+   The following conditions will be considered runtime constraint violations:
+   - newstreamptr being NULL.
+   - mode being NULL.
+   - stream being NULL.
+   In case of a constraint violation, no attempt is made to close or open any
+   file. If newstreamptr is not NULL, *newstreamptr is set to NULL.
+
+   Returns zero if successfull, non-zero otherwise.
+*/
 _PDCLIB_PUBLIC errno_t freopen_s( FILE * _PDCLIB_restrict * _PDCLIB_restrict newstreamptr, const char * _PDCLIB_restrict filename, const char * _PDCLIB_restrict mode, FILE * _PDCLIB_restrict stream );
+
+/* None of these are implemented yet. Placeholder declarations. */
+_PDCLIB_PUBLIC errno_t tmpnam_s( char * s, rsize_t maxsize );
 _PDCLIB_PUBLIC int fprintf_s( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
 _PDCLIB_PUBLIC int fscanf_s( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict format, ... );
 _PDCLIB_PUBLIC int printf_s( const char * _PDCLIB_restrict format, ... );

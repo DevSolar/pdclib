@@ -87,11 +87,13 @@ set( PDCLIB_SOURCES
      functions/stdio/fgetpos.c
      functions/stdio/fgets.c
      functions/stdio/fopen.c
+     functions/stdio/fopen_s.c
      functions/stdio/fprintf.c
      functions/stdio/fputc.c
      functions/stdio/fputs.c
      functions/stdio/fread.c
      functions/stdio/freopen.c
+     functions/stdio/freopen_s.c
      functions/stdio/fscanf.c
      functions/stdio/fseek.c
      functions/stdio/fsetpos.c
@@ -113,6 +115,7 @@ set( PDCLIB_SOURCES
      functions/stdio/snprintf.c
      functions/stdio/sprintf.c
      functions/stdio/sscanf.c
+     functions/stdio/tmpfile_s.c
      functions/stdio/tmpnam.c
      functions/stdio/ungetc.c
      functions/stdio/vfprintf.c
