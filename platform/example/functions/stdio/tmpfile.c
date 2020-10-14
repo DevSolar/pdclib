@@ -8,13 +8,6 @@
 
 #ifndef REGTEST
 
-#ifdef __ANDROID__
-/* typedef sigset_t */
-#include "bits/signal_types.h"
-#define _STRUCT_TIMESPEC
-#include <time.h>
-#endif
-
 #ifndef __STDC_NO_THREADS__
 #include <threads.h>
 extern mtx_t _PDCLIB_filelist_mtx;
@@ -25,8 +18,6 @@ extern mtx_t _PDCLIB_filelist_mtx;
 
 #include <stdlib.h>
 #include <string.h>
-
-#define _STRUCT_TIMESPEC
 
 #include "sys/types.h"
 #include "sys/stat.h"

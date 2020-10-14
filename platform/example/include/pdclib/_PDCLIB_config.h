@@ -1,5 +1,5 @@
 /* Internal PDCLib configuration <_PDCLIB_config.h>
-   (Generic Template)
+   ("Example" platform target, for PDCLib development)
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -14,6 +14,13 @@
 
 /* The character (sequence) your platform uses as newline.                    */
 #define _PDCLIB_endl "\n"
+
+/* Helper macros also documented in _PDCLIB_internal.h, but defined here as   */
+/* they are needed in this file already.                                      */
+/* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending. */
+/* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
+#define _PDCLIB_cc( x, y )     x ## y
+#define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
 
 /* exit() can signal success to the host environment by the value of zero or  */
 /* the constant EXIT_SUCCESS. Failure is signaled by EXIT_FAILURE. Note that  */
@@ -43,6 +50,10 @@
 /* -------------------------------------------------------------------------- */
 /* Symbol Visibility                                                          */
 /* -------------------------------------------------------------------------- */
+
+/* This defines _PDCLIB_PUBLIC to indicate external linkage, and _PDCLIB_LOCAL
+   to indicate local linkage.
+*/
 
 #ifdef _PDCLIB_STATIC_DEFINE
   #define _PDCLIB_PUBLIC
@@ -140,9 +151,9 @@
 /* The minimum width types have a fifth define, a macro taking a value and    */
 /* expanding to an integer constant of that value, and the corresponding      */
 /* minimum width type.                                                        */
-/* The *are* predefines provided for the printf()/scanf() length specifiers,  */
+/* There *are* predefines provided for the printf()/scanf() length specifiers */
 /* but tunneling them through here would have added many lines of repetitive  */
-/* and mostly redundant defines, so these are determined in <_PDCLIB_int.h>.  */
+/* and mostly redundant defines. They are determined in <_PDCLIB_internal.h>. */
 /* -------------------------------------------------------------------------- */
 
 #define _PDCLIB_int_fast8_t        __INT_FAST8_TYPE__
@@ -154,10 +165,8 @@
 #define _PDCLIB_int_least8_t       __INT_LEAST8_TYPE__
 #define _PDCLIB_INT_LEAST8_MAX     __INT_LEAST8_MAX__
 #define _PDCLIB_INT_LEAST8_MIN     _PDCLIB_MIN_CALC( __INT_LEAST8_MAX__ )
-#define _PDCLIB_INT_LEAST8_C       __INT8_C
 #define _PDCLIB_uint_least8_t      __UINT_LEAST8_TYPE__
 #define _PDCLIB_UINT_LEAST8_MAX    __UINT_LEAST8_MAX__
-#define _PDCLIB_UINT_LEAST8_C      __UINT8_C
 
 #define _PDCLIB_int_fast16_t       __INT_FAST16_TYPE__
 #define _PDCLIB_INT_FAST16_MAX     __INT_FAST16_MAX__
@@ -168,10 +177,8 @@
 #define _PDCLIB_int_least16_t      __INT_LEAST16_TYPE__
 #define _PDCLIB_INT_LEAST16_MAX    __INT_LEAST16_MAX__
 #define _PDCLIB_INT_LEAST16_MIN    _PDCLIB_MIN_CALC( __INT_LEAST16_MAX__ )
-#define _PDCLIB_INT_LEAST16_C      __INT16_C
 #define _PDCLIB_uint_least16_t     __UINT_LEAST16_TYPE__
 #define _PDCLIB_UINT_LEAST16_MAX   __UINT_LEAST16_MAX__
-#define _PDCLIB_UINT_LEAST16_C     __UINT16_C
 
 #define _PDCLIB_int_fast32_t       __INT_FAST32_TYPE__
 #define _PDCLIB_INT_FAST32_MAX     __INT_FAST32_MAX__
@@ -182,10 +189,8 @@
 #define _PDCLIB_int_least32_t      __INT_LEAST32_TYPE__
 #define _PDCLIB_INT_LEAST32_MAX    __INT_LEAST32_MAX__
 #define _PDCLIB_INT_LEAST32_MIN    _PDCLIB_MIN_CALC( __INT_LEAST32_MAX__ )
-#define _PDCLIB_INT_LEAST32_C      __INT32_C
 #define _PDCLIB_uint_least32_t     __UINT_LEAST32_TYPE__
 #define _PDCLIB_UINT_LEAST32_MAX   __UINT_LEAST32_MAX__
-#define _PDCLIB_UINT_LEAST32_C     __UINT32_C
 
 #define _PDCLIB_int_fast64_t       __INT_FAST64_TYPE__
 #define _PDCLIB_INT_FAST64_MAX     __INT_FAST64_MAX__
@@ -196,10 +201,30 @@
 #define _PDCLIB_int_least64_t      __INT_LEAST64_TYPE__
 #define _PDCLIB_INT_LEAST64_MAX    __INT_LEAST64_MAX__
 #define _PDCLIB_INT_LEAST64_MIN    _PDCLIB_MIN_CALC( __INT_LEAST64_MAX__ )
-#define _PDCLIB_INT_LEAST64_C      __INT64_C
 #define _PDCLIB_uint_least64_t     __UINT_LEAST64_TYPE__
 #define _PDCLIB_UINT_LEAST64_MAX   __UINT_LEAST64_MAX__
+
+#if defined( __INT8_C )
+#define _PDCLIB_INT_LEAST8_C       __INT8_C
+#define _PDCLIB_UINT_LEAST8_C      __UINT8_C
+#define _PDCLIB_INT_LEAST16_C      __INT16_C
+#define _PDCLIB_UINT_LEAST16_C     __UINT16_C
+#define _PDCLIB_INT_LEAST32_C      __INT32_C
+#define _PDCLIB_UINT_LEAST32_C     __UINT32_C
+#define _PDCLIB_INT_LEAST64_C      __INT64_C
 #define _PDCLIB_UINT_LEAST64_C     __UINT64_C
+#elif defined( __INT8_C_SUFFIX__ )
+#define _PDCLIB_INT_LEAST8_C(c)    _PDCLIB_concat( c, __INT8_C_SUFFIX__ )
+#define _PDCLIB_UINT_LEAST8_C(c)   _PDCLIB_concat( c, __UINT8_C_SUFFIX__ )
+#define _PDCLIB_INT_LEAST16_C(c)   _PDCLIB_concat( c, __INT16_C_SUFFIX__ )
+#define _PDCLIB_UINT_LEAST16_C(c)  _PDCLIB_concat( c, __UINT16_C_SUFFIX__ )
+#define _PDCLIB_INT_LEAST32_C(c)   _PDCLIB_concat( c, __INT32_C_SUFFIX__ )
+#define _PDCLIB_UINT_LEAST32_C(c)  _PDCLIB_concat( c, __UINT32_C_SUFFIX__ )
+#define _PDCLIB_INT_LEAST64_C(c)   _PDCLIB_concat( c, __INT64_C_SUFFIX__ )
+#define _PDCLIB_UINT_LEAST64_C(c)  _PDCLIB_concat( c, __UINT64_C_SUFFIX__ )
+#else
+#error Please provide macros for defining least-width integer constants.
+#endif
 
 /* <stdlib.h> defines the div() function family that allows taking quotient   */
 /* and remainder of an integer division in one operation. Many platforms      */

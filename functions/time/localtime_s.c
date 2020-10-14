@@ -36,7 +36,7 @@ int main( void )
     time_t t;
     struct tm time;
 
-    /* TODO: Constraint handling, timezone specific */
+    /* TODO: Constraint handling, System Clock DST */
 
     t = -2147483648l;
     TESTCASE( localtime_s( &t, &time ) != NULL );

@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 typedef _PDCLIB_wint_t wint_t;
 typedef int wctrans_t;

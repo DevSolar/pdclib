@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 #include "pdclib/_PDCLIB_lib_ext1.h"
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 /* 7.18.1.1 Exact-width integer types. */
 
@@ -195,14 +195,6 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 #ifndef _PDCLIB_NO_CONSTANT_MACROS
 
 /* 7.18.4.1 Macros for minimum-width integer constants */
-
-/* As the minimum-width types - for the required widths of 8, 16, 32, and 64
-   bits - are expressed in terms of the exact-width types, the mechanism for
-   these macros is to append the literal of that exact-width type to the macro
-   parameter.
-   This is considered a hack, as the author is not sure his understanding of
-   the requirements of this macro is correct. Any input appreciated.
-*/
 
 /* Expand to an integer constant of specified value and type int_leastN_t */
 

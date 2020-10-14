@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 #ifndef _PDCLIB_NULL_DEFINED
 #define _PDCLIB_NULL_DEFINED _PDCLIB_NULL_DEFINED

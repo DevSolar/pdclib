@@ -17,17 +17,6 @@ extern "C" {
 #include <stdint.h>
 #include <time.h>
 
-#define TYPE_BIT( type ) ( sizeof (type) * _PDCLIB_CHAR_BIT )
-
-/* Max and min values of the integer type T, of which only the bottom
-   B bits are used, and where the highest-order used bit is considered
-   to be a sign bit if T is signed.  */
-#define MAXVAL( t, b ) \
-  ( ( t ) ( ( ( t ) 1 << ( ( b ) - 1 - _PDCLIB_TYPE_SIGNED( t ) ) ) \
-      - 1 + ( ( t ) 1 << ( ( b ) - 1 - _PDCLIB_TYPE_SIGNED( t ) ) ) ) )
-#define MINVAL( t, b )                        \
-  ( ( t ) ( _PDCLIB_TYPE_SIGNED( t ) ? - _PDCLIB_TWOS_COMPLEMENT - MAXVAL( t, b ) : 0 ) )
-
 /* Handy macros that are independent of tzfile implementation. */
 #define YEARSPERREPEAT  400 /* years before a Gregorian repeat */
 
@@ -77,18 +66,18 @@ static const int year_lengths[2] =
 /* time type information */
 struct ttinfo
 {
-    int_fast32_t tt_utoff;    /* UT offset in seconds    */
-    bool         tt_isdst;    /* used to set tm_isdst    */
-    int          tt_desigidx; /* abbreviation list index */
-    bool         tt_ttisstd;  /* transition is std time  */
-    bool         tt_ttisut;   /* transition is UT        */
+    int_fast32_t utoff;    /* UT offset in seconds    */
+    bool         isdst;    /* used to set tm_isdst    */
+    int          desigidx; /* abbreviation list index */
+    bool         ttisstd;  /* transition is std time  */
+    bool         ttisut;   /* transition is UT        */
 };
 
 /* leap second information */
 struct lsinfo
 {
-    time_t       ls_trans;    /* transition time         */
-    int_fast64_t ls_corr;     /* correction to apply     */
+    time_t       trans;    /* transition time         */
+    int_fast64_t corr;     /* correction to apply     */
 };
 
 #define BIGGEST( a, b )  (((a) > (b)) ? (a) : (b))
@@ -141,27 +130,8 @@ struct state
     int            defaulttype;
 };
 
-enum r_type
-{
-    JULIAN_DAY,           /* Jn = Julian day                   */
-    DAY_OF_YEAR,          /* n = day of year                   */
-    MONTH_NTH_DAY_OF_WEEK /* Mm.n.d = month, week, day of week */
-};
-
-struct rule
-{
-    enum r_type  r_type; /* type of rule            */
-    int          r_day;  /* day number of rule      */
-    int          r_week; /* week number of rule     */
-    int          r_mon;  /* month number of rule    */
-    int_fast32_t r_time; /* transition time of rule */
-};
-
 extern struct state _PDCLIB_lclmem;
 extern struct state _PDCLIB_gmtmem;
-
-#define _PDCLIB_lclptr (&_PDCLIB_lclmem)
-#define _PDCLIB_gmtptr (&_PDCLIB_gmtmem)
 
 void        _PDCLIB_gmtcheck(void);
 struct tm * _PDCLIB_gmtsub( struct state const * sp, time_t const * timep, int_fast32_t offset, struct tm * tmp );

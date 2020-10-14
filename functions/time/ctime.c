@@ -29,10 +29,12 @@ char * ctime( const time_t * timer )
 
 int main( void )
 {
+    /* TODO: System Clock DST */
     time_t t;
 
     t = -2147483648l;
     TESTCASE( strcmp( ctime( &t ), "Fri Dec 13 21:45:52 1901\n" ) == 0 );
+    puts( ctime( &t ) );
 
     t = 2147483647l;
     TESTCASE( strcmp( ctime( &t ), "Tue Jan 19 04:14:07 2038\n" ) == 0 );

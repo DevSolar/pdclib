@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 #include "pdclib/_PDCLIB_lib_ext1.h"
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 /* FIXME: With <threads.h>, this needs to be in thread-specific storage. */
 #define errno (*_PDCLIB_errno_func())

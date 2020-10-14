@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "pdclib/_PDCLIB_int.h"
+#include "pdclib/_PDCLIB_internal.h"
 
 struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path, const char * locale )
 {

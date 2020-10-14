@@ -11,11 +11,11 @@
 /* Initialize *S to a value based on UTOFF, ISDST, and DESIGIDX.  */
 void _PDCLIB_init_ttinfo( struct ttinfo * s, int_fast32_t utoff, bool isdst, int desigidx )
 {
-    s->tt_utoff = utoff;
-    s->tt_isdst = isdst;
-    s->tt_desigidx = desigidx;
-    s->tt_ttisstd = false;
-    s->tt_ttisut = false;
+    s->utoff = utoff;
+    s->isdst = isdst;
+    s->desigidx = desigidx;
+    s->ttisstd = false;
+    s->ttisut = false;
 }
 
 #endif
