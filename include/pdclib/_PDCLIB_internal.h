@@ -63,8 +63,12 @@ extern "C" {
 
 /* -------------------------------------------------------------------------- */
 /* Helper macros:                                                             */
+/*                                                                            */
+/* (defined in _PDCLIB_config.h)                                              */
 /* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending. */
 /* _PDCLIB_concat( x, y ) concatenates two preprocessor tokens with extending */
+/*                                                                            */
+/* (defined below)                                                            */
 /* _PDCLIB_static_assert( e, m ) does a compile-time assertion of expression  */
 /*                               e, with m as the failure message.            */
 /* _PDCLIB_symbol2string( x ) turn symbol into string literal (by adding ""). */
@@ -77,9 +81,6 @@ extern "C" {
 /*                                   fit for Annex K constraint violation     */
 /*                                   handler.                                 */
 /* -------------------------------------------------------------------------- */
-
-#define _PDCLIB_cc( x, y )     x ## y
-#define _PDCLIB_concat( x, y ) _PDCLIB_cc( x, y )
 
 #define _PDCLIB_static_assert( e, m ) enum { _PDCLIB_concat( _PDCLIB_assert_, __LINE__ ) = 1 / ( !!(e) ) }
 
