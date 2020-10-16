@@ -6,10 +6,11 @@
 
 #ifndef REGTEST
 
-#define _DEFAULT_SOURCE
-#include "/usr/include/stdlib.h"
-
 #include "pdclib/_PDCLIB_glue.h"
+
+#include <stddef.h>
+
+extern char * realpath( const char * file_name, char * resolved_name );
 
 char * _PDCLIB_realpath( const char * path )
 {
