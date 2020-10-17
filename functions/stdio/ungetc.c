@@ -38,9 +38,35 @@ int ungetc( int c, struct _PDCLIB_file_t * stream )
 
 #include "_PDCLIB_test.h"
 
+#include <stdlib.h>
+
 int main( void )
 {
-    /* Testing covered by ftell.c */
+    char buffer[4];
+    char input[1];
+    FILE * fh;
+    int read;
+    TESTCASE( ( fh = tmpfile() ) != NULL );
+    TESTCASE( setvbuf( fh, buffer, _IOLBF, 4 ) == 0 );
+    rewind( fh );
+    TESTCASE( fprintf( fh, "123" ) == 3 );
+    TESTCASE( ftell( fh ) == 3 );
+    rewind( fh );
+    TESTCASE( fscanf( fh, "12%n", &read ) == 0 );
+    TESTCASE( read == 2 );
+    TESTCASE( ftell( fh ) == 2 );
+    TESTCASE( ungetc( 'x', fh ) == 'x' );
+    TESTCASE( ftell( fh ) == 1 );
+    read = 0;
+    TESTCASE( fscanf( fh, "x3%n", &read ) == 0 );
+    TESTCASE( ftell( fh ) == 3 );
+    TESTCASE( read == 2 );
+    TESTCASE( ungetc( 'y', fh ) == 'y' );
+    TESTCASE( ftell( fh ) == 2 );
+    TESTCASE( fread( input, 1, 1, fh ) == 1 );
+    TESTCASE( ftell( fh ) == 3 );
+    TESTCASE( input[0] == 'y' );
+    TESTCASE( fclose( fh ) == 0 );
     return TEST_RESULTS;
 }
 
