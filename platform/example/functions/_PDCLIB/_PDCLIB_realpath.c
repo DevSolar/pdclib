@@ -10,7 +10,15 @@
 
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern char * realpath( const char * file_name, char * resolved_name );
+
+#ifdef __cplusplus
+}
+#endif
 
 char * _PDCLIB_realpath( const char * path )
 {
