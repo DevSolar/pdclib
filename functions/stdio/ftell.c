@@ -36,7 +36,6 @@ long int ftell( struct _PDCLIB_file_t * stream )
     long int rc;
     _PDCLIB_LOCK( stream->mtx );
 
-    /* TODO: Check what happens when ungetc() is called on a stream at offset 0 */
     if ( ( stream->pos.offset - stream->bufend ) > ( LONG_MAX - ( stream->bufidx - stream->ungetidx ) ) )
     {
         /* integer overflow */

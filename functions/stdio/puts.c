@@ -14,8 +14,6 @@
 #include <threads.h>
 #endif
 
-extern char * _PDCLIB_eol;
-
 int puts( const char * s )
 {
     _PDCLIB_LOCK( stdout->mtx );

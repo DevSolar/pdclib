@@ -1,4 +1,4 @@
-/* fwrite( void *, size_t, size_t, FILE * )
+/* fread( void *, size_t, size_t, struct * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
