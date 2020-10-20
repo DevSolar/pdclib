@@ -46,6 +46,7 @@ int main( void )
     char input[1];
     FILE * fh;
     int read;
+    fpos_t pos;
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IOLBF, 4 ) == 0 );
     rewind( fh );
@@ -66,6 +67,24 @@ int main( void )
     TESTCASE( fread( input, 1, 1, fh ) == 1 );
     TESTCASE( ftell( fh ) == 3 );
     TESTCASE( input[0] == 'y' );
+    rewind( fh );
+    TESTCASE( ungetc( 'z', fh ) == 'z' );
+    TESTCASE( ftell( fh ) == -1 );
+    TESTCASE( fread( input, 1, 4, fh ) == 4 );
+    TESTCASE( memcmp( input, "z123", 4 ) == 0 );
+    rewind( fh );
+    TESTCASE( ungetc( 'z', fh ) == 'z' );
+    TESTCASE( ftell( fh ) == -1 );
+    TESTCASE( fscanf( fh, "%4c", input ) == 1 );
+    TESTCASE( memcmp( input, "z123", 4 ) == 0 );
+    rewind( fh );
+    TESTCASE( fgetc( fh ) == '1' );
+    TESTCASE( ftell( fh ) == 1 );
+    TESTCASE( ungetc( 'z', fh ) == 'z' );
+    TESTCASE( fgetpos( fh, &pos ) == 0 );
+    TESTCASE( fsetpos( fh, &pos ) == 0 );
+    TESTCASE( ftell( fh ) == 0 );
+    TESTCASE( fgetc( fh ) == '1' );
     TESTCASE( fclose( fh ) == 0 );
     return TEST_RESULTS;
 }
