@@ -81,6 +81,7 @@ int main( void )
     TESTCASE( fgetc( fh ) == '1' );
     TESTCASE( ftell( fh ) == 1 );
     TESTCASE( ungetc( 'z', fh ) == 'z' );
+    TESTCASE( ftell( fh ) == 0 );
     TESTCASE( fgetpos( fh, &pos ) == 0 );
     TESTCASE( fsetpos( fh, &pos ) == 0 );
     TESTCASE( ftell( fh ) == 0 );
