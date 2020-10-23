@@ -15,7 +15,7 @@
 int fgetpos( struct _PDCLIB_file_t * _PDCLIB_restrict stream, struct _PDCLIB_fpos_t * _PDCLIB_restrict pos )
 {
     _PDCLIB_LOCK( stream->mtx );
-    pos->offset = stream->pos.offset + stream->bufidx - stream->ungetidx;
+    pos->offset = ( stream->pos.offset - ( ( ( int )stream->bufend - ( int )stream->bufidx ) + stream->ungetidx ) );
     pos->status = stream->pos.status;
     /* TODO: Add mbstate. */
     _PDCLIB_UNLOCK( stream->mtx );
