@@ -594,6 +594,35 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path
 _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, const char * locale );
 
 /* -------------------------------------------------------------------------- */
+/* _PDCLIB_bigint_t support (required for floating point conversions)         */
+/* -------------------------------------------------------------------------- */
+
+/* Number of least32 words used in bigint representation.                     */
+#define _PDCLIB_BIGINT_WORDS 32
+
+/* Maximum number of characters needed for _PDCLIB_bigint_tostring()          */
+#define _PDCLIB_BIGINT_CHARS ( _PDCLIB_BIGINT_WORDS * 8 ) + 3
+
+typedef struct
+{
+    /* Least significant word first */
+    _PDCLIB_uint_least32_t data[ _PDCLIB_BIGINT_WORDS ];
+    /* Number of words used; zero value == zero size */
+    int size;
+} _PDCLIB_bigint_t;
+
+/* Sets a bigint from a 32bit input value. */
+_PDCLIB_LOCAL _PDCLIB_bigint_t _PDCLIB_bigint32( _PDCLIB_uint_least32_t value );
+
+/* Sets a bigint from a 64bit input value. */
+_PDCLIB_LOCAL _PDCLIB_bigint_t _PDCLIB_bigint64( _PDCLIB_uint_least64_t value );
+
+/* Writes a hexadecimal representation of the given bigint into the given buffer.
+   Buffer should be at least _PDCLIB_BIGINT_CHARS in size.
+*/
+_PDCLIB_LOCAL void _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * value, char * buffer );
+
+/* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
 /* -------------------------------------------------------------------------- */
 
