@@ -249,6 +249,9 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/assert.c
      functions/_PDCLIB/errno.c
      functions/_PDCLIB/_PDCLIB_atomax.c
+     functions/_PDCLIB/_PDCLIB_bigint32.c
+     functions/_PDCLIB/_PDCLIB_bigint64.c
+     functions/_PDCLIB/_PDCLIB_bigint_tostring.c
      functions/_PDCLIB/_PDCLIB_closeall.c
      functions/_PDCLIB/_PDCLIB_digits.c
      functions/_PDCLIB/_PDCLIB_filemode.c
