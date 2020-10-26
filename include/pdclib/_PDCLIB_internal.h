@@ -622,6 +622,9 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t _PDCLIB_bigint64( _PDCLIB_uint_least64_t value );
 */
 _PDCLIB_PUBLIC int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs );
 
+/* Adds to a given bigint another given bigint. */
+_PDCLIB_PUBLIC void _PDCLIB_bigint_add( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_t const * rhs );
+
 /* Writes a hexadecimal representation of the given bigint into the given buffer.
    Buffer should be at least _PDCLIB_BIGINT_CHARS in size.
 */
