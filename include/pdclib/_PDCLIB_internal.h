@@ -617,6 +617,11 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t _PDCLIB_bigint32( _PDCLIB_uint_least32_t value );
 /* Sets a bigint from a 64bit input value. */
 _PDCLIB_LOCAL _PDCLIB_bigint_t _PDCLIB_bigint64( _PDCLIB_uint_least64_t value );
 
+/* Compares two given bigint values. Returns 0 if lhs == rhs, a negative number
+   if lhs < rhs, and a positive number if lhs > rhs.
+*/
+_PDCLIB_PUBLIC int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs );
+
 /* Writes a hexadecimal representation of the given bigint into the given buffer.
    Buffer should be at least _PDCLIB_BIGINT_CHARS in size.
 */
