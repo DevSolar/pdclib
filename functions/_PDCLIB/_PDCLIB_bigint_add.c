@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-void _PDCLIB_bigint_add( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_t const * rhs )
+_PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs )
 {
     _PDCLIB_bigint_t const * smaller = ( lhs->size < rhs->size ) ? lhs : rhs;
     unsigned carry = 0;
@@ -45,6 +45,8 @@ void _PDCLIB_bigint_add( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_t const * rhs )
     {
         lhs->data[ lhs->size++ ] = carry;
     }
+
+    return lhs;
 }
 
 #endif
@@ -57,25 +59,25 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t lhs, rhs;
-    lhs = _PDCLIB_bigint32( UINT32_C( 0 ) );
-    rhs = _PDCLIB_bigint64( UINT64_C( 0 ) );
+    _PDCLIB_bigint32( &lhs, UINT32_C( 0 ) );
+    _PDCLIB_bigint64( &rhs, UINT64_C( 0 ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 0 );
-    lhs = _PDCLIB_bigint32( UINT32_C( 0x12345678 ) );
+    _PDCLIB_bigint32( &lhs, UINT32_C( 0x12345678 ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 1 );
     TESTCASE( lhs.data[0] == 0x12345678 );
-    rhs = _PDCLIB_bigint32( UINT32_C( 0x11111111 ) );
+    _PDCLIB_bigint32( &rhs, UINT32_C( 0x11111111 ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 1 );
     TESTCASE( lhs.data[0] == 0x23456789 );
-    rhs = _PDCLIB_bigint64( UINT64_C( 0x00000001DCBA9877 ) );
+    _PDCLIB_bigint64( &rhs, UINT64_C( 0x00000001DCBA9877 ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 2 );
     TESTCASE( lhs.data[0] == 0x00000000 );
     TESTCASE( lhs.data[1] == 0x00000002 );
-    lhs = _PDCLIB_bigint32( UINT32_C( 0xFFFFFFFF ) );
-    rhs = _PDCLIB_bigint32( UINT32_C( 0xFFFFFFFF ) );
+    _PDCLIB_bigint32( &lhs, UINT32_C( 0xFFFFFFFF ) );
+    _PDCLIB_bigint32( &rhs, UINT32_C( 0xFFFFFFFF ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 2 );
     TESTCASE( lhs.data[0] == 0xFFFFFFFE );

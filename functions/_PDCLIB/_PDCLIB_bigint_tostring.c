@@ -12,8 +12,9 @@
 #include <stdio.h>
 #include <string.h>
 
-void _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * value, char * buffer )
+char * _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * _PDCLIB_restrict value, char * _PDCLIB_restrict buffer )
 {
+    char * rc = buffer;
     strcpy( buffer, "0x" );
     buffer += 2;
 
@@ -31,6 +32,8 @@ void _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * value, char * buffer )
     {
         strcpy( buffer, "00000000" );
     }
+
+    return rc;
 }
 
 #endif
@@ -44,17 +47,12 @@ int main( void )
 #ifndef REGTEST
     _PDCLIB_bigint_t value;
     char buffer[ 100 ];
-    value.size = 0;
-    _PDCLIB_bigint_tostring( &value, buffer );
-    TESTCASE( strcmp( buffer, "0x00000000" ) == 0 );
-    value.size = 1;
-    value.data[0] = 0x12345678;
-    _PDCLIB_bigint_tostring( &value, buffer );
-    TESTCASE( strcmp( buffer, "0x12345678" ) == 0 );
-    value.size = 2;
-    value.data[1] = 0x90abcdef;
-    _PDCLIB_bigint_tostring( &value, buffer );
-    TESTCASE( strcmp( buffer, "0x90abcdef12345678" ) == 0 );
+    _PDCLIB_bigint32( &value, UINT32_C( 0 ) );
+    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), "0x00000000" ) == 0 );
+    _PDCLIB_bigint32( &value, UINT32_C( 0x12345678 ) );
+    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), "0x12345678" ) == 0 );
+    _PDCLIB_bigint64( &value, UINT64_C( 0x90abcdef12345678 ) );
+    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), "0x90abcdef12345678" ) == 0 );
 #endif
     return TEST_RESULTS;
 }
