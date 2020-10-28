@@ -633,6 +633,9 @@ _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB
 /* Multiplies a given bigint with another given bigint. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
+/* Multiplies a given bigint with a given 32bit value. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul32( _PDCLIB_bigint_t * lhs, _PDCLIB_uint_least32_t rhs );
+
 /* Writes a hexadecimal representation of the given bigint into the given buffer.
    Buffer should be at least _PDCLIB_BIGINT_CHARS in size.
 */
