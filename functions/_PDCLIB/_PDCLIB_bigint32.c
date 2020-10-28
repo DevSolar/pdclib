@@ -8,11 +8,13 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
-_PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t value )
-{
-    *bigint = { { value }, 1 };
+#include <stdint.h>
 
-    if ( value == 0 )
+_PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, uint_least32_t value )
+{
+    bigint->size = 1;
+
+    if ( ( bigint->data[0] = value ) == UINT32_C( 0 ) )
     {
         bigint->size = 0;
     }

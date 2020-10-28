@@ -16,6 +16,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
     unsigned carry = 0;
     int i;
 
+    /* Add up bigint digits */
     for ( i = 0; i < smaller->size; ++i )
     {
         lhs->data[i] += rhs->data[i] + carry;
@@ -24,9 +25,10 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
 
     if ( smaller == lhs )
     {
+        /* Continue adding digits from wider bigint */
         for ( i = lhs->size; i < rhs->size; ++i )
         {
-            lhs->data[i] += rhs->data[i] + carry;
+            lhs->data[i] = rhs->data[i] + carry;
             carry = ( lhs->data[i] < rhs->data[i] );
         }
 
@@ -34,6 +36,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
     }
     else
     {
+        /* Continue adding carry through digits of smaller bigint */
         for ( i = rhs->size; i < lhs->size; ++i )
         {
             lhs->data[i] += carry;
@@ -41,6 +44,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
         }
     }
 
+    /* Possible new digit */
     if ( carry )
     {
         lhs->data[ lhs->size++ ] = carry;
