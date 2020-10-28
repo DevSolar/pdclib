@@ -612,23 +612,31 @@ typedef struct
 } _PDCLIB_bigint_t;
 
 /* Sets a bigint from a 32bit input value. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t _PDCLIB_bigint32( _PDCLIB_uint_least32_t value );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t value );
 
 /* Sets a bigint from a 64bit input value. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t _PDCLIB_bigint64( _PDCLIB_uint_least64_t value );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least64_t value );
+
+/* Sets a bigint from another bigint. (Copies only value->size words, so it is
+   faster than a POD copy of a _PDCLIB_bigint_t in most cases.)
+*/
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint( _PDCLIB_bigint_t * _PDCLIB_restrict bigint, _PDCLIB_bigint_t const * _PDCLIB_restrict value );
 
 /* Compares two given bigint values. Returns 0 if lhs == rhs, a negative number
    if lhs < rhs, and a positive number if lhs > rhs.
 */
-_PDCLIB_PUBLIC int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs );
+_PDCLIB_PUBLIC int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Adds to a given bigint another given bigint. */
-_PDCLIB_PUBLIC void _PDCLIB_bigint_add( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_t const * rhs );
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
+/* Multiplies a given bigint with another given bigint. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Writes a hexadecimal representation of the given bigint into the given buffer.
    Buffer should be at least _PDCLIB_BIGINT_CHARS in size.
 */
-_PDCLIB_LOCAL void _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * value, char * buffer );
+_PDCLIB_LOCAL char * _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * _PDCLIB_restrict value, char * _PDCLIB_restrict buffer );
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */

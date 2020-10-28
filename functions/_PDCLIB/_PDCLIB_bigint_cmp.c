@@ -8,7 +8,7 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
-int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs )
+int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs )
 {
     int i;
 
@@ -40,16 +40,16 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t lhs, rhs;
-    lhs = _PDCLIB_bigint32( UINT32_C( 0 ) );
-    rhs = _PDCLIB_bigint64( UINT64_C( 0 ) );
+    _PDCLIB_bigint32( &lhs, UINT32_C( 0 ) );
+    _PDCLIB_bigint64( &rhs, UINT64_C( 0 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) == 0 );
-    lhs = _PDCLIB_bigint32( UINT32_C( 0x01 ) );
+    _PDCLIB_bigint32( &lhs, UINT32_C( 0x01 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) > 0 );
-    rhs = _PDCLIB_bigint32( UINT32_C( 0x8000000 ) );
+    _PDCLIB_bigint32( &rhs, UINT32_C( 0x8000000 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) < 0 );
-    lhs = _PDCLIB_bigint64( UINT64_C( 0x01 ) );
+    _PDCLIB_bigint64( &lhs, UINT64_C( 0x01 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) < 0 );
-    lhs = _PDCLIB_bigint64( UINT64_C( 0x0000000180000000 ) );
+    _PDCLIB_bigint64( &lhs, UINT64_C( 0x0000000180000000 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) > 0 );
 #endif
     return TEST_RESULTS;
