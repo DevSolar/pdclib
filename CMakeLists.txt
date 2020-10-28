@@ -27,10 +27,13 @@ project( pdclib )
 option( IGNORE_NO_TESTDRIVER "Ignore NO_TESTDRIVER flags instead of reporting them as error. Default: OFF." OFF )
 option( AS_CXX "Compile as C++. (For testing purposes.) Default: OFF." OFF )
 option( AS_C11 "Compile as C11. (For testing purposes.) Default: OFF." OFF )
+option( AS_C90 "Compile as C90. (For testing purposes.) Default: OFF." OFF )
 
-# Setting compiler to C11 standard, no extensions.
+# Setting compiler to standard, no extensions.
 if ( AS_C11 )
     set( CMAKE_C_STANDARD 11 )
+elseif( AS_C90 )
+    set( CMAKE_C_STANDARD 90 )
 else()
     set( CMAKE_C_STANDARD 99 )
 endif()

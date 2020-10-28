@@ -39,13 +39,13 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict resul
 
     for ( s = 0; s < smaller->size; ++s )
     {
-        uint64_t digit;     /* Hold intermediary (wide) result. */
-        uint32_t carry = 0; /* Hold overflow. */
+        uint_least64_t digit;     /* Hold intermediary (wide) result. */
+        uint_least32_t carry = 0; /* Hold overflow. */
 
         for ( w = 0; w < wider->size; ++w )
         {
             /* Add product and carry into intermediate result */
-            digit = result->data[ w + s ] + ( (uint64_t)smaller->data[ s ] * (uint64_t)wider->data[ w ] ) + carry;
+            digit = result->data[ w + s ] + ( (uint_least64_t)smaller->data[ s ] * (uint_least64_t)wider->data[ w ] ) + carry;
             /* Get 32bit carry */
             carry = digit >> 32;
             /* Write lower 32bit back into result */

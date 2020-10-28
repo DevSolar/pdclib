@@ -12,11 +12,21 @@
 
 _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, uint_least64_t value )
 {
-    *bigint = { { (uint_least32_t)( value & UINT32_C( 0xFFFFFFFF ) ), (uint_least32_t)( value >> 32 ) }, 2 };
-
-    while ( bigint->data[ bigint->size - 1 ] == UINT32_C( 0 ) )
+    if ( value == UINT64_C( 0 ) )
     {
-        --bigint->size;
+        bigint->size = 0;
+        return bigint;
+    }
+
+    bigint->data[0] = (uint_least32_t)( value & UINT32_C( 0xFFFFFFFF ) );
+
+    if ( ( bigint->data[1] = (uint_least32_t)( value >> 32 ) ) > UINT32_C( 0 ) )
+    {
+        bigint->size = 2;
+    }
+    else
+    {
+        bigint->size = 1;
     }
 
     return bigint;
