@@ -8,12 +8,12 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
-_PDCLIB_bigint_t * _PDCLIB_bigint2( _PDCLIB_bigint_t * bigint, unsigned value )
+_PDCLIB_bigint_t * _PDCLIB_bigint2( _PDCLIB_bigint_t * bigint, unsigned n )
 {
     int i;
 
-    bigint->size = ( value / 32 ) + 1;
-    bigint->data[ bigint->size - 1 ] = 1 << ( value - ( bigint->size - 1 ) * 32 );
+    bigint->size = ( n / 32 ) + 1;
+    bigint->data[ bigint->size - 1 ] = 1 << ( n - ( bigint->size - 1 ) * 32 );
 
     for ( i = 0; i < bigint->size - 1; ++i )
     {
