@@ -594,6 +594,84 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path
 _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, const char * locale );
 
 /* -------------------------------------------------------------------------- */
+/* _PDCLIB_bigint_t support (required for floating point conversions)         */
+/* -------------------------------------------------------------------------- */
+
+/* Number of least32 words used in bigint representation.                     */
+#define _PDCLIB_BIGINT_WORDS 32
+
+/* Maximum number of characters needed for _PDCLIB_bigint_tostring()          */
+#define _PDCLIB_BIGINT_CHARS ( _PDCLIB_BIGINT_WORDS * 8 ) + 3
+
+/* Type */
+/* ---- */
+
+typedef struct
+{
+    /* Least significant word first */
+    _PDCLIB_uint_least32_t data[ _PDCLIB_BIGINT_WORDS ];
+    /* Number of words used; zero value == zero size */
+    int size;
+} _PDCLIB_bigint_t;
+
+/* Initializer */
+/* ----------- */
+
+/* Sets a bigint to pow2( n ) */
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint2( _PDCLIB_bigint_t * bigint, unsigned n );
+
+/* Sets a bigint to pow10( n ) */
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint10( _PDCLIB_bigint_t * bigint, unsigned n );
+
+/* Sets a bigint from a 32bit input value. */
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t value );
+
+/* Sets a bigint from a 64bit input value. */
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least64_t value );
+
+/* Sets a bigint from another bigint. (Copies only value->size words, so it is
+   faster than a POD copy of a _PDCLIB_bigint_t in most cases.)
+*/
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint( _PDCLIB_bigint_t * _PDCLIB_restrict bigint, _PDCLIB_bigint_t const * _PDCLIB_restrict value );
+
+/* Comparison, Output */
+/* ------------------ */
+
+/* Compares two given bigint values. Returns 0 if lhs == rhs, a negative number
+   if lhs < rhs, and a positive number if lhs > rhs.
+*/
+_PDCLIB_PUBLIC int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
+/* Writes a hexadecimal representation of the given bigint into the given buffer.
+   Buffer should be at least _PDCLIB_BIGINT_CHARS in size.
+*/
+_PDCLIB_LOCAL char * _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * _PDCLIB_restrict value, char * _PDCLIB_restrict buffer );
+
+/* Operations (in-place) */
+/* --------------------- */
+
+/* Adds to a given bigint another given bigint. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
+/* Multiplies a given bigint with a given 32bit value. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul32( _PDCLIB_bigint_t * lhs, _PDCLIB_uint_least32_t rhs );
+
+/* Shifts a given bigint left by a given count of bits. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs );
+
+/* Operations (into new bigint) */
+/* ---------------------------- */
+
+/* Multiplies a given bigint with another given bigint. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
+/* Queries */
+/* ------- */
+
+/* Returns the log2() of a given bigint */
+_PDCLIB_PUBLIC unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint );
+
+/* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
 /* -------------------------------------------------------------------------- */
 

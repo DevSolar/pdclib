@@ -27,10 +27,13 @@ project( pdclib )
 option( IGNORE_NO_TESTDRIVER "Ignore NO_TESTDRIVER flags instead of reporting them as error. Default: OFF." OFF )
 option( AS_CXX "Compile as C++. (For testing purposes.) Default: OFF." OFF )
 option( AS_C11 "Compile as C11. (For testing purposes.) Default: OFF." OFF )
+option( AS_C90 "Compile as C90. (For testing purposes.) Default: OFF." OFF )
 
-# Setting compiler to C11 standard, no extensions.
+# Setting compiler to standard, no extensions.
 if ( AS_C11 )
     set( CMAKE_C_STANDARD 11 )
+elseif( AS_C90 )
+    set( CMAKE_C_STANDARD 90 )
 else()
     set( CMAKE_C_STANDARD 99 )
 endif()
@@ -249,6 +252,18 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/assert.c
      functions/_PDCLIB/errno.c
      functions/_PDCLIB/_PDCLIB_atomax.c
+     functions/_PDCLIB/_PDCLIB_bigint.c
+     functions/_PDCLIB/_PDCLIB_bigint2.c
+     functions/_PDCLIB/_PDCLIB_bigint10.c
+     functions/_PDCLIB/_PDCLIB_bigint32.c
+     functions/_PDCLIB/_PDCLIB_bigint64.c
+     functions/_PDCLIB/_PDCLIB_bigint_add.c
+     functions/_PDCLIB/_PDCLIB_bigint_cmp.c
+     functions/_PDCLIB/_PDCLIB_bigint_log2.c
+     functions/_PDCLIB/_PDCLIB_bigint_mul.c
+     functions/_PDCLIB/_PDCLIB_bigint_mul32.c
+     functions/_PDCLIB/_PDCLIB_bigint_shl.c
+     functions/_PDCLIB/_PDCLIB_bigint_tostring.c
      functions/_PDCLIB/_PDCLIB_closeall.c
      functions/_PDCLIB/_PDCLIB_digits.c
      functions/_PDCLIB/_PDCLIB_filemode.c
