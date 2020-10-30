@@ -617,6 +617,9 @@ typedef struct
 /* Initializer */
 /* ----------- */
 
+/* Sets a bigint with the given bit set. */
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint2( _PDCLIB_bigint_t * bigint, unsigned bit );
+
 /* Sets a bigint from a 32bit input value. */
 _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t value );
 
