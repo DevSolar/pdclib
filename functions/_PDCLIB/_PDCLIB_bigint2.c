@@ -8,8 +8,6 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
-#include <stdint.h>
-
 _PDCLIB_bigint_t * _PDCLIB_bigint2( _PDCLIB_bigint_t * bigint, unsigned value )
 {
     int i;
