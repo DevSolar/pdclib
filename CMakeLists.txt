@@ -258,6 +258,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_bigint64.c
      functions/_PDCLIB/_PDCLIB_bigint_add.c
      functions/_PDCLIB/_PDCLIB_bigint_cmp.c
+     functions/_PDCLIB/_PDCLIB_bigint_log2.c
      functions/_PDCLIB/_PDCLIB_bigint_mul.c
      functions/_PDCLIB/_PDCLIB_bigint_mul32.c
      functions/_PDCLIB/_PDCLIB_bigint_shl.c

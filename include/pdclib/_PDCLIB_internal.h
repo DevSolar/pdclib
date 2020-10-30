@@ -662,6 +662,12 @@ _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, un
 /* Multiplies a given bigint with another given bigint. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
+/* Queries */
+/* ------- */
+
+/* Returns the log2() of a given bigint */
+_PDCLIB_PUBLIC unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint );
+
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
 /* -------------------------------------------------------------------------- */
