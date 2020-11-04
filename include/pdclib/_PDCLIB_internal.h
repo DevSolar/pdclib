@@ -653,6 +653,9 @@ _PDCLIB_LOCAL char * _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * _PDCLIB_r
 /* Adds to a given bigint another given bigint. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
+/* Substracts from a given bigint another given bigint. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
 /* Multiplies a given bigint with a given 32bit value. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul32( _PDCLIB_bigint_t * lhs, _PDCLIB_uint_least32_t rhs );
 
