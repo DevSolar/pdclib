@@ -12,43 +12,62 @@
 
 _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs )
 {
-    _PDCLIB_bigint_t const * smaller = ( lhs->size < rhs->size ) ? lhs : rhs;
+    _PDCLIB_bigint_t const * smaller;
+    _PDCLIB_bigint_t const * wider;
     unsigned carry = 0;
+    unsigned newcarry;
     int i;
 
-    /* Add up bigint digits */
-    for ( i = 0; i < smaller->size; ++i )
+    if ( lhs->size < rhs->size )
     {
-        lhs->data[i] += rhs->data[i] + carry;
-        carry = ( lhs->data[i] < rhs->data[i] );
-    }
-
-    if ( smaller == lhs )
-    {
-        /* Continue adding digits from wider bigint */
-        for ( i = lhs->size; i < rhs->size; ++i )
-        {
-            lhs->data[i] = rhs->data[i] + carry;
-            carry = ( lhs->data[i] < rhs->data[i] );
-        }
-
-        lhs->size = rhs->size;
+        smaller = lhs;
+        wider = rhs;
     }
     else
     {
-        /* Continue adding carry through digits of smaller bigint */
-        for ( i = rhs->size; i < lhs->size; ++i )
+        smaller = rhs;
+        wider = lhs;
+    }
+
+    /* Add up the bigints digit by digit, ensuring no overflow of 32-bit range */
+    for ( i = 0; i < smaller->size; ++i )
+    {
+        uint_least32_t l = ( UINT32_MAX - lhs->data[i] );
+        uint_least32_t r = ( UINT32_MAX - rhs->data[i] );
+
+        if ( ( newcarry = ( l < rhs->data[i] ) || ( carry && ( l == rhs->data[i] ) ) ) )
         {
-            lhs->data[i] += carry;
-            carry = ( lhs->data[i] < carry );
+            lhs->data[i] = UINT32_MAX - ( l + r ) - 1 + carry;
         }
+        else
+        {
+            lhs->data[i] = lhs->data[i] + rhs->data[i] + carry;
+        }
+
+        carry = newcarry;
+    }
+
+    for ( ; i < wider->size; ++i )
+    {
+        if ( ( newcarry = ( ( UINT32_MAX - wider->data[i] ) < carry ) ) )
+        {
+            lhs->data[i] = 0;
+        }
+        else
+        {
+            lhs->data[i] = wider->data[i] + carry;
+        }
+
+        carry = newcarry;
     }
 
     /* Possible new digit */
     if ( carry )
     {
-        lhs->data[ lhs->size++ ] = carry;
+        lhs->data[i++] = carry;
     }
+
+    lhs->size = i;
 
     return lhs;
 }
