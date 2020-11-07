@@ -23,13 +23,12 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_mul32( _PDCLIB_bigint_t * _PDCLIB_restrict lhs
         /* Get 32bit carry */
         carry = digit >> 32;
         /* Write lower 32bit back into bigint */
-        lhs->data[ i ] = ( digit & UINT64_C( 0xFFFFFFFF ) );
+        lhs->data[ i ] = ( digit & UINT32_C( 0xFFFFFFFF ) );
     }
 
     if ( carry > 0 )
     {
-        lhs->data[ i ] = carry;
-        ++lhs->size;
+        lhs->data[ lhs->size++ ] = carry;
     }
 
     return lhs;
@@ -45,25 +44,25 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t lhs;
-    _PDCLIB_bigint32( &lhs, UINT32_C( 0 ) );
-    _PDCLIB_bigint_mul32( &lhs, UINT32_C( 0 ) );
+    _PDCLIB_bigint32( &lhs, 0 );
+    _PDCLIB_bigint_mul32( &lhs, 0 );
     TESTCASE( lhs.size == 0 );
-    _PDCLIB_bigint_mul32( &lhs, UINT32_C( 1 ) );
+    _PDCLIB_bigint_mul32( &lhs, 1 );
     TESTCASE( lhs.size == 0 );
-    _PDCLIB_bigint32( &lhs, UINT32_C( 2 ) );
-    _PDCLIB_bigint_mul32( &lhs, UINT32_C( 1 ) );
+    _PDCLIB_bigint32( &lhs, 2 );
+    _PDCLIB_bigint_mul32( &lhs, 1 );
     TESTCASE( lhs.size == 1 );
-    TESTCASE( lhs.data[0] == UINT32_C( 2 ) );
+    TESTCASE( lhs.data[0] == 2 );
     _PDCLIB_bigint64( &lhs, UINT64_C( 0x100000000 ) );
-    _PDCLIB_bigint_mul32( &lhs, UINT32_C( 2 ) );
+    _PDCLIB_bigint_mul32( &lhs, 2 );
     TESTCASE( lhs.size == 2 );
-    TESTCASE( lhs.data[0] == UINT32_C( 0 ) );
-    TESTCASE( lhs.data[1] == UINT32_C( 2 ) );
+    TESTCASE( lhs.data[0] == 0 );
+    TESTCASE( lhs.data[1] == 2 );
     _PDCLIB_bigint_mul32( &lhs, UINT32_C( 0x80000000 ) );
     TESTCASE( lhs.size == 3 );
-    TESTCASE( lhs.data[0] == UINT32_C( 0 ) );
-    TESTCASE( lhs.data[1] == UINT32_C( 0 ) );
-    TESTCASE( lhs.data[2] == UINT32_C( 1 ) );
+    TESTCASE( lhs.data[0] == 0 );
+    TESTCASE( lhs.data[1] == 0 );
+    TESTCASE( lhs.data[2] == 1 );
 #endif
     return TEST_RESULTS;
 }

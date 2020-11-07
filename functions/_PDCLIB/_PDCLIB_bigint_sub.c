@@ -24,7 +24,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
 
         if ( ( newcarry = ( lhs->data[i] < rhs->data[i] ) || ( carry && ( lhs->data[i] == rhs->data[i] ) ) ) )
         {
-            lhs->data[i] += ( UINT32_MAX - rhs->data[i] ) + ( 1 - carry );
+            lhs->data[i] += ( UINT32_C( 0xFFFFFFFF ) - rhs->data[i] ) + ( 1 - carry );
         }
         else
         {
@@ -43,11 +43,11 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
         }
         else
         {
-            lhs->data[i] = UINT32_MAX;
+            lhs->data[i] = UINT32_C( 0xFFFFFFFF );
         }
     }
 
-    for ( i = lhs->size - 1; i >= 0 && lhs->data[ i ] == UINT32_C( 0 ); --i )
+    while ( lhs->size > 0 && lhs->data[ lhs->size - 1 ] == 0 )
     {
         --lhs->size;
     }
@@ -67,7 +67,7 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t lhs, rhs, res;
-    uint_least32_t NUL = UINT32_C( 0x0 );
+    uint_least32_t NUL = 0;
     uint_least32_t SML = UINT32_C( 0x7FFFFFFF );
     uint_least32_t MID = UINT32_C( 0x80000000 );
     uint_least32_t LRG = UINT32_C( 0x80000001 );

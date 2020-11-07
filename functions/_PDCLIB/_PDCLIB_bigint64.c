@@ -20,7 +20,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, uint_least64_t v
 
     bigint->data[0] = (uint_least32_t)( value & UINT32_C( 0xFFFFFFFF ) );
 
-    if ( ( bigint->data[1] = (uint_least32_t)( value >> 32 ) ) > UINT32_C( 0 ) )
+    if ( ( bigint->data[1] = (uint_least32_t)( value >> 32 ) ) > 0 )
     {
         bigint->size = 2;
     }
@@ -44,7 +44,7 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t big;
-    _PDCLIB_bigint64( &big, UINT64_C( 0 ) );
+    _PDCLIB_bigint64( &big, 0 );
     TESTCASE( big.size == 0 );
     _PDCLIB_bigint64( &big, UINT64_C( 0x12345678 ) );
     TESTCASE( big.size == 1 );
