@@ -47,7 +47,7 @@ int main( void )
 #ifndef REGTEST
     _PDCLIB_bigint_t value;
     char buffer[ _PDCLIB_BIGINT_CHARS ];
-    _PDCLIB_bigint32( &value, UINT32_C( 0 ) );
+    _PDCLIB_bigint32( &value, 0 );
     TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), "0x00000000" ) == 0 );
     _PDCLIB_bigint32( &value, UINT32_C( 0x12345678 ) );
     TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), "0x12345678" ) == 0 );

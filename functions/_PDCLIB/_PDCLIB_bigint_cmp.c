@@ -40,14 +40,14 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t lhs, rhs;
-    _PDCLIB_bigint32( &lhs, UINT32_C( 0 ) );
-    _PDCLIB_bigint64( &rhs, UINT64_C( 0 ) );
+    _PDCLIB_bigint32( &lhs, 0 );
+    _PDCLIB_bigint64( &rhs, 0 );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) == 0 );
-    _PDCLIB_bigint32( &lhs, UINT32_C( 0x01 ) );
+    _PDCLIB_bigint32( &lhs, 1 );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) > 0 );
     _PDCLIB_bigint32( &rhs, UINT32_C( 0x8000000 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) < 0 );
-    _PDCLIB_bigint64( &lhs, UINT64_C( 0x01 ) );
+    _PDCLIB_bigint64( &lhs, 1 );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) < 0 );
     _PDCLIB_bigint64( &lhs, UINT64_C( 0x0000000180000000 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) > 0 );

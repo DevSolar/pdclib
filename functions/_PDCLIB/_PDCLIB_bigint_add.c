@@ -32,12 +32,12 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
     /* Add up the bigints digit by digit, ensuring no overflow of 32-bit range */
     for ( i = 0; i < smaller->size; ++i )
     {
-        uint_least32_t l = ( UINT32_MAX - lhs->data[i] );
-        uint_least32_t r = ( UINT32_MAX - rhs->data[i] );
+        uint_least32_t l = ( UINT32_C( 0xFFFFFFFF ) - lhs->data[i] );
+        uint_least32_t r = ( UINT32_C( 0xFFFFFFFF ) - rhs->data[i] );
 
         if ( ( newcarry = ( l < rhs->data[i] ) || ( carry && ( l == rhs->data[i] ) ) ) )
         {
-            lhs->data[i] = UINT32_MAX - ( l + r ) - 1 + carry;
+            lhs->data[i] = UINT32_C( 0xFFFFFFFF ) - ( l + r ) - 1 + carry;
         }
         else
         {
@@ -49,7 +49,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
 
     for ( ; i < wider->size; ++i )
     {
-        if ( ( newcarry = ( ( UINT32_MAX - wider->data[i] ) < carry ) ) )
+        if ( ( newcarry = ( ( UINT32_C( 0xFFFFFFFF ) - wider->data[i] ) < carry ) ) )
         {
             lhs->data[i] = 0;
         }
@@ -82,29 +82,29 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t lhs, rhs;
-    _PDCLIB_bigint32( &lhs, UINT32_C( 0 ) );
-    _PDCLIB_bigint64( &rhs, UINT64_C( 0 ) );
+    _PDCLIB_bigint32( &lhs, 0 );
+    _PDCLIB_bigint64( &rhs, 0 );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 0 );
     _PDCLIB_bigint32( &lhs, UINT32_C( 0x12345678 ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 1 );
-    TESTCASE( lhs.data[0] == 0x12345678 );
+    TESTCASE( lhs.data[0] == UINT32_C( 0x12345678 ) );
     _PDCLIB_bigint32( &rhs, UINT32_C( 0x11111111 ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 1 );
-    TESTCASE( lhs.data[0] == 0x23456789 );
+    TESTCASE( lhs.data[0] == UINT32_C( 0x23456789 ) );
     _PDCLIB_bigint64( &rhs, UINT64_C( 0x00000001DCBA9877 ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 2 );
-    TESTCASE( lhs.data[0] == 0x00000000 );
-    TESTCASE( lhs.data[1] == 0x00000002 );
+    TESTCASE( lhs.data[0] == 0 );
+    TESTCASE( lhs.data[1] == 2 );
     _PDCLIB_bigint32( &lhs, UINT32_C( 0xFFFFFFFF ) );
     _PDCLIB_bigint32( &rhs, UINT32_C( 0xFFFFFFFF ) );
     _PDCLIB_bigint_add( &lhs, &rhs );
     TESTCASE( lhs.size == 2 );
-    TESTCASE( lhs.data[0] == 0xFFFFFFFE );
-    TESTCASE( lhs.data[1] == 0x00000001 );
+    TESTCASE( lhs.data[0] == UINT32_C( 0xFFFFFFFE ) );
+    TESTCASE( lhs.data[1] == 1 );
 #endif
     return TEST_RESULTS;
 }
