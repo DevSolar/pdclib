@@ -392,7 +392,9 @@ struct _PDCLIB_imaxdiv_t
 /* 80bit IEC 60559 double-extended format (64bit mantissa) is DECIMAL_DIG 21. */
 #define _PDCLIB_DECIMAL_DIG __DECIMAL_DIG__
 
-#if __LDBL_DECIMAL_DIG__ == 21
+#ifndef __LDBL_DECIMAL_DIG__
+#define _PDCLIB_LDBL_64
+#elif __LDBL_DECIMAL_DIG__ == 21
 #define _PDCLIB_LDBL_80
 #elif __LDBL_DECIMAL_DIG__ == 36
 #define _PDCLIB_LDBL_128
