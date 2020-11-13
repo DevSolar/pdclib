@@ -498,3 +498,9 @@ add_subdirectory( auxiliary/uctype )
 # (Platform maintainers are supposed to use the output to adapt their
 # platform's platform/<xyz>/include/pdclib/_PDCLIB_config.h.)
 add_subdirectory( auxiliary/pthread )
+
+# A helper executable storing a given floating point number into the
+# various FP data types of the platform (float, double, long double, ...)
+# and displaying their encoding. Nothing more than a "I understood those
+# encodings correctly" confidence check.
+add_subdirectory( auxiliary/fpconvert )
