@@ -223,7 +223,7 @@
 #define _PDCLIB_INT_LEAST64_C(c)   _PDCLIB_concat( c, __INT64_C_SUFFIX__ )
 #define _PDCLIB_UINT_LEAST64_C(c)  _PDCLIB_concat( c, __UINT64_C_SUFFIX__ )
 #else
-#error Please provide macros for defining least-width integer constants.
+#error Please create your own _PDCLIB_config.h. Using the existing one as-is will not work. (Unsupported *INTn_C macros.)
 #endif
 
 /* <stdlib.h> defines the div() function family that allows taking quotient   */
@@ -381,7 +381,7 @@ struct _PDCLIB_imaxdiv_t
 /* to double (1), or promotes float and double to long double (2).            */
 /* (-1) signifies indeterminable behaviour, any other value implementation-   */
 /* specific behaviour.                                                        */
-#define _PDCLIB_FLT_EVAL_METHOD -1
+#define _PDCLIB_FLT_EVAL_METHOD __FLT_EVAL_METHOD__
 
 /* "Number of the decimal digits (n), such that any floating-point number in  */
 /* the widest supported floating type with p(max) radix (b) digits can be     */
@@ -390,7 +390,13 @@ struct _PDCLIB_imaxdiv_t
 /* [1 + p(max) log(10)b] otherwise."                                          */
 /* 64bit IEC 60559 double format (53bit mantissa) is DECIMAL_DIG 17.          */
 /* 80bit IEC 60559 double-extended format (64bit mantissa) is DECIMAL_DIG 21. */
-#define _PDCLIB_DECIMAL_DIG 17
+#define _PDCLIB_DECIMAL_DIG __DECIMAL_DIG__
+
+#if __LDBL_DECIMAL_DIG__ == 21
+#define _PDCLIB_LDBL_80
+#elif __LDBL_DECIMAL_DIG__ == 36
+#define _PDCLIB_LDBL_128
+#endif
 
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
@@ -439,7 +445,7 @@ typedef __builtin_va_list _PDCLIB_va_list;
 
 #else
 
-#error Please create your own _PDCLIB_config.h. Using the existing one as-is will not work.
+#error Please create your own _PDCLIB_config.h. Using the existing one as-is will not work. (Unsupported varargs.)
 
 #endif
 
