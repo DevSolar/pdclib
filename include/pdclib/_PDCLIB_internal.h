@@ -662,6 +662,9 @@ _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul32( _PDCLIB_bigint_t * lhs, 
 /* Divides a given bigint by a given 32bit value. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div32( _PDCLIB_bigint_t * lhs, _PDCLIB_uint_least32_t rhs );
 
+/* Divides a given bigint by another given bigint. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
 /* Shifts a given bigint left by a given count of bits. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs );
 
@@ -671,14 +674,29 @@ _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, un
 /* Multiplies a given bigint with another given bigint. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
-/* Divides a given bigint by another given bigint. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
-
 /* Queries */
 /* ------- */
 
 /* Returns the log2() of a given bigint */
 _PDCLIB_PUBLIC unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint );
+
+/* FP Conversions */
+/* -------------- */
+
+/* Split a float into its integral components.
+   Returns 1 if value is negative, zero otherwise.
+*/
+_PDCLIB_LOCAL int _PDCLIB_float_split( float value, unsigned * exponent, _PDCLIB_bigint_t * significand );
+
+/* Split a double into its integral components.
+   Returns 1 if value is negative, zero otherwise.
+*/
+_PDCLIB_LOCAL int _PDCLIB_double_split( double value, unsigned * exponent, _PDCLIB_bigint_t * significand );
+
+/* Split a long double into its integral components.
+   Returns 1 if value is negative, zero otherwise.
+*/
+_PDCLIB_LOCAL int _PDCLIB_long_double_split( long double value, unsigned * exponent, _PDCLIB_bigint_t * significand );
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
