@@ -653,8 +653,14 @@ _PDCLIB_LOCAL char * _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * _PDCLIB_r
 /* Adds to a given bigint another given bigint. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
+/* Substracts from a given bigint another given bigint. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
 /* Multiplies a given bigint with a given 32bit value. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul32( _PDCLIB_bigint_t * lhs, _PDCLIB_uint_least32_t rhs );
+
+/* Divides a given bigint by a given 32bit value. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div32( _PDCLIB_bigint_t * lhs, _PDCLIB_uint_least32_t rhs );
 
 /* Shifts a given bigint left by a given count of bits. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs );
@@ -664,6 +670,9 @@ _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, un
 
 /* Multiplies a given bigint with another given bigint. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
+/* Divides a given bigint by another given bigint. */
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Queries */
 /* ------- */

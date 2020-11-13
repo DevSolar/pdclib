@@ -14,7 +14,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, uint_least32_t v
 {
     bigint->size = 1;
 
-    if ( ( bigint->data[0] = value ) == UINT32_C( 0 ) )
+    if ( ( bigint->data[0] = value ) == 0 )
     {
         bigint->size = 0;
     }
@@ -35,7 +35,7 @@ int main( void )
 #ifndef REGTEST
     _PDCLIB_bigint_t big;
     _PDCLIB_bigint_t * bigptr;
-    bigptr = _PDCLIB_bigint32( &big, UINT32_C( 0 ) );
+    bigptr = _PDCLIB_bigint32( &big, 0 );
     TESTCASE( bigptr == &big );
     TESTCASE( big.size == 0 );
     _PDCLIB_bigint32( &big, UINT32_C( 0x12345678 ) );

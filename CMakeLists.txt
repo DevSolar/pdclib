@@ -258,10 +258,12 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_bigint32.c
      functions/_PDCLIB/_PDCLIB_bigint64.c
      functions/_PDCLIB/_PDCLIB_bigint_add.c
+     functions/_PDCLIB/_PDCLIB_bigint_sub.c
      functions/_PDCLIB/_PDCLIB_bigint_cmp.c
      functions/_PDCLIB/_PDCLIB_bigint_log2.c
      functions/_PDCLIB/_PDCLIB_bigint_mul.c
      functions/_PDCLIB/_PDCLIB_bigint_mul32.c
+     functions/_PDCLIB/_PDCLIB_bigint_div32.c
      functions/_PDCLIB/_PDCLIB_bigint_shl.c
      functions/_PDCLIB/_PDCLIB_bigint_tostring.c
      functions/_PDCLIB/_PDCLIB_closeall.c
@@ -496,3 +498,9 @@ add_subdirectory( auxiliary/uctype )
 # (Platform maintainers are supposed to use the output to adapt their
 # platform's platform/<xyz>/include/pdclib/_PDCLIB_config.h.)
 add_subdirectory( auxiliary/pthread )
+
+# A helper executable storing a given floating point number into the
+# various FP data types of the platform (float, double, long double, ...)
+# and displaying their encoding. Nothing more than a "I understood those
+# encodings correctly" confidence check.
+add_subdirectory( auxiliary/fpconvert )
