@@ -14,8 +14,8 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
 {
     _PDCLIB_bigint_t const * smaller;
     _PDCLIB_bigint_t const * wider;
-    unsigned carry = 0;
-    unsigned newcarry;
+    _PDCLIB_bigint_digit_t carry = 0;
+    _PDCLIB_bigint_digit_t newcarry;
     int i;
 
     if ( lhs->size < rhs->size )
@@ -32,8 +32,8 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
     /* Add up the bigints digit by digit, ensuring no overflow of 32-bit range */
     for ( i = 0; i < smaller->size; ++i )
     {
-        uint_least32_t l = _PDCLIB_BIGINT_DIGIT_MAX - lhs->data[i];
-        uint_least32_t r = _PDCLIB_BIGINT_DIGIT_MAX - rhs->data[i];
+        _PDCLIB_bigint_digit_t l = _PDCLIB_BIGINT_DIGIT_MAX - lhs->data[i];
+        _PDCLIB_bigint_digit_t r = _PDCLIB_BIGINT_DIGIT_MAX - rhs->data[i];
 
         if ( ( newcarry = ( l < rhs->data[i] ) || ( carry && ( l == rhs->data[i] ) ) ) )
         {
