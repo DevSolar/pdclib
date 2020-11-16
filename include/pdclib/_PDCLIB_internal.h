@@ -597,20 +597,37 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const cha
 /* _PDCLIB_bigint_t support (required for floating point conversions)         */
 /* -------------------------------------------------------------------------- */
 
-/* Number of least32 words used in bigint representation.                     */
-#define _PDCLIB_BIGINT_WORDS 32
+/* Must be divisible by 32.                                                   */
+#define _PDCLIB_BIGINT_BITS 1024
+
+#if _PDCLIB_BIGINT_DIGIT_BITS == 32
+#define _PDCLIB_BIGINT_DIGIT_MAX UINT32_C( 0xFFFFFFFF )
+#define _PDCLIB_BIGINT_BASE ( UINT64_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
+typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_digit_t;
+typedef _PDCLIB_uint_least64_t _PDCLIB_bigint_arith_t;
+#elif _PDCLIB_BIGINT_DIGIT_BITS == 16
+#define _PDCLIB_BIGINT_DIGIT_MAX UINT16_C( 0xFFFF )
+#define _PDCLIB_BIGINT_BASE ( UINT32_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
+typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_digit_t;
+typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_arith_t;
+#else
+#error Only 16 or 32 supported for _PDCLIB_BIGINT_DIGIT_BITS.
+#endif
+
+/* How many "digits" a _PDCLIB_bigint_t holds.                                */
+#define _PDCLIB_BIGINT_DIGITS _PDCLIB_BIGINT_BITS / _PDCLIB_BIGINT_DIGIT_BITS
 
 /* Maximum number of characters needed for _PDCLIB_bigint_tostring()          */
-#define _PDCLIB_BIGINT_CHARS ( _PDCLIB_BIGINT_WORDS * 8 ) + 3
+#define _PDCLIB_BIGINT_CHARS ( _PDCLIB_BIGINT_BITS / 4 + _PDCLIB_BIGINT_DIGITS + 2 )
 
 /* Type */
 /* ---- */
 
 typedef struct
 {
-    /* Least significant word first */
-    _PDCLIB_uint_least32_t data[ _PDCLIB_BIGINT_WORDS ];
-    /* Number of words used; zero value == zero size */
+    /* Least significant digit first */
+    _PDCLIB_bigint_digit_t data[ _PDCLIB_BIGINT_DIGITS ];
+    /* Number of digits used; zero value == zero size */
     int size;
 } _PDCLIB_bigint_t;
 
@@ -626,10 +643,10 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint10( _PDCLIB_bigint_t * bigint, un
 /* Sets a bigint from a 32bit input value. */
 _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t value );
 
-/* Sets a bigint from a 64bit input value. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least64_t value );
+/* Sets a bigint from two 32bit input values. */
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t high, _PDCLIB_uint_least32_t low );
 
-/* Sets a bigint from another bigint. (Copies only value->size words, so it is
+/* Sets a bigint from another bigint. (Copies only value->size digits, so it is
    faster than a POD copy of a _PDCLIB_bigint_t in most cases.)
 */
 _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint( _PDCLIB_bigint_t * _PDCLIB_restrict bigint, _PDCLIB_bigint_t const * _PDCLIB_restrict value );
@@ -657,10 +674,10 @@ _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Multiplies a given bigint with a given 32bit value. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul32( _PDCLIB_bigint_t * lhs, _PDCLIB_uint_least32_t rhs );
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
 
 /* Divides a given bigint by a given 32bit value. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div32( _PDCLIB_bigint_t * lhs, _PDCLIB_uint_least32_t rhs );
+_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
 
 /* Divides a given bigint by another given bigint. */
 _PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );

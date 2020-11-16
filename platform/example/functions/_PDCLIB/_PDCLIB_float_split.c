@@ -17,8 +17,16 @@ int _PDCLIB_float_split( float value, unsigned * exponent, _PDCLIB_bigint_t * si
     } flt = { value };
 
     *exponent            = ( ( (unsigned)flt.byte[3] & 0x7F ) <<  1 ) | ( (unsigned)flt.byte[2] >> 7 );
+
+#if _PDCLIB_BIGINT_DIGIT_BITS == 32
     significand->data[0] = ( ( (unsigned)flt.byte[2] & 0x7F ) << 16 ) | ( (unsigned)flt.byte[1] << 8 ) | (unsigned)flt.byte[0];
     significand->size    = 1;
+#else
+    significand->data[1] =   (unsigned)flt.byte[2] & 0x7F;
+    significand->data[0] = ( (unsigned)flt.byte[1] << 8 ) | (unsigned)flt.byte[0];
+    significand->size    = 2;
+#endif
+
     return flt.byte[3] >> 7;
 }
 
@@ -28,21 +36,23 @@ int _PDCLIB_float_split( float value, unsigned * exponent, _PDCLIB_bigint_t * si
 
 #include "_PDCLIB_test.h"
 
+#include <stdint.h>
+
 int main( void )
 {
 #ifndef REGTEST
-    _PDCLIB_bigint_t significand;
+    _PDCLIB_bigint_t significand, expected;
     unsigned exponent;
 
     TESTCASE( _PDCLIB_float_split( 0.8f, &exponent, &significand ) == 0 );
     TESTCASE( exponent == 0x007e );
-    TESTCASE( significand.size == 1 );
-    TESTCASE( significand.data[0] == 0x004ccccd );
+    _PDCLIB_bigint32( &expected, UINT32_C( 0x004ccccd ) );
+    TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 
     TESTCASE( _PDCLIB_float_split( -24.789f, &exponent, &significand ) == 1 );
     TESTCASE( exponent == 0x0083 );
-    TESTCASE( significand.size == 1 );
-    TESTCASE( significand.data[0] == 0x00464fdf );
+    _PDCLIB_bigint32( &expected, UINT32_C( 0x00464fdf ) );
+    TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 #endif
 
     return TEST_RESULTS;
