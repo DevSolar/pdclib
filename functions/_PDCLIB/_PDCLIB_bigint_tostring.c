@@ -15,22 +15,24 @@
 char * _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * _PDCLIB_restrict value, char * _PDCLIB_restrict buffer )
 {
     char * rc = buffer;
-    strcpy( buffer, "0x" );
-    buffer += 2;
+    char prefix[3] = "0x";
+    int hexdigits = _PDCLIB_BIGINT_DIGIT_BITS / 4;
 
     if ( value->size > 0 )
     {
-        int i;
+        unsigned i;
 
-        for ( i = value->size - 1; i >= 0; --i )
+        for ( i = value->size; i > 0; --i )
         {
-            sprintf( buffer, "%08" PRIxLEAST32, value->data[i] );
-            buffer += 8;
+            sprintf( buffer, "%s%0*" PRIxLEAST32, prefix, hexdigits, value->data[i - 1] );
+            buffer += hexdigits + strlen( prefix );
+            prefix[0] = '.';
+            prefix[1] = '\0';
         }
     }
     else
     {
-        strcpy( buffer, "00000000" );
+        sprintf( buffer, "0x%0*x", hexdigits, 0 );
     }
 
     return rc;
@@ -47,12 +49,17 @@ int main( void )
 #ifndef REGTEST
     _PDCLIB_bigint_t value;
     char buffer[ _PDCLIB_BIGINT_CHARS ];
+#if _PDCLIB_BIGINT_DIGIT_BITS == 16
+    char const * expected[] = { "0x0000", "0x1234.5678", "0x90ab.cdef.1234.5678" };
+#else
+    char const * expected[] = { "0x00000000", "0x12345678", "0x90abcdef.12345678" };
+#endif
     _PDCLIB_bigint32( &value, 0 );
-    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), "0x00000000" ) == 0 );
+    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), expected[0] ) == 0 );
     _PDCLIB_bigint32( &value, UINT32_C( 0x12345678 ) );
-    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), "0x12345678" ) == 0 );
-    _PDCLIB_bigint64( &value, UINT64_C( 0x90abcdef12345678 ) );
-    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), "0x90abcdef12345678" ) == 0 );
+    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), expected[1] ) == 0 );
+    _PDCLIB_bigint64( &value, UINT32_C( 0x90abcdef ), UINT32_C( 0x12345678 ) );
+    TESTCASE( strcmp( _PDCLIB_bigint_tostring( &value, buffer ), expected[2] ) == 0 );
 #endif
     return TEST_RESULTS;
 }

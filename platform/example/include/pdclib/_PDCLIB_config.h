@@ -420,6 +420,21 @@ struct _PDCLIB_imaxdiv_t
 #endif
 
 /* -------------------------------------------------------------------------- */
+/* Big Integer Arithmetic                                                     */
+/* -------------------------------------------------------------------------- */
+/* In support of the floating point converstions required by printf() etc.,   */
+/* PDCLib provides rudimentary big integer arithmetics. The _PDCLIB_bigint_t  */
+/* type stores values in a sequence of integer "digits", which may be either  */
+/* uint_least32_t or uint_least16_t.. While addition and substraction can be  */
+/* done in-place and in-type, multiplication and division require the help of */
+/* the next larger type. If the platform provides (efficient) 64bit integer   */
+/* arithmetics, set the define below to 32; otherwise set it to 16. Other     */
+/* values are not supported.                                                  */
+/* (The value range of _PDCLIB_bigint_t is not affected.)                     */
+
+#define _PDCLIB_BIGINT_DIGIT_BITS 32
+
+/* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
 /* -------------------------------------------------------------------------- */
 

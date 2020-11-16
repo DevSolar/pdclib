@@ -36,7 +36,7 @@ unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint )
     value |= value >> 8;
     value |= value >> 16;
 
-    return lookup[ ( value * UINT32_C( 0x07C4ACDDU ) ) >> 27 ] + ( bigint->size - 1 ) * 32;
+    return lookup[ ( value * UINT32_C( 0x07C4ACDDU ) ) >> 27 ] + ( bigint->size - 1 ) * _PDCLIB_BIGINT_DIGIT_BITS;
 }
 
 #endif
@@ -67,9 +67,9 @@ int main( void )
     TESTCASE( _PDCLIB_bigint_log2( &big ) == 31 );
     _PDCLIB_bigint32( &big, UINT32_C( 0x87654321 ) );
     TESTCASE( _PDCLIB_bigint_log2( &big ) == 31 );
-    _PDCLIB_bigint64( &big, UINT64_C( 0xFFFFFFFFFFFFFFFF ) );
+    _PDCLIB_bigint64( &big, UINT32_C( 0xFFFFFFFF ), UINT32_C( 0xFFFFFFFF ) );
     TESTCASE( _PDCLIB_bigint_log2( &big ) == 63 );
-    _PDCLIB_bigint64( &big, UINT64_C( 0xfedcba9087654321 ) );
+    _PDCLIB_bigint64( &big, UINT32_C( 0xfedcba90 ), UINT32_C( 0x87654321 ) );
     TESTCASE( _PDCLIB_bigint_log2( &big ) == 63 );
 #endif
     return TEST_RESULTS;

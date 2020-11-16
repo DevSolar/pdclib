@@ -17,9 +17,19 @@ int _PDCLIB_double_split( double value, unsigned * exponent, _PDCLIB_bigint_t * 
     } dbl = { value };
 
     *exponent            = ( ( (unsigned)dbl.byte[7] & 0x7F ) <<  4 ) | ( ( (unsigned)dbl.byte[6] & 0xF0 ) >>  4 );
+
+#if _PDCLIB_BIGINT_DIGIT_BITS == 32
     significand->data[1] = ( ( (unsigned)dbl.byte[6] & 0x0F ) << 16 ) |   ( (unsigned)dbl.byte[5]          <<  8 ) |   (unsigned)dbl.byte[4];
     significand->data[0] =   ( (unsigned)dbl.byte[3]          << 24 ) |   ( (unsigned)dbl.byte[2]          << 16 ) | ( (unsigned)dbl.byte[1] << 8 ) | (unsigned)dbl.byte[0];
     significand->size    = 2;
+#else
+    significand->data[3] =   (unsigned)dbl.byte[6] & 0x0F;
+    significand->data[2] = ( (unsigned)dbl.byte[5] << 8 ) | (unsigned)dbl.byte[4];
+    significand->data[1] = ( (unsigned)dbl.byte[3] << 8 ) | (unsigned)dbl.byte[2];
+    significand->data[0] = ( (unsigned)dbl.byte[1] << 8 ) | (unsigned)dbl.byte[0];
+    significand->size    = 4;
+#endif
+
     return dbl.byte[7] >> 7;
 }
 
@@ -29,23 +39,23 @@ int _PDCLIB_double_split( double value, unsigned * exponent, _PDCLIB_bigint_t * 
 
 #include "_PDCLIB_test.h"
 
+#include <stdint.h>
+
 int main( void )
 {
 #ifndef REGTEST
-    _PDCLIB_bigint_t significand;
+    _PDCLIB_bigint_t significand, expected;
     unsigned exponent;
 
     TESTCASE( _PDCLIB_double_split( 0.8, &exponent, &significand ) == 0 );
     TESTCASE( exponent == 0x03fe );
-    TESTCASE( significand.size == 2 );
-    TESTCASE( significand.data[1] == 0x00099999 );
-    TESTCASE( significand.data[0] == 0x9999999a );
+    _PDCLIB_bigint64( &expected, UINT32_C( 0x00099999 ), UINT32_C( 0x9999999a ) );
+    TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 
     TESTCASE( _PDCLIB_double_split( -24.789, &exponent, &significand ) == 1 );
     TESTCASE( exponent == 0x0403 );
-    TESTCASE( significand.size == 2 );
-    TESTCASE( significand.data[1] == 0x0008c9fb );
-    TESTCASE( significand.data[0] == 0xe76c8b44 );
+    _PDCLIB_bigint64( &expected, UINT32_C( 0x0008c9fb ), UINT32_C( 0xe76c8b44 ) );
+    TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 #endif
 
     return TEST_RESULTS;
