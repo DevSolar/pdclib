@@ -62,6 +62,7 @@ int main( void )
     TESTCASE( strtoumax( "0Xa1", NULL, 0 ) == 161 );
     /* proper handling of border case: 0x followed by non-hexdigit */
     TESTCASE( strtoumax( tricky, &endptr, 0 ) == 0 );
+    /* newlib completely balks at this parse, so we _NOREG it */
     TESTCASE_NOREG( endptr == tricky + 2 );
     /* proper handling of border case: 0 followed by non-octdigit */
     TESTCASE( strtoumax( tricky, &endptr, 8 ) == 0 );

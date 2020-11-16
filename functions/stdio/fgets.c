@@ -82,12 +82,13 @@ int main( void )
     TESTCASE( strcmp( buffer, "weenie" ) == 0 );
     TESTCASE( feof( fh ) );
     TESTCASE( fseek( fh, -1, SEEK_END ) == 0 );
-    TESTCASE( fgets( buffer, 1, fh ) == buffer );
-    TESTCASE( strcmp( buffer, "" ) == 0 );
+    /* newlib returns NULL on any n < 2, so we _NOREG these tests. */
+    TESTCASE_NOREG( fgets( buffer, 1, fh ) == buffer );
+    TESTCASE_NOREG( strcmp( buffer, "" ) == 0 );
     TESTCASE( fgets( buffer, 0, fh ) == NULL );
     TESTCASE( ! feof( fh ) );
-    TESTCASE( fgets( buffer, 1, fh ) == buffer );
-    TESTCASE( strcmp( buffer, "" ) == 0 );
+    TESTCASE_NOREG( fgets( buffer, 1, fh ) == buffer );
+    TESTCASE_NOREG( strcmp( buffer, "" ) == 0 );
     TESTCASE( ! feof( fh ) );
     TESTCASE( fgets( buffer, 2, fh ) == buffer );
     TESTCASE( strcmp( buffer, "e" ) == 0 );

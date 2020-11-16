@@ -69,7 +69,8 @@ int main( void )
     TESTCASE( strtol( "0Xa1", NULL, 0 ) == 161 );
     /* proper handling of border case: 0x followed by non-hexdigit */
     TESTCASE( strtol( tricky, &endptr, 0 ) == 0 );
-    TESTCASE( endptr == tricky + 2 );
+    /* newlib completely balks at this parse, so we _NOREG it. */
+    TESTCASE_NOREG( endptr == tricky + 2 );
     /* proper handling of border case: 0 followed by non-octdigit */
     TESTCASE( strtol( tricky, &endptr, 8 ) == 0 );
     TESTCASE( endptr == tricky + 2 );
