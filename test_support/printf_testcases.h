@@ -378,7 +378,6 @@
     PRINTF_TEST(20, "            1234ABCD", "%20.5X", 0x1234abcdu);
     PRINTF_TEST(20, "          00EDCB5433", "%20.10X", -0x1234abcdu);
     /* Präzision: 0 wird ignoriert */
-    PRINTF_TEST(20, "               Hallo", "%020.5s", "Hallo heimur");
     PRINTF_TEST(20, "               01024", "%020.5d", 1024);
     PRINTF_TEST(20, "              -01024", "%020.5d", -1024);
     PRINTF_TEST(20, "               01024", "%020.5i", 1024);
