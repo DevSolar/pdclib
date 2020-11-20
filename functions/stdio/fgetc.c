@@ -26,14 +26,7 @@ int fgetc( struct _PDCLIB_file_t * stream )
         return EOF;
     }
 
-    if ( stream->ungetidx > 0 )
-    {
-        rc = ( unsigned char )stream->ungetbuf[ --( stream->ungetidx ) ];
-    }
-    else
-    {
-        rc = ( unsigned char )stream->buffer[stream->bufidx++];
-    }
+    rc = _PDCLIB_GET( stream );
 
     _PDCLIB_UNLOCK( stream->mtx );
 
