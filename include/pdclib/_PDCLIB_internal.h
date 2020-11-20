@@ -99,6 +99,8 @@ extern "C" {
 
 #define _PDCLIB_CONSTRAINT_VIOLATION( e ) _PDCLIB_lc_messages->errno_texts[e], NULL, e
 
+#define _PDCLIB_GET( fh ) ( fh->ungetidx == 0 ) ? ( unsigned char )fh->buffer[ fh->bufidx++ ] : ( unsigned char )fh->ungetbuf[ --fh->ungetidx ]
+
 /* -------------------------------------------------------------------------- */
 /* Preparing the length modifiers used in <inttypes.h>.                       */
 /* -------------------------------------------------------------------------- */
