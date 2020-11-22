@@ -20,7 +20,7 @@ int fgetc( struct _PDCLIB_file_t * stream )
 
     _PDCLIB_LOCK( stream->mtx );
 
-    if ( _PDCLIB_prepread( stream ) == EOF )
+    if ( _PDCLIB_prepread( stream ) == EOF || _PDCLIB_CHECKBUFFER( stream ) == EOF )
     {
         _PDCLIB_UNLOCK( stream->mtx );
         return EOF;
