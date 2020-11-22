@@ -37,7 +37,7 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
         return NULL;
     }
 
-    while ( ( ( *dest++ = _PDCLIB_GET( stream ) ) != '\n' ) && ( --size > 0 ) )
+    while ( ( ( *dest++ = _PDCLIB_GETC( stream ) ) != '\n' ) && ( --size > 0 ) )
     {
         if ( stream->bufidx == stream->bufend )
         {
