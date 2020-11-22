@@ -44,7 +44,7 @@ size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PD
                 return nmemb_i;
             }
 
-            dest[ nmemb_i * size + size_i ] = _PDCLIB_GET( stream );
+            dest[ nmemb_i * size + size_i ] = _PDCLIB_GETC( stream );
         }
     }
 
