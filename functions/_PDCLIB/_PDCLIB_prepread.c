@@ -24,7 +24,7 @@ int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
 
     stream->status |= _PDCLIB_FREAD | _PDCLIB_BYTESTREAM;
 
-    return _PDCLIB_CHECKBUFFER( stream );
+    return 0;
 }
 
 #endif

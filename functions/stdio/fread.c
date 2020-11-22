@@ -22,7 +22,7 @@ size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PD
 
     _PDCLIB_LOCK( stream->mtx );
 
-    if ( _PDCLIB_prepread( stream ) == EOF )
+    if ( _PDCLIB_prepread( stream ) == EOF || _PDCLIB_CHECKBUFFER( stream ) == EOF )
     {
         _PDCLIB_UNLOCK( stream->mtx );
         return 0;
