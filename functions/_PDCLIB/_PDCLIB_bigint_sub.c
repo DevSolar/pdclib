@@ -24,7 +24,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
 
         if ( ( newcarry = ( lhs->data[i] < rhs->data[i] ) || ( carry && ( lhs->data[i] == rhs->data[i] ) ) ) )
         {
-            lhs->data[i] += ( UINT32_C( 0xFFFFFFFF ) - rhs->data[i] ) + ( 1 - carry );
+            lhs->data[i] += ( _PDCLIB_BIGINT_DIGIT_MAX - rhs->data[i] ) + ( 1 - carry );
         }
         else
         {
@@ -43,7 +43,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
         }
         else
         {
-            lhs->data[i] = UINT32_C( 0xFFFFFFFF );
+            lhs->data[i] = _PDCLIB_BIGINT_DIGIT_MAX;
         }
     }
 
@@ -67,11 +67,11 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t lhs, rhs, res;
-    uint_least32_t NUL = 0;
-    uint_least32_t SML = UINT32_C( 0x7FFFFFFF );
-    uint_least32_t MID = UINT32_C( 0x80000000 );
-    uint_least32_t LRG = UINT32_C( 0x80000001 );
-    uint_least32_t MAX = UINT32_C( 0xFFFFFFFF );
+    _PDCLIB_bigint_digit_t NUL = 0;
+    _PDCLIB_bigint_digit_t SML = _PDCLIB_BIGINT_DIGIT_MAX / 2;
+    _PDCLIB_bigint_digit_t MID = _PDCLIB_BIGINT_DIGIT_MAX / 2 + 1;
+    _PDCLIB_bigint_digit_t LRG = _PDCLIB_BIGINT_DIGIT_MAX / 2 + 2;
+    _PDCLIB_bigint_digit_t MAX = _PDCLIB_BIGINT_DIGIT_MAX;
 
     /* Building a large number substraction that covers all kinds of
        cases. From rightmost digit to left:

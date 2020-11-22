@@ -13,10 +13,10 @@
 
 _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs )
 {
-    unsigned word_shifts = rhs / 32;
-    unsigned bit_shifts = rhs - ( word_shifts * 32 );
-    uint_least64_t digit;
-    uint_least32_t carry = 0;
+    unsigned word_shifts = rhs / _PDCLIB_BIGINT_DIGIT_BITS;
+    unsigned bit_shifts = rhs - ( word_shifts * _PDCLIB_BIGINT_DIGIT_BITS );
+    _PDCLIB_bigint_arith_t digit;
+    _PDCLIB_bigint_digit_t carry = 0;
     int i;
 
     if ( lhs->size == 0 )
@@ -26,16 +26,16 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs )
 
     if ( word_shifts > 0 )
     {
-        memmove( lhs->data + word_shifts, lhs->data, sizeof( uint_least32_t ) * lhs->size );
-        memset( lhs->data, 0, sizeof( uint_least32_t ) * word_shifts );
+        memmove( lhs->data + word_shifts, lhs->data, sizeof( _PDCLIB_bigint_digit_t ) * lhs->size );
+        memset( lhs->data, 0, sizeof( _PDCLIB_bigint_digit_t ) * word_shifts );
         lhs->size += word_shifts;
     }
 
     for ( i = 0 + word_shifts; i < lhs->size; ++i )
     {
-        digit = ( (uint_least64_t)lhs->data[i] << bit_shifts ) | carry;
-        carry = digit >> 32;
-        lhs->data[i] = digit & UINT32_C( 0xFFFFFFFF );
+        digit = ( (_PDCLIB_bigint_arith_t)lhs->data[i] << bit_shifts ) | carry;
+        carry = digit >> _PDCLIB_BIGINT_DIGIT_BITS;
+        lhs->data[i] = digit & _PDCLIB_BIGINT_DIGIT_MAX;
     }
 
     if ( carry > 0 )
@@ -55,22 +55,17 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs )
 int main( void )
 {
 #ifndef REGTEST
-    _PDCLIB_bigint_t lhs;
+    _PDCLIB_bigint_t lhs, expected;
+
     _PDCLIB_bigint32( &lhs, 12 );
+    _PDCLIB_bigint32( &expected, 48 );
     _PDCLIB_bigint_shl( &lhs, 2 );
-    TESTCASE( lhs.size == 1 );
-    TESTCASE( lhs.data[0] == 48 );
+    TESTCASE( _PDCLIB_bigint_cmp( &lhs, &expected ) == 0 );
+
     _PDCLIB_bigint32( &lhs, UINT32_C( 0x80000001 ) );
+    _PDCLIB_bigint64( &expected, 1, 2 );
     _PDCLIB_bigint_shl( &lhs, 1 );
-    TESTCASE( lhs.size == 2 );
-    TESTCASE( lhs.data[0] == 2 );
-    TESTCASE( lhs.data[1] == 1 );
-    _PDCLIB_bigint_shl( &lhs, 65 );
-    TESTCASE( lhs.size == 4 );
-    TESTCASE( lhs.data[0] == 0 );
-    TESTCASE( lhs.data[1] == 0 );
-    TESTCASE( lhs.data[2] == 4 );
-    TESTCASE( lhs.data[3] == 2 );
+    TESTCASE( _PDCLIB_bigint_cmp( &lhs, &expected ) == 0 );
 #endif
     return TEST_RESULTS;
 }

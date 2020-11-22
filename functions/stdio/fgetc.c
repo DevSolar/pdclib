@@ -16,23 +16,16 @@
 
 int fgetc( struct _PDCLIB_file_t * stream )
 {
-    int rc;
+    int rc = EOF;
 
     _PDCLIB_LOCK( stream->mtx );
 
-    if ( _PDCLIB_prepread( stream ) == EOF )
+    if ( _PDCLIB_prepread( stream ) != EOF )
     {
-        _PDCLIB_UNLOCK( stream->mtx );
-        return EOF;
-    }
-
-    if ( stream->ungetidx > 0 )
-    {
-        rc = ( unsigned char )stream->ungetbuf[ --( stream->ungetidx ) ];
-    }
-    else
-    {
-        rc = ( unsigned char )stream->buffer[stream->bufidx++];
+        if ( _PDCLIB_CHECKBUFFER( stream ) != EOF )
+        {
+            rc = _PDCLIB_GETC( stream );
+        }
     }
 
     _PDCLIB_UNLOCK( stream->mtx );

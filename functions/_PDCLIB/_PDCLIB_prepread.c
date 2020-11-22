@@ -24,14 +24,7 @@ int _PDCLIB_prepread( struct _PDCLIB_file_t * stream )
 
     stream->status |= _PDCLIB_FREAD | _PDCLIB_BYTESTREAM;
 
-    if ( ( stream->bufidx == stream->bufend ) && ( stream->ungetidx == 0 ) )
-    {
-        return _PDCLIB_fillbuffer( stream );
-    }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 #endif

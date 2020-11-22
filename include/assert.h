@@ -28,13 +28,13 @@ _PDCLIB_PUBLIC void _PDCLIB_assert89( const char * const );
                             ", function ", __func__, \
                             ", file " __FILE__ \
                             ", line " _PDCLIB_value2string( __LINE__ ) \
-                            "." _PDCLIB_endl ) )
+                            ".\n" ) )
 #else
 #define assert( expression ) ( ( expression ) ? (void) 0 \
         : _PDCLIB_assert89( "Assertion failed: " #expression \
                             ", file " __FILE__ \
                             ", line " _PDCLIB_value2string( __LINE__ ) \
-                            "." _PDCLIB_endl ) )
+                            ".\n" ) )
 #endif
 #endif
 

@@ -12,9 +12,6 @@
 /* Misc                                                                       */
 /* -------------------------------------------------------------------------- */
 
-/* The character (sequence) your platform uses as newline.                    */
-#define _PDCLIB_endl "\n"
-
 /* Helper macros also documented in _PDCLIB_internal.h, but defined here as   */
 /* they are needed in this file already.                                      */
 /* _PDCLIB_cc( x, y ) concatenates two preprocessor tokens without extending. */
@@ -100,14 +97,17 @@
 #define _PDCLIB_TWOS_COMPLEMENT 1
 
 /* Calculation of a minimum value from a given maximum for two's complement.  */
+/* (For convenience only, used only in this header file below.)               */
 #define _PDCLIB_MIN_CALC( max ) ( ( - max ) - 1 )
 
 /* Now, introducting the various predefines to the _PDCLIB_* namespace, so    */
 /* the rest of PDCLib can work with that and adapting to a different compiler */
 /* will require changes only in this one file.                                */
 
+/* Bits in a char */
 #define _PDCLIB_CHAR_BIT __CHAR_BIT__
 
+/* Maximum and minimum values of signed / unsigned char                       */
 #define _PDCLIB_SCHAR_MAX __SCHAR_MAX__
 #define _PDCLIB_SCHAR_MIN _PDCLIB_MIN_CALC( __SCHAR_MAX__ )
 #define _PDCLIB_UCHAR_MAX ( __SCHAR_MAX__ * 2 + 1 )
@@ -121,18 +121,22 @@
 #define _PDCLIB_CHAR_MIN _PDCLIB_SCHAR_MIN
 #endif
 
+/* Maximum and minimum values of signed / unsigned short                      */
 #define _PDCLIB_SHRT_MAX __SHRT_MAX__
 #define _PDCLIB_SHRT_MIN _PDCLIB_MIN_CALC( __SHRT_MAX__ )
 #define _PDCLIB_USHRT_MAX ( __SHRT_MAX__ * 2u + 1 )
 
+/* Maximum and minimum values of signed / unsigned int                        */
 #define _PDCLIB_INT_MAX __INT_MAX__
 #define _PDCLIB_INT_MIN _PDCLIB_MIN_CALC( __INT_MAX__ )
 #define _PDCLIB_UINT_MAX ( __INT_MAX__ * 2u + 1 )
 
+/* Maximum and minimum values of signed / unsigned long                       */
 #define _PDCLIB_LONG_MAX __LONG_MAX__
 #define _PDCLIB_LONG_MIN _PDCLIB_MIN_CALC( __LONG_MAX__ )
 #define _PDCLIB_ULONG_MAX ( __LONG_MAX__ * 2ul + 1 )
 
+/* Maximum and minimum values of signed / unsigned long long                  */
 #define _PDCLIB_LLONG_MAX __LONG_LONG_MAX__
 #define _PDCLIB_LLONG_MIN _PDCLIB_MIN_CALC( __LONG_LONG_MAX__ )
 #define _PDCLIB_ULLONG_MAX ( __LONG_LONG_MAX__ * 2ull + 1 )
@@ -156,55 +160,65 @@
 /* and mostly redundant defines. They are determined in <_PDCLIB_internal.h>. */
 /* -------------------------------------------------------------------------- */
 
+/* int_fast8_t / uint_fast8_t                                                 */
 #define _PDCLIB_int_fast8_t        __INT_FAST8_TYPE__
 #define _PDCLIB_INT_FAST8_MAX      __INT_FAST8_MAX__
 #define _PDCLIB_INT_FAST8_MIN      _PDCLIB_MIN_CALC( __INT_FAST8_MAX__ )
 #define _PDCLIB_uint_fast8_t       __UINT_FAST8_TYPE__
 #define _PDCLIB_UINT_FAST8_MAX     __UINT_FAST8_MAX__
 
+/* int_least8_t / uint_least8_t                                               */
 #define _PDCLIB_int_least8_t       __INT_LEAST8_TYPE__
 #define _PDCLIB_INT_LEAST8_MAX     __INT_LEAST8_MAX__
 #define _PDCLIB_INT_LEAST8_MIN     _PDCLIB_MIN_CALC( __INT_LEAST8_MAX__ )
 #define _PDCLIB_uint_least8_t      __UINT_LEAST8_TYPE__
 #define _PDCLIB_UINT_LEAST8_MAX    __UINT_LEAST8_MAX__
 
+/* int_fast16_t / uint_fast16_t                                               */
 #define _PDCLIB_int_fast16_t       __INT_FAST16_TYPE__
 #define _PDCLIB_INT_FAST16_MAX     __INT_FAST16_MAX__
 #define _PDCLIB_INT_FAST16_MIN     _PDCLIB_MIN_CALC( __INT_FAST16_MAX__ )
 #define _PDCLIB_uint_fast16_t      __UINT_FAST16_TYPE__
 #define _PDCLIB_UINT_FAST16_MAX    __UINT_FAST16_MAX__
 
+/* int_least16_t / uint_least16_t                                             */
 #define _PDCLIB_int_least16_t      __INT_LEAST16_TYPE__
 #define _PDCLIB_INT_LEAST16_MAX    __INT_LEAST16_MAX__
 #define _PDCLIB_INT_LEAST16_MIN    _PDCLIB_MIN_CALC( __INT_LEAST16_MAX__ )
 #define _PDCLIB_uint_least16_t     __UINT_LEAST16_TYPE__
 #define _PDCLIB_UINT_LEAST16_MAX   __UINT_LEAST16_MAX__
 
+/* int_fast32_t / uint_fast32_t                                               */
 #define _PDCLIB_int_fast32_t       __INT_FAST32_TYPE__
 #define _PDCLIB_INT_FAST32_MAX     __INT_FAST32_MAX__
 #define _PDCLIB_INT_FAST32_MIN     _PDCLIB_MIN_CALC( __INT_FAST32_MAX__ )
 #define _PDCLIB_uint_fast32_t      __UINT_FAST32_TYPE__
 #define _PDCLIB_UINT_FAST32_MAX    __UINT_FAST32_MAX__
 
+/* int_least32_t / uint_least32_t                                             */
 #define _PDCLIB_int_least32_t      __INT_LEAST32_TYPE__
 #define _PDCLIB_INT_LEAST32_MAX    __INT_LEAST32_MAX__
 #define _PDCLIB_INT_LEAST32_MIN    _PDCLIB_MIN_CALC( __INT_LEAST32_MAX__ )
 #define _PDCLIB_uint_least32_t     __UINT_LEAST32_TYPE__
 #define _PDCLIB_UINT_LEAST32_MAX   __UINT_LEAST32_MAX__
 
+/* int_fast64_t / uint_fast64_t                                               */
 #define _PDCLIB_int_fast64_t       __INT_FAST64_TYPE__
 #define _PDCLIB_INT_FAST64_MAX     __INT_FAST64_MAX__
 #define _PDCLIB_INT_FAST64_MIN     _PDCLIB_MIN_CALC( __INT_FAST64_MAX__ )
 #define _PDCLIB_uint_fast64_t      __UINT_FAST64_TYPE__
 #define _PDCLIB_UINT_FAST64_MAX    __UINT_FAST64_MAX__
 
+/* int_least64_t / uint_least64_t                                             */
 #define _PDCLIB_int_least64_t      __INT_LEAST64_TYPE__
 #define _PDCLIB_INT_LEAST64_MAX    __INT_LEAST64_MAX__
 #define _PDCLIB_INT_LEAST64_MIN    _PDCLIB_MIN_CALC( __INT_LEAST64_MAX__ )
 #define _PDCLIB_uint_least64_t     __UINT_LEAST64_TYPE__
 #define _PDCLIB_UINT_LEAST64_MAX   __UINT_LEAST64_MAX__
 
+/* INTn_C / UINTn_C macros for define int_leastN_t / uint_leastN_t literals.  */
 #if defined( __INT8_C )
+/* GCC                                                                        */
 #define _PDCLIB_INT_LEAST8_C       __INT8_C
 #define _PDCLIB_UINT_LEAST8_C      __UINT8_C
 #define _PDCLIB_INT_LEAST16_C      __INT16_C
@@ -214,6 +228,7 @@
 #define _PDCLIB_INT_LEAST64_C      __INT64_C
 #define _PDCLIB_UINT_LEAST64_C     __UINT64_C
 #elif defined( __INT8_C_SUFFIX__ )
+/* Clang                                                                      */
 #define _PDCLIB_INT_LEAST8_C(c)    _PDCLIB_concat( c, __INT8_C_SUFFIX__ )
 #define _PDCLIB_UINT_LEAST8_C(c)   _PDCLIB_concat( c, __UINT8_C_SUFFIX__ )
 #define _PDCLIB_INT_LEAST16_C(c)   _PDCLIB_concat( c, __INT16_C_SUFFIX__ )
@@ -223,7 +238,7 @@
 #define _PDCLIB_INT_LEAST64_C(c)   _PDCLIB_concat( c, __INT64_C_SUFFIX__ )
 #define _PDCLIB_UINT_LEAST64_C(c)  _PDCLIB_concat( c, __UINT64_C_SUFFIX__ )
 #else
-#error Please provide macros for defining least-width integer constants.
+#error Please create your own _PDCLIB_config.h. Using the existing one as-is will not work. (Unsupported *INTn_C macros.)
 #endif
 
 /* <stdlib.h> defines the div() function family that allows taking quotient   */
@@ -258,7 +273,6 @@ struct _PDCLIB_lldiv_t
 #define _PDCLIB_ptrdiff_t   __PTRDIFF_TYPE__
 #define _PDCLIB_PTRDIFF_MAX __PTRDIFF_MAX__
 #define _PDCLIB_PTRDIFF_MIN _PDCLIB_MIN_CALC( __PTRDIFF_MAX__ )
-#define _PDCLIB_PTR_CONV l
 
 /* An integer type that can be accessed as atomic entity (think asynchronous  */
 /* interrupts). In a freestanding environment, the type itself need not be    */
@@ -381,16 +395,44 @@ struct _PDCLIB_imaxdiv_t
 /* to double (1), or promotes float and double to long double (2).            */
 /* (-1) signifies indeterminable behaviour, any other value implementation-   */
 /* specific behaviour.                                                        */
-#define _PDCLIB_FLT_EVAL_METHOD -1
+#define _PDCLIB_FLT_EVAL_METHOD __FLT_EVAL_METHOD__
 
 /* "Number of the decimal digits (n), such that any floating-point number in  */
 /* the widest supported floating type with p(max) radix (b) digits can be     */
 /* rounded to a floating-point number with (n) decimal digits and back again  */
 /* without change to the value p(max) log(10)b if (b) is a power of 10,       */
 /* [1 + p(max) log(10)b] otherwise."                                          */
-/* 64bit IEC 60559 double format (53bit mantissa) is DECIMAL_DIG 17.          */
-/* 80bit IEC 60559 double-extended format (64bit mantissa) is DECIMAL_DIG 21. */
-#define _PDCLIB_DECIMAL_DIG 17
+/*  32bit IEEE 754 single precision (23bit mantissa) is DECIMAL_DIG 9.        */
+/*  64bit IEEE 754 double precision (53bit mantissa) is DECIMAL_DIG 17.       */
+/*  80bit IEEE 754 extended precision (64bit mantissa) is DECIMAL_DIG 21.     */
+/* 128bit IEEE 754 quadruple precision (112bit mantissa) is DECIMAL_DIG 36.   */
+#define _PDCLIB_DECIMAL_DIG __DECIMAL_DIG__
+
+/* Most platforms today use IEEE 754 single precision for 'float', and double */
+/* precision for 'double'. But type 'long double' varies. We use what the     */
+/* compiler states about LDBL_DECIMAL_DIG to determine the type.              */
+#ifndef __LDBL_DECIMAL_DIG__
+#define _PDCLIB_LDBL_64
+#elif __LDBL_DECIMAL_DIG__ == 21
+#define _PDCLIB_LDBL_80
+#elif __LDBL_DECIMAL_DIG__ == 36
+#define _PDCLIB_LDBL_128
+#endif
+
+/* -------------------------------------------------------------------------- */
+/* Big Integer Arithmetic                                                     */
+/* -------------------------------------------------------------------------- */
+/* In support of the floating point converstions required by printf() etc.,   */
+/* PDCLib provides rudimentary big integer arithmetics. The _PDCLIB_bigint_t  */
+/* type stores values in a sequence of integer "digits", which may be either  */
+/* uint_least32_t or uint_least16_t.. While addition and substraction can be  */
+/* done in-place and in-type, multiplication and division require the help of */
+/* the next larger type. If the platform provides (efficient) 64bit integer   */
+/* arithmetics, set the define below to 32; otherwise set it to 16. Other     */
+/* values are not supported.                                                  */
+/* (The value range of _PDCLIB_bigint_t is not affected.)                     */
+
+#define _PDCLIB_BIGINT_DIGIT_BITS 32
 
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
@@ -414,9 +456,9 @@ struct _PDCLIB_imaxdiv_t
 
 #if defined( __i386 )
 
-/* The following generic implementation works only for pure                   */
-/* stack-based architectures, and only if arguments are aligned to pointer    */
-/* type. Credits to Michael Moody, who contributed this to the Public Domain. */
+/* The following generic implementation works only for pure stack-based       */
+/* architectures, and only if arguments are aligned to pointer type. Credits  */
+/* to Michael Moody, who contributed this to the Public Domain.               */
 
 /* Internal helper macro. va_round is not part of <stdarg.h>.                 */
 #define _PDCLIB_va_round( type ) ( (sizeof(type) + sizeof(void *) - 1) & ~(sizeof(void *) - 1) )
@@ -439,7 +481,7 @@ typedef __builtin_va_list _PDCLIB_va_list;
 
 #else
 
-#error Please create your own _PDCLIB_config.h. Using the existing one as-is will not work.
+#error Please create your own _PDCLIB_config.h. Using the existing one as-is will not work. (Unsupported varargs.)
 
 #endif
 
@@ -695,7 +737,7 @@ typedef int _PDCLIB_fd_t;
 
 /* The default path where PDCLib should look for its locale data.             */
 /* Must end with the appropriate separator character.                         */
-#define _PDCLIB_LOCALE_PATH "/usr/share/pdclib/i18n"
+#define _PDCLIB_LOCALE_PATH "/usr/share/pdclib/i18n/"
 
 /* The name of the environment variable that can be used to override that     */
 /* path setting.                                                              */
@@ -711,17 +753,16 @@ typedef unsigned int wint_t;
 /* support.                                                                   */
 /* The problem here is we cannot just #include <pthread.h> and access the     */
 /* original definitions. The standard library must not drag identifiers into  */
-/* the user's namespace, so we have to set our own definitions. Which are,    */
-/* obviously, platform-specific.                                              */
+/* the user's namespace, so we have to set our own definitions in the _PDCLIB */
+/* namespace. Which are, obviously, platform-specific.                        */
 /* If you do NOT want to provide threads support, define __STDC_NO_THREADS__  */
 /* to 1 and simply delete the threads.h header and the corresponding files in */
-/* functions/threads/. This makes PDCLib not thread-safe (obviously), as all  */
-/* all the safeguards against race conditions (e.g. in <stdio.h>) will be     */
-/* omitted.                                                                   */
+/* functions/threads/. This makes PDCLib non-thread-safe (obviously), as the  */
+/* safeguards against race conditions (e.g. in <stdio.h>) will be omitted.    */
 
 /* auxiliary/pthread/pthread_readout.c provides a convenience program to read */
 /* appropriate definitions from a platform's <pthread.h>, giving output that  */
-/* can readily be pasted here.                                                */
+/* can be copy & pasted here.                                                 */
 
 typedef unsigned long int _PDCLIB_thrd_t;
 typedef union { unsigned char _PDCLIB_cnd_t_data[ 48 ]; long long int _PDCLIB_cnd_t_align; } _PDCLIB_cnd_t;

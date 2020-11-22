@@ -262,8 +262,8 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_bigint_cmp.c
      functions/_PDCLIB/_PDCLIB_bigint_log2.c
      functions/_PDCLIB/_PDCLIB_bigint_mul.c
-     functions/_PDCLIB/_PDCLIB_bigint_mul32.c
-     functions/_PDCLIB/_PDCLIB_bigint_div32.c
+     functions/_PDCLIB/_PDCLIB_bigint_mul_dig.c
+     functions/_PDCLIB/_PDCLIB_bigint_div_dig.c
      functions/_PDCLIB/_PDCLIB_bigint_shl.c
      functions/_PDCLIB/_PDCLIB_bigint_tostring.c
      functions/_PDCLIB/_PDCLIB_closeall.c
@@ -295,6 +295,9 @@ set( PDCLIB_SOURCES
      platform/example/functions/_PDCLIB/_PDCLIB_Exit.c
      platform/example/functions/_PDCLIB/_PDCLIB_fillbuffer.c
      platform/example/functions/_PDCLIB/_PDCLIB_flushbuffer.c
+     platform/example/functions/_PDCLIB/_PDCLIB_float_split.c
+     platform/example/functions/_PDCLIB/_PDCLIB_double_split.c
+     platform/example/functions/_PDCLIB/_PDCLIB_long_double_split.c
      platform/example/functions/_PDCLIB/_PDCLIB_open.c
      platform/example/functions/_PDCLIB/_PDCLIB_realpath.c
      platform/example/functions/_PDCLIB/_PDCLIB_rename.c

@@ -11,9 +11,12 @@
 
 int scanf( const char * _PDCLIB_restrict format, ... )
 {
+    int rc;
     va_list ap;
     va_start( ap, format );
-    return vfscanf( stdin, format, ap );
+    rc = vfscanf( stdin, format, ap );
+    va_end( ap );
+    return rc;
 }
 
 #endif

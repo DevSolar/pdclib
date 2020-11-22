@@ -31,17 +31,11 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
 
     _PDCLIB_LOCK( stream->mtx );
 
-    if ( _PDCLIB_prepread( stream ) == EOF )
+    if ( _PDCLIB_prepread( stream ) != EOF )
     {
-        _PDCLIB_UNLOCK( stream->mtx );
-        return NULL;
-    }
-
-    while ( ( ( *dest++ = stream->buffer[stream->bufidx++] ) != '\n' ) && --size > 0 )
-    {
-        if ( stream->bufidx == stream->bufend )
+        do
         {
-            if ( _PDCLIB_fillbuffer( stream ) == EOF )
+            if ( _PDCLIB_CHECKBUFFER( stream ) == EOF )
             {
                 /* In case of error / EOF before a character is read, this
                    will lead to a \0 be written anyway. Since the results
@@ -50,6 +44,7 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
                 break;
             }
         }
+        while ( ( ( *dest++ = _PDCLIB_GETC( stream ) ) != '\n' ) && ( --size > 0 ) );
     }
 
     _PDCLIB_UNLOCK( stream->mtx );
@@ -82,12 +77,13 @@ int main( void )
     TESTCASE( strcmp( buffer, "weenie" ) == 0 );
     TESTCASE( feof( fh ) );
     TESTCASE( fseek( fh, -1, SEEK_END ) == 0 );
-    TESTCASE( fgets( buffer, 1, fh ) == buffer );
-    TESTCASE( strcmp( buffer, "" ) == 0 );
+    /* newlib returns NULL on any n < 2, so we _NOREG these tests. */
+    TESTCASE_NOREG( fgets( buffer, 1, fh ) == buffer );
+    TESTCASE_NOREG( strcmp( buffer, "" ) == 0 );
     TESTCASE( fgets( buffer, 0, fh ) == NULL );
     TESTCASE( ! feof( fh ) );
-    TESTCASE( fgets( buffer, 1, fh ) == buffer );
-    TESTCASE( strcmp( buffer, "" ) == 0 );
+    TESTCASE_NOREG( fgets( buffer, 1, fh ) == buffer );
+    TESTCASE_NOREG( strcmp( buffer, "" ) == 0 );
     TESTCASE( ! feof( fh ) );
     TESTCASE( fgets( buffer, 2, fh ) == buffer );
     TESTCASE( strcmp( buffer, "e" ) == 0 );

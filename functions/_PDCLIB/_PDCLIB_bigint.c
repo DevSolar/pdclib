@@ -34,7 +34,7 @@ int main( void )
     _PDCLIB_bigint32( &other, UINT32_C( 0x12345678 ) );
     _PDCLIB_bigint( &big, &other );
     TESTCASE( _PDCLIB_bigint_cmp( &big, &other ) == 0 );
-    _PDCLIB_bigint64( &other, UINT64_C( 0x1234567890abcdef ) );
+    _PDCLIB_bigint64( &other, UINT32_C( 0x12345678 ), UINT32_C( 0x90abcdef ) );
     _PDCLIB_bigint( &big, &other );
     TESTCASE( _PDCLIB_bigint_cmp( &big, &other ) == 0 );
 #endif

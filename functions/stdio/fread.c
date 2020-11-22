@@ -18,42 +18,29 @@
 size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PDCLIB_file_t * _PDCLIB_restrict stream )
 {
     char * dest = ( char * )ptr;
-    size_t nmemb_i;
+    size_t nmemb_i = 0;
 
     _PDCLIB_LOCK( stream->mtx );
 
-    if ( _PDCLIB_prepread( stream ) == EOF )
+    if ( _PDCLIB_prepread( stream ) != EOF )
     {
-        _PDCLIB_UNLOCK( stream->mtx );
-        return 0;
-    }
-
-    for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
-    {
-        size_t size_i;
-
-        /* TODO: For better performance, move from stream buffer
-           to destination block-wise, not byte-wise.
-        */
-        for ( size_i = 0; size_i < size; ++size_i )
+        for ( nmemb_i = 0; nmemb_i < nmemb; ++nmemb_i )
         {
-            if ( stream->ungetidx > 0 )
+            size_t size_i;
+
+            /* TODO: For better performance, move from stream buffer
+               to destination block-wise, not byte-wise.
+            */
+            for ( size_i = 0; size_i < size; ++size_i )
             {
-                dest[ nmemb_i * size + size_i ] = stream->ungetbuf[ --( stream->ungetidx ) ];
-            }
-            else
-            {
-                if ( stream->bufidx == stream->bufend )
+                if ( _PDCLIB_CHECKBUFFER( stream ) == EOF )
                 {
-                    if ( _PDCLIB_fillbuffer( stream ) == EOF )
-                    {
-                        /* Could not read requested data */
-                        _PDCLIB_UNLOCK( stream->mtx );
-                        return nmemb_i;
-                    }
+                    /* Could not read requested data */
+                    _PDCLIB_UNLOCK( stream->mtx );
+                    return nmemb_i;
                 }
 
-                dest[ nmemb_i * size + size_i ] = stream->buffer[ stream->bufidx++ ];
+                dest[ nmemb_i * size + size_i ] = _PDCLIB_GETC( stream );
             }
         }
     }
