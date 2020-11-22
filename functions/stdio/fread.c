@@ -37,7 +37,7 @@ size_t fread( void * _PDCLIB_restrict ptr, size_t size, size_t nmemb, struct _PD
         */
         for ( size_i = 0; size_i < size; ++size_i )
         {
-            if ( ( stream->ungetidx == 0 ) && ( stream->bufidx == stream->bufend ) && ( _PDCLIB_fillbuffer( stream ) == EOF ) )
+            if ( _PDCLIB_CHECKBUFFER( stream ) == EOF )
             {
                 /* Could not read requested data */
                 _PDCLIB_UNLOCK( stream->mtx );

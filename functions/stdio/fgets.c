@@ -39,16 +39,13 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
 
     while ( ( ( *dest++ = _PDCLIB_GETC( stream ) ) != '\n' ) && ( --size > 0 ) )
     {
-        if ( stream->bufidx == stream->bufend )
+        if ( _PDCLIB_CHECKBUFFER( stream ) == EOF )
         {
-            if ( _PDCLIB_fillbuffer( stream ) == EOF )
-            {
-                /* In case of error / EOF before a character is read, this
-                   will lead to a \0 be written anyway. Since the results
-                   are "indeterminate" by definition, this does not hurt.
-                */
-                break;
-            }
+            /* In case of error / EOF before a character is read, this
+               will lead to a \0 be written anyway. Since the results
+               are "indeterminate" by definition, this does not hurt.
+            */
+            break;
         }
     }
 

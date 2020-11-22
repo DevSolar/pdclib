@@ -101,6 +101,8 @@ extern "C" {
 
 #define _PDCLIB_GETC( fh ) ( fh->ungetidx == 0 ) ? ( unsigned char )fh->buffer[ fh->bufidx++ ] : ( unsigned char )fh->ungetbuf[ --fh->ungetidx ]
 
+#define _PDCLIB_CHECKBUFFER( fh ) ( ( fh->bufidx == fh->bufend ) && ( fh->ungetidx == 0 ) ) ? _PDCLIB_fillbuffer( fh ) : 0
+
 /* -------------------------------------------------------------------------- */
 /* Preparing the length modifiers used in <inttypes.h>.                       */
 /* -------------------------------------------------------------------------- */
