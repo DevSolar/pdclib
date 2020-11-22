@@ -31,22 +31,20 @@ char * fgets( char * _PDCLIB_restrict s, int size, struct _PDCLIB_file_t * _PDCL
 
     _PDCLIB_LOCK( stream->mtx );
 
-    if ( _PDCLIB_prepread( stream ) == EOF || _PDCLIB_CHECKBUFFER( stream ) == EOF )
+    if ( _PDCLIB_prepread( stream ) != EOF )
     {
-        _PDCLIB_UNLOCK( stream->mtx );
-        return NULL;
-    }
-
-    while ( ( ( *dest++ = _PDCLIB_GETC( stream ) ) != '\n' ) && ( --size > 0 ) )
-    {
-        if ( _PDCLIB_CHECKBUFFER( stream ) == EOF )
+        do
         {
-            /* In case of error / EOF before a character is read, this
-               will lead to a \0 be written anyway. Since the results
-               are "indeterminate" by definition, this does not hurt.
-            */
-            break;
+            if ( _PDCLIB_CHECKBUFFER( stream ) == EOF )
+            {
+                /* In case of error / EOF before a character is read, this
+                   will lead to a \0 be written anyway. Since the results
+                   are "indeterminate" by definition, this does not hurt.
+                */
+                break;
+            }
         }
+        while ( ( ( *dest++ = _PDCLIB_GETC( stream ) ) != '\n' ) && ( --size > 0 ) );
     }
 
     _PDCLIB_UNLOCK( stream->mtx );
