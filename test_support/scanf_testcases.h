@@ -1,3 +1,4 @@
+/* SCANF_TEST( expected_rc, input, format, ... ) */
 {
     char buffer[100];
     int i;
@@ -99,4 +100,8 @@
     p = NULL;
     SCANF_TEST( 1, buffer, "%p", (void**)&p );
     TESTCASE( p == &i );
+    /* errors */
+    SCANF_TEST( EOF, "", "%d", &i );
+    SCANF_TEST( 1, "foo", "%5c", buffer );
+    TESTCASE( memcmp( buffer, "foo", 3 ) == 0 );
 }

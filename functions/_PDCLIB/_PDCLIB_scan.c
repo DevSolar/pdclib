@@ -734,6 +734,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
 static int testscanf( const char * s, const char * format, ... )
 {
     struct _PDCLIB_status_t status;
+    char const * rc;
 
     status.n = 0;
     status.i = 0;
@@ -741,9 +742,17 @@ static int testscanf( const char * s, const char * format, ... )
     status.stream = NULL;
     va_start( status.arg, format );
 
-    if ( *( _PDCLIB_scan( format, &status ) ) != '\0' )
+    rc = _PDCLIB_scan( format, &status );
+
+    if ( rc != NULL && rc[0] != '\0' )
     {
         printf( "_PDCLIB_scan() did not return end-of-specifier on '%s'.\n", format );
+        ++TEST_RESULTS;
+    }
+
+    if ( rc == NULL && s[0] != '\0' )
+    {
+        printf( "_PDCLIB_scan() returned NULL on '%s' input.", s );
         ++TEST_RESULTS;
     }
 
