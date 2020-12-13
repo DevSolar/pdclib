@@ -185,6 +185,7 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
                already so it will be taken into account when the deepestmost recursion \
                does the prefix / padding stuff. \
             */ \
+            int digit = value % status->base; \
             ++(status->current); \
             if ( ( value / status->base ) != 0 ) \
             { \
@@ -201,22 +202,19 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
                 intformat( value, status ); \
             } \
             /* Recursion tail - print the current digit. */ \
+            if ( digit < 0 ) \
             { \
-                int digit = value % status->base; \
-                if ( digit < 0 ) \
-                { \
-                    digit *= -1; \
-                } \
-                if ( status->flags & E_lower ) \
-                { \
-                    /* Lowercase letters. Same array used for strto...(). */ \
-                    PUT( _PDCLIB_digits[ digit ] ); \
-                } \
-                else \
-                { \
-                    /* Uppercase letters. Array only used here, only 0-F. */ \
-                    PUT( _PDCLIB_Xdigits[ digit ] ); \
-                } \
+                digit *= -1; \
+            } \
+            if ( status->flags & E_lower ) \
+            { \
+                /* Lowercase letters. Same array used for strto...(). */ \
+                PUT( _PDCLIB_digits[ digit ] ); \
+            } \
+            else \
+            { \
+                /* Uppercase letters. Array only used here, only 0-F. */ \
+                PUT( _PDCLIB_Xdigits[ digit ] ); \
             } \
         } \
     } while ( 0 )
