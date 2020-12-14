@@ -9,7 +9,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef __STDC_NO_THREADS__
 #include <threads.h>
+#endif
 
 struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream )
 {
@@ -39,7 +41,7 @@ struct _PDCLIB_file_t * _PDCLIB_init_file_t( struct _PDCLIB_file_t * stream )
     rc->ungetidx = 0;
     rc->status = _PDCLIB_FREEBUFFER;
 
-#ifndef __STDC_NO_THREADS
+#ifndef __STDC_NO_THREADS__
 
     if ( stream == NULL )
     {
