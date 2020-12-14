@@ -54,7 +54,7 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     if ( ( rc->handle = _PDCLIB_open( filename, rc->status ) ) == _PDCLIB_NOHANDLE )
     {
         /* OS open() failed */
-#ifndef __STDC_NO_THREADS
+#ifndef __STDC_NO_THREADS__
         mtx_destroy( &rc->mtx );
 #endif
         free( rc->buffer );
