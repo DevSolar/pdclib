@@ -15,6 +15,8 @@
 
 #ifndef REGTEST
 
+#include "pdclib/_PDCLIB_glue.h"
+
 /* Using an integer's bits as flags for both the conversion flags and length
    modifiers.
 */
@@ -42,7 +44,10 @@ static int GET( struct _PDCLIB_status_t * status )
 
     if ( status->stream != NULL )
     {
-        rc = getc( status->stream );
+        if ( _PDCLIB_CHECKBUFFER( status->stream ) != EOF )
+        {
+            rc = _PDCLIB_GETC( status->stream );
+        }
     }
     else
     {
