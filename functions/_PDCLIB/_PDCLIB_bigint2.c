@@ -8,9 +8,11 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
+#include <stddef.h>
+
 _PDCLIB_bigint_t * _PDCLIB_bigint2( _PDCLIB_bigint_t * bigint, unsigned n )
 {
-    int i;
+    size_t i;
 
     /* Check which bigint digit will contain the set bit */
     bigint->size = ( n / _PDCLIB_BIGINT_DIGIT_BITS ) + 1;

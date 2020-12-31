@@ -8,13 +8,14 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
+#include <stddef.h>
 #include <stdint.h>
 
 _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs )
 {
     _PDCLIB_bigint_t const * smaller;
     _PDCLIB_bigint_t const * wider;
-    int s, w;
+    size_t s, w;
 
     /* Largest possible result size */
     result->size = lhs->size + rhs->size;

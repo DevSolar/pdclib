@@ -9,11 +9,12 @@
 #include "pdclib/_PDCLIB_internal.h"
 
 #include <assert.h>
+#include <stddef.h>
 #include <stdint.h>
 
 _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs )
 {
-    int i;
+    size_t i;
     unsigned carry = 0;
 
     assert( _PDCLIB_bigint_cmp( lhs, rhs ) >= 0 );

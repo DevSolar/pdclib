@@ -8,13 +8,14 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
+#include <stddef.h>
 #include <stdint.h>
 
 _PDCLIB_bigint_t * _PDCLIB_bigint_mul_dig( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_digit_t rhs )
 {
     _PDCLIB_bigint_arith_t digit;     /* Hold intermediary (wide) result. */
     _PDCLIB_bigint_digit_t carry = 0; /* Hold overflow. */
-    int i;
+    size_t i;
 
     for ( i = 0; i < lhs->size; ++i )
     {

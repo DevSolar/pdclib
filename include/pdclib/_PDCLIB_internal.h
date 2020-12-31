@@ -632,7 +632,7 @@ typedef struct
     /* Least significant digit first */
     _PDCLIB_bigint_digit_t data[ _PDCLIB_BIGINT_DIGITS ];
     /* Number of digits used; zero value == zero size */
-    int size;
+    _PDCLIB_size_t size;
 } _PDCLIB_bigint_t;
 
 /* Initializer */
@@ -661,7 +661,7 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint( _PDCLIB_bigint_t * _PDCLIB_rest
 /* Compares two given bigint values. Returns 0 if lhs == rhs, a negative number
    if lhs < rhs, and a positive number if lhs > rhs.
 */
-_PDCLIB_PUBLIC int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+_PDCLIB_LOCAL int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Writes a hexadecimal representation of the given bigint into the given buffer.
    Buffer should be at least _PDCLIB_BIGINT_CHARS in size.
@@ -672,34 +672,34 @@ _PDCLIB_LOCAL char * _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * _PDCLIB_r
 /* --------------------- */
 
 /* Adds to a given bigint another given bigint. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Substracts from a given bigint another given bigint. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Multiplies a given bigint with a given 32bit value. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mul_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
 
 /* Divides a given bigint by a given 32bit value. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_div_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
 
 /* Divides a given bigint by another given bigint. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Shifts a given bigint left by a given count of bits. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs );
 
 /* Operations (into new bigint) */
 /* ---------------------------- */
 
 /* Multiplies a given bigint with another given bigint. */
-_PDCLIB_PUBLIC _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Queries */
 /* ------- */
 
 /* Returns the log2() of a given bigint */
-_PDCLIB_PUBLIC unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint );
+_PDCLIB_LOCAL unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint );
 
 /* FP Conversions */
 /* -------------- */

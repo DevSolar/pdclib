@@ -8,6 +8,7 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
+#include <stddef.h>
 #include <stdint.h>
 
 _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs )
@@ -16,7 +17,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, 
     _PDCLIB_bigint_t const * wider;
     _PDCLIB_bigint_digit_t carry = 0;
     _PDCLIB_bigint_digit_t newcarry;
-    int i;
+    size_t i;
 
     if ( lhs->size < rhs->size )
     {
