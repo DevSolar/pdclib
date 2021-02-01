@@ -10,21 +10,21 @@
 
 #include <stdint.h>
 
+#define DIGITS_PER_32BIT ( 32 / _PDCLIB_BIGINT_DIGIT_BITS )
+
 _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, uint_least32_t high, uint_least32_t low )
 {
-#if _PDCLIB_BIGINT_DIGIT_BITS == 32
-    bigint->data[0] = low;
-    bigint->data[1] = high;
-
-    bigint->size = 2;
-#else
-    bigint->data[0] = low & _PDCLIB_BIGINT_DIGIT_MAX;
-    bigint->data[1] = low >> _PDCLIB_BIGINT_DIGIT_BITS;
-    bigint->data[2] = high & _PDCLIB_BIGINT_DIGIT_MAX;
-    bigint->data[3] = high >> _PDCLIB_BIGINT_DIGIT_BITS;
-
-    bigint->size = 4;
+    for ( bigint->size = 0; bigint->size < DIGITS_PER_32BIT; ++bigint->size )
+    {
+        bigint->data[ bigint->size ]                    = low  & _PDCLIB_BIGINT_DIGIT_MAX;
+        bigint->data[ bigint->size + DIGITS_PER_32BIT ] = high & _PDCLIB_BIGINT_DIGIT_MAX;
+#if _PDCLIB_BIGINT_DIGIT_BITS < 32
+        low  >>= _PDCLIB_BIGINT_DIGIT_BITS;
+        high >>= _PDCLIB_BIGINT_DIGIT_BITS;
 #endif
+    }
+
+    bigint->size *= 2;
 
     while ( bigint->size > 0 && bigint->data[ bigint->size - 1 ] == 0 )
     {
@@ -44,7 +44,21 @@ _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, uint_least32_t h
 
 int main( void )
 {
-    /* No testdriver; used extensively in other tests. */
+#ifndef REGTEST
+    _PDCLIB_bigint_t big;
+    uint_least32_t value;
+    unsigned n;
+
+    for ( n = 0; n < 32; ++n )
+    {
+        value = UINT32_C( 1 ) << n;
+        _PDCLIB_bigint64( &big, 0, value );
+        TESTCASE( big.size == n / _PDCLIB_BIGINT_DIGIT_BITS + 1 );
+        _PDCLIB_bigint64( &big, value, 0 );
+        TESTCASE( big.size == n / _PDCLIB_BIGINT_DIGIT_BITS + DIGITS_PER_32BIT + 1 );
+    }
+#endif
+
     return TEST_RESULTS;
 }
 
