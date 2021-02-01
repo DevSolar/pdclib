@@ -12,14 +12,13 @@
 
 _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, uint_least32_t value )
 {
-#if _PDCLIB_BIGINT_DIGIT_BITS == 32
-    bigint->data[0] = value;
-    bigint->size = 1;
-#else
-    bigint->data[0] = value & _PDCLIB_BIGINT_DIGIT_MAX;
-    bigint->data[1] = value >> _PDCLIB_BIGINT_DIGIT_BITS;
-    bigint->size = 2;
+    for ( bigint->size = 0; bigint->size < 32 / _PDCLIB_BIGINT_DIGIT_BITS; ++bigint->size )
+    {
+        bigint->data[ bigint->size ] = value & _PDCLIB_BIGINT_DIGIT_MAX;
+#if _PDCLIB_BIGINT_DIGIT_BITS < 32
+        value >>= _PDCLIB_BIGINT_DIGIT_BITS;
 #endif
+    }
 
     while ( bigint->size > 0 && bigint->data[ bigint->size - 1 ] == 0 )
     {
@@ -39,7 +38,19 @@ _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, uint_least32_t v
 
 int main( void )
 {
-    /* No testdriver; used extensively in other tests. */
+#ifndef REGTEST
+    _PDCLIB_bigint_t big;
+    uint_least32_t value;
+    unsigned n;
+
+    for ( n = 0; n < 32; ++n )
+    {
+        value = UINT32_C( 1 ) << n;
+        _PDCLIB_bigint32( &big, value );
+        TESTCASE( big.size == n / _PDCLIB_BIGINT_DIGIT_BITS + 1 );
+    }
+#endif
+
     return TEST_RESULTS;
 }
 
