@@ -17,7 +17,7 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs )
     unsigned bit_shifts = rhs - ( word_shifts * _PDCLIB_BIGINT_DIGIT_BITS );
     _PDCLIB_bigint_arith_t digit;
     _PDCLIB_bigint_digit_t carry = 0;
-    int i;
+    size_t i;
 
     if ( lhs->size == 0 )
     {
