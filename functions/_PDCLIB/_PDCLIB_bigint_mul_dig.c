@@ -60,8 +60,10 @@ int main( void )
     _PDCLIB_bigint_mul_dig( &lhs, _PDCLIB_BIGINT_DIGIT_MAX / 2 + 1 );
 #if _PDCLIB_BIGINT_DIGIT_BITS == 32
     _PDCLIB_bigint64( &expected, 1, 0 );
-#else
+#elif _PDCLIB_BIGINT_DIGIT_BITS == 16
     _PDCLIB_bigint32( &expected, 0x00010000 );
+#else
+    _PDCLIB_bigint32( &expected, 0x00000100 );
 #endif
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &expected ) == 0 );
 #endif

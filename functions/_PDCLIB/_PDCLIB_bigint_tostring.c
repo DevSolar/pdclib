@@ -49,7 +49,9 @@ int main( void )
 #ifndef REGTEST
     _PDCLIB_bigint_t value;
     char buffer[ _PDCLIB_BIGINT_CHARS ];
-#if _PDCLIB_BIGINT_DIGIT_BITS == 16
+#if _PDCLIB_BIGINT_DIGIT_BITS == 8
+    char const * expected[] = { "0x00", "0x12.34.56.78", "0x90.ab.cd.ef.12.34.56.78" };
+#elif _PDCLIB_BIGINT_DIGIT_BITS == 16
     char const * expected[] = { "0x0000", "0x1234.5678", "0x90ab.cdef.1234.5678" };
 #else
     char const * expected[] = { "0x00000000", "0x12345678", "0x90abcdef.12345678" };
