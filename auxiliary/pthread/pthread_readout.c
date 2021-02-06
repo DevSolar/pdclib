@@ -99,7 +99,7 @@ int main( int argc, char * argv[] )
     struct _PDCLIB_timespec pts;
 
     assert( sizeof( ts.tv_sec ) == sizeof( pts.tv_sec ) );
-    assert( alignof( ts.tv_sec ) == alignof( pts.tv_sec ) );
+    assert( alignof( time_t /*ts.tv_sec*/ ) == alignof( _PDCLIB_time_t /*pts.tv_sec*/ ) );
     assert( sizeof( ts.tv_nsec ) == sizeof( pts.tv_nsec ) );
     assert( sizeof( struct timespec ) == sizeof( struct _PDCLIB_timespec ) );
     assert( offsetof( struct timespec, tv_sec ) == offsetof( struct _PDCLIB_timespec, tv_sec ) );
