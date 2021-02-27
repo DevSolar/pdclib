@@ -413,6 +413,8 @@ struct _PDCLIB_imaxdiv_t
 /* compiler states about LDBL_DECIMAL_DIG to determine the type.              */
 #ifndef __LDBL_DECIMAL_DIG__
 #define _PDCLIB_LDBL_64
+#elif __LDBL_DECIMAL_DIG__ == 17
+#define _PDCLIB_LDBL_64
 #elif __LDBL_DECIMAL_DIG__ == 21
 #define _PDCLIB_LDBL_80
 #elif __LDBL_DECIMAL_DIG__ == 36
@@ -432,7 +434,7 @@ struct _PDCLIB_imaxdiv_t
 /* purposes.                                                                  */
 /* (The value range of _PDCLIB_bigint_t is not affected by this setting.)     */
 
-#define _PDCLIB_BIGINT_DIGIT_BITS 32
+#define _PDCLIB_BIGINT_DIGIT_BITS 16
 
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */
