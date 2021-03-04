@@ -1,4 +1,4 @@
-/* _PDCLIB_bigint( _PDCLIB_bigint_t *, _PDCLIB_bigint_t * )
+/* _PDCLIB_bigint( _PDCLIB_bigint_t *, _PDCLIB_bigint_t const * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
