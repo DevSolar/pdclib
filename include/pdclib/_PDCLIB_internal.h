@@ -614,6 +614,11 @@ typedef _PDCLIB_uint_least64_t _PDCLIB_bigint_arith_t;
 #define _PDCLIB_BIGINT_BASE ( UINT32_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
 typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_digit_t;
 typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_arith_t;
+#elif _PDCLIB_BIGINT_DIGIT_BITS == 8
+#define _PDCLIB_BIGINT_DIGIT_MAX UINT8_C( 0xFF )
+#define _PDCLIB_BIGINT_BASE ( UINT16_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
+typedef _PDCLIB_uint_least8_t  _PDCLIB_bigint_digit_t;
+typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_arith_t;
 #else
 #error Only 16 or 32 supported for _PDCLIB_BIGINT_DIGIT_BITS.
 #endif
@@ -683,9 +688,6 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mul_dig( _PDCLIB_bigint_t * lhs,
 /* Divides a given bigint by a given 32bit value. */
 _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_div_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
 
-/* Divides a given bigint by another given bigint. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
-
 /* Shifts a given bigint left by a given count of bits. */
 _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs );
 
@@ -694,6 +696,9 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, uns
 
 /* Multiplies a given bigint with another given bigint. */
 _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
+
+/* Divides a given bigint by another given bigint. */
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
 
 /* Queries */
 /* ------- */

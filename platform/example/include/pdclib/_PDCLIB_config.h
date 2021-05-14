@@ -413,6 +413,8 @@ struct _PDCLIB_imaxdiv_t
 /* compiler states about LDBL_DECIMAL_DIG to determine the type.              */
 #ifndef __LDBL_DECIMAL_DIG__
 #define _PDCLIB_LDBL_64
+#elif __LDBL_DECIMAL_DIG__ == 17
+#define _PDCLIB_LDBL_64
 #elif __LDBL_DECIMAL_DIG__ == 21
 #define _PDCLIB_LDBL_80
 #elif __LDBL_DECIMAL_DIG__ == 36
@@ -424,15 +426,15 @@ struct _PDCLIB_imaxdiv_t
 /* -------------------------------------------------------------------------- */
 /* In support of the floating point converstions required by printf() etc.,   */
 /* PDCLib provides rudimentary big integer arithmetics. The _PDCLIB_bigint_t  */
-/* type stores values in a sequence of integer "digits", which may be either  */
-/* uint_least32_t or uint_least16_t.. While addition and substraction can be  */
-/* done in-place and in-type, multiplication and division require the help of */
-/* the next larger type. If the platform provides (efficient) 64bit integer   */
-/* arithmetics, set the define below to 32; otherwise set it to 16. Other     */
-/* values are not supported.                                                  */
-/* (The value range of _PDCLIB_bigint_t is not affected.)                     */
+/* type stores values in a sequence of integer "digits", which may be of any  */
+/* uint_leastN_t type with N being 32, 16, or 8. Note that multiplication and */
+/* division require the help of the next larger type. So set the define to    */
+/* 32 if efficient 64bit integer arithmetics are available on your platform,  */
+/* and to 16 otherwise. The option to set this to 8 is basically for testing  */
+/* purposes.                                                                  */
+/* (The value range of _PDCLIB_bigint_t is not affected by this setting.)     */
 
-#define _PDCLIB_BIGINT_DIGIT_BITS 32
+#define _PDCLIB_BIGINT_DIGIT_BITS 16
 
 /* -------------------------------------------------------------------------- */
 /* Platform-dependent macros defined by the standard headers.                 */

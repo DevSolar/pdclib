@@ -21,10 +21,15 @@ int _PDCLIB_float_split( float value, unsigned * exponent, _PDCLIB_bigint_t * si
 #if _PDCLIB_BIGINT_DIGIT_BITS == 32
     significand->data[0] = ( ( (unsigned)flt.byte[2] & 0x7F ) << 16 ) | ( (unsigned)flt.byte[1] << 8 ) | (unsigned)flt.byte[0];
     significand->size    = 1;
-#else
+#elif _PDCLIB_BIGINT_DIGIT_BITS == 16
     significand->data[1] =   (unsigned)flt.byte[2] & 0x7F;
     significand->data[0] = ( (unsigned)flt.byte[1] << 8 ) | (unsigned)flt.byte[0];
     significand->size    = 2;
+#else
+    significand->data[2] = (unsigned)flt.byte[2] & 0x7F;
+    significand->data[1] = (unsigned)flt.byte[1];
+    significand->data[0] = (unsigned)flt.byte[0];
+    significand->size    = 3;
 #endif
 
     return flt.byte[3] >> 7;
