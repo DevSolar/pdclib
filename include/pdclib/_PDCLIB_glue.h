@@ -25,7 +25,7 @@ extern "C" {
 /* A system call that terminates the calling process, returning a given status
    to the environment.
 */
-_PDCLIB_LOCAL void _PDCLIB_Exit( int status ) _PDCLIB_NORETURN;
+_PDCLIB_LOCAL _PDCLIB_Noreturn void _PDCLIB_Exit( int status ) _PDCLIB_NORETURN;
 
 
 /* stdio.h */

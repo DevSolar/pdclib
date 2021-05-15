@@ -29,10 +29,10 @@ typedef _PDCLIB_size_t size_t;
 #define _IOLBF (1u<<1)
 #define _IONBF (1u<<2)
 
-/* The following are platform-dependant, and defined in _PDCLIB_config.h. */
+/* The following are platform-dependent, and defined in _PDCLIB_config.h. */
 typedef struct _PDCLIB_fpos_t fpos_t;
 typedef struct _PDCLIB_file_t FILE;
-#define EOF -1
+#define EOF (-1)
 #define BUFSIZ _PDCLIB_BUFSIZ
 #define FOPEN_MAX _PDCLIB_FOPEN_MAX
 #define FILENAME_MAX _PDCLIB_FILENAME_MAX

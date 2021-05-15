@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-extern void _exit( int status ) _PDCLIB_NORETURN;
+extern _PDCLIB_Noreturn void _exit( int status ) _PDCLIB_NORETURN;
 
 #ifdef __cplusplus
 }

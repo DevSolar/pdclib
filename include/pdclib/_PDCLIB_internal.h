@@ -46,7 +46,7 @@ extern "C" {
 #endif
 
 /* restrict / inline enabled for C99 onward only */
-#if __STDC_VERSION__ < 199901L
+#if defined( __cplusplus ) || ! defined( __STDC_VERSION ) ||  __STDC_VERSION__ < 199901L
 #define _PDCLIB_restrict
 #define _PDCLIB_inline
 #else
@@ -55,10 +55,14 @@ extern "C" {
 #endif
 
 /* noreturn enabled for C11 onward only */
-#if __STDC_VERSION__ < 201112L
-#define _PDCLIB_Noreturn
+#if defined( __cplusplus ) && __cplusplus >= 201103L
+#define _PDCLIB_Noreturn [[noreturn]]
 #else
+#if defined( __STDC_VERSION__ ) >= 201112L
 #define _PDCLIB_Noreturn _Noreturn
+#else
+#define _PDCLIB_Noreturn
+#endif
 #endif
 
 /* -------------------------------------------------------------------------- */

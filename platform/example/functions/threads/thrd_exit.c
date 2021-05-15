@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-extern void pthread_exit( void * ) _PDCLIB_NORETURN;
+extern _PDCLIB_Noreturn void pthread_exit( void * ) _PDCLIB_NORETURN;
 
 #ifdef __cplusplus
 }
