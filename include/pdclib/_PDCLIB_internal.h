@@ -46,7 +46,7 @@ extern "C" {
 #endif
 
 /* restrict / inline enabled for C99 onward only */
-#if __STDC_VERSION__ < 199901L
+#if defined( __cplusplus ) || ! defined( __STDC_VERSION ) ||  __STDC_VERSION__ < 199901L
 #define _PDCLIB_restrict
 #define _PDCLIB_inline
 #else
