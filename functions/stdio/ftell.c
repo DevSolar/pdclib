@@ -67,7 +67,7 @@ int main( void )
        fgetc fflush rewind fputc ungetc fseek
        flushbuffer seek fillbuffer prepread prepwrite
     */
-    char * buffer = ( char * )malloc( 4 );
+    char buffer[4];
     FILE * fh;
     TESTCASE( ( fh = tmpfile() ) != NULL );
     TESTCASE( setvbuf( fh, buffer, _IOLBF, 4 ) == 0 );
