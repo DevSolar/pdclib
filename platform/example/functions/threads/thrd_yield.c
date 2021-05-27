@@ -12,7 +12,13 @@
 extern "C" {
 #endif
 
+#ifndef __ANDROID__
 extern int pthread_yield( void );
+#define yield pthread_yield
+#else
+extern int sched_yield( void );
+#define yield sched_yield
+#endif
 
 #ifdef __cplusplus
 }
@@ -20,7 +26,7 @@ extern int pthread_yield( void );
 
 void thrd_yield( void )
 {
-    pthread_yield();
+    yield();
 }
 
 #endif
