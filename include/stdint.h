@@ -205,10 +205,10 @@ typedef _PDCLIB_uintmax_t uintmax_t;
 
 /* Expand to an integer constant of specified value and type uint_leastN_t */
 
-#define UINT8_C  _PDCLIB_INT_LEAST8_C
-#define UINT16_C _PDCLIB_INT_LEAST16_C
-#define UINT32_C _PDCLIB_INT_LEAST32_C
-#define UINT64_C _PDCLIB_INT_LEAST64_C
+#define UINT8_C  _PDCLIB_UINT_LEAST8_C
+#define UINT16_C _PDCLIB_UINT_LEAST16_C
+#define UINT32_C _PDCLIB_UINT_LEAST32_C
+#define UINT64_C _PDCLIB_UINT_LEAST64_C
 
 /* 7.18.4.2 Macros for greatest-width integer constants */
 

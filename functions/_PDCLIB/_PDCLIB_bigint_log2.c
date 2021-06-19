@@ -36,7 +36,7 @@ unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint )
     value |= value >> 8;
     value |= value >> 16;
 
-    return lookup[ ( value * UINT32_C( 0x07C4ACDDU ) ) >> 27 ] + ( bigint->size - 1 ) * _PDCLIB_BIGINT_DIGIT_BITS;
+    return lookup[ ( value * UINT32_C( 0x07C4ACDD ) ) >> 27 ] + ( bigint->size - 1 ) * _PDCLIB_BIGINT_DIGIT_BITS;
 }
 
 #endif
