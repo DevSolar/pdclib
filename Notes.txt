@@ -16,6 +16,9 @@ Paul Edwards (author of the PDPCLIB), for inspirational code fragments, thanks.
 P.J. Plauger (author of "The Standard C Library"), for a book without which I
 would not have been able to create PDCLib at this quality, thanks.
 
+Henry S. Warren, Jr. (author of "Hacker's Delight"), for providing sample code
+usable under PD / CC0 conditions, thanks.
+
 Arthur David Olson et al., for their work on the Time Zone Database and the
 tzcode reference implementation on which most of PDCLib's time functions are
 based, thanks.
