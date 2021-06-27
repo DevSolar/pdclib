@@ -427,11 +427,10 @@ struct _PDCLIB_imaxdiv_t
 /* In support of the floating point converstions required by printf() etc.,   */
 /* PDCLib provides rudimentary big integer arithmetics. The _PDCLIB_bigint_t  */
 /* type stores values in a sequence of integer "digits", which may be of any  */
-/* uint_leastN_t type with N being 32, 16, or 8. Note that multiplication and */
+/* uint_leastN_t type with N being 32 or 16. Note that multiplication and     */
 /* division require the help of the next larger type. So set the define to    */
 /* 32 if efficient 64bit integer arithmetics are available on your platform,  */
-/* and to 16 otherwise. The option to set this to 8 is basically for testing  */
-/* purposes.                                                                  */
+/* and to 16 otherwise.                                                       */
 /* (The value range of _PDCLIB_bigint_t is not affected by this setting.)     */
 
 #define _PDCLIB_BIGINT_DIGIT_BITS 16

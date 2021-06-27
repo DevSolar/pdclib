@@ -613,16 +613,20 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const cha
 #define _PDCLIB_BIGINT_BASE ( UINT64_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
 typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_digit_t;
 typedef _PDCLIB_uint_least64_t _PDCLIB_bigint_arith_t;
+typedef _PDCLIB_int_least64_t _PDCLIB_bigint_sarith_t;
 #elif _PDCLIB_BIGINT_DIGIT_BITS == 16
 #define _PDCLIB_BIGINT_DIGIT_MAX UINT16_C( 0xFFFF )
 #define _PDCLIB_BIGINT_BASE ( UINT32_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
 typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_digit_t;
 typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_arith_t;
+typedef _PDCLIB_int_least32_t _PDCLIB_bigint_sarith_t;
 #elif _PDCLIB_BIGINT_DIGIT_BITS == 8
+/* For testing purposes only. */
 #define _PDCLIB_BIGINT_DIGIT_MAX UINT8_C( 0xFF )
 #define _PDCLIB_BIGINT_BASE ( UINT16_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
 typedef _PDCLIB_uint_least8_t  _PDCLIB_bigint_digit_t;
 typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_arith_t;
+typedef _PDCLIB_int_least16_t _PDCLIB_bigint_sarith_t;
 #else
 #error Only 16 or 32 supported for _PDCLIB_BIGINT_DIGIT_BITS.
 #endif
