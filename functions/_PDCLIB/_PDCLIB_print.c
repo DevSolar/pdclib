@@ -9,284 +9,10 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stddef.h>
-#include <string.h>
 
 #ifndef REGTEST
 
-/* Using an integer's bits as flags for both the conversion flags and length
-   modifiers.
-*/
-#define E_minus    (INT32_C(1)<<0)
-#define E_plus     (INT32_C(1)<<1)
-#define E_alt      (INT32_C(1)<<2)
-#define E_space    (INT32_C(1)<<3)
-#define E_zero     (INT32_C(1)<<4)
-#define E_done     (INT32_C(1)<<5)
-
-#define E_char     (INT32_C(1)<<6)
-#define E_short    (INT32_C(1)<<7)
-#define E_long     (INT32_C(1)<<8)
-#define E_llong    (INT32_C(1)<<9)
-#define E_intmax   (INT32_C(1)<<10)
-#define E_size     (INT32_C(1)<<11)
-#define E_ptrdiff  (INT32_C(1)<<12)
-#define E_pointer  (INT32_C(1)<<13)
-
-#define E_double   (INT32_C(1)<<14)
-#define E_ldouble  (INT32_C(1)<<15)
-
-#define E_lower    (INT32_C(1)<<16)
-#define E_unsigned (INT32_C(1)<<17)
-
-/* This macro delivers a given character to either a memory buffer or a stream,
-   depending on the contents of 'status' (struct _PDCLIB_status_t).
-   x - the character to be delivered
-   i - pointer to number of characters already delivered in this call
-   n - pointer to maximum number of characters to be delivered in this call
-   s - the buffer into which the character shall be delivered
-*/
-#define PUT( x ) \
-    do { \
-        int character = x; \
-        if ( status->i < status->n ) { \
-            if ( status->stream != NULL ) \
-                putc( character, status->stream ); \
-            else \
-                status->s[status->i] = character; \
-        } \
-        ++(status->i); \
-    } while ( 0 )
-
-
-static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
-{
-    /* At worst, we need two prefix characters (hex prefix). */
-    char preface[3] = "\0";
-    size_t preidx = 0;
-
-    if ( status->prec < 0 )
-    {
-        status->prec = 1;
-    }
-
-    if ( ( status->flags & E_alt ) && ( status->base == 16 || status->base == 8 ) && ( value != 0 ) )
-    {
-        /* Octal / hexadecimal prefix for "%#" conversions */
-        preface[ preidx++ ] = '0';
-
-        if ( status->base == 16 )
-        {
-            preface[ preidx++ ] = ( status->flags & E_lower ) ? 'x' : 'X';
-        }
-    }
-
-    if ( value < 0 )
-    {
-        /* Negative sign for negative values - at all times. */
-        preface[ preidx++ ] = '-';
-    }
-    else if ( !( status->flags & E_unsigned ) )
-    {
-        /* plus sign / extra space are only for unsigned conversions */
-        if ( status->flags & E_plus )
-        {
-            preface[ preidx++ ] = '+';
-        }
-        else
-        {
-            if ( status->flags & E_space )
-            {
-                preface[ preidx++ ] = ' ';
-            }
-        }
-    }
-
-    {
-        /* At this point, status->current has the number of digits queued up.
-           Determine if we have a precision requirement to pad those.
-        */
-        size_t prec_pads = ( ( _PDCLIB_size_t )status->prec > status->current ) ? ( ( _PDCLIB_size_t )status->prec - status->current ) : 0;
-
-        if ( !( status->flags & ( E_minus | E_zero ) ) )
-        {
-            /* Space padding is only done if no zero padding or left alignment
-               is requested. Calculate the number of characters that WILL be
-               printed, including any prefixes determined above.
-            */
-            /* The number of characters to be printed, plus prefixes if any. */
-            /* This line contained probably the most stupid, time-wasting bug
-               I've ever perpetrated. Greetings to Samface, DevL, and all
-               sceners at Breakpoint 2006.
-            */
-            size_t characters = preidx + ( ( status->current > ( _PDCLIB_size_t )status->prec ) ? status->current : ( _PDCLIB_size_t )status->prec );
-
-            if ( status->width > characters )
-            {
-                size_t i;
-
-                for ( i = 0; i < status->width - characters; ++i )
-                {
-                    PUT( ' ' );
-                    ++( status->current );
-                }
-            }
-        }
-
-        /* Now we did the padding, do the prefixes (if any). */
-        preidx = 0;
-
-        while ( preface[ preidx ] != '\0' )
-        {
-            PUT( preface[ preidx++ ] );
-            ++( status->current );
-        }
-
-        /* Do the precision padding if necessary. */
-        while ( prec_pads-- > 0 )
-        {
-            PUT( '0' );
-            ++( status->current );
-        }
-
-        if ( ( !( status->flags & E_minus ) ) && ( status->flags & E_zero ) )
-        {
-            /* If field is not left aligned, and zero padding is requested, do
-               so.
-            */
-            while ( status->current < status->width )
-            {
-                PUT( '0' );
-                ++( status->current );
-            }
-        }
-    }
-}
-
-
-/* This function recursively converts a given integer value to a character
-   stream. The conversion is done under the control of a given status struct
-   and written either to a character string or a stream, depending on that
-   same status struct. The status struct also keeps the function from exceeding
-   snprintf() limits, and enables any necessary padding / prefixing of the
-   output once the number of characters to be printed is known, which happens
-   at the lowermost recursion level.
-*/
-#define INT2BASE() \
-    do \
-    { \
-        /* Special case: zero value, zero precision -- no output (but padding) */ \
-        if ( status->current == 0 && value == 0 && status->prec == 0 ) \
-        { \
-            intformat( value, status ); \
-        } \
-        else \
-        { \
-            /* Registering the character being printed at the end of the function here \
-               already so it will be taken into account when the deepestmost recursion \
-               does the prefix / padding stuff. \
-            */ \
-            int digit = value % status->base; \
-            ++(status->current); \
-            if ( ( value / status->base ) != 0 ) \
-            { \
-                /* More digits to be done - recurse deeper */ \
-                int2base( value / status->base, status ); \
-            } \
-            else \
-            { \
-                /* We reached the last digit, the deepest point of our recursion, and \
-                   only now know how long the number to be printed actually is. Now we \
-                   have to do the sign, prefix, width, and precision padding stuff \
-                   before printing the numbers while we resurface from the recursion. \
-                */ \
-                intformat( value, status ); \
-            } \
-            /* Recursion tail - print the current digit. */ \
-            if ( digit < 0 ) \
-            { \
-                digit *= -1; \
-            } \
-            if ( status->flags & E_lower ) \
-            { \
-                /* Lowercase letters. Same array used for strto...(). */ \
-                PUT( _PDCLIB_digits[ digit ] ); \
-            } \
-            else \
-            { \
-                /* Uppercase letters. Array only used here, only 0-F. */ \
-                PUT( _PDCLIB_Xdigits[ digit ] ); \
-            } \
-        } \
-    } while ( 0 )
-
-
-static void int2base( intmax_t value, struct _PDCLIB_status_t * status )
-{
-    INT2BASE();
-}
-
-
-static void floatformat( long double value, struct _PDCLIB_status_t * status )
-{
-    /* TODO */
-}
-
-/* Print a "string" (%c, %s) under control of a given status struct. See
-   INT2BASE().
-*/
-static void stringformat( const char * s, struct _PDCLIB_status_t * status )
-{
-    if ( status->flags & E_char )
-    {
-        status->prec = 1;
-    }
-    else
-    {
-        if ( status->prec < 0 )
-        {
-            status->prec = strlen( s );
-        }
-        else
-        {
-            int i;
-
-            for ( i = 0; i < status->prec; ++i )
-            {
-                if ( s[i] == 0 )
-                {
-                    status->prec = i;
-                    break;
-                }
-            }
-        }
-    }
-
-    if ( !( status->flags & E_minus ) && ( status->width > ( _PDCLIB_size_t )status->prec ) )
-    {
-        while ( status->current < ( status->width - status->prec ) )
-        {
-            PUT( ' ' );
-            ++( status->current );
-        }
-    }
-
-    while ( status->prec > 0 )
-    {
-        PUT( *( s++ ) );
-        --( status->prec );
-        ++( status->current );
-    }
-
-    if ( status->flags & E_minus )
-    {
-        while ( status->width > status->current )
-        {
-            PUT( ' ' );
-            ++( status->current );
-        }
-    }
-}
-
+#include "pdclib/_PDCLIB_print.h"
 
 const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status )
 {
@@ -516,13 +242,13 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 char c[1];
                 c[0] = ( char )va_arg( status->arg, int );
                 status->flags |= E_char;
-                stringformat( c, status );
+                _PDCLIB_print_string( c, status );
                 return ++spec;
             }
 
         case 's':
             /* TODO: wide chars. */
-            stringformat( va_arg( status->arg, char * ), status );
+            _PDCLIB_print_string( va_arg( status->arg, char * ), status );
             return ++spec;
 
         case 'p':
@@ -560,7 +286,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 value = va_arg( status->arg, double );
             }
 
-            floatformat( value, status );
+            _PDCLIB_print_float( value, status );
         }
         else
         {
@@ -608,7 +334,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                         return NULL;
                 }
 
-                INT2BASE();
+                _PDCLIB_print_uint( value, status );
             }
             else
             {
@@ -650,7 +376,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                         return NULL;
                 }
 
-                INT2BASE();
+                _PDCLIB_print_int( value, status );
             }
         }
 

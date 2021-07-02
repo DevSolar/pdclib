@@ -8,6 +8,11 @@
 
 #include "pdclib/_PDCLIB_print.h"
 
+void _PDCLIB_print_float( long double value, struct _PDCLIB_status_t * status )
+{
+    /* TODO */
+}
+
 #endif
 
 #ifdef TEST
