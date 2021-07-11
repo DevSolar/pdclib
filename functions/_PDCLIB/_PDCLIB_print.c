@@ -4,8 +4,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#include <inttypes.h>
 #include <stdio.h>
-#include <stdint.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -294,6 +294,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             {
                 /* Integer conversions (unsigned) */
                 uintmax_t value;
+                imaxdiv_t div;
 
                 switch ( status->flags & ( E_char | E_short | E_long | E_llong | E_size | E_pointer | E_intmax ) )
                 {
@@ -334,7 +335,9 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                         return NULL;
                 }
 
-                _PDCLIB_print_uint( value, status );
+                div.quot = value / status->base;
+                div.rem = value % status->base;
+                _PDCLIB_print_integer( div, status );
             }
             else
             {
@@ -376,7 +379,7 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                         return NULL;
                 }
 
-                _PDCLIB_print_int( value, status );
+                _PDCLIB_print_integer( imaxdiv( value, status->base ), status );
             }
         }
 

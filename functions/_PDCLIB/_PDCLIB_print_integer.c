@@ -6,7 +6,7 @@
 
 #ifndef REGTEST
 
-#include <stdint.h>
+#include <inttypes.h>
 #include <stdio.h>
 
 #include "pdclib/_PDCLIB_print.h"
@@ -123,62 +123,39 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
    output once the number of characters to be printed is known, which happens
    at the lowermost recursion level.
 */
-#define INT2BASE() \
-    do \
-    { \
-        /* Special case: zero value, zero precision -- no output (but padding) */ \
-        if ( status->current == 0 && value == 0 && status->prec == 0 ) \
-        { \
-            intformat( value, status ); \
-        } \
-        else \
-        { \
-            /* Registering the character being printed at the end of the function here \
-               already so it will be taken into account when the deepestmost recursion \
-               does the prefix / padding stuff. \
-            */ \
-            int digit = value % status->base; \
-            ++(status->current); \
-            if ( ( value / status->base ) != 0 ) \
-            { \
-                /* More digits to be done - recurse deeper */ \
-                _PDCLIB_print_int( value / status->base, status ); \
-            } \
-            else \
-            { \
-                /* We reached the last digit, the deepest point of our recursion, and \
-                   only now know how long the number to be printed actually is. Now we \
-                   have to do the sign, prefix, width, and precision padding stuff \
-                   before printing the numbers while we resurface from the recursion. \
-                */ \
-                intformat( value, status ); \
-            } \
-            /* Recursion tail - print the current digit. */ \
-            if ( digit < 0 ) \
-            { \
-                digit *= -1; \
-            } \
-            if ( status->flags & E_lower ) \
-            { \
-                /* Lowercase letters. Same array used for strto...(). */ \
-                PUT( _PDCLIB_digits[ digit ] ); \
-            } \
-            else \
-            { \
-                /* Uppercase letters. Array only used here, only 0-F. */ \
-                PUT( _PDCLIB_Xdigits[ digit ] ); \
-            } \
-        } \
-    } while ( 0 )
-
-void _PDCLIB_print_int( intmax_t value, struct _PDCLIB_status_t * status )
+void _PDCLIB_print_integer( imaxdiv_t div, struct _PDCLIB_status_t * status )
 {
-    INT2BASE();
-}
+    if ( status->current == 0 && div.quot == 0 && div.rem == 0 && status->prec == 0 )
+    {
+        intformat( 0, status );
+    }
+    else
+    {
+        ++(status->current);
 
-void _PDCLIB_print_uint( uintmax_t value, struct _PDCLIB_status_t * status )
-{
-    INT2BASE();
+        if ( div.quot != 0 )
+        {
+            _PDCLIB_print_integer( imaxdiv( div.quot, status->base ), status );
+        }
+        else
+        {
+            intformat( div.rem, status );
+        }
+
+        if ( div.rem < 0 )
+        {
+            div.rem *= -1;
+        }
+
+        if ( status->flags & E_lower )
+        {
+            PUT( _PDCLIB_digits[ div.rem ] );
+        }
+        else
+        {
+            PUT( _PDCLIB_Xdigits[ div.rem ] );
+        }
+    }
 }
 
 #endif
@@ -191,8 +168,7 @@ void _PDCLIB_print_uint( uintmax_t value, struct _PDCLIB_status_t * status )
 
 int main( void )
 {
-#ifndef REGTEST
-#endif
+    /* Tested by the various *printf() drivers. */
     return TEST_RESULTS;
 }
 

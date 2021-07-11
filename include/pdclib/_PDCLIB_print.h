@@ -54,8 +54,7 @@
 #define E_lower    (INT32_C(1)<<16)
 #define E_unsigned (INT32_C(1)<<17)
 
-void _PDCLIB_print_int( _PDCLIB_intmax_t value, struct _PDCLIB_status_t * status );
-void _PDCLIB_print_uint( _PDCLIB_uintmax_t value, struct _PDCLIB_status_t * status );
+void _PDCLIB_print_integer( struct _PDCLIB_imaxdiv_t div, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_string( const char * s, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_float( long double value, struct _PDCLIB_status_t * status );
 
