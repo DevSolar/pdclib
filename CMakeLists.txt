@@ -284,6 +284,9 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_prepread.c
      functions/_PDCLIB/_PDCLIB_prepwrite.c
      functions/_PDCLIB/_PDCLIB_print.c
+     functions/_PDCLIB/_PDCLIB_print_float.c
+     functions/_PDCLIB/_PDCLIB_print_integer.c
+     functions/_PDCLIB/_PDCLIB_print_string.c
      functions/_PDCLIB/_PDCLIB_scan.c
      functions/_PDCLIB/_PDCLIB_seed.c
      functions/_PDCLIB/_PDCLIB_strtok.c
@@ -349,6 +352,7 @@ set( PDCLIB_PRIVATE_HEADERS
 # PDCLib only, not for using it.
 set( PDCLIB_NOINSTALL_HEADERS
      include/pdclib/_PDCLIB_glue.h
+     include/pdclib/_PDCLIB_print.h
      #include/pdclib/_PDCLIB_tzcode.h
 )
 
