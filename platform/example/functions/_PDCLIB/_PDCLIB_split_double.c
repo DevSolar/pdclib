@@ -1,4 +1,4 @@
-/* _PDCLIB_double_split( double, unsigned *, _PDCLIB_bigint_t * )
+/* _PDCLIB_split_double( double, unsigned *, _PDCLIB_bigint_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -8,7 +8,7 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
-int _PDCLIB_double_split( double value, unsigned * exponent, _PDCLIB_bigint_t * significand )
+int _PDCLIB_split_double( double value, unsigned * exponent, _PDCLIB_bigint_t * significand )
 {
     union
     {
@@ -56,12 +56,12 @@ int main( void )
     _PDCLIB_bigint_t significand, expected;
     unsigned exponent;
 
-    TESTCASE( _PDCLIB_double_split( 0.8, &exponent, &significand ) == 0 );
+    TESTCASE( _PDCLIB_split_double( 0.8, &exponent, &significand ) == 0 );
     TESTCASE( exponent == 0x03fe );
     _PDCLIB_bigint64( &expected, UINT32_C( 0x00099999 ), UINT32_C( 0x9999999a ) );
     TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 
-    TESTCASE( _PDCLIB_double_split( -24.789, &exponent, &significand ) == 1 );
+    TESTCASE( _PDCLIB_split_double( -24.789, &exponent, &significand ) == 1 );
     TESTCASE( exponent == 0x0403 );
     _PDCLIB_bigint64( &expected, UINT32_C( 0x0008c9fb ), UINT32_C( 0xe76c8b44 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );

@@ -1,4 +1,4 @@
-/* _PDCLIB_long_double_split( long double, unsigned *, _PDCLIB_bigint_t * )
+/* _PDCLIB_split_long_double( long double, unsigned *, _PDCLIB_bigint_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -8,7 +8,7 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
-int _PDCLIB_long_double_split( long double value, unsigned * exponent, _PDCLIB_bigint_t * significand )
+int _PDCLIB_split_long_double( long double value, unsigned * exponent, _PDCLIB_bigint_t * significand )
 {
     union
     {
@@ -90,24 +90,24 @@ int main( void )
 
 #if defined( _PDCLIB_LDBL_64 )
 
-    TESTCASE( _PDCLIB_long_double_split( 0.8l, &exponent, &significand ) == 0 );
+    TESTCASE( _PDCLIB_split_long_double( 0.8l, &exponent, &significand ) == 0 );
     TESTCASE( exponent == 0x03fe );
     _PDCLIB_bigint64( &expected, UINT32_C( 0x00099999 ), UINT32_C( 0x9999999a ) );
     TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 
-    TESTCASE( _PDCLIB_long_double_split( -24.789l, &exponent, &significand ) == 1 );
+    TESTCASE( _PDCLIB_split_long_double( -24.789l, &exponent, &significand ) == 1 );
     TESTCASE( exponent == 0x0403 );
     _PDCLIB_bigint64( &expected, UINT32_C( 0x0008c9fb ), UINT32_C( 0xe76c8b44 ) );
     TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 
 #elif defined( _PDCLIB_LDBL_80 )
 
-    TESTCASE( _PDCLIB_long_double_split( 0.8l, &exponent, &significand ) == 0 );
+    TESTCASE( _PDCLIB_split_long_double( 0.8l, &exponent, &significand ) == 0 );
     TESTCASE( exponent == 0x3ffe );
     _PDCLIB_bigint64( &expected, UINT32_C( 0xcccccccc ), UINT32_C( 0xcccccccd ) );
     TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 
-    TESTCASE( _PDCLIB_long_double_split( -24.789l, &exponent, &significand ) == 1 );
+    TESTCASE( _PDCLIB_split_long_double( -24.789l, &exponent, &significand ) == 1 );
     TESTCASE( exponent == 0x4003 );
     _PDCLIB_bigint64( &expected, UINT32_C( 0xc64fdf3b ), UINT32_C( 0x645a1cac ) );
     TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
@@ -116,7 +116,7 @@ int main( void )
 
     _PDCLIB_bigint_t expect_2;
 
-    TESTCASE( _PDCLIB_long_double_split( 0.8l, &exponent, &significand ) == 0 );
+    TESTCASE( _PDCLIB_split_long_double( 0.8l, &exponent, &significand ) == 0 );
     TESTCASE( exponent == 0x3ffe );
     _PDCLIB_bigint64( &expected, UINT32_C( 0x00009999 ), UINT32_C( 0x99999999 ) );
     _PDCLIB_bigint64( &expect_2, UINT32_C( 0x99999999 ), UINT32_C( 0x9999999a ) );
@@ -124,7 +124,7 @@ int main( void )
     _PDCLIB_bigint_add( &expected, &expect_2 );
     TESTCASE( _PDCLIB_bigint_cmp( &significand, &expected ) == 0 );
 
-    TESTCASE( _PDCLIB_long_double_split( -24.789l, &exponent, &significand ) == 1 );
+    TESTCASE( _PDCLIB_split_long_double( -24.789l, &exponent, &significand ) == 1 );
     TESTCASE( exponent == 0x4003 );
     _PDCLIB_bigint64( &expected, UINT32_C( 0x00008c9f ), UINT32_C( 0xbe76c8b4 ) );
     _PDCLIB_bigint64( &expect_2, UINT32_C( 0x39581062 ), UINT32_C( 0x4dd2f1aa ) );
