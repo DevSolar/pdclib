@@ -248,15 +248,15 @@ int main( int argc, char * argv[] )
     printf( "Dec:  %d\n", ( (unsigned)flt80_byte[7] & 0x80 ) == 0x80 );
 
     /* Adjusting mantissa from memcpy bytes */
-    shl( flt80_byte, 7 );
+    shl( flt80_byte, 8 );
 
     /* Printing binary dump of mantissa */
     printf( "Mant: mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
 
     for ( unsigned i = 8; i > 0; --i )
     {
-        unsigned high_nibble = ( dbl_byte[ i - 1 ] & 0xf0 ) >> 4;
-        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ dbl_byte[ i - 1 ] & 0x0f ] );
+        unsigned high_nibble = ( flt80_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt80_byte[ i - 1 ] & 0x0f ] );
         if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
     }
 
@@ -265,7 +265,7 @@ int main( int argc, char * argv[] )
 
     for ( unsigned i = 8; i > 0; --i )
     {
-        printf( "       %02x.", dbl_byte[ i - 1 ] );
+        printf( "       %02x.", flt80_byte[ i - 1 ] );
         if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      " );
     }
 
