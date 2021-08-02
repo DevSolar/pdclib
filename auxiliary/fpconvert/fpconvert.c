@@ -104,7 +104,7 @@ int main( int argc, char * argv[] )
     memcpy( flt128_byte, &flt128.value, sizeof( float128_t ) );
 #endif
 
-    puts( "-------------------------------- float --------------------------------" );
+    puts( "------------------- float --------------------" );
 
     printf( "Bits: %zu\n", sizeof( float ) * CHAR_BIT );
 
@@ -154,7 +154,7 @@ int main( int argc, char * argv[] )
 
     puts( "" );
 
-    puts( "------------------------------- double --------------------------------" );
+    puts( "------------------ double --------------------" );
 
     printf( "Bits: %zu\n", sizeof( double ) * CHAR_BIT );
 
@@ -211,7 +211,7 @@ int main( int argc, char * argv[] )
     puts( "" );
 
 #ifdef FLOAT80
-    puts( "------------------------------- float80 -------------------------------" );
+    puts( "------------------ float80 -------------------" );
 
     printf( "Bits: %zu (48 unused, 80 encoded)\n", sizeof( long double ) * CHAR_BIT );
 
@@ -272,7 +272,7 @@ int main( int argc, char * argv[] )
 #endif
 
 #ifdef FLOAT128
-    puts( "------------------------------ float128 -------------------------------" );
+    puts( "----------------- float128 -------------------" );
 
     printf( "Bits: %zu\n", sizeof( float128_t ) * CHAR_BIT );
 
@@ -327,5 +327,5 @@ int main( int argc, char * argv[] )
     puts( "" );
 #endif
 
-    puts( "-------------------------------------------------------------------" );
+    puts( "----------------------------------------------" );
 }
