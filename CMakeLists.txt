@@ -304,9 +304,6 @@ set( PDCLIB_SOURCES
      platform/example/functions/_PDCLIB/_PDCLIB_rename.c
      platform/example/functions/_PDCLIB/_PDCLIB_remove.c
      platform/example/functions/_PDCLIB/_PDCLIB_seek.c
-     platform/example/functions/_PDCLIB/_PDCLIB_split_float.c
-     platform/example/functions/_PDCLIB/_PDCLIB_split_double.c
-     platform/example/functions/_PDCLIB/_PDCLIB_split_long_double.c
      platform/example/functions/_PDCLIB/_PDCLIB_stdinit.c
 )
 
