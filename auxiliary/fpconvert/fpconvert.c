@@ -36,7 +36,7 @@ union
 {
     long double value;
     unsigned char byte[ sizeof( long double ) ];
-} ldbl;
+} flt80;
 #endif
 
 #if __LDBL_DECIMAL_DIG__ == 36 || __FLT128_DECIMAL_DIG__ == 36
@@ -72,7 +72,7 @@ int main( int argc, char * argv[] )
     unsigned char    flt_byte[ sizeof( float ) ];
     unsigned char    dbl_byte[ sizeof( double ) ];
 #ifdef FLOAT80
-    unsigned char        ldbl[ sizeof( long double ) ];
+    unsigned char  flt80_byte[ sizeof( long double ) ];
 #endif
 #ifdef FLOAT128
     unsigned char flt128_byte[ sizeof( float128_t ) ];
@@ -89,7 +89,7 @@ int main( int argc, char * argv[] )
     flt.value    =    strtof( argv[1], NULL );
     dbl.value    =    strtod( argv[1], NULL );
 #ifdef FLOAT80
-    ldbl.value   =   strtold( argv[1], NULL );
+    flt80.value  =   strtold( argv[1], NULL );
 #endif
 #ifdef FLOAT128
     flt128.value = strtof128( argv[1], NULL );
@@ -98,7 +98,7 @@ int main( int argc, char * argv[] )
     memcpy(    flt_byte,    &flt.value, sizeof( float ) );
     memcpy(    dbl_byte,    &dbl.value, sizeof( double ) );
 #ifdef FLOAT80
-    memcpy(   ldbl_byte,   &ldbl.value, sizeof( long double ) );
+    memcpy(  flt80_byte,  &flt80.value, sizeof( long double ) );
 #endif
 #ifdef FLOAT128
     memcpy( flt128_byte, &flt128.value, sizeof( float128_t ) );
@@ -216,14 +216,14 @@ int main( int argc, char * argv[] )
     printf( "Bits: %zu (48 unused, 80 encoded)\n", sizeof( long double ) * CHAR_BIT );
 
     printf( "Hex:  %02x%02x.%02x%02x.%02x%02x.%02x%02x.%02x%02x.\n",
-            ldbl_byte[ 9 ], ldbl_byte[ 8 ],
-            ldbl_byte[ 7 ], ldbl_byte[ 6 ], ldbl_byte[ 5 ], ldbl_byte[ 4 ],
-            ldbl_byte[ 3 ], ldbl_byte[ 2 ], ldbl_byte[ 1 ], ldbl_byte[ 0 ] );
+            flt80_byte[ 9 ], flt80_byte[ 8 ],
+            flt80_byte[ 7 ], flt80_byte[ 6 ], flt80_byte[ 5 ], flt80_byte[ 4 ],
+            flt80_byte[ 3 ], flt80_byte[ 2 ], flt80_byte[ 1 ], flt80_byte[ 0 ] );
 
     /* Asserting identity of memcpy bytes and union bytes */
     for ( unsigned i = 0; i < sizeof( long double ); ++i )
     {
-        assert( ldbl_byte[ i ] == ldbl.byte[ i ] );
+        assert( flt80_byte[ i ] == flt80.byte[ i ] );
     }
 
     /* Printing binary dump of significant parts of register */
@@ -231,8 +231,8 @@ int main( int argc, char * argv[] )
 
     for ( unsigned i = sizeof( long double ) - 6; i > 0; --i )
     {
-        unsigned high_nibble = ( ldbl_byte[ i - 1 ] & 0xf0 ) >> 4;
-        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ ldbl_byte[ i - 1 ] & 0x0f ] );
+        unsigned high_nibble = ( flt80_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt80_byte[ i - 1 ] & 0x0f ] );
         if ( i == 9 ) printf( "\n      immm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
         if ( i == 5 ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
     }
@@ -240,15 +240,15 @@ int main( int argc, char * argv[] )
     puts( "" );
 
     /* Extracting exponent from memcpy bytes */
-    exp = ( ( (unsigned)ldbl_byte[9] & 0x7f ) << 8 ) | (unsigned)ldbl_byte[8];
+    exp = ( ( (unsigned)flt80_byte[9] & 0x7f ) << 8 ) | (unsigned)flt80_byte[8];
 
-    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_LDBL_BIAS );
+    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_FLT80_BIAS );
 
     /* Printing decimal */
-    printf( "Dec:  %d\n", ( (unsigned)ldbl_byte[7] & 0x80 ) == 0x80 );
+    printf( "Dec:  %d\n", ( (unsigned)flt80_byte[7] & 0x80 ) == 0x80 );
 
     /* Adjusting mantissa from memcpy bytes */
-    shl( ldbl_byte, 7 );
+    shl( flt80_byte, 7 );
 
     /* Printing binary dump of mantissa */
     printf( "Mant: mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
