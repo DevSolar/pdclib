@@ -44,7 +44,7 @@ union
 #if __LDBL_DECIMAL_DIG__ == 36
 typedef long double float128_t;
 #define strtof128 strtold
-#elif __FLT128_DEVIMAL_DIG__ == 36
+#elif __FLT128_DECIMAL_DIG__ == 36
 #include "quadmath.h"
 typedef __float128 float128_t;
 #define strtof128 strtoflt128
@@ -266,6 +266,7 @@ int main( int argc, char * argv[] )
     for ( unsigned i = 8; i > 0; --i )
     {
         printf( "       %02x.", dbl_byte[ i - 1 ] );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      " );
     }
 
     puts( "" );
