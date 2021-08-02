@@ -1,196 +1,331 @@
 #include <assert.h>
+#include <inttypes.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#define _PDCLIB_FLT_BIAS 127
+#define _PDCLIB_DBL_BIAS 1023
+#define _PDCLIB_FLT80_BIAS 16383
+#define _PDCLIB_FLT128_BIAS 16383
+
+char * nibbles[] =
+{
+    "0000", "0001", "0010", "0011",
+    "0100", "0101", "0110", "0111",
+    "1000", "1001", "1010", "1011",
+    "1100", "1101", "1110", "1111"
+};
 
 union
 {
     float value;
     unsigned char byte[ sizeof( float ) ];
-    struct
-    {
-        unsigned mant : 23;
-        unsigned exp  :  8;
-        unsigned sign :  1;
-    } bits;
-} float32;
+} flt;
 
 union
 {
     double value;
     unsigned char byte[ sizeof( double ) ];
-    struct
-    {
-        unsigned mant_low  : 32;
-        unsigned mant_high : 20;
-        unsigned exp       : 11;
-        unsigned sign      :  1;
-    } bits;
-} float64;
+} dbl;
 
 #if __LDBL_DECIMAL_DIG__ == 21
-
 #define FLOAT80
-
 union
 {
     long double value;
     unsigned char byte[ sizeof( long double ) ];
-    struct
-    {
-        unsigned mant_low  : 32;
-        unsigned mant_high : 32;
-        unsigned exp       : 15;
-        unsigned sign      :  1;
-    } bits;
-} float80;
-
+} ldbl;
 #endif
 
 #if __LDBL_DECIMAL_DIG__ == 36 || __FLT128_DECIMAL_DIG__ == 36
-
-
+#define FLOAT128
 #if __LDBL_DECIMAL_DIG__ == 36
-#define FLOAT128 " long double "
 typedef long double float128_t;
 #define strtof128 strtold
-#elif __FLT128_DECIMAL_DIG__ == 36
-#define FLOAT128 " __float128 -"
-#include <quadmath.h>
+#elif __FLT128_DEVIMAL_DIG__ == 36
+#include "quadmath.h"
 typedef __float128 float128_t;
 #define strtof128 strtoflt128
 #endif
-
 union
 {
     float128_t value;
     unsigned char byte[ sizeof( float128_t ) ];
-    struct
-    {
-        unsigned mant_l1 : 32;
-        unsigned mant_l2 : 32;
-        unsigned mant_h1 : 32;
-        unsigned mant_h2 : 16;
-        unsigned exp     : 15;
-        unsigned sign    :  1;
-    } bits;
-} float128;
-
+} flt128;
 #endif
+
+void shl( unsigned char * byte, size_t size )
+{
+    for ( unsigned i = size; i > 1; --i )
+    {
+        byte[ i - 1 ] <<= 1;
+        byte[ i - 1 ] |= ( byte[ i - 2 ] >> 7 );
+    }
+
+    byte[ 0 ] <<= 1;
+}
 
 int main( int argc, char * argv[] )
 {
-    int i;
+    unsigned char    flt_byte[ sizeof( float ) ];
+    unsigned char    dbl_byte[ sizeof( double ) ];
+#ifdef FLOAT80
+    unsigned char        ldbl[ sizeof( long double ) ];
+#endif
+#ifdef FLOAT128
+    unsigned char flt128_byte[ sizeof( float128_t ) ];
+#endif
 
-    unsigned sign;
-    unsigned exp;
-    unsigned mant[4];
+    int exp;
 
     if ( argc != 2 )
     {
-        puts( "Usage: fpconvert <floating-point>" );
+        puts( "Usage: fpconvert2 <floating-point>" );
         return 1;
     }
 
-    float32.value  =    strtof( argv[1], NULL );
-    float64.value  =    strtod( argv[1], NULL );
+    flt.value    =    strtof( argv[1], NULL );
+    dbl.value    =    strtod( argv[1], NULL );
 #ifdef FLOAT80
-    float80.value  =   strtold( argv[1], NULL );
+    ldbl.value   =   strtold( argv[1], NULL );
 #endif
 #ifdef FLOAT128
-    float128.value = strtof128( argv[1], NULL );
+    flt128.value = strtof128( argv[1], NULL );
 #endif
 
-    puts( "\n---------------------------------- float ----------------------------------" );
+    memcpy(    flt_byte,    &flt.value, sizeof( float ) );
+    memcpy(    dbl_byte,    &dbl.value, sizeof( double ) );
+#ifdef FLOAT80
+    memcpy(   ldbl_byte,   &ldbl.value, sizeof( long double ) );
+#endif
+#ifdef FLOAT128
+    memcpy( flt128_byte, &flt128.value, sizeof( float128_t ) );
+#endif
 
-    for ( i = sizeof( float ); i > 0; --i )
+    puts( "-------------------------------- float --------------------------------" );
+
+    printf( "Bits: %zu\n", sizeof( float ) * CHAR_BIT );
+
+    printf( "Hex:  %02x%02x.%02x%02x.\n", flt_byte[ 3 ], flt_byte[ 2 ], flt_byte[ 1 ], flt_byte[ 0 ] );
+
+    /* Asserting identity of memcpy bytes and union bytes */
+    for ( unsigned i = 0; i < sizeof( float ); ++i )
     {
-        printf( "%02hhx ", float32.byte[i - 1] );
+        assert( flt_byte[ i ] == flt.byte[ i ] );
+    }
+
+    /* Printing binary dump of whole register */
+    printf( "Bin:  seee.eeee.emmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+
+    for ( unsigned i = sizeof( float ); i > 0; --i )
+    {
+        unsigned high_nibble = ( flt_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt_byte[ i - 1 ] & 0x0f ] );
     }
 
     puts( "" );
 
-    sign    = float32.byte[3] >> 7;
-    exp     = ( ( (unsigned)float32.byte[3] & 0x7F ) <<  1 ) |   ( (unsigned)float32.byte[2]   >> 7 );
-    mant[0] = ( ( (unsigned)float32.byte[2] & 0x7F ) << 16 ) | ( ( (unsigned)float32.byte[1] ) << 8 ) | ( (unsigned)float32.byte[0] );
+    /* Extracting exponent from memcpy bytes */
+    exp = ( ( (unsigned)flt_byte[3] & 0x7f ) << 1 ) | ( (unsigned)flt_byte[2] >> 7 );
 
-    assert( sign    == float32.bits.sign );
-    assert( exp     == float32.bits.exp );
-    assert( mant[0] == float32.bits.mant );
+    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_FLT_BIAS );
 
-    printf( "sign: %u exponent: 0x%04x significand: 0x%08x\n\n", sign, exp, mant[0] );
+    /* Adjusting mantissa from memcpy bytes */
+    shl( flt_byte, 3 );
 
-    puts( "--------------------------------- double ----------------------------------" );
+    /* Printing binary dump of mantissa */
+    printf( "Mant: mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
 
-    for ( i = sizeof( double ); i > 0; --i )
+    for ( unsigned i = 3; i > 0; --i )
     {
-        printf( "%02hhx ", float64.byte[i - 1] );
+        unsigned high_nibble = ( flt_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt_byte[ i - 1 ] & 0x0f ] );
+    }
+
+    /* Printing hexadecimal dump of adjusted mantissa */
+    printf( "\n      " );
+
+    for ( unsigned i = 3; i > 0; --i )
+    {
+        printf( "       %02x.", flt_byte[ i - 1 ] );
     }
 
     puts( "" );
 
-    sign     = float64.byte[7] >> 7;
-    exp      = ( ( (unsigned)float64.byte[7] & 0x7F ) <<  4 ) | ( ( (unsigned)float64.byte[6] & 0xF0 ) >>  4 );
-    mant[0]  = ( ( (unsigned)float64.byte[6] & 0x0F ) << 16 ) |   ( (unsigned)float64.byte[5]          <<  8 ) |   (unsigned)float64.byte[4];
-    mant[1]  =   ( (unsigned)float64.byte[3]          << 24 ) |   ( (unsigned)float64.byte[2]          << 16 ) | ( (unsigned)float64.byte[1] << 8 ) | (unsigned)float64.byte[0];
+    puts( "------------------------------- double --------------------------------" );
 
-    assert( sign    == float64.bits.sign );
-    assert( exp     == float64.bits.exp );
-    assert( mant[0] == float64.bits.mant_high );
-    assert( mant[1] == float64.bits.mant_low );
+    printf( "Bits: %zu\n", sizeof( double ) * CHAR_BIT );
 
-    printf( "sign: %u exponent: 0x%04x significand: 0x%08x.%08x\n\n", sign, exp, mant[0], mant[1] );
+    printf( "Hex:  %02x%02x.%02x%02x.%02x%02x.%02x%02x.\n", dbl_byte[ 7 ], dbl_byte[ 6 ], dbl_byte[ 5 ], dbl_byte[ 4 ], dbl_byte[ 3 ], dbl_byte[ 2 ], dbl_byte[ 1 ], dbl_byte[ 0 ] );
+
+    /* Asserting identity of memcpy bytes and union bytes */
+    for ( unsigned i = 0; i < sizeof( double ); ++i )
+    {
+        assert( dbl_byte[ i ] == dbl.byte[ i ] );
+    }
+
+    /* Printing binary dump of whole register */
+    printf( "Bin:  seee.eeee.eeee.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+
+    for ( unsigned i = sizeof( double ); i > 0; --i )
+    {
+        unsigned high_nibble = ( dbl_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ dbl_byte[ i - 1 ] & 0x0f ] );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+    }
+
+    puts( "" );
+
+    /* Extracting exponent from memcpy bytes */
+    exp = ( ( (unsigned)dbl_byte[7] & 0x7f ) << 4 ) | ( ( (unsigned)dbl_byte[6] & 0xf0 ) >> 4 );
+
+    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_DBL_BIAS );
+
+    /* Adjusting mantissa from memcpy bytes */
+    shl( dbl_byte, 7 );
+    shl( dbl_byte, 7 );
+    shl( dbl_byte, 7 );
+    shl( dbl_byte, 7 );
+
+    /* Printing binary dump of mantissa */
+    printf( "Mant: mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+
+    for ( unsigned i = 7; i > 0; --i )
+    {
+        unsigned high_nibble = ( dbl_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ dbl_byte[ i - 1 ] & 0x0f ] );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.xxxx.\n      " );
+    }
+
+    /* Printing hexadecimal dump of adjusted mantissa */
+    printf( "\n      " );
+
+    for ( unsigned i = 7; i > 0; --i )
+    {
+        printf( "       %02x.", dbl_byte[ i - 1 ] );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      " );
+    }
+
+    puts( "" );
 
 #ifdef FLOAT80
+    puts( "------------------------------- float80 -------------------------------" );
 
-    puts( "------------------------------- long double -------------------------------" );
+    printf( "Bits: %zu (48 unused, 80 encoded)\n", sizeof( long double ) * CHAR_BIT );
 
-    for ( i = sizeof( long double ); i > 0; --i )
+    printf( "Hex:  %02x%02x.%02x%02x.%02x%02x.%02x%02x.%02x%02x.\n",
+            ldbl_byte[ 9 ], ldbl_byte[ 8 ],
+            ldbl_byte[ 7 ], ldbl_byte[ 6 ], ldbl_byte[ 5 ], ldbl_byte[ 4 ],
+            ldbl_byte[ 3 ], ldbl_byte[ 2 ], ldbl_byte[ 1 ], ldbl_byte[ 0 ] );
+
+    /* Asserting identity of memcpy bytes and union bytes */
+    for ( unsigned i = 0; i < sizeof( long double ); ++i )
     {
-        printf( "%02hhx ", float80.byte[i - 1] );
+        assert( ldbl_byte[ i ] == ldbl.byte[ i ] );
+    }
+
+    /* Printing binary dump of significant parts of register */
+    printf( "Bin:  seee.eeee.eeee.eeee.\n      " );
+
+    for ( unsigned i = sizeof( long double ) - 6; i > 0; --i )
+    {
+        unsigned high_nibble = ( ldbl_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ ldbl_byte[ i - 1 ] & 0x0f ] );
+        if ( i == 9 ) printf( "\n      immm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+        if ( i == 5 ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
     }
 
     puts( "" );
 
-    sign    = float80.byte[9] >> 7;
-    exp     = ( ( (unsigned)float80.byte[9] & 0x7F ) <<  8 ) |     (unsigned)float80.byte[8];
-    mant[0] =   ( (unsigned)float80.byte[7]          << 24 ) |   ( (unsigned)float80.byte[6] << 16 ) | ( (unsigned)float80.byte[5] << 8 ) | (unsigned)float80.byte[4];
-    mant[1] =   ( (unsigned)float80.byte[3]          << 24 ) |   ( (unsigned)float80.byte[2] << 16 ) | ( (unsigned)float80.byte[1] << 8 ) | (unsigned)float80.byte[0];
+    /* Extracting exponent from memcpy bytes */
+    exp = ( ( (unsigned)ldbl_byte[9] & 0x7f ) << 8 ) | (unsigned)ldbl_byte[8];
 
-    assert( sign    == float80.bits.sign );
-    assert( exp     == float80.bits.exp );
-    assert( mant[0] == float80.bits.mant_high );
-    assert( mant[1] == float80.bits.mant_low );
+    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_LDBL_BIAS );
 
-    printf( "sign: %u exponent: 0x%04x significand: 0x%08x.%08x\n\n", sign, exp, mant[0], mant[1] );
+    /* Printing decimal */
+    printf( "Dec:  %d\n", ( (unsigned)ldbl_byte[7] & 0x80 ) == 0x80 );
 
+    /* Adjusting mantissa from memcpy bytes */
+    shl( ldbl_byte, 7 );
+
+    /* Printing binary dump of mantissa */
+    printf( "Mant: mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+
+    for ( unsigned i = 8; i > 0; --i )
+    {
+        unsigned high_nibble = ( dbl_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ dbl_byte[ i - 1 ] & 0x0f ] );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+    }
+
+    /* Printing hexadecimal dump of mantissa */
+    printf( "\n      " );
+
+    for ( unsigned i = 8; i > 0; --i )
+    {
+        printf( "       %02x.", dbl_byte[ i - 1 ] );
+    }
+
+    puts( "" );
 #endif
 
 #ifdef FLOAT128
+    puts( "------------------------------ float128 -------------------------------" );
 
-    puts( "-------------------------------" FLOAT128 "-------------------------------" );
+    printf( "Bits: %zu\n", sizeof( float128_t ) * CHAR_BIT );
 
-    for ( i = sizeof( float128_t ); i > 0; --i )
+    printf( "Hex:  %02x%02x.%02x%02x.%02x%02x.%02x%02x.%02x%02x.%02x%02x.%02x%02x.%02x%02x.\n",
+            flt128_byte[ 15 ], flt128_byte[ 14 ], flt128_byte[ 13 ], flt128_byte[ 12 ],
+            flt128_byte[ 11 ], flt128_byte[ 10 ], flt128_byte[  9 ], flt128_byte[  8 ],
+            flt128_byte[  7 ], flt128_byte[  6 ], flt128_byte[  5 ], flt128_byte[  4 ],
+            flt128_byte[  3 ], flt128_byte[  2 ], flt128_byte[  1 ], flt128_byte[  0 ] );
+
+    /* Asserting identity of memcpy bytes and union bytes */
+    for ( unsigned i = 0; i < sizeof( float128_t ); ++i )
     {
-        printf( "%02hhx ", float128.byte[i - 1] );
+        assert( flt128_byte[ i ] == flt128.byte[ i ] );
+    }
+
+    /* Printing binary dump of whole register */
+    printf( "Bin:  seee.eeee.eeee.eeee.mmmm.mmmm.mmmm.mmmm.\n      " );
+
+    for ( unsigned i = sizeof( float128_t ); i > 0; --i )
+    {
+        unsigned high_nibble = ( flt128_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt128_byte[ i - 1 ] & 0x0f ] );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
     }
 
     puts( "" );
 
-    sign    = float128.byte[15] >> 7;
-    exp     = ( ( (unsigned)float128.byte[15] & 0x7F ) <<  8 ) |   (unsigned)float128.byte[14];
-    mant[0] =   ( (unsigned)float128.byte[13]          <<  8 ) |   (unsigned)float128.byte[12];
-    mant[1] =   ( (unsigned)float128.byte[11]          << 24 ) | ( (unsigned)float128.byte[10] << 16 ) | ( (unsigned)float128.byte[9] << 8 ) | (unsigned)float128.byte[8];
-    mant[2] =   ( (unsigned)float128.byte[ 7]          << 24 ) | ( (unsigned)float128.byte[ 6] << 16 ) | ( (unsigned)float128.byte[5] << 8 ) | (unsigned)float128.byte[4];
-    mant[3] =   ( (unsigned)float128.byte[ 3]          << 24 ) | ( (unsigned)float128.byte[ 2] << 16 ) | ( (unsigned)float128.byte[1] << 8 ) | (unsigned)float128.byte[0];
+    /* Extracting exponent from memcpy bytes */
+    exp = ( ( (unsigned)flt128_byte[ 15 ] & 0x7f ) << 8 ) | (unsigned)flt128_byte[ 14 ];
 
-    assert( sign    == float128.bits.sign );
-    assert( exp     == float128.bits.exp );
-    assert( mant[0] == float128.bits.mant_h2 );
-    assert( mant[1] == float128.bits.mant_h1 );
-    assert( mant[2] == float128.bits.mant_l2 );
-    assert( mant[3] == float128.bits.mant_l1 );
+    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_FLT128_BIAS );
 
-    printf( "sign: %u exponent: 0x%04x significand: 0x%08x.%08x.%08x.%08x\n\n", sign, exp, mant[0], mant[1], mant[2], mant[3] );
+    /* Printing binary dump of mantissa */
+    printf( "Mant: mmmm.mmmm.mmmm.mmmm.\n      " );
 
+    for ( unsigned i = 14; i > 0; --i )
+    {
+        unsigned high_nibble = ( flt128_byte[ i - 1 ] & 0xf0 ) >> 4;
+        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt128_byte[ i - 1 ] & 0x0f ] );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+    }
+
+    /* Printing hexadecimal dump of mantissa */
+    printf( "\n      " );
+
+    for ( unsigned i = 14; i > 0; --i )
+    {
+        printf( "       %02x.", flt128_byte[ i - 1 ] );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      " );
+    }
+
+    puts( "" );
 #endif
+
+    puts( "-------------------------------------------------------------------" );
 }
