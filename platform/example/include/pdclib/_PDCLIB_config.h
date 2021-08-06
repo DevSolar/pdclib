@@ -96,6 +96,9 @@
 /* negative zero of those encodings is in any form handled gracefully.        */
 #define _PDCLIB_TWOS_COMPLEMENT 1
 
+/* 1234 for little endian, 4321 for big endian; other types not supported.    */
+#define _PDCLIB_ENDIANESS __BYTE_ORDER__
+
 /* Calculation of a minimum value from a given maximum for two's complement.  */
 /* (For convenience only, used only in this header file below.)               */
 #define _PDCLIB_MIN_CALC( max ) ( ( - max ) - 1 )
@@ -418,17 +421,51 @@ struct _PDCLIB_imaxdiv_t
 /* 128bit IEEE 754 quadruple precision (112bit mantissa) is DECIMAL_DIG 36.   */
 #define _PDCLIB_DECIMAL_DIG __DECIMAL_DIG__
 
+/* Macros for deconstructing floating point values                            */
+#define _PDCLIB_DBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_DBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
+#define _PDCLIB_DBL_BIAS 1023
+#define _PDCLIB_DBL_MANT( bytes ) ( bytes + 6 )
+#define _PDCLIB_DBL_MANT_SIZE 7
+#define _PDCLIB_DBL_OFF 4
+#define _PDCLIB_DBL_DEC 1
+
 /* Most platforms today use IEEE 754 single precision for 'float', and double */
 /* precision for 'double'. But type 'long double' varies. We use what the     */
 /* compiler states about LDBL_DECIMAL_DIG to determine the type.              */
-#ifndef __LDBL_DECIMAL_DIG__
-#define _PDCLIB_LDBL_64
-#elif __LDBL_DECIMAL_DIG__ == 17
-#define _PDCLIB_LDBL_64
-#elif __LDBL_DECIMAL_DIG__ == 21
+#if __LDBL_DECIMAL_DIG__ == 21
+
 #define _PDCLIB_LDBL_80
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[9] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[9] & 0x7f ) << 8 ) | (unsigned)bytes[8] )
+#define _PDCLIB_LDBL_BIAS 16383
+#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 7 )
+#define _PDCLIB_LDBL_MANT_SIZE 8
+#define _PDCLIB_LDBL_OFF 1
+#define _PDCLIB_LDBL_DEC ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+
 #elif __LDBL_DECIMAL_DIG__ == 36
+
 #define _PDCLIB_LDBL_128
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[15] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[15] & 0x7f ) << 8 ) | (unsigned)bytes[14] )
+#define _PDCLIB_LDBL_BIAS 16383
+#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 13 )
+#define _PDCLIB_LDBL_MANT_SIZE 14
+#define _PDCLIB_LDBL_OFF 0
+#define _PDCLIB_LDBL_DEC 1
+
+#else
+
+#define _PDCLIB_LDBL_64
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
+#define _PDCLIB_LDBL_BIAS 1023
+#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 6 )
+#define _PDCLIB_LDBL_MANT_SIZE 7
+#define _PDCLIB_LDBL_OFF 4
+#define _PDCLIB_LDBL_DEC 1
+
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -823,6 +860,14 @@ typedef union { unsigned char _PDCLIB_thrd_attr_t_data[ 56 ]; long int _PDCLIB_t
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
+#endif
+
+/* Termux defines atexit in crtbegin_so.o leading to a multiple definition    */
+/* error from the linker. This is a crude workaround, which does NOT fix      */
+/* various run-time issues on Termux likely also related to crt linkage. But  */
+/* at least things compile OK, and SOME tests can be run.                     */
+#if defined( __ARM_NEON )
+#define atexit _PDCLIB_atexit
 #endif
 
 #endif
