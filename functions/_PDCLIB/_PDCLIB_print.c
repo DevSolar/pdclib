@@ -226,34 +226,42 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             break;
 
         case 'f':
+            status->base = 2;
             status->flags |= ( E_decimal | E_double | E_lower );
             break;
 
         case 'F':
+            status->base = 2;
             status->flags |= ( E_decimal | E_double );
             break;
 
         case 'e':
+            status->base = 2;
             status->flags |= ( E_exponent | E_double | E_lower );
             break;
 
         case 'E':
+            status->base = 2;
             status->flags |= ( E_exponent | E_double );
             break;
 
         case 'g':
+            status->base = 2;
             status->flags |= ( E_generic | E_double | E_lower );
             break;
 
         case 'G':
+            status->base = 2;
             status->flags |= ( E_generic | E_double );
             break;
 
         case 'a':
+            status->base = 2;
             status->flags |= ( E_hexa | E_double | E_lower );
             break;
 
         case 'A':
+            status->base = 2;
             status->flags |= ( E_hexa | E_double );
             break;
 
