@@ -80,9 +80,9 @@ int main( int argc, char * argv[] )
 
     int exp;
 
-    if ( argc != 2 )
+    if ( argc < 2 && argc > 3 )
     {
-        puts( "Usage: fpconvert2 <floating-point>" );
+        puts( "Usage: fpconvert2 <floating-point> [<conversion>]" );
         return 1;
     }
 
@@ -329,4 +329,12 @@ int main( int argc, char * argv[] )
 #endif
 
     puts( "----------------------------------------------" );
+
+    if ( argc == 3 )
+    {
+        char conversion[ 10 ] = "%";
+        strcat( conversion, argv[ 2 ] );
+        strcat( conversion, "\n" );
+        printf( conversion, strtod( argv[ 1 ], NULL ) );
+    }
 }
