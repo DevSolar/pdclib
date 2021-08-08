@@ -40,7 +40,7 @@ static void intformat( intmax_t value, struct _PDCLIB_status_t * status )
     }
     else if ( !( status->flags & E_unsigned ) )
     {
-        /* plus sign / extra space are only for unsigned conversions */
+        /* plus sign / extra space are only for signed conversions */
         if ( status->flags & E_plus )
         {
             preface[ preidx++ ] = '+';

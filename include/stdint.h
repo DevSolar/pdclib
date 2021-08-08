@@ -16,28 +16,24 @@ extern "C" {
 
 /* 7.18.1.1 Exact-width integer types. */
 
-#if _PDCLIB_TWOS_COMPLEMENT == 1
-
-#if _PDCLIB_INT_LEAST8_MAX == 0x7f
-typedef _PDCLIB_int_least8_t  int8_t;
-typedef _PDCLIB_uint_least8_t  uint8_t;
+#ifdef _PDCLIB_int8_t
+typedef _PDCLIB_int8_t int8_t;
+typedef _PDCLIB_uint8_t uint8_t;
 #endif
 
-#if _PDCLIB_INT_LEAST16_MAX == 0x7fff
-typedef _PDCLIB_int_least16_t int16_t;
-typedef _PDCLIB_uint_least16_t uint16_t;
+#ifdef _PDCLIB_int16_t
+typedef _PDCLIB_int16_t int16_t;
+typedef _PDCLIB_uint16_t uint16_t;
 #endif
 
-#if _PDCLIB_INT_LEAST32_MAX == 0x7fffffffl
-typedef _PDCLIB_int_least32_t int32_t;
-typedef _PDCLIB_uint_least32_t uint32_t;
+#ifdef _PDCLIB_int32_t
+typedef _PDCLIB_int32_t int32_t;
+typedef _PDCLIB_uint32_t uint32_t;
 #endif
 
-#if _PDCLIB_INT_LEAST64_MAX == 0x7fffffffffffffffll
-typedef _PDCLIB_int_least64_t int64_t;
-typedef _PDCLIB_uint_least64_t uint64_t;
-#endif
-
+#ifdef _PDCLIB_int64_t
+typedef _PDCLIB_int64_t int64_t;
+typedef _PDCLIB_uint64_t uint64_t;
 #endif
 
 /* 7.18.1.2 Minimum-width integer types */

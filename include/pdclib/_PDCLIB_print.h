@@ -9,6 +9,10 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+
 /* This macro delivers a given character to either a memory buffer or a stream,
    depending on the contents of 'status' (struct _PDCLIB_status_t).
    x - the character to be delivered
@@ -51,11 +55,17 @@
 #define E_double   (INT32_C(1)<<14)
 #define E_ldouble  (INT32_C(1)<<15)
 
+#define E_decimal  (INT32_C(1)<<18)
+#define E_exponent (INT32_C(1)<<19)
+#define E_generic  (INT32_C(1)<<20)
+#define E_hexa     (INT32_C(1)<<21)
+
 #define E_lower    (INT32_C(1)<<16)
 #define E_unsigned (INT32_C(1)<<17)
 
 void _PDCLIB_print_integer( struct _PDCLIB_imaxdiv_t div, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_string( const char * s, struct _PDCLIB_status_t * status );
-void _PDCLIB_print_float( long double value, struct _PDCLIB_status_t * status );
+void _PDCLIB_print_double( double value, struct _PDCLIB_status_t * status );
+void _PDCLIB_print_ldouble( long double value, struct _PDCLIB_status_t * status );
 
 #endif

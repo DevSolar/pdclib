@@ -37,7 +37,10 @@ char * tmpnam( char * s )
 
 int main( void )
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     TESTCASE( strlen( tmpnam( NULL ) ) < L_tmpnam );
+#pragma GCC diagnostic pop
     return TEST_RESULTS;
 }
 

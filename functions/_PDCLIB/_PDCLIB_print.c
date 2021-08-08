@@ -226,14 +226,35 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             break;
 
         case 'f':
+            status->flags |= ( E_decimal | E_double | E_lower );
+            break;
+
         case 'F':
+            status->flags |= ( E_decimal | E_double );
+            break;
+
         case 'e':
+            status->flags |= ( E_exponent | E_double | E_lower );
+            break;
+
         case 'E':
+            status->flags |= ( E_exponent | E_double );
+            break;
+
         case 'g':
+            status->flags |= ( E_generic | E_double | E_lower );
+            break;
+
         case 'G':
+            status->flags |= ( E_generic | E_double );
+            break;
+
         case 'a':
+            status->flags |= ( E_hexa | E_double | E_lower );
+            break;
+
         case 'A':
-            status->flags |= E_double;
+            status->flags |= ( E_hexa | E_double );
             break;
 
         case 'c':
@@ -275,18 +296,16 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         if ( status->flags & E_double )
         {
             /* Floating Point conversions */
-            long double value;
-
             if ( status->flags & E_ldouble )
             {
-                value = va_arg( status->arg, long double );
+                long double value = va_arg( status->arg, long double );
+                _PDCLIB_print_ldouble( value, status );
             }
             else
             {
-                value = va_arg( status->arg, double );
+                double value = va_arg( status->arg, double );
+                _PDCLIB_print_double( value, status );
             }
-
-            _PDCLIB_print_float( value, status );
         }
         else
         {

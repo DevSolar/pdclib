@@ -96,6 +96,9 @@
 /* negative zero of those encodings is in any form handled gracefully.        */
 #define _PDCLIB_TWOS_COMPLEMENT 1
 
+/* 1234 for little endian, 4321 for big endian; other types not supported.    */
+#define _PDCLIB_ENDIANESS __BYTE_ORDER__
+
 /* Calculation of a minimum value from a given maximum for two's complement.  */
 /* (For convenience only, used only in this header file below.)               */
 #define _PDCLIB_MIN_CALC( max ) ( ( - max ) - 1 )
@@ -150,11 +153,9 @@
 /* the standard allows you to define any type that meets minimum width and    */
 /* signedness requirements.                                                   */
 /* The first define is the appropriate basic type (e.g. "long int"), second   */
-/* its max value, the third its min value, and the fourth the width in bits   */
-/* (not bytes!).                                                              */
-/* The minimum width types have a fifth define, a macro taking a value and    */
-/* expanding to an integer constant of that value, and the corresponding      */
-/* minimum width type.                                                        */
+/* its max value, the third its min value (both expressed in the given type). */
+/* The same follows for the unsigned type (for which the minimum value is     */
+/* obviously zero and need not be defined).                                   */
 /* There *are* predefines provided for the printf()/scanf() length specifiers */
 /* but tunneling them through here would have added many lines of repetitive  */
 /* and mostly redundant defines. They are determined in <_PDCLIB_internal.h>. */
@@ -216,7 +217,19 @@
 #define _PDCLIB_uint_least64_t     __UINT_LEAST64_TYPE__
 #define _PDCLIB_UINT_LEAST64_MAX   __UINT_LEAST64_MAX__
 
-/* INTn_C / UINTn_C macros for define int_leastN_t / uint_leastN_t literals.  */
+/* Exact-width integer types. These are *optional*. If your platform does not */
+/* support types of these exact widths in two's complement encoding, just     */
+/* leave them undefined.                                                      */
+#define _PDCLIB_int8_t   __INT8_TYPE__
+#define _PDCLIB_int16_t  __INT16_TYPE__
+#define _PDCLIB_int32_t  __INT32_TYPE__
+#define _PDCLIB_int64_t  __INT64_TYPE__
+#define _PDCLIB_uint8_t  __UINT8_TYPE__
+#define _PDCLIB_uint16_t __UINT16_TYPE__
+#define _PDCLIB_uint32_t __UINT32_TYPE__
+#define _PDCLIB_uint64_t __UINT64_TYPE__
+
+/* INTn_C / UINTn_C macros to define int_leastN_t / uint_leastN_t literals.   */
 #if defined( __INT8_C )
 /* GCC                                                                        */
 #define _PDCLIB_INT_LEAST8_C       __INT8_C
@@ -408,17 +421,51 @@ struct _PDCLIB_imaxdiv_t
 /* 128bit IEEE 754 quadruple precision (112bit mantissa) is DECIMAL_DIG 36.   */
 #define _PDCLIB_DECIMAL_DIG __DECIMAL_DIG__
 
+/* Macros for deconstructing floating point values                            */
+#define _PDCLIB_DBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_DBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
+#define _PDCLIB_DBL_BIAS 1023
+#define _PDCLIB_DBL_MANT( bytes ) ( bytes + 6 )
+#define _PDCLIB_DBL_MANT_SIZE 7
+#define _PDCLIB_DBL_OFF 4
+#define _PDCLIB_DBL_DEC( bytes ) ( ( _PDCLIB_DBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+
 /* Most platforms today use IEEE 754 single precision for 'float', and double */
 /* precision for 'double'. But type 'long double' varies. We use what the     */
 /* compiler states about LDBL_DECIMAL_DIG to determine the type.              */
-#ifndef __LDBL_DECIMAL_DIG__
-#define _PDCLIB_LDBL_64
-#elif __LDBL_DECIMAL_DIG__ == 17
-#define _PDCLIB_LDBL_64
-#elif __LDBL_DECIMAL_DIG__ == 21
+#if __LDBL_DECIMAL_DIG__ == 21
+
 #define _PDCLIB_LDBL_80
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[9] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[9] & 0x7f ) << 8 ) | (unsigned)bytes[8] )
+#define _PDCLIB_LDBL_BIAS 16383
+#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 7 )
+#define _PDCLIB_LDBL_MANT_SIZE 8
+#define _PDCLIB_LDBL_OFF 1
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+
 #elif __LDBL_DECIMAL_DIG__ == 36
+
 #define _PDCLIB_LDBL_128
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[15] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[15] & 0x7f ) << 8 ) | (unsigned)bytes[14] )
+#define _PDCLIB_LDBL_BIAS 16383
+#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 13 )
+#define _PDCLIB_LDBL_MANT_SIZE 14
+#define _PDCLIB_LDBL_OFF 0
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+
+#else
+
+#define _PDCLIB_LDBL_64
+#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
+#define _PDCLIB_LDBL_BIAS 1023
+#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 6 )
+#define _PDCLIB_LDBL_MANT_SIZE 7
+#define _PDCLIB_LDBL_OFF 4
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -813,6 +860,14 @@ typedef union { unsigned char _PDCLIB_thrd_attr_t_data[ 56 ]; long int _PDCLIB_t
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
+#endif
+
+/* Termux defines atexit in crtbegin_so.o leading to a multiple definition    */
+/* error from the linker. This is a crude workaround, which does NOT fix      */
+/* various run-time issues on Termux likely also related to crt linkage. But  */
+/* at least things compile OK, and SOME tests can be run.                     */
+#if defined( __ARM_NEON )
+#define atexit _PDCLIB_atexit
 #endif
 
 #endif

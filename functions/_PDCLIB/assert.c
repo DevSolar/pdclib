@@ -41,6 +41,10 @@ static void aborthandler( int sig )
     exit( ( signed int )TEST_RESULTS );
 }
 
+#ifdef NDEBUG
+#error Compiling test drivers with NDEBUG set is a questionable choice...
+#endif
+
 #define NDEBUG
 
 #include <assert.h>
