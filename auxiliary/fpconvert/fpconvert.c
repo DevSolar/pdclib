@@ -80,9 +80,9 @@ int main( int argc, char * argv[] )
 
     int exp;
 
-    if ( argc < 2 && argc > 3 )
+    if ( argc < 2 || argc > 3 )
     {
-        puts( "Usage: fpconvert2 <floating-point> [<conversion>]" );
+        puts( "Usage: fpconvert <floating-point> [<conversion>]" );
         return 1;
     }
 
