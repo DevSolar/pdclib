@@ -27,11 +27,11 @@
 #error Unsupported endianess.
 #endif
 
-static void print_hexa( int sign, int exp, int dec, unsigned char * mant, size_t size, struct _PDCLIB_status_t * status )
+static void print_hexa( char sign, int exp, int dec, unsigned char * mant, size_t size, struct _PDCLIB_status_t * status )
 {
     /* Array of hexadecimal digits, the 0th element being the decimal */
-    int digits;
-    int i;
+    size_t digits;
+    size_t i;
     unsigned char digit[ _PDCLIB_LDBL_MANT_SIZE * 2 + 1 ] = { dec, 0 };
 
     /* Array holding the decimal exponent */
@@ -65,10 +65,10 @@ static void print_hexa( int sign, int exp, int dec, unsigned char * mant, size_t
     }
 
     /* Precision smaller than number of digits requires rounding */
-    if ( ( status->prec >= 0 ) && ( status->prec < digits ) )
+    if ( ( status->prec >= 0 ) && ( (size_t)status->prec < digits ) )
     {
         /* Round up for .51 through .99. Round-to-even for .5. */
-        if ( ( digit[ status->prec + 1 ] > 5 ) || ( digits > ( status->prec + 1 ) )
+        if ( ( digit[ status->prec + 1 ] > 5 ) || ( digits > (size_t)( status->prec + 1 ) )
           || ( digit[ status->prec ] % 2 ) )
         {
             ++digit[ status->prec ];
@@ -91,25 +91,7 @@ static void print_hexa( int sign, int exp, int dec, unsigned char * mant, size_t
         exp = d.quot;
     } while ( exp > 0 );
 
-    /* Turning sign bit into sign character. */
-    if ( sign )
-    {
-        sign = '-';
-    }
-    else if ( status->flags & E_plus )
-    {
-        sign = '+';
-    }
-    else if ( status->flags & E_space )
-    {
-        sign = ' ';
-    }
-    else
-    {
-        sign = '\0';
-    }
-
-    status->current = ( status->prec > digits ) ? status->prec : digits;
+    status->current = ( status->prec > (int)digits ) ? (size_t)status->prec : digits;
     status->current = 5 + ( sign != '\0' ) + ( ( status->current > 0 ) || ( status->flags & E_alt ) ) + expdigits + status->current;
 
     if ( ! ( status->flags & ( E_zero | E_minus ) ) )
@@ -122,7 +104,7 @@ static void print_hexa( int sign, int exp, int dec, unsigned char * mant, size_t
         }
     }
 
-    if ( sign )
+    if ( sign != '\0' )
     {
         PUT( sign );
     }
@@ -152,7 +134,7 @@ static void print_hexa( int sign, int exp, int dec, unsigned char * mant, size_t
         PUT( digit_chars[ digit[ i ] ] );
     }
 
-    while ( i <= status->prec )
+    while ( (int)i <= status->prec )
     {
         PUT( '0' );
         ++i;
@@ -167,7 +149,7 @@ static void print_hexa( int sign, int exp, int dec, unsigned char * mant, size_t
     }
 }
 
-static void print_fp( int sign, int exp, int dec, unsigned char * mant, size_t size, struct _PDCLIB_status_t * status )
+static void print_fp( char sign, int exp, int dec, unsigned char * mant, size_t size, struct _PDCLIB_status_t * status )
 {
     switch ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) )
     {
@@ -179,6 +161,61 @@ static void print_fp( int sign, int exp, int dec, unsigned char * mant, size_t s
         case E_generic:
         default:
             break;
+    }
+}
+
+static void print_infnan_padding( char sign, struct _PDCLIB_status_t * status )
+{
+    status->current = ( sign != '\0' ) ? 4 : 3;
+
+    if ( ! ( status->flags & E_minus ) )
+    {
+        while ( status->current < status->width )
+        {
+            PUT( ' ' );
+            ++status->current;
+        }
+    }
+
+    if ( sign != '\0' )
+    {
+        PUT( sign );
+    }
+}
+
+static void print_inf( char sign, struct _PDCLIB_status_t * status )
+{
+    print_infnan_padding( sign, status );
+
+    if ( status->flags & E_lower )
+    {
+        PUT( 'i' );
+        PUT( 'n' );
+        PUT( 'f' );
+    }
+    else
+    {
+        PUT( 'I' );
+        PUT( 'N' );
+        PUT( 'F' );
+    }
+}
+
+static void print_nan( char sign, struct _PDCLIB_status_t * status )
+{
+    print_infnan_padding( sign, status );
+
+    if ( status->flags & E_lower )
+    {
+        PUT( 'n' );
+        PUT( 'a' );
+        PUT( 'n' );
+    }
+    else
+    {
+        PUT( 'N' );
+        PUT( 'A' );
+        PUT( 'N' );
     }
 }
 
@@ -203,33 +240,93 @@ static void shift_left( unsigned char * start, size_t size, size_t offset )
 void _PDCLIB_print_ldouble( long double value, struct _PDCLIB_status_t * status )
 {
     unsigned char bytes[ sizeof( long double ) ];
-    int sign;
-    int exp;
+    char sign;
 
     memcpy( bytes, &value, sizeof( long double ) );
 
     sign = _PDCLIB_LDBL_SIGN( bytes );
-    exp = _PDCLIB_LDBL_EXP( bytes ) - _PDCLIB_LDBL_BIAS;
 
-    shift_left( _PDCLIB_LDBL_MANT( bytes ), _PDCLIB_LDBL_MANT_SIZE, _PDCLIB_LDBL_OFF );
+    /* Turning sign bit into sign character. */
+    if ( sign )
+    {
+        sign = '-';
+    }
+    else if ( status->flags & E_plus )
+    {
+        sign = '+';
+    }
+    else if ( status->flags & E_space )
+    {
+        sign = ' ';
+    }
+    else
+    {
+        sign = '\0';
+    }
 
-    print_fp( sign, exp, _PDCLIB_LDBL_DEC( bytes ), _PDCLIB_LDBL_MANT( bytes ), _PDCLIB_LDBL_MANT_SIZE, status );
+    if ( _PDCLIB_LDBL_IS_NAN_OR_INF( bytes ) )
+    {
+        if ( _PDCLIB_LDBL_ISNAN( value ) )
+        {
+            print_nan( sign, status );
+        }
+        else
+        {
+            print_inf( sign, status );
+        }
+    }
+    else
+    {
+        int exp = _PDCLIB_LDBL_EXP( bytes ) - _PDCLIB_LDBL_BIAS;
+        shift_left( _PDCLIB_LDBL_MANT( bytes ), _PDCLIB_LDBL_MANT_SIZE, _PDCLIB_LDBL_OFF );
+        print_fp( sign, exp, _PDCLIB_LDBL_DEC( bytes ), _PDCLIB_LDBL_MANT( bytes ), _PDCLIB_LDBL_MANT_SIZE, status );
+    }
 }
 
 void _PDCLIB_print_double( double value, struct _PDCLIB_status_t * status )
 {
     unsigned char bytes[ sizeof( double ) ];
-    int sign;
-    int exp;
+    char sign;
 
     memcpy( bytes, &value, sizeof( double ) );
 
     sign = _PDCLIB_DBL_SIGN( bytes );
-    exp = _PDCLIB_DBL_EXP( bytes ) - _PDCLIB_DBL_BIAS;
 
-    shift_left( _PDCLIB_DBL_MANT( bytes ), _PDCLIB_DBL_MANT_SIZE, _PDCLIB_DBL_OFF );
+    /* Turning sign bit into sign character. */
+    if ( sign )
+    {
+        sign = '-';
+    }
+    else if ( status->flags & E_plus )
+    {
+        sign = '+';
+    }
+    else if ( status->flags & E_space )
+    {
+        sign = ' ';
+    }
+    else
+    {
+        sign = '\0';
+    }
 
-    print_fp( sign, exp, _PDCLIB_DBL_DEC( bytes ), _PDCLIB_DBL_MANT( bytes ), _PDCLIB_DBL_MANT_SIZE, status );
+    if ( _PDCLIB_DBL_IS_NAN_OR_INF( bytes ) )
+    {
+        if ( _PDCLIB_DBL_ISNAN( value ) )
+        {
+            print_nan( sign, status );
+        }
+        else
+        {
+            print_inf( sign, status );
+        }
+    }
+    else
+    {
+        int exp = _PDCLIB_DBL_EXP( bytes ) - _PDCLIB_DBL_BIAS;
+        shift_left( _PDCLIB_DBL_MANT( bytes ), _PDCLIB_DBL_MANT_SIZE, _PDCLIB_DBL_OFF );
+        print_fp( sign, exp, _PDCLIB_DBL_DEC( bytes ), _PDCLIB_DBL_MANT( bytes ), _PDCLIB_DBL_MANT_SIZE, status );
+    }
 }
 
 #endif
