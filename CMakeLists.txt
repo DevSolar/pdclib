@@ -289,6 +289,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_print_string.c
      functions/_PDCLIB/_PDCLIB_scan.c
      functions/_PDCLIB/_PDCLIB_seed.c
+     functions/_PDCLIB/_PDCLIB_strtod_scan.c
      functions/_PDCLIB/_PDCLIB_strtok.c
      functions/_PDCLIB/_PDCLIB_strtox_main.c
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
