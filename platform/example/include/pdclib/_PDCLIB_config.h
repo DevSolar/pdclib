@@ -429,6 +429,10 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_DBL_MANT_SIZE 7
 #define _PDCLIB_DBL_OFF 4
 #define _PDCLIB_DBL_DEC( bytes ) ( ( _PDCLIB_DBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+#define _PDCLIB_DBL_IS_NAN_OR_INF( bytes ) ( _PDCLIB_DBL_EXP( bytes ) == 0x7ff )
+#define _PDCLIB_DBL_ISNAN( value ) ( (value) != (value) )
+#define _PDCLIB_DBL_NAN ( 0.0 / 0.0 )
+#define _PDCLIB_DBL_INF ( 1.0 / 0.0 )
 
 /* Most platforms today use IEEE 754 single precision for 'float', and double */
 /* precision for 'double'. But type 'long double' varies. We use what the     */
@@ -443,6 +447,8 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_LDBL_MANT_SIZE 8
 #define _PDCLIB_LDBL_OFF 1
 #define _PDCLIB_LDBL_DEC( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_IS_NAN_OR_INF( bytes ) ( _PDCLIB_LDBL_EXP( bytes ) == 0x7fff )
+#define _PDCLIB_LDBL_ISNAN( value ) ( (value) != (value) )
 
 #elif __LDBL_DECIMAL_DIG__ == 36
 
@@ -454,6 +460,8 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_LDBL_MANT_SIZE 14
 #define _PDCLIB_LDBL_OFF 0
 #define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+#define _PDCLIB_LDBL_IS_NAN_OR_INF( bytes ) ( _PDCLIB_LDBL_EXP( bytes ) == 0x7fff )
+#define _PDCLIB_LDBL_ISNAN( value ) ( (value) != (value) )
 
 #else
 
@@ -465,6 +473,8 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_LDBL_MANT_SIZE 7
 #define _PDCLIB_LDBL_OFF 4
 #define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
+#define _PDCLIB_LDBL_IS_NAN_OR_INF( bytes ) ( _PDCLIB_LDBL_EXP( bytes ) == 0x7ff )
+#define _PDCLIB_LDBL_ISNAN( value ) ( (value) != (value) )
 
 #endif
 
