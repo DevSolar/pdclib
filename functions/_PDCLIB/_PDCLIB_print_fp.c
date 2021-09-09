@@ -6,99 +6,147 @@
 
 #ifndef REGTEST
 
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
 #include <limits.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "pdclib/_PDCLIB_print.h"
 
-/* The 'mant' pointer arguments to the functions below always refer to
-   the most significant byte of the mantissa. On little endian machines,
-   this is the byte with the highest index, while on big endian machines
-   it is the lowest. The purpose of the OP macro is to abstract the move
-   from the most significant byte to the next.
-*/
-#if _PDCLIB_ENDIANESS == 1234
 #define OP -
-#elif _PDCLIB_ENDIANESS == 4321
-#define OP +
-#else
-#error Unsupported endianess.
-#endif
-
-static void print_hexa( char sign, int exp, int dec, unsigned char * mant, size_t size, struct _PDCLIB_status_t * status )
+/* dec:      1 - normalized, 0 - subnormal
+   mant:     MSB of the mantissa
+   mant_dig: base FLT_RADIX digits in the mantissa, including the decimal
+*/
+static void _PDCLIB_print_hexa( int sign,
+                                int exp,
+                                int dec,
+                                unsigned char const * mant,
+                                size_t mant_dig,
+                                struct _PDCLIB_status_t * status )
 {
-    /* Array of hexadecimal digits, the 0th element being the decimal */
-    size_t digits;
+    size_t excess_bits;
+    char value;
+
+    unsigned char mantissa[ _PDCLIB_LDBL_MANT_DIG / 4 + 2 ] = { 0 };
+    size_t m = 0;
+
+    char exponent[ 7 ];
+    size_t e = 0;
+
     size_t i;
-    unsigned char digit[ _PDCLIB_LDBL_MANT_SIZE * 2 + 1 ] = { dec, 0 };
 
-    /* Array holding the decimal exponent */
-    size_t expdigits = 0;
-    char exponent[ 6 ] = "+";
-
-    /* Pointer to lowercase / uppercase digit array depending on flag */
     char const * digit_chars = ( status->flags & E_lower ) ? _PDCLIB_digits : _PDCLIB_Xdigits;
-    char const * special_chars = ( status->flags & E_lower ) ? "xp" : "XP";
 
-    /* Writing out the mantissa as a sequence of nibbles */
-    for ( digits = 0; digits < size; ++digits )
+    _PDCLIB_static_assert( _PDCLIB_FLT_RADIX == 2, "Assuming 2-based FP" );
+    _PDCLIB_static_assert( _PDCLIB_CHAR_BIT == 8, "Assuming 8-bit bytes" );
+
+    /* Mantissa */
+    /* -------- */
+
+    /* Handle the most significant byte (which might need masking) */
+    excess_bits = ( mant_dig - 1 ) % 8;
+    value = *mant & ( ( 1 << excess_bits ) - 1 );
+
+    if ( excess_bits >= 4 )
     {
-        unsigned char byte = *( mant OP digits );
-        /* Remember that digit[0] holds the decimal, and that digit[] holds
-           nibbles, not bytes.
-        */
-        digit[ digits * 2 + 1 ] = ( byte & 0xf0 ) >> 4;
-        digit[ digits * 2 + 2 ] = ( byte & 0x0f );
+        mantissa[1] = value & 0x0f;
+        value >>= 4;
+        excess_bits -= 4;
+        ++m;
     }
 
-    /* Adjust digits for nibbles */
-    digits *= 2;
+    mantissa[0] = ( dec << excess_bits ) | ( value & ( ( 1 << excess_bits ) - 1 ) );
 
-    /* Ignore trailing zeroes, also make digits refer to fractional
-       digits (i.e., total minus one) for later ease-of-use.
+    /* Now handle the remaining bytes. */
+    /* This is doing a little trick: m is the highest valid index
+       (or a count of *fractional* digits, if you like), not a count
+       of elements (0..1, not 1..2), so it can double as an index
+       into the mant[] array (when divided by 2).
     */
-    while ( ( --digits > 0 ) && ( digit[ digits ] == 0 ) )
+    while ( m < ( ( mant_dig + 3 ) / 4 - 1 ) )
     {
-        /* EMPTY */
+        value = *(mant OP ( ( m / 2 ) + 1 ) );
+        mantissa[++m] = ( value & 0xf0 ) >> 4;
+        mantissa[++m] = ( value & 0x0f );
     }
 
-    /* Precision smaller than number of digits requires rounding */
-    if ( ( status->prec >= 0 ) && ( (size_t)status->prec < digits ) )
+    /* Roll back trailing zeroes */
+    while ( m > 0 && mantissa[m] == 0 )
     {
-        /* Round up for .51 through .99. Round-to-even for .5. */
-        if ( ( digit[ status->prec + 1 ] > 5 ) || ( digits > (size_t)( status->prec + 1 ) )
-          || ( digit[ status->prec ] % 2 ) )
+        --m;
+    }
+
+    /* Exponent */
+    /* -------- */
+
+    exp -= excess_bits;
+
+    if ( ( m == 0 && dec == 0 ) || exp == 0 )
+    {
+        /* All zero */
+        exponent[0] = '+';
+        exponent[1] = '0';
+        e = 2;
+    }
+    else
+    {
+        if ( dec == 0 )
         {
-            ++digit[ status->prec ];
+            /* Subnormal */
+            ++exp;
         }
 
-        digits = status->prec;
+        if ( exp >= 0 )
+        {
+            exponent[0] = '+';
+        }
+        else
+        {
+            exponent[0] = '-';
+            exp *= -1;
+        }
+
+        for ( e = 1; exp > 0; ++e )
+        {
+            div_t d = div( exp, 10 );
+            exponent[e] = digit_chars[ d.rem ];
+            exp = d.quot;
+        }
     }
 
-    /* Write out the exponent */
-    if ( exp < 0 )
+    exponent[e] = '\0';
+
+    /* Rounding */
+    /* -------- */
+
+    if ( ( status->prec >= 0 ) && ( m > (size_t)status->prec ) )
     {
-        exponent[ 0 ] = '-';
-        exp *= -1;
+        i = status->prec;
+
+        if ( ( mantissa[ i + 1 ] > 8 ) || 
+             ( ( mantissa[ i + 1 ] == 8 ) &&
+               ( ( m >= i + 2 ) || ( mantissa[ i ] % 2 ) )
+             )
+           )
+        {
+            while ( ( ++mantissa[ i ] ) > 0xf )
+            {
+                mantissa[ i-- ] = 0;
+            }
+        }
+
+        m = i;
     }
 
-    do
-    {
-        div_t d = div( exp, 10 );
-        exponent[ ++expdigits ] = _PDCLIB_digits[ d.rem ];
-        exp = d.quot;
-    } while ( exp > 0 );
+    /* Padding */
+    /* ------- */
 
-    status->current = ( status->prec > (int)digits ) ? (size_t)status->prec : digits;
-    status->current = 5 + ( sign != '\0' ) + ( ( status->current > 0 ) || ( status->flags & E_alt ) ) + expdigits + status->current;
+    status->current = m + 4 + ( sign != '\0' ) + ( ( m > 0 ) || ( status->prec > 0 ) || ( status->flags & E_alt ) ) + e;
 
     if ( ! ( status->flags & ( E_zero | E_minus ) ) )
     {
-        unsigned pad;
-
-        for ( pad = status->current; pad < status->width; ++pad )
+        for ( i = status->current; i < status->width; ++i )
         {
             PUT( ' ' );
         }
@@ -109,29 +157,30 @@ static void print_hexa( char sign, int exp, int dec, unsigned char * mant, size_
         PUT( sign );
     }
 
+    /* Output */
+    /* ------ */
+
     PUT( '0' );
-    PUT( special_chars[0] );
+    PUT( ( status->flags & E_lower ) ? 'x' : 'X' );
+
+    PUT( digit_chars[ mantissa[0] ] );
+
+    if ( ( ( m > 0 ) && ( status->prec != 0 ) ) || ( status->prec > 0 ) || ( status->flags & E_alt ) )
+    {
+        PUT( '.' );
+    }
 
     if ( ( status->flags & E_zero ) && ! ( status->flags & E_minus ) )
     {
-        unsigned pad;
-
-        for ( pad = status->current; pad < status->width; ++pad )
+        for ( i = status->current; i < status->width; ++i )
         {
             PUT( '0' );
         }
     }
 
-    PUT( digit_chars[ digit[0] ] );
-
-    if ( ( digits > 0 ) || ( status->flags & E_alt ) )
+    for ( i = 1; i <= m; ++i )
     {
-        PUT( '.' );
-    }
-
-    for ( i = 1; i <= digits; ++i )
-    {
-        PUT( digit_chars[ digit[ i ] ] );
+        PUT( digit_chars[ mantissa[i] ] );
     }
 
     while ( (int)i <= status->prec )
@@ -140,22 +189,79 @@ static void print_hexa( char sign, int exp, int dec, unsigned char * mant, size_
         ++i;
     }
 
-    PUT( special_chars[1] );
+    PUT( ( status->flags & E_lower ) ? 'p' : 'P' );
     PUT( exponent[0] );
 
-    while ( expdigits > 0 )
+    for ( i = e - 1; i > 0; --i )
     {
-        PUT( exponent[ expdigits-- ] );
+        PUT( exponent[i] );
     }
 }
 
-static void print_fp( char sign, int exp, int dec, unsigned char * mant, size_t size, struct _PDCLIB_status_t * status )
+/* dec:      1 - normalized, 0 - subnormal
+   exp:      INT_MAX - infinity, INT_MIN - Not a Number
+   mant:     MSB of the mantissa
+   mant_dig: base FLT_RADIX digits in the mantissa, including the decimal
+*/
+static void _PDCLIB_print_fp( int sign,
+                              int exp,
+                              int dec,
+                              unsigned char const * mant,
+                              size_t mant_dig,
+                              struct _PDCLIB_status_t * status )
 {
+    /* Turning sign bit into sign character. */
+    if ( sign )
+    {
+        sign = '-';
+    }
+    else if ( status->flags & E_plus )
+    {
+        sign = '+';
+    }
+    else if ( status->flags & E_space )
+    {
+        sign = ' ';
+    }
+    else
+    {
+        sign = '\0';
+    }
+
+    if ( exp == INT_MIN || exp == INT_MAX )
+    {
+        /* "nan" / "inf" */
+        char const * s = ( status->flags & E_lower )
+                         ? ( ( exp == INT_MIN ) ? "nan" : "inf" )
+                         : ( ( exp == INT_MIN ) ? "NAN" : "INF" );
+
+        status->current = ( sign == '\0' ) ? 3 : 4;
+
+        if ( ! ( status->flags & E_minus ) )
+        {
+            while ( status->current < status->width )
+            {
+                PUT( ' ' );
+                ++status->current;
+            }
+        }
+
+        if ( sign != '\0' )
+        {
+            PUT( sign );
+        }
+
+        while ( *s )
+        {
+            PUT( *s++ );
+        }
+    }
+
     switch ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) )
     {
         case E_hexa:
-            print_hexa( sign, exp, dec, mant, size, status );
-            return;
+            _PDCLIB_print_hexa( sign, exp, dec, mant, mant_dig, status );
+            break;
         case E_decimal:
         case E_exponent:
         case E_generic:
@@ -164,182 +270,59 @@ static void print_fp( char sign, int exp, int dec, unsigned char * mant, size_t 
     }
 }
 
-static void print_infnan_padding( char sign, struct _PDCLIB_status_t * status )
+void _PDCLIB_print_double( double value, struct _PDCLIB_status_t * status )
 {
-    status->current = ( sign != '\0' ) ? 4 : 3;
+    unsigned char bytes[ sizeof( double ) ];
+    int exp;
+    memcpy( bytes, &value, sizeof( double ) );
+    exp = _PDCLIB_DBL_EXP( bytes ) - _PDCLIB_DBL_BIAS;
 
-    if ( ! ( status->flags & E_minus ) )
+    if ( exp == _PDCLIB_DBL_MAX_EXP )
     {
-        while ( status->current < status->width )
-        {
-            PUT( ' ' );
-            ++status->current;
-        }
+        /*                           NAN       INF */
+        exp = ( value != value ) ? INT_MIN : INT_MAX;
     }
 
-    if ( sign != '\0' )
-    {
-        PUT( sign );
-    }
-}
-
-static void print_inf( char sign, struct _PDCLIB_status_t * status )
-{
-    print_infnan_padding( sign, status );
-
-    if ( status->flags & E_lower )
-    {
-        PUT( 'i' );
-        PUT( 'n' );
-        PUT( 'f' );
-    }
-    else
-    {
-        PUT( 'I' );
-        PUT( 'N' );
-        PUT( 'F' );
-    }
-}
-
-static void print_nan( char sign, struct _PDCLIB_status_t * status )
-{
-    print_infnan_padding( sign, status );
-
-    if ( status->flags & E_lower )
-    {
-        PUT( 'n' );
-        PUT( 'a' );
-        PUT( 'n' );
-    }
-    else
-    {
-        PUT( 'N' );
-        PUT( 'A' );
-        PUT( 'N' );
-    }
-}
-
-static void shift_left( unsigned char * start, size_t size, size_t offset )
-{
-    unsigned char * end = start OP ( size - 1 );
-
-    assert( size > 0 );
-    assert( offset > 0 );
-    assert( offset < CHAR_BIT );
-
-    while ( start != end )
-    {
-        *start <<= offset;
-        *start |= ( *( start OP 1 ) >> ( CHAR_BIT - offset ) );
-        start = start OP 1;
-    }
-
-    *start <<= offset;
+    _PDCLIB_print_fp( _PDCLIB_DBL_SIGN( bytes ),
+                      exp,
+                      _PDCLIB_DBL_DEC( bytes ),
+                      _PDCLIB_DBL_MANT_START( bytes ),
+                      _PDCLIB_DBL_MANT_DIG,
+                      status );
 }
 
 void _PDCLIB_print_ldouble( long double value, struct _PDCLIB_status_t * status )
 {
     unsigned char bytes[ sizeof( long double ) ];
-    char sign;
-
+    int exp;
     memcpy( bytes, &value, sizeof( long double ) );
+    exp = _PDCLIB_LDBL_EXP( bytes ) - _PDCLIB_LDBL_BIAS;
 
-    sign = _PDCLIB_LDBL_SIGN( bytes );
-
-    /* Turning sign bit into sign character. */
-    if ( sign )
+    if ( exp == _PDCLIB_LDBL_MAX_EXP )
     {
-        sign = '-';
-    }
-    else if ( status->flags & E_plus )
-    {
-        sign = '+';
-    }
-    else if ( status->flags & E_space )
-    {
-        sign = ' ';
-    }
-    else
-    {
-        sign = '\0';
+        /*                           NAN       INF */
+        exp = ( value != value ) ? INT_MIN : INT_MAX;
     }
 
-    if ( _PDCLIB_LDBL_IS_NAN_OR_INF( bytes ) )
-    {
-        if ( _PDCLIB_LDBL_ISNAN( value ) )
-        {
-            print_nan( sign, status );
-        }
-        else
-        {
-            print_inf( sign, status );
-        }
-    }
-    else
-    {
-        int exp = _PDCLIB_LDBL_EXP( bytes ) - _PDCLIB_LDBL_BIAS;
-        shift_left( _PDCLIB_LDBL_MANT( bytes ), _PDCLIB_LDBL_MANT_SIZE, _PDCLIB_LDBL_OFF );
-        print_fp( sign, exp, _PDCLIB_LDBL_DEC( bytes ), _PDCLIB_LDBL_MANT( bytes ), _PDCLIB_LDBL_MANT_SIZE, status );
-    }
-}
-
-void _PDCLIB_print_double( double value, struct _PDCLIB_status_t * status )
-{
-    unsigned char bytes[ sizeof( double ) ];
-    char sign;
-
-    memcpy( bytes, &value, sizeof( double ) );
-
-    sign = _PDCLIB_DBL_SIGN( bytes );
-
-    /* Turning sign bit into sign character. */
-    if ( sign )
-    {
-        sign = '-';
-    }
-    else if ( status->flags & E_plus )
-    {
-        sign = '+';
-    }
-    else if ( status->flags & E_space )
-    {
-        sign = ' ';
-    }
-    else
-    {
-        sign = '\0';
-    }
-
-    if ( _PDCLIB_DBL_IS_NAN_OR_INF( bytes ) )
-    {
-        if ( _PDCLIB_DBL_ISNAN( value ) )
-        {
-            print_nan( sign, status );
-        }
-        else
-        {
-            print_inf( sign, status );
-        }
-    }
-    else
-    {
-        int exp = _PDCLIB_DBL_EXP( bytes ) - _PDCLIB_DBL_BIAS;
-        shift_left( _PDCLIB_DBL_MANT( bytes ), _PDCLIB_DBL_MANT_SIZE, _PDCLIB_DBL_OFF );
-        print_fp( sign, exp, _PDCLIB_DBL_DEC( bytes ), _PDCLIB_DBL_MANT( bytes ), _PDCLIB_DBL_MANT_SIZE, status );
-    }
+    _PDCLIB_print_fp( _PDCLIB_LDBL_SIGN( bytes ),
+                      exp,
+                      _PDCLIB_LDBL_DEC( bytes ),
+                      _PDCLIB_LDBL_MANT_START( bytes ),
+                      _PDCLIB_LDBL_MANT_DIG,
+                      status );
 }
 
 #endif
 
 #ifdef TEST
 
-#include <stddef.h>
+#include <stdlib.h>
 
 #include "_PDCLIB_test.h"
 
 int main( int argc, char * argv[] )
 {
-    /* Tested by the various *printf() drivers. */
+    /* Tested by _PDCLIB_print testdriver */
     return TEST_RESULTS;
 }
 
