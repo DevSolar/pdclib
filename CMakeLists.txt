@@ -284,7 +284,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_prepread.c
      functions/_PDCLIB/_PDCLIB_prepwrite.c
      functions/_PDCLIB/_PDCLIB_print.c
-     functions/_PDCLIB/_PDCLIB_print_float.c
+     functions/_PDCLIB/_PDCLIB_print_fp.c
      functions/_PDCLIB/_PDCLIB_print_integer.c
      functions/_PDCLIB/_PDCLIB_print_string.c
      functions/_PDCLIB/_PDCLIB_scan.c
@@ -510,3 +510,22 @@ add_subdirectory( auxiliary/pthread )
 # and displaying their encoding. Nothing more than a "I understood those
 # encodings correctly" confidence check.
 add_subdirectory( auxiliary/fpconvert )
+
+# Creating symlinks to source in binary dir for convenience
+if ( CMAKE_HOST_UNIX )
+    if ( NOT EXISTS functions )
+        execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/functions ${CMAKE_BINARY_DIR}/functions )
+    endif()
+    if ( NOT EXISTS include )
+        execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include )
+    endif()
+    if ( NOT EXISTS platform )
+        execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/platform ${CMAKE_BINARY_DIR}/platform )
+    endif()
+    if ( NOT EXISTS auxiliary )
+        execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/auxiliary ${CMAKE_BINARY_DIR}/auxiliary )
+    endif()
+    if ( NOT EXISTS CMakeLists.txt )
+        execute_process( COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/CMakeLists.txt ${CMAKE_BINARY_DIR}/CMakeLists.txt )
+    endif()
+endif()
