@@ -404,77 +404,98 @@ struct _PDCLIB_imaxdiv_t
 /* indeterminable rounding, any other value implementation-specific rounding. */
 #define _PDCLIB_FLT_ROUNDS -1
 
-/* Whether the implementation uses exact-width precision (0), promotes float  */
-/* to double (1), or promotes float and double to long double (2).            */
-/* (-1) signifies indeterminable behaviour, any other value implementation-   */
-/* specific behaviour.                                                        */
-#define _PDCLIB_FLT_EVAL_METHOD __FLT_EVAL_METHOD__
+/* Check <float.h> for explanations on each of these values.                  */
+#define _PDCLIB_FLT_EVAL_METHOD   __FLT_EVAL_METHOD__
 
-/* "Number of the decimal digits (n), such that any floating-point number in  */
-/* the widest supported floating type with p(max) radix (b) digits can be     */
-/* rounded to a floating-point number with (n) decimal digits and back again  */
-/* without change to the value p(max) log(10)b if (b) is a power of 10,       */
-/* [1 + p(max) log(10)b] otherwise."                                          */
-/*  32bit IEEE 754 single precision (23bit mantissa) is DECIMAL_DIG 9.        */
-/*  64bit IEEE 754 double precision (53bit mantissa) is DECIMAL_DIG 17.       */
-/*  80bit IEEE 754 extended precision (64bit mantissa) is DECIMAL_DIG 21.     */
-/* 128bit IEEE 754 quadruple precision (112bit mantissa) is DECIMAL_DIG 36.   */
-#define _PDCLIB_DECIMAL_DIG __DECIMAL_DIG__
+#define _PDCLIB_FLT_HAS_SUBNORM   __FLT_HAS_DENORM__
+#define _PDCLIB_DBL_HAS_SUBNORM   __DBL_HAS_DENORM__
+#define _PDCLIB_LDBL_HAS_SUBNORM  __LDBL_HAS_DENORM__
+
+#define _PDCLIB_FLT_RADIX         __FLT_RADIX__
+
+#define _PDCLIB_FLT_MANT_DIG      __FLT_MANT_DIG__
+#define _PDCLIB_DBL_MANT_DIG      __DBL_MANT_DIG__
+#define _PDCLIB_LDBL_MANT_DIG     __LDBL_MANT_DIG__
+
+#define _PDCLIB_FLT_DECIMAL_DIG   __FLT_DECIMAL_DIG__
+#define _PDCLIB_DBL_DECIMAL_DIG   __DBL_DECIMAL_DIG__
+#define _PDCLIB_LDBL_DECIMAL_DIG  __LDBL_DECIMAL_DIG__
+
+#define _PDCLIB_DECIMAL_DIG       __DECIMAL_DIG__
+
+#define _PDCLIB_FLT_DIG           __FLT_DIG__
+#define _PDCLIB_DBL_DIG           __DBL_DIG__
+#define _PDCLIB_LDBL_DIG          __LDBL_DIG__
+
+#define _PDCLIB_FLT_MIN_EXP       __FLT_MIN_EXP__
+#define _PDCLIB_DBL_MIN_EXP       __DBL_MIN_EXP__
+#define _PDCLIB_LDBL_MIN_EXP      __LDBL_MIN_EXP__
+
+#define _PDCLIB_FLT_MIN_10_EXP    __FLT_MIN_10_EXP__
+#define _PDCLIB_DBL_MIN_10_EXP    __DBL_MIN_10_EXP__
+#define _PDCLIB_LDBL_MIN_10_EXP   __LDBL_MIN_10_EXP__
+
+#define _PDCLIB_FLT_MAX_EXP       __FLT_MAX_EXP__
+#define _PDCLIB_DBL_MAX_EXP       __DBL_MAX_EXP__
+#define _PDCLIB_LDBL_MAX_EXP      __LDBL_MAX_EXP__
+
+#define _PDCLIB_FLT_MAX_10_EXP    __FLT_MAX_10_EXP__
+#define _PDCLIB_DBL_MAX_10_EXP    __DBL_MAX_10_EXP__
+#define _PDCLIB_LDBL_MAX_10_EXP   __LDBL_MAX_10_EXP__
+
+#define _PDCLIB_FLT_MAX           __FLT_MAX__
+#define _PDCLIB_DBL_MAX           __DBL_MAX__
+#define _PDCLIB_LDBL_MAX          __LDBL_MAX__
+
+#define _PDCLIB_FLT_EPSILON       __FLT_EPSILON__
+#define _PDCLIB_DBL_EPSILON       __DBL_EPSILON__
+#define _PDCLIB_LDBL_EPSILON      __LDBL_EPSILON__
+
+#define _PDCLIB_FLT_MIN           __FLT_MIN__
+#define _PDCLIB_DBL_MIN           __DBL_MIN__
+#define _PDCLIB_LDBL_MIN          __LDBL_MIN__
+
+#define _PDCLIB_FLT_TRUE_MIN      __FLT_DENORM_MIN__
+#define _PDCLIB_DBL_TRUE_MIN      __DBL_DENORM_MIN__
+#define _PDCLIB_LDBL_TRUE_MIN     __LDBL_DENORM_MIN__
 
 /* Macros for deconstructing floating point values                            */
 #define _PDCLIB_DBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_DBL_DEC( bytes ) ( ( _PDCLIB_DBL_EXP( bytes ) > 0 ) ? 1 : 0 )
 #define _PDCLIB_DBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
 #define _PDCLIB_DBL_BIAS 1023
-#define _PDCLIB_DBL_MANT( bytes ) ( bytes + 6 )
-#define _PDCLIB_DBL_MANT_SIZE 7
-#define _PDCLIB_DBL_OFF 4
-#define _PDCLIB_DBL_DEC( bytes ) ( ( _PDCLIB_DBL_EXP( bytes ) > 0 ) ? 1 : 0 )
-#define _PDCLIB_DBL_IS_NAN_OR_INF( bytes ) ( _PDCLIB_DBL_EXP( bytes ) == 0x7ff )
-#define _PDCLIB_DBL_ISNAN( value ) ( (value) != (value) )
-#define _PDCLIB_DBL_NAN ( 0.0 / 0.0 )
-#define _PDCLIB_DBL_INF ( 1.0 / 0.0 )
+#define _PDCLIB_DBL_MANT_START( bytes ) ( bytes + 6 )
 
 /* Most platforms today use IEEE 754 single precision for 'float', and double */
 /* precision for 'double'. But type 'long double' varies. We use what the     */
-/* compiler states about LDBL_DECIMAL_DIG to determine the type.              */
-#if __LDBL_DECIMAL_DIG__ == 21
+/* compiler states about LDBL_MANT_DIG to determine the type.                 */
+#if _PDCLIB_LDBL_MANT_DIG == 64
 
-#define _PDCLIB_LDBL_80
+/* Intel "Extended Precision" format, using 80 bits (64bit mantissa) */
 #define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[9] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
 #define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[9] & 0x7f ) << 8 ) | (unsigned)bytes[8] )
 #define _PDCLIB_LDBL_BIAS 16383
-#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 7 )
-#define _PDCLIB_LDBL_MANT_SIZE 8
-#define _PDCLIB_LDBL_OFF 1
-#define _PDCLIB_LDBL_DEC( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
-#define _PDCLIB_LDBL_IS_NAN_OR_INF( bytes ) ( _PDCLIB_LDBL_EXP( bytes ) == 0x7fff )
-#define _PDCLIB_LDBL_ISNAN( value ) ( (value) != (value) )
+#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 7 )
 
-#elif __LDBL_DECIMAL_DIG__ == 36
+#elif _PDCLIB_LDBL_MANT_DIG == 113
 
-#define _PDCLIB_LDBL_128
+/* IEEE "Quadruple Precision" format, using 128 bits (113bit mantissa) */
 #define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[15] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
 #define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[15] & 0x7f ) << 8 ) | (unsigned)bytes[14] )
 #define _PDCLIB_LDBL_BIAS 16383
-#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 13 )
-#define _PDCLIB_LDBL_MANT_SIZE 14
-#define _PDCLIB_LDBL_OFF 0
-#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
-#define _PDCLIB_LDBL_IS_NAN_OR_INF( bytes ) ( _PDCLIB_LDBL_EXP( bytes ) == 0x7fff )
-#define _PDCLIB_LDBL_ISNAN( value ) ( (value) != (value) )
+#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 13 )
 
 #else
 
-#define _PDCLIB_LDBL_64
+/* IEEE "Double Precision" format, using 64 bits (53bit mantissa,
+   same as DBL above) */
 #define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
+#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
 #define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
 #define _PDCLIB_LDBL_BIAS 1023
-#define _PDCLIB_LDBL_MANT( bytes ) ( bytes + 6 )
-#define _PDCLIB_LDBL_MANT_SIZE 7
-#define _PDCLIB_LDBL_OFF 4
-#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
-#define _PDCLIB_LDBL_IS_NAN_OR_INF( bytes ) ( _PDCLIB_LDBL_EXP( bytes ) == 0x7ff )
-#define _PDCLIB_LDBL_ISNAN( value ) ( (value) != (value) )
+#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 6 )
 
 #endif
 
