@@ -117,7 +117,7 @@ int main( int argc, char * argv[] )
     }
 
     /* Printing binary dump of whole register */
-    printf( "Bin:  seee.eeee.emmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+    printf( "Bin:  seee.eeee.efff.ffff.ffff.ffff.ffff.ffff.\n      " );
 
     for ( unsigned i = sizeof( float ); i > 0; --i )
     {
@@ -130,29 +130,7 @@ int main( int argc, char * argv[] )
     /* Extracting exponent from memcpy bytes */
     exp = ( ( (unsigned)flt_byte[3] & 0x7f ) << 1 ) | ( (unsigned)flt_byte[2] >> 7 );
 
-    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_FLT_BIAS );
-
-    /* Adjusting mantissa from memcpy bytes */
-    shl( flt_byte, 3 );
-
-    /* Printing binary dump of mantissa */
-    printf( "Mant: mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
-
-    for ( unsigned i = 3; i > 0; --i )
-    {
-        unsigned high_nibble = ( flt_byte[ i - 1 ] & 0xf0 ) >> 4;
-        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt_byte[ i - 1 ] & 0x0f ] );
-    }
-
-    /* Printing hexadecimal dump of adjusted mantissa */
-    printf( "\n      " );
-
-    for ( unsigned i = 3; i > 0; --i )
-    {
-        printf( "       %02x.", flt_byte[ i - 1 ] );
-    }
-
-    puts( "" );
+    printf( "Exp:  %#x      Unbiased: %d\n", exp, exp - _PDCLIB_FLT_BIAS );
 
     puts( "------------------ double --------------------" );
 
@@ -167,13 +145,13 @@ int main( int argc, char * argv[] )
     }
 
     /* Printing binary dump of whole register */
-    printf( "Bin:  seee.eeee.eeee.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+    printf( "Bin:  seee.eeee.eeee.ffff.ffff.ffff.ffff.ffff.\n      " );
 
     for ( unsigned i = sizeof( double ); i > 0; --i )
     {
         unsigned high_nibble = ( dbl_byte[ i - 1 ] & 0xf0 ) >> 4;
         printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ dbl_byte[ i - 1 ] & 0x0f ] );
-        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.\n      " );
     }
 
     puts( "" );
@@ -181,34 +159,7 @@ int main( int argc, char * argv[] )
     /* Extracting exponent from memcpy bytes */
     exp = ( ( (unsigned)dbl_byte[7] & 0x7f ) << 4 ) | ( ( (unsigned)dbl_byte[6] & 0xf0 ) >> 4 );
 
-    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_DBL_BIAS );
-
-    /* Adjusting mantissa from memcpy bytes */
-    shl( dbl_byte, 7 );
-    shl( dbl_byte, 7 );
-    shl( dbl_byte, 7 );
-    shl( dbl_byte, 7 );
-
-    /* Printing binary dump of mantissa */
-    printf( "Mant: mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
-
-    for ( unsigned i = 7; i > 0; --i )
-    {
-        unsigned high_nibble = ( dbl_byte[ i - 1 ] & 0xf0 ) >> 4;
-        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ dbl_byte[ i - 1 ] & 0x0f ] );
-        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.xxxx.\n      " );
-    }
-
-    /* Printing hexadecimal dump of adjusted mantissa */
-    printf( "\n      " );
-
-    for ( unsigned i = 7; i > 0; --i )
-    {
-        printf( "       %02x.", dbl_byte[ i - 1 ] );
-        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      " );
-    }
-
-    puts( "" );
+    printf( "Exp:  %#x      Unbiased: %d\n", exp, exp - _PDCLIB_DBL_BIAS );
 
 #ifdef FLOAT80
     puts( "------------------ float80 -------------------" );
@@ -233,8 +184,8 @@ int main( int argc, char * argv[] )
     {
         unsigned high_nibble = ( flt80_byte[ i - 1 ] & 0xf0 ) >> 4;
         printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt80_byte[ i - 1 ] & 0x0f ] );
-        if ( i == 9 ) printf( "\n      immm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
-        if ( i == 5 ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+        if ( i == 9 ) printf( "\n      ifff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.\n      " );
+        if ( i == 5 ) printf( "\n      ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.\n      " );
     }
 
     puts( "" );
@@ -242,34 +193,11 @@ int main( int argc, char * argv[] )
     /* Extracting exponent from memcpy bytes */
     exp = ( ( (unsigned)flt80_byte[9] & 0x7f ) << 8 ) | (unsigned)flt80_byte[8];
 
-    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_FLT80_BIAS );
+    printf( "Exp:  %#x      Unbiased: %d\n", exp, exp - _PDCLIB_FLT80_BIAS );
 
     /* Printing decimal */
     printf( "Dec:  %d\n", ( (unsigned)flt80_byte[7] & 0x80 ) == 0x80 );
 
-    /* Adjusting mantissa from memcpy bytes */
-    shl( flt80_byte, 8 );
-
-    /* Printing binary dump of mantissa */
-    printf( "Mant: mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
-
-    for ( unsigned i = 8; i > 0; --i )
-    {
-        unsigned high_nibble = ( flt80_byte[ i - 1 ] & 0xf0 ) >> 4;
-        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt80_byte[ i - 1 ] & 0x0f ] );
-        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
-    }
-
-    /* Printing hexadecimal dump of mantissa */
-    printf( "\n      " );
-
-    for ( unsigned i = 8; i > 0; --i )
-    {
-        printf( "       %02x.", flt80_byte[ i - 1 ] );
-        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      " );
-    }
-
-    puts( "" );
 #endif
 
 #ifdef FLOAT128
@@ -290,13 +218,13 @@ int main( int argc, char * argv[] )
     }
 
     /* Printing binary dump of whole register */
-    printf( "Bin:  seee.eeee.eeee.eeee.mmmm.mmmm.mmmm.mmmm.\n      " );
+    printf( "Bin:  seee.eeee.eeee.eeee.ffff.ffff.ffff.ffff.\n      " );
 
     for ( unsigned i = sizeof( float128_t ); i > 0; --i )
     {
         unsigned high_nibble = ( flt128_byte[ i - 1 ] & 0xf0 ) >> 4;
         printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt128_byte[ i - 1 ] & 0x0f ] );
-        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
+        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      ffff.ffff.ffff.ffff.ffff.ffff.ffff.ffff.\n      " );
     }
 
     puts( "" );
@@ -304,28 +232,7 @@ int main( int argc, char * argv[] )
     /* Extracting exponent from memcpy bytes */
     exp = ( ( (unsigned)flt128_byte[ 15 ] & 0x7f ) << 8 ) | (unsigned)flt128_byte[ 14 ];
 
-    printf( "Exp:  %#x      Bias: %#x\n", exp, exp - _PDCLIB_FLT128_BIAS );
-
-    /* Printing binary dump of mantissa */
-    printf( "Mant: mmmm.mmmm.mmmm.mmmm.\n      " );
-
-    for ( unsigned i = 14; i > 0; --i )
-    {
-        unsigned high_nibble = ( flt128_byte[ i - 1 ] & 0xf0 ) >> 4;
-        printf( "%s.%s.", nibbles[ high_nibble ], nibbles[ flt128_byte[ i - 1 ] & 0x0f ] );
-        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.mmmm.\n      " );
-    }
-
-    /* Printing hexadecimal dump of mantissa */
-    printf( "\n      " );
-
-    for ( unsigned i = 14; i > 0; --i )
-    {
-        printf( "       %02x.", flt128_byte[ i - 1 ] );
-        if ( ( i > 1 ) && ( i % 4 == 1 ) ) printf( "\n      " );
-    }
-
-    puts( "" );
+    printf( "Exp:  %#x      Unbiased: %d\n", exp, exp - _PDCLIB_FLT128_BIAS );
 #endif
 
     puts( "----------------------------------------------" );
@@ -333,8 +240,28 @@ int main( int argc, char * argv[] )
     if ( argc == 3 )
     {
         char conversion[ 10 ] = "%";
+        size_t len;
+
+        if ( argv[ 2 ][ 0 ] == '%' )
+        {
+            ++argv[ 2 ];
+        }
+
+        if ( strlen( argv[ 2 ] ) > 8 )
+        {
+            puts( "Conversion too long (8 characters max)" );
+            return 1;
+        }
+
+        /* Print the fp value with the conversion given */
         strcat( conversion, argv[ 2 ] );
         strcat( conversion, "\n" );
         printf( conversion, strtod( argv[ 1 ], NULL ) );
+
+        /* Do the same with long double precision */
+        len = strlen( conversion );
+        memmove( conversion + len - 1, conversion + len - 2, 3 );
+        conversion[ len - 2 ] = 'L';
+        printf( conversion, strtold( argv[ 1 ], NULL ) );
     }
 }
