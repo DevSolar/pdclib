@@ -129,19 +129,48 @@
     }
 #endif
     }
-    /* PDCLIB-20: Verify "unusual" combinations of length and signedness */
+    /* Verify "unusual" combinations of length and signedness */
     PRINTF_TEST( 1,  "1", "%tu", ( ptrdiff_t )  1); /* unsigned prtdiff_t */
     PRINTF_TEST( 2, "-1", "%jd", ( intmax_t )  -1); /* intmax_t */
     PRINTF_TEST( 1,  "1", "%ju", ( uintmax_t )  1); /* uintmax_t */
     PRINTF_TEST( 1,  "1", "%zd", ( size_t )     1); /* signed size_t */
+    /* Floating Point */
+    /* Double */
+    PRINTF_TEST( 6, "0x0p+0", "%a", 0.0 );
+    PRINTF_TEST( 7, "+0x0p+0", "%+a", 0.0 );
+    PRINTF_TEST( 7, " 0x0p+0", "% a", 0.0 );
+    PRINTF_TEST( 6, "0x1p+2", "%a", 4.0 );
+    PRINTF_TEST( 6, "0x1p-2", "%a", 0.25 );
+    PRINTF_TEST( 7, "-0x1p+0", "%a", -1.0 );
+    PRINTF_TEST( 23, "0x1.fffffffffffffp+1023", "%a", DBL_MAX );
+    PRINTF_TEST( 9, "0x1p-1022", "%a", DBL_MIN );
+    PRINTF_TEST( 23, "0x0.0000000000001p-1022", "%a", 0x0.0000000000002p-1023 );
+    PRINTF_TEST( 20, "0x1.0000000000001p+0", "%a", 1.0 + DBL_EPSILON );
+    PRINTF_TEST( 8, "  0x0p+0", "% 8a", 0.0 );
+    PRINTF_TEST( 8, " 0x0p+0 ", "%- 8a", 0.0 );
+    PRINTF_TEST( 8, "0x000p+0", "%08a", 0.0 );
+    PRINTF_TEST( 11, "0x2.0000p+0", "%.4a", 1.999998 );
+    PRINTF_TEST( 12, "0x1.ffffep+0", "%.5a", 1.999998 );
+    /* Long Double */
+    PRINTF_TEST( 6, "0x0p+0", "%La", 0.0L );
+    PRINTF_TEST( 7, "+0x0p+0", "%+La", 0.0L );
+    PRINTF_TEST( 7, " 0x0p+0", "% La", 0.0L );
+    PRINTF_TEST( 8, "  0x0p+0", "% 8La", 0.0L );
+    PRINTF_TEST( 8, " 0x0p+0 ", "%- 8La", 0.0L );
+    PRINTF_TEST( 8, "0x000p+0", "%08La", 0.0L );
+#if LDBL_MANT_DIG == 64
+    PRINTF_TEST( 6, "0x8p-1", "%La", 4.0L );
+    PRINTF_TEST( 6, "0x8p-5", "%La", 0.25L );
+    PRINTF_TEST( 7, "-0x8p-3", "%La", -1.0L );
+    PRINTF_TEST( 11, "0xf.ffffp-3", "%.4La", 1.999998L );
+    PRINTF_TEST( 12, "0xf.fffefp-3", "%.5La", 1.999998L );
+#endif
 
 /******************************************************************************
  * NOTE: The following test cases are imported from the Tyndur project. They  *
  *       are therefore under the license of said project, not CC0.            *
  *       As said code comprises test cases, it does not form part of the      *
  *       final compiled library, and has no bearing on its licensing.         *
- *                                                                            *
- *       See bug PDCLIB-6 for full details                                    *
  ******************************************************************************/
 /*
  * Copyright (c) 2011 The tyndur Project. All rights reserved.
