@@ -4,8 +4,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #ifndef REGTEST
 
@@ -17,10 +17,14 @@ int vprintf( const char * _PDCLIB_restrict format, _PDCLIB_va_list arg )
 #endif
 
 #ifdef TEST
+
+#include <stddef.h>
+#include <stdint.h>
+#include <float.h>
+
 #define _PDCLIB_FILEID "stdio/vprintf.c"
 #define _PDCLIB_FILEIO
-#include <stdint.h>
-#include <stddef.h>
+
 #include "_PDCLIB_test.h"
 
 static int testprintf( FILE * stream, const char * format, ... )

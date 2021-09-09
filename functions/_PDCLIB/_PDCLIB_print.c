@@ -469,6 +469,8 @@ static int testprintf( char * buffer, const char * format, ... )
 
 #define TEST_CONVERSION_ONLY
 
+#include <float.h>
+
 int main( void )
 {
 #ifndef REGTEST

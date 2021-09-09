@@ -4,9 +4,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdio.h>
-#include <stdint.h>
 #include <stdarg.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #ifndef REGTEST
 
@@ -23,9 +23,12 @@ int sprintf( char * _PDCLIB_restrict s, const char * _PDCLIB_restrict format, ..
 #endif
 
 #ifdef TEST
+
+#include <stddef.h>
+#include <float.h>
+
 #define _PDCLIB_FILEID "stdio/sprintf.c"
 #define _PDCLIB_STRINGIO
-#include <stddef.h>
 
 #include "_PDCLIB_test.h"
 

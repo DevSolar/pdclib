@@ -4,9 +4,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #ifndef REGTEST
 
@@ -79,9 +79,13 @@ int vfprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDC
 #endif
 
 #ifdef TEST
+
+#include <stddef.h>
+#include <float.h>
+
 #define _PDCLIB_FILEID "stdio/vfprintf.c"
 #define _PDCLIB_FILEIO
-#include <stddef.h>
+
 #include "_PDCLIB_test.h"
 
 static int testprintf( FILE * stream, const char * format, ... )

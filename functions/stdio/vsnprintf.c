@@ -4,8 +4,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #ifndef REGTEST
 
@@ -58,10 +58,14 @@ int vsnprintf( char * _PDCLIB_restrict s, size_t n, const char * _PDCLIB_restric
 #endif
 
 #ifdef TEST
+
+#include <stddef.h>
+#include <stdint.h>
+#include <float.h>
+
 #define _PDCLIB_FILEID "stdio/vsnprintf.c"
 #define _PDCLIB_STRINGIO
-#include <stdint.h>
-#include <stddef.h>
+
 #include "_PDCLIB_test.h"
 
 static int testprintf( char * s, const char * format, ... )

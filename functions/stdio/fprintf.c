@@ -4,8 +4,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #ifndef REGTEST
 
@@ -22,8 +22,11 @@ int fprintf( struct _PDCLIB_file_t * _PDCLIB_restrict stream, const char * _PDCL
 #endif
 
 #ifdef TEST
-#include <stdint.h>
+
 #include <stddef.h>
+#include <stdint.h>
+#include <float.h>
+
 #define _PDCLIB_FILEID "stdio/fprintf.c"
 #define _PDCLIB_FILEIO
 

@@ -4,8 +4,8 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #ifndef REGTEST
 
@@ -22,10 +22,13 @@ int printf( const char * _PDCLIB_restrict format, ... )
 #endif
 
 #ifdef TEST
+
+#include <stddef.h>
+#include <stdint.h>
+#include <float.h>
+
 #define _PDCLIB_FILEID "stdio/printf.c"
 #define _PDCLIB_FILEIO
-#include <stdint.h>
-#include <stddef.h>
 
 #include "_PDCLIB_test.h"
 
