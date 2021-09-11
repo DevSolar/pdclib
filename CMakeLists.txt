@@ -154,7 +154,6 @@ set( PDCLIB_SOURCES
      functions/stdlib/rand.c
      functions/stdlib/set_constraint_handler_s.c
      functions/stdlib/srand.c
-     functions/stdlib/strtod.c
      functions/stdlib/strtol.c
      functions/stdlib/strtoll.c
      functions/stdlib/strtoul.c
@@ -290,6 +289,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_print_string.c
      functions/_PDCLIB/_PDCLIB_scan.c
      functions/_PDCLIB/_PDCLIB_seed.c
+     functions/_PDCLIB/_PDCLIB_strtod_main.c
      functions/_PDCLIB/_PDCLIB_strtod_scan.c
      functions/_PDCLIB/_PDCLIB_strtok.c
      functions/_PDCLIB/_PDCLIB_strtox_main.c
