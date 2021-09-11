@@ -154,6 +154,7 @@ set( PDCLIB_SOURCES
      functions/stdlib/rand.c
      functions/stdlib/set_constraint_handler_s.c
      functions/stdlib/srand.c
+     functions/stdlib/strtod.c
      functions/stdlib/strtol.c
      functions/stdlib/strtoll.c
      functions/stdlib/strtoul.c
