@@ -255,6 +255,8 @@ static void _PDCLIB_print_fp( int sign,
         {
             PUT( *s++ );
         }
+
+        return;
     }
 
     switch ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) )
