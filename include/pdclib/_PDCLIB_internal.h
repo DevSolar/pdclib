@@ -666,6 +666,11 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, _P
 /* Sets a bigint from two 32bit input values. */
 _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t high, _PDCLIB_uint_least32_t low );
 
+/* Sets a bigint to the mantissa of a floating point value, as used rather
+   specifically in _PDCLIB_print_fp.c.
+*/
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mant( _PDCLIB_bigint_t * bigint, int dec, unsigned char const * mant, _PDCLIB_size_t mant_dig );
+
 /* Sets a bigint from another bigint. (Copies only value->size digits, so it is
    faster than a POD copy of a _PDCLIB_bigint_t in most cases.)
 */

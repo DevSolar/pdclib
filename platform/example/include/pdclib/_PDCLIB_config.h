@@ -499,6 +499,12 @@ struct _PDCLIB_imaxdiv_t
 
 #endif
 
+/* Given the definitions for *_MANT_START above, which resolve to "pointer
+   to most dignificant byte of mantissa", the operand to use to get at the
+   less significant bytes. (That would be - for i386, x86_64, and ARM.)
+*/
+#define _PDCLIB_FLT_OP -
+
 /* -------------------------------------------------------------------------- */
 /* Big Integer Arithmetic                                                     */
 /* -------------------------------------------------------------------------- */
