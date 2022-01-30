@@ -12,16 +12,15 @@
 
 #include <stdio.h>
 
-_PDCLIB_bigint_t * _PDCLIB_bigint_mant( _PDCLIB_bigint_t * bigint, int dec, unsigned char const * mant, size_t mant_dig )
+_PDCLIB_bigint_t * _PDCLIB_bigint_mant( _PDCLIB_bigint_t * bigint, unsigned char const * mant, size_t mant_dig )
 {
     div_t mant_byte = div( mant_dig - 1, _PDCLIB_CHAR_BIT );
-    div_t mant_digit = div( mant_dig - 1, _PDCLIB_BIGINT_DIGIT_BITS );
 
     size_t digit = 0;
     size_t offset = 0;
     size_t i;
 
-    bigint->size = mant_digit.quot + 1;
+    bigint->size = ( ( mant_dig - 1 ) / _PDCLIB_BIGINT_DIGIT_BITS ) + 1;
 
     for ( i = 0; i < bigint->size; ++i )
     {
@@ -44,18 +43,6 @@ _PDCLIB_bigint_t * _PDCLIB_bigint_mant( _PDCLIB_bigint_t * bigint, int dec, unsi
 
     // Copy most significant bytes
     bigint->data[ digit ] |= ( ( (_PDCLIB_bigint_digit_t)*mant ) & ( ( 1 << ( mant_byte.rem + 1 ) ) - 1 ) ) << offset;
-
-    if ( dec )
-    {
-        if ( ( mant_digit.rem + 1 ) == _PDCLIB_BIGINT_DIGIT_BITS )
-        {
-            bigint->data[ bigint->size++ ] = 1;
-        }
-        else
-        {
-            bigint->data[ bigint->size - 1 ] |= (_PDCLIB_bigint_digit_t)1 << ( mant_digit.rem + 1 );
-        }
-    }
 
     while ( bigint->size > 0 && bigint->data[ bigint->size - 1 ] == 0 )
     {
@@ -84,115 +71,73 @@ int main( void )
     _PDCLIB_bigint_t bigint;
     char buffer[ _PDCLIB_BIGINT_CHARS ];
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, 1 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, 1 );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x01 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, 2 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, 2 );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x03 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, 3 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, 3 );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x03 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, 4 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, 4 );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x03 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, 5 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, 5 );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x13 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, 6 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, 6 );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x33 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, 7 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, 7 );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x33 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, 8 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, 8 );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x33 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[ bigint.size - 1 ] >> ( _PDCLIB_BIGINT_DIGIT_BITS - _PDCLIB_CHAR_BIT ) == 0x33 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 1 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 1 );
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x01 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 2 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 2 );
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x03 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 3 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 3 );
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x03 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 4 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 4 );
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x03 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 5 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 5 );
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x13 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 6 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 6 );
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x33 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 7 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 7 );
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x33 );
 
-    _PDCLIB_bigint_mant( &bigint, 0, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 8 );
+    _PDCLIB_bigint_mant( &bigint, mant + 16, _PDCLIB_BIGINT_DIGIT_BITS + 8 );
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[ bigint.size - 1 ] == 0x33 );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 1 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x03 );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 2 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x07 );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 3 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x0b );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 4 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x13 );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 5 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x33 );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 6 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x73 );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 7 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0xb3 );
-
-    // 6543210987654321
-    // 0011001100110011
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 8 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x0133   );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 9 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x0333 );
-
-    _PDCLIB_bigint_mant( &bigint, 1, mant + 16, 10 );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[ bigint.size - 1 ] == 0x0733 );
 #endif
 
     return TEST_RESULTS;

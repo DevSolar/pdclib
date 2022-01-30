@@ -260,6 +260,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_bigint_add.c
      functions/_PDCLIB/_PDCLIB_bigint_sub.c
      functions/_PDCLIB/_PDCLIB_bigint_cmp.c
+     functions/_PDCLIB/_PDCLIB_bigint_invlog2.c
      functions/_PDCLIB/_PDCLIB_bigint_log2.c
      functions/_PDCLIB/_PDCLIB_bigint_mant.c
      functions/_PDCLIB/_PDCLIB_bigint_mul.c

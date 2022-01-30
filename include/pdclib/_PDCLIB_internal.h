@@ -669,7 +669,7 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, _P
 /* Sets a bigint to the mantissa of a floating point value, as used rather
    specifically in _PDCLIB_print_fp.c.
 */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mant( _PDCLIB_bigint_t * bigint, int dec, unsigned char const * mant, _PDCLIB_size_t mant_dig );
+_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mant( _PDCLIB_bigint_t * bigint, unsigned char const * mant, _PDCLIB_size_t mant_dig );
 
 /* Sets a bigint from another bigint. (Copies only value->size digits, so it is
    faster than a POD copy of a _PDCLIB_bigint_t in most cases.)
@@ -719,8 +719,15 @@ _PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_
 /* Queries */
 /* ------- */
 
-/* Returns the log2() of a given bigint */
+/* Returns the log2() of a given bigint, i.e. the offset of the highest
+   bit set.
+*/
 _PDCLIB_LOCAL unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint );
+
+/* Returns the "inverse" log2() of a given bigint, i.e. the offset of the
+   lowest bit set.
+*/
+_PDCLIB_LOCAL unsigned _PDCLIB_bigint_invlog2( _PDCLIB_bigint_t const * bigint );
 
 /* FP Conversions */
 /* -------------- */
