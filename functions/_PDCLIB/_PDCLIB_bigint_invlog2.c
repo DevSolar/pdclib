@@ -33,6 +33,8 @@ unsigned _PDCLIB_bigint_invlog2( _PDCLIB_bigint_t const * bigint )
             return zeroes + ( lookup[ ( -bigint->data[ i ] & bigint->data[ i ] ) % 37 ] );
         }
     }
+
+    return 0;
 }
 
 #endif
@@ -47,6 +49,8 @@ int main( void )
 {
 #ifndef REGTEST
     _PDCLIB_bigint_t big;
+    _PDCLIB_bigint32( &big, UINT32_C( 0x00000000 ) );
+    TESTCASE( _PDCLIB_bigint_invlog2( &big ) == 0 );
     _PDCLIB_bigint32( &big, UINT32_C( 0x00000001 ) );
     TESTCASE( _PDCLIB_bigint_invlog2( &big ) == 0 );
     _PDCLIB_bigint32( &big, UINT32_C( 0x00000002 ) );
