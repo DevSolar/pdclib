@@ -57,5 +57,8 @@ dkms.conf
 # PDCLib regression test drivers
 *_r
 
+# Build directory
+build
+
 # Auxiliary Targets
 get-uctypes
