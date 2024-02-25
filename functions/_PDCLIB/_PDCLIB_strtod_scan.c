@@ -26,6 +26,12 @@ void _PDCLIB_strtod_scan( const char * s, const char ** dec, const char ** frac,
 
     strtol( (char *)s, (char **)dec, base );
 
+    if ( base == 16 && ( **dec == 'x' || **dec == 'X' ) )
+    {
+        /* Happens when there is no decimal part */
+        ++( *dec );
+    }
+
     if ( **dec == decimal_point )
     {
         strtol( (char *)( *dec + 1 ), (char **)frac, base );
@@ -81,7 +87,7 @@ int main( void )
     const char * s[] =
         { "12.34e56", ".12e34", "98e76", "12.34", ".34", "18",
           "1.2e3", ".1e2", "1e2", "1.2", ".1", "1",
-          ".", ".e", "e", "1.e", ".1e"
+          ".", ".e", "e", "1.e", ".1e", "0x.123p-6"
         };
 
     _PDCLIB_strtod_scan( s[0], &dec, &frac, &exp, 10 );
@@ -168,6 +174,11 @@ int main( void )
     TESTCASE( dec == s[16] );
     TESTCASE( frac == s[16] + 2 );
     TESTCASE( exp == s[16] + 2 );
+
+    _PDCLIB_strtod_scan( s[17], &dec, &frac, &exp, 16 );
+    TESTCASE( dec == s[17] + 2 );
+    TESTCASE( frac == s[17] + 6 );
+    TESTCASE( exp == s[17] + 9 );
 #endif
 
     return TEST_RESULTS;
