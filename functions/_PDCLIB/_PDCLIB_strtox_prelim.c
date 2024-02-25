@@ -5,6 +5,7 @@
 */
 
 #include <ctype.h>
+#include <locale.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -12,6 +13,14 @@
 
 const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
 {
+    char decimal_point = '.';
+    struct lconv * lconv;
+
+    if ( ( lconv = localeconv() ) != NULL )
+    {
+        decimal_point = *lconv->decimal_point;
+    }
+
     /* skipping leading whitespace */
     while ( isspace( *p ) )
     {
@@ -50,7 +59,7 @@ const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base )
         }
         else if ( *base == 0 )
         {
-            *base = 8;
+            *base = *p == decimal_point ? 10 : 8;
             /* back up one digit, so that a plain zero is decoded correctly
                (and endptr is set correctly as well).
                (2019-01-15, Giovanni Mascellani)
