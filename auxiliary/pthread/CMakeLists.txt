@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.9 FATAL_ERROR )
+cmake_minimum_required( VERSION 2.9...3.27 FATAL_ERROR )
 
 project( pthread_readout LANGUAGES C )
 

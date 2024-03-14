@@ -20,7 +20,7 @@
 # cpack -G <generator>
 # to create a package of your compiled version of PDCLib.
 
-cmake_minimum_required( VERSION 3.1.3 FATAL_ERROR )
+cmake_minimum_required( VERSION 3.1.3...3.27.7 FATAL_ERROR )
 
 project( pdclib )
 
@@ -46,6 +46,12 @@ set( CMAKE_C_EXTENSIONS OFF )
 if ( NOT CMAKE_BUILD_TYPE )
     message( "++ CMAKE_BUILD_TYPE not set. Defaulting to 'Debug'." )
     set( CMAKE_BUILD_TYPE Debug )
+endif()
+
+if ( NOT CMAKE_BUILD_TYPE STREQUAL "Debug" )
+    message( "++ CMAKE_BUILD_TYPE not set to 'Debug'." )
+    message( "++ Building testdrivers for <assert.h>" )
+    message( "++ will fail." )
 endif()
 
 # Use the test support built-in to CMake. Use the "ctest" client to run
