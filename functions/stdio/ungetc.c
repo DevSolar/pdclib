@@ -43,7 +43,7 @@ int ungetc( int c, struct _PDCLIB_file_t * stream )
 int main( void )
 {
     char buffer[4];
-    char input[1];
+    char input[4];
     FILE * fh;
     int read;
     fpos_t pos;

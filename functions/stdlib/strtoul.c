@@ -115,6 +115,9 @@ int main( void )
 #else
 #error Unsupported width of 'long' (neither 32 nor 64 bit).
 #endif
+    errno = 0;
+    TESTCASE( strtoul( "-1", NULL, 0 ) == ULONG_MAX );
+    TESTCASE( errno == 0 );
     return TEST_RESULTS;
 }
 
