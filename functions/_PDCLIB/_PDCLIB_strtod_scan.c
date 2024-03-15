@@ -24,16 +24,18 @@ void _PDCLIB_strtod_scan( const char * s, const char ** dec, const char ** frac,
         decimal_point = *lconv->decimal_point;
     }
 
+    // decimal part, until decimal point, exponent, or end of number
     strtol( (char *)s, (char **)dec, base );
 
     if ( base == 16 && ( **dec == 'x' || **dec == 'X' ) )
     {
-        /* Happens when there is no decimal part */
+        // 0x immediately followed by decimal point
         ++( *dec );
     }
 
     if ( **dec == decimal_point )
     {
+        // fractional part, until exponent, or end of number
         strtol( (char *)( *dec + 1 ), (char **)frac, base );
 
         if ( *dec == s && *frac == s + 1 )
@@ -87,7 +89,8 @@ int main( void )
     const char * s[] =
         { "12.34e56", ".12e34", "98e76", "12.34", ".34", "18",
           "1.2e3", ".1e2", "1e2", "1.2", ".1", "1",
-          ".", ".e", "e", "1.e", ".1e", "0x.123p-6"
+          ".", ".e", "e", "1.e", ".1e",
+          "0xdeadp1", "0xde.adP-21", "0xdead.", "0x.dead"
         };
 
     _PDCLIB_strtod_scan( s[0], &dec, &frac, &exp, 10 );
@@ -176,9 +179,24 @@ int main( void )
     TESTCASE( exp == s[16] + 2 );
 
     _PDCLIB_strtod_scan( s[17], &dec, &frac, &exp, 16 );
-    TESTCASE( dec == s[17] + 2 );
+    TESTCASE( dec == s[17] + 6 );
     TESTCASE( frac == s[17] + 6 );
-    TESTCASE( exp == s[17] + 9 );
+    TESTCASE( exp == s[17] + 8 );
+
+    _PDCLIB_strtod_scan( s[18], &dec, &frac, &exp, 16 );
+    TESTCASE( dec == s[18] + 4 );
+    TESTCASE( frac == s[18] + 7 );
+    TESTCASE( exp == s[18] + 11 );
+
+    _PDCLIB_strtod_scan( s[19], &dec, &frac, &exp, 16 );
+    TESTCASE( dec == s[19] + 6 );
+    TESTCASE( frac == s[19] + 7 );
+    TESTCASE( exp == s[19] + 7 );
+
+    _PDCLIB_strtod_scan( s[20], &dec, &frac, &exp, 16 );
+    TESTCASE( dec == s[20] + 2 );
+    TESTCASE( frac == s[20] + 7 );
+    TESTCASE( exp == s[20] + 7 );
 #endif
 
     return TEST_RESULTS;
