@@ -69,7 +69,6 @@ int main( void )
         0x33
     };
     _PDCLIB_bigint_t bigint;
-    char buffer[ _PDCLIB_BIGINT_CHARS ];
 
     _PDCLIB_bigint_mant( &bigint, mant + 16, 1 );
     TESTCASE( bigint.size == 1 );
