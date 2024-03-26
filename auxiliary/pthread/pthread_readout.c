@@ -11,7 +11,7 @@
 #include "pthread.h"
 
 /* For _PDCLIB_time -> reconstructing struct _PDCLIB_timespec */
-#include "_PDCLIB_config.h"
+#include "pdclib/_PDCLIB_config.h"
 
 #define symbol2string( x ) #x
 #define value2string( x ) symbol2string( x )

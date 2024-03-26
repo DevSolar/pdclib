@@ -22,12 +22,13 @@
 
 cmake_minimum_required( VERSION 3.1.3...3.27.7 FATAL_ERROR )
 
-project( pdclib )
+project( pdclib LANGUAGES C )
 
 option( IGNORE_NO_TESTDRIVER "Ignore NO_TESTDRIVER flags instead of reporting them as error. Default: OFF." OFF )
 option( AS_CXX "Compile as C++. (For testing purposes.) Default: OFF." OFF )
 option( AS_C11 "Compile as C11. (For testing purposes.) Default: OFF." OFF )
 option( AS_C90 "Compile as C90. (For testing purposes.) Default: OFF." OFF )
+option( USE_THREADS "Compile with support for <threads.h>. Default: ON." ON )
 
 # Setting compiler to standard, no extensions.
 if ( AS_C11 )
@@ -40,6 +41,14 @@ endif()
 
 set( CMAKE_C_STANDARD_REQUIRED ON )
 set( CMAKE_C_EXTENSIONS OFF )
+
+if ( NOT USE_THREADS )
+    set( __STDC_NO_THREADS__ 1 )
+endif()
+
+configure_file( platform/example/include/pdclib/_PDCLIB_config.h
+    configured_include/pdclib/_PDCLIB_config.h
+)
 
 # Debug is the default setting anyway, but better to make it explicit and
 # give output about it.
@@ -201,32 +210,6 @@ set( PDCLIB_SOURCES
      functions/string/strncat_s.c
      functions/string/strncpy_s.c
 
-     platform/example/functions/threads/call_once.c
-     platform/example/functions/threads/cnd_broadcast.c
-     platform/example/functions/threads/cnd_destroy.c
-     platform/example/functions/threads/cnd_init.c
-     platform/example/functions/threads/cnd_signal.c
-     platform/example/functions/threads/cnd_timedwait.c
-     platform/example/functions/threads/cnd_wait.c
-     platform/example/functions/threads/mtx_destroy.c
-     platform/example/functions/threads/mtx_init.c
-     platform/example/functions/threads/mtx_lock.c
-     platform/example/functions/threads/mtx_timedlock.c
-     platform/example/functions/threads/mtx_trylock.c
-     platform/example/functions/threads/mtx_unlock.c
-     platform/example/functions/threads/thrd_create.c
-     platform/example/functions/threads/thrd_current.c
-     platform/example/functions/threads/thrd_detach.c
-     platform/example/functions/threads/thrd_equal.c
-     platform/example/functions/threads/thrd_exit.c
-     platform/example/functions/threads/thrd_join.c
-     platform/example/functions/threads/thrd_sleep.c
-     platform/example/functions/threads/thrd_yield.c
-     platform/example/functions/threads/tss_create.c
-     platform/example/functions/threads/tss_delete.c
-     platform/example/functions/threads/tss_get.c
-     platform/example/functions/threads/tss_set.c
-
      functions/time/asctime.c
      functions/time/asctime_s.c
      functions/time/ctime.c
@@ -317,6 +300,37 @@ set( PDCLIB_SOURCES
      platform/example/functions/_PDCLIB/_PDCLIB_stdinit.c
 )
 
+if ( USE_THREADS )
+    list( APPEND PDCLIB_SOURCES
+          platform/example/functions/threads/call_once.c
+          platform/example/functions/threads/cnd_broadcast.c
+          platform/example/functions/threads/cnd_destroy.c
+          platform/example/functions/threads/cnd_init.c
+          platform/example/functions/threads/cnd_signal.c
+          platform/example/functions/threads/cnd_timedwait.c
+          platform/example/functions/threads/cnd_wait.c
+          platform/example/functions/threads/mtx_destroy.c
+          platform/example/functions/threads/mtx_init.c
+          platform/example/functions/threads/mtx_lock.c
+          platform/example/functions/threads/mtx_timedlock.c
+          platform/example/functions/threads/mtx_trylock.c
+          platform/example/functions/threads/mtx_unlock.c
+          platform/example/functions/threads/thrd_create.c
+          platform/example/functions/threads/thrd_current.c
+          platform/example/functions/threads/thrd_detach.c
+          platform/example/functions/threads/thrd_equal.c
+          platform/example/functions/threads/thrd_exit.c
+          platform/example/functions/threads/thrd_join.c
+          platform/example/functions/threads/thrd_sleep.c
+          platform/example/functions/threads/thrd_yield.c
+          platform/example/functions/threads/tss_create.c
+          platform/example/functions/threads/tss_delete.c
+          platform/example/functions/threads/tss_get.c
+          platform/example/functions/threads/tss_set.c
+    )
+endif()
+
+
 # List of header files. Not required for actually building, but if they
 # are not listed (in add_library()), they do not show up in IDE project
 # files (like MSVC solutions).
@@ -343,8 +357,13 @@ set( PDCLIB_HEADERS
 
      platform/example/include/float.h
      platform/example/include/signal.h
-     platform/example/include/threads.h
 )
+
+if ( USE_THREADS )
+    list( APPEND PDCLIB_HEADERS
+          platform/example/include/threads.h
+    )
+endif()
 
 # These get installed in a "pdclib" subdirectory of your system's default
 # "include" directory.
@@ -367,28 +386,30 @@ set( PDCLIB_NOINSTALL_HEADERS
 # with PDCLib headers (specifically, struct timespec).
 add_library( _dlmalloc OBJECT functions/_dlmalloc/malloc.c )
 add_library( _dlmallocs OBJECT functions/_dlmalloc/malloc.c )
-target_include_directories( _dlmalloc  PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
-target_include_directories( _dlmallocs PRIVATE ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
+target_include_directories( _dlmalloc  PRIVATE ${CMAKE_BINARY_DIR}/configured_include )
+target_include_directories( _dlmallocs PRIVATE ${CMAKE_BINARY_DIR}/configured_include )
 
 # Two libraries, one for dynamic linking, one for static linking.
 add_library( pdclib  SHARED ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmalloc>  ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} )
 add_library( pdclibs STATIC ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmallocs> ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} )
 
-# The example implementation makes use of pthread. We use CMake facilities
-# to locate the pthread library for linking.
-set( CMAKE_THREAD_PREFER_PTHREAD 1 )
-set( THREADS_PREFER_PTHREAD_FLAG 1 )
-find_package( Threads )
-if ( NOT CMAKE_USE_PTHREADS_INIT )
-    message( FATAL_ERROR "Example platform requires pthread to be available." )
+if ( USE_THREADS )
+    # The example implementation makes use of pthread. We use CMake facilities
+    # to locate the pthread library for linking.
+    set( CMAKE_THREAD_PREFER_PTHREAD 1 )
+    set( THREADS_PREFER_PTHREAD_FLAG 1 )
+    find_package( Threads )
+    if ( NOT CMAKE_USE_PTHREADS_INIT )
+        message( FATAL_ERROR "Example platform requires pthread to be available." )
+    endif()
+
+    target_link_libraries( pdclib Threads::Threads )
+    target_link_libraries( pdclibs Threads::Threads )
 endif()
 
-target_link_libraries( pdclib Threads::Threads )
-target_link_libraries( pdclibs Threads::Threads )
-
 # Compilation shall use PDCLib's over system include directories.
-target_include_directories( pdclib  BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
-target_include_directories( pdclibs BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include )
+target_include_directories( pdclib  BEFORE PRIVATE ${CMAKE_BINARY_DIR}/configured_include include platform/example/include )
+target_include_directories( pdclibs BEFORE PRIVATE ${CMAKE_BINARY_DIR}/configured_include include platform/example/include )
 
 # The code for the DLL / shared object should be compiled with whatever
 # options are appropriate for your compiler to generate relocatable code.
@@ -447,7 +468,7 @@ foreach( file ${PDCLIB_SOURCES} )
     add_executable( ${basename}_t ${file} )
     set_property( TARGET ${basename}_t APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -D_PDCLIB_BUILD ${FLAGS}" )
     set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers )
-    target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/platform/example/include ${CMAKE_SOURCE_DIR}/test_support )
+    target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_BINARY_DIR}/configured_include include platform/example/include test_support )
     target_link_libraries( ${basename}_t pdclibs )
     add_test( ${basename}_t test_support/testdrivers/${basename}_t )
     add_dependencies( testdrivers ${basename}_t )
@@ -457,7 +478,7 @@ foreach( file ${PDCLIB_SOURCES} )
     add_executable( ${basename}_r ${file} )
     set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST ${FLAGS}" )
     set_property( TARGET ${basename}_r PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
-    target_include_directories( ${basename}_r BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/test_support )
+    target_include_directories( ${basename}_r BEFORE PRIVATE test_support )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
     add_dependencies( regtestdrivers ${basename}_r )
 endforeach()
@@ -508,11 +529,13 @@ add_subdirectory( auxiliary/errno )
 # Unicode database.
 add_subdirectory( auxiliary/uctype )
 
-# A helper executable to read, from the system <pthread.h>, some size
-# parameters of pthread stuctures.
-# (Platform maintainers are supposed to use the output to adapt their
-# platform's platform/<xyz>/include/pdclib/_PDCLIB_config.h.)
-add_subdirectory( auxiliary/pthread )
+if ( USE_THREADS )
+    # A helper executable to read, from the system <pthread.h>, some size
+    # parameters of pthread stuctures.
+    # (Platform maintainers are supposed to use the output to adapt their
+    # platform's platform/<xyz>/include/pdclib/_PDCLIB_config.h.)
+    add_subdirectory( auxiliary/pthread )
+endif()
 
 # A helper executable storing a given floating point number into the
 # various FP data types of the platform (float, double, long double, ...)

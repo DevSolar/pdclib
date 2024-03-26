@@ -849,6 +849,10 @@ typedef unsigned int wint_t;
 /* appropriate definitions from a platform's <pthread.h>, giving output that  */
 /* can be copy & pasted here.                                                 */
 
+#cmakedefine __STDC_NO_THREADS__ 1
+
+#ifndef __STDC_NO_THREADS__
+
 typedef unsigned long int _PDCLIB_thrd_t;
 typedef union { unsigned char _PDCLIB_cnd_t_data[ 48 ]; long long int _PDCLIB_cnd_t_align; } _PDCLIB_cnd_t;
 #if defined( __arm__ ) || defined( __ARM_NEON )
@@ -897,6 +901,8 @@ typedef union { unsigned char _PDCLIB_thrd_attr_t_data[ 56 ]; long int _PDCLIB_t
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,\
      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }
+#endif
+
 #endif
 
 /* Termux defines atexit in crtbegin_so.o leading to a multiple definition    */

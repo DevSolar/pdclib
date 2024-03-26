@@ -11,7 +11,7 @@ add_executable( pthread_readout pthread_readout.c )
 # For this executable specifically, make the _PDCLIB_* headers available
 # but *not* PDCLib's standard headers -- so we can check PDCLib config
 # against the host system.
-target_include_directories( pthread_readout BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include/pdclib ${CMAKE_SOURCE_DIR}/platform/example/include/pdclib )
+target_include_directories( pthread_readout BEFORE PRIVATE ${CMAKE_BINARY_DIR}/configured_include include/pdclib platform/example/include/pdclib )
 
 # PThread linkage.
 set( CMAKE_THREAD_PREFER_PTHREAD 1 )

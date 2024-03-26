@@ -18,7 +18,7 @@ void * sbrk( intptr_t );
 
 #ifndef REGTEST
 
-#include "_PDCLIB_config.h"
+#include "pdclib/_PDCLIB_config.h"
 
 /* Have all functions herein use the dl* prefix */
 #define USE_DL_PREFIX 1
