@@ -16,12 +16,19 @@
 
 #include "/usr/include/errno.h"
 
+/* The system calls provided for renaming are rename(), renameat()
+   and renameat2(). Using rename() is not possible, since we have
+   that symbol in our library and would end up with a recursive
+   call. But we *can* use renameat() with default parameters!
+   AT_FDCWD is declared in fcntl.h. We need to manually declare
+   renameat() here as it is declared in system's <stdio.h>.
+*/
+#include "/usr/include/fcntl.h"
+int renameat( int, const char *, int, const char * );
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-extern int unlink( const char * pathname );
-extern int link( const char * oldpath, const char * newpath );
 
 #ifdef __cplusplus
 }
@@ -29,29 +36,18 @@ extern int link( const char * oldpath, const char * newpath );
 
 int _PDCLIB_rename( const char * oldpath, const char * newpath )
 {
-    /* Note that the behaviour if new file exists is implementation-defined.
-       There is nothing wrong with either overwriting it or failing the
-       operation, but you might want to document whichever you chose.
-       This example fails if new file exists.
+    /* Whether existing newpath is overwritten is implementation-
+       defined. This system call *does* overwrite.
     */
-    if ( link( oldpath, newpath ) == 0 )
-    {
-        if ( unlink( oldpath ) == EOF )
-        {
-            /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
-            *_PDCLIB_errno_func() = errno;
-            return -1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-    else
+    if ( renameat( AT_FDCWD, oldpath, AT_FDCWD, newpath ) != 0 )
     {
         /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
         *_PDCLIB_errno_func() = errno;
-        return EOF;
+        return -1;
+    }
+    else
+    {
+        return 0;
     }
 }
 
@@ -93,10 +89,11 @@ int main( void )
     /* check that file 1 exists */
     TESTCASE( ( file = fopen( testfile1, "r" ) ) != NULL );
     TESTCASE( fclose( file ) == 0 );
-    /* rename file 1 to file 2 - expected to fail, see comment in
-       _PDCLIB_rename() itself.
+    /* Whether existing destination files are overwritten or not
+       is implementation-defined.
+       This implementation *does* overwrite.
     */
-    TESTCASE( _PDCLIB_rename( testfile1, testfile2 ) == -1 );
+    TESTCASE( _PDCLIB_rename( testfile1, testfile2 ) == 0 );
     /* remove both files */
     remove( testfile1 );
     remove( testfile2 );

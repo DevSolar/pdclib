@@ -50,6 +50,7 @@ int rename( const char * oldpath, const char * newpath )
 #include "_PDCLIB_test.h"
 
 #include <stdlib.h>
+#include <errno.h>
 
 int main( void )
 {
@@ -84,8 +85,12 @@ int main( void )
     /* rename file 1 to file 2 - expected to fail, see comment in
        _PDCLIB_rename() itself.
     */
-    /* NOREG as glibc overwrites existing destination file. */
-    TESTCASE_NOREG( rename( testfile1, testfile2 ) == -1 );
+    /* Whether existing destination files are overwritten or not
+       is implementation-defined.
+       See functions/_PDCLIB/_PDCLIB_rename.c for your platform
+       for details.
+    */
+    /*TESTCASE( rename( testfile1, testfile2 ) == [0|1] );*/
     /* remove both files */
     TESTCASE( remove( testfile1 ) == 0 );
     TESTCASE( remove( testfile2 ) == 0 );
