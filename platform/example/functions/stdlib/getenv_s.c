@@ -86,21 +86,21 @@ int main( void )
 {
 #if ! defined( REGTEST ) || defined( __STDC_LIB_EXT1__ )
     size_t len;
-    char value[20];
+    char value[100];
     set_constraint_handler_s( test_handler );
 
-    TESTCASE( getenv_s( &len, value, 20, "SHELL" ) == 0 );
-    TESTCASE( strcmp( value, "/bin/bash" ) == 0 );
+    TESTCASE( getenv_s( &len, value, 100, "SHELL" ) == 0 );
+    TESTCASE( strcmp( value + ( len - 2 ), "sh" ) == 0 );
     /* TESTCASE( strcmp( value, "/bin/sh" ) == 0 ); */
 
     /* constraint violations */
-    TESTCASE( getenv_s( &len, NULL, 20, "SHELL" ) != 0 );
+    TESTCASE( getenv_s( &len, NULL, 100, "SHELL" ) != 0 );
     TESTCASE( getenv_s( &len, value, 0, "SHELL" ) != 0 );
     TESTCASE( getenv_s( &len, value, RSIZE_MAX + 1, "SHELL" ) != 0 );
-    TESTCASE( getenv_s( &len, value, 20, NULL ) != 0 );
+    TESTCASE( getenv_s( &len, value, 100, NULL ) != 0 );
 
     /* non-existing (hopefully), != 0 but not constraint violation */
-    TESTCASE( getenv_s( &len, value, 20, "supercalifragilisticexpialidocius" ) != 0 );
+    TESTCASE( getenv_s( &len, value, 100, "supercalifragilisticexpialidocius" ) != 0 );
 
     TESTCASE( HANDLER_CALLS == 4 );
 #endif

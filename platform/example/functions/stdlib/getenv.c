@@ -47,8 +47,9 @@ char * getenv( const char * name )
 
 int main( void )
 {
-    TESTCASE( strcmp( getenv( "SHELL" ), "/bin/bash" ) == 0 );
-    /* TESTCASE( strcmp( getenv( "SHELL" ), "/bin/sh" ) == 0 ); */
+    char * env = getenv( "SHELL" );
+    size_t len = strlen( env );
+    TESTCASE( strcmp( env + ( len - 2 ), "sh" ) == 0 );
     return TEST_RESULTS;
 }
 

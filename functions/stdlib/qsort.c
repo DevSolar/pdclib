@@ -176,6 +176,8 @@ int main( void )
     TESTCASE( strcmp( s, presort ) == 0 );
 #if defined( REGTEST ) && ( defined( __BSD_VISIBLE ) || defined( __APPLE__ ) )
     puts( "qsort.c: Skipping test #4 for BSD as it goes into endless loop here." );
+#elif defined( REGTEST ) && defined( __ANDROID__ )
+    puts( "qsort.c: Skipping test #4 for Android as it crashes." );
 #else
     qsort( s, 100, 0, compare );
     TESTCASE( strcmp( s, presort ) == 0 );
