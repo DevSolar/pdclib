@@ -12,7 +12,19 @@
 
 #ifndef REGTEST
 
+/* Having to jump through some hoops here so including fcntl.h does
+   work. Linux struggles with redefinitions of SEEK_SET et al. if
+   we set _GNU_SOURCE, but Cygwin needs that to actually get to the
+   AT_FDCWD definition.
+*/
+#ifdef __linux__
+#define _ATFILE_SOURCE 1
+#else
+#define _GNU_SOURCE 1
+#endif
+
 #include "pdclib/_PDCLIB_glue.h"
+#include "pdclib/_PDCLIB_defguard.h"
 
 #include "/usr/include/errno.h"
 
@@ -24,11 +36,12 @@
    renameat() here as it is declared in system's <stdio.h>.
 */
 #include "/usr/include/fcntl.h"
-int renameat( int, const char *, int, const char * );
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+int renameat( int, const char *, int, const char * );
 
 #ifdef __cplusplus
 }
