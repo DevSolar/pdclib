@@ -377,9 +377,6 @@ _PDCLIB_LOCAL _PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
 _PDCLIB_LOCAL const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
 _PDCLIB_LOCAL _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, int limdigit, char * sign );
 
-/* A helper function used by strtof(), strtod(), and strtold().               */
-_PDCLIB_LOCAL void _PDCLIB_strtod_scan( const char * s, const char ** dec, const char ** frac, const char ** exp, int base );
-
 /* Digits arrays used by various integer conversion functions */
 extern const char _PDCLIB_digits[];
 extern const char _PDCLIB_Xdigits[];
