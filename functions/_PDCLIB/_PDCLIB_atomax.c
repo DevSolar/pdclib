@@ -16,7 +16,7 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s )
     const char * x;
 
     /* TODO: In other than "C" locale, additional patterns may be defined     */
-    while ( isspace( *s ) )
+    while ( isspace( (unsigned char)*s ) )
     {
         ++s;
     }
@@ -31,7 +31,7 @@ _PDCLIB_intmax_t _PDCLIB_atomax( const char * s )
     }
 
     /* TODO: Earlier version was missing tolower() but was not caught by tests */
-    while ( ( x = (const char *)memchr( _PDCLIB_digits, tolower( *( s++ ) ), 10 ) ) != NULL )
+    while ( ( x = (const char *)memchr( _PDCLIB_digits, tolower( (unsigned char)*( s++ ) ), 10 ) ) != NULL )
     {
         rc = rc * 10 + ( x - _PDCLIB_digits );
     }

@@ -349,7 +349,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
             while ( ( status->current < status->width ) &&
                     ( ( rc = GET( status ) ) != EOF ) )
             {
-                if ( isspace( rc ) )
+                if ( isspace( (unsigned char)rc ) )
                 {
                     UNGET( rc, status );
 
@@ -512,7 +512,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
         while ( ( status->current < status->width ) &&
                 ( ( rc = GET( status ) ) != EOF ) )
         {
-            if ( isspace( rc ) )
+            if ( isspace( (unsigned char)rc ) )
             {
                 if ( sign )
                 {
@@ -572,7 +572,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                             if ( ( status->current < status->width ) &&
                                  ( ( rc = GET( status ) ) != EOF ) )
                             {
-                                if ( tolower( rc ) == 'x' )
+                                if ( tolower( (unsigned char)rc ) == 'x' )
                                 {
                                     /* 0x... would be prefix for hex base... */
                                     if ( ( status->base == 0 ) ||
@@ -611,7 +611,7 @@ const char * _PDCLIB_scan( const char * spec, struct _PDCLIB_status_t * status )
                     }
                     else
                     {
-                        char * digitptr = (char *)memchr( _PDCLIB_digits, tolower( rc ), status->base );
+                        char * digitptr = (char *)memchr( _PDCLIB_digits, tolower( (unsigned char)rc ), status->base );
 
                         if ( digitptr == NULL )
                         {

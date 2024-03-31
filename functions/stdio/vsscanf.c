@@ -32,11 +32,11 @@ int vsscanf( const char * _PDCLIB_restrict s, const char * _PDCLIB_restrict form
         if ( ( *format != '%' ) || ( ( rc = _PDCLIB_scan( format, &status ) ) == format ) )
         {
             /* No conversion specifier, match verbatim */
-            if ( isspace( *format ) )
+            if ( isspace( (unsigned char)*format ) )
             {
                 /* Whitespace char in format string: Skip all whitespaces */
                 /* No whitespaces in input do not result in matching error */
-                while ( isspace( *status.s ) )
+                while ( isspace( (unsigned char)*status.s ) )
                 {
                     ++status.s;
                     ++status.i;

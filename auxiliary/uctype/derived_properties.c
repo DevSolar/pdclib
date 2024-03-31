@@ -135,7 +135,7 @@ struct derived_properties_t * read_derived_properties( const char * filename )
                                     }
                                     else
                                     {
-                                        while ( *p && ! isxdigit( *p ) )
+                                        while ( *p && ! isxdigit( (unsigned char)*p ) )
                                         {
                                             ++p;
                                         }

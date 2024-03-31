@@ -15,7 +15,7 @@ char * trim( char * s )
     char * p;
 
     /* Skip over leading whitespace */
-    while ( *s && isspace( *s ) )
+    while ( *s && isspace( (unsigned char)*s ) )
     {
         ++s;
     }
@@ -28,7 +28,7 @@ char * trim( char * s )
         ++p;
     }
 
-    while ( isspace( *( --p ) ) )
+    while ( isspace( (unsigned char)*( --p ) ) )
     {
         *p = '\0';
     }

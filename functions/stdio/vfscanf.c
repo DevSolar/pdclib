@@ -49,11 +49,11 @@ int vfscanf( FILE * _PDCLIB_restrict stream, const char * _PDCLIB_restrict forma
             int c;
 
             /* No conversion specifier, match verbatim */
-            if ( isspace( *format ) )
+            if ( isspace( (unsigned char)*format ) )
             {
                 /* Whitespace char in format string: Skip all whitespaces */
                 /* No whitespaces in input does not result in matching error */
-                while ( isspace( c = getc( stream ) ) )
+                while ( isspace( (unsigned char)( c = getc( stream ) ) ) )
                 {
                     ++status.i;
                 }

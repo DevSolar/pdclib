@@ -81,7 +81,7 @@ static double _PDCLIB_strtod_main( const char * nptr, char ** endptr )
 
                         if ( *p++ == '(' )
                         {
-                            while ( isalnum( *p ) )
+                            while ( isalnum( (unsigned char)*p ) )
                             {
                                 ++p;
                             }

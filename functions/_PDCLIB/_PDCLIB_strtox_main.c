@@ -17,7 +17,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
     int digit = -1;
     const char * x;
 
-    while ( ( x = (const char *)memchr( _PDCLIB_digits, tolower( **p ), base ) ) != NULL )
+    while ( ( x = (const char *)memchr( _PDCLIB_digits, tolower( (unsigned char)**p ), base ) ) != NULL )
     {
         digit = x - _PDCLIB_digits;
 
@@ -32,7 +32,7 @@ _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, uintm
 
             /* TODO: Only if endptr != NULL - but do we really want *another* parameter? */
             /* TODO: Earlier version was missing tolower() here but was not caught by tests */
-            while ( memchr( _PDCLIB_digits, tolower( **p ), base ) != NULL )
+            while ( memchr( _PDCLIB_digits, tolower( (unsigned char)**p ), base ) != NULL )
             {
                 ++( *p );
             }
