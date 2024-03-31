@@ -23,6 +23,9 @@ Arthur David Olson et al., for their work on the Time Zone Database and the
 tzcode reference implementation on which most of PDCLib's time functions are
 based, thanks.
 
+Junekey Jeon, for allowing me to use the implementation for his Dragonbox
+fp-to-text conversion algorithm as reference for my CC0 implementation, thanks.
+
 Paul Bourke (author of mathlib), for allowing me access to a complete math
 library under public domain terms so I could use it as a reference, thanks.
 
