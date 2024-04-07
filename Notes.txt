@@ -23,6 +23,11 @@ Arthur David Olson et al., for their work on the Time Zone Database and the
 tzcode reference implementation on which most of PDCLib's time functions are
 based, thanks.
 
+David M. Gay, for releasing his dtoa.c (implementing strtod() as well as
+binary-to-text conversion on floating point numbers) under a license that
+should be good enough for most PDCLib users. Better than waiting for me to
+get those features implemented, anyway.
+
 Junekey Jeon, for allowing me to use the implementation for his Dragonbox
 fp-to-text conversion algorithm as reference for my CC0 implementation, thanks.
 

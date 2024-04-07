@@ -462,6 +462,13 @@ _PDCLIB_LOCAL int _PDCLIB_getstream( struct _PDCLIB_file_t * stream );
 _PDCLIB_LOCAL char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, _PDCLIB_size_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char ** _PDCLIB_restrict ptr );
 
 /* -------------------------------------------------------------------------- */
+/* Declaration of helper functions (implemented in functions/_dtoa).          */
+/* -------------------------------------------------------------------------- */
+
+_PDCLIB_LOCAL void _PDCLIB_freedtoa( char * s );
+_PDCLIB_LOCAL char * _PDCLIB_dtoa( double dd, int mode, int ndigits, int * decpt, int * sign, char ** rve );
+
+/* -------------------------------------------------------------------------- */
 /* errno                                                                      */
 /* -------------------------------------------------------------------------- */
 

@@ -4,6 +4,11 @@ PDCLib - Public Domain C Library
 License
 -------
 
+With the exception of functions/_dtoa/dtoa.c, which is under its
+own license, the following license applies to the whole of PDCLib.
+
+-------
+
 PDCLib is distributed unter the Creative Commons CC0 License. You
 should have received a copy of the full legal text of this license
 as part of this distribution (COPYING.CC0). It is also available at
