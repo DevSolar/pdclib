@@ -225,6 +225,10 @@ set( PDCLIB_SOURCES
      platform/example/functions/time/time.c
      platform/example/functions/time/timespec_get.c
 
+     functions/_dlmalloc/malloc.c
+
+     functions/_dtoa/dtoa.c
+
      functions/_tzcode/_PDCLIB_gmtcheck.c
      functions/_tzcode/_PDCLIB_gmtsub.c
      functions/_tzcode/_PDCLIB_increment_overflow.c
@@ -382,22 +386,9 @@ set( PDCLIB_NOINSTALL_HEADERS
      #include/pdclib/_PDCLIB_tzcode.h
 )
 
-# dlmalloc, compiled separately as its inclusion of system headers conflicts
-# with PDCLib headers (specifically, struct timespec).
-add_library( _dlmalloc OBJECT functions/_dlmalloc/malloc.c )
-add_library( _dlmallocs OBJECT functions/_dlmalloc/malloc.c )
-target_include_directories( _dlmalloc  PRIVATE ${CMAKE_BINARY_DIR}/configured_include )
-target_include_directories( _dlmallocs PRIVATE ${CMAKE_BINARY_DIR}/configured_include )
-
-# dtoa, compiled separately to avoid any misunderstandings as to licensing.
-add_library( _dtoa  OBJECT functions/_dtoa/dtoa.c )
-add_library( _dtoas OBJECT functions/_dtoa/dtoa.c )
-target_include_directories( _dtoa  PRIVATE ${CMAKE_BINARY_DIR}/configured_include include platform/example/include )
-target_include_directories( _dtoas PRIVATE ${CMAKE_BINARY_DIR}/configured_include include platform/example/include )
-
 # Two libraries, one for dynamic linking, one for static linking.
-add_library( pdclib  SHARED ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmalloc>  $<TARGET_OBJECTS:_dtoa>  ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} )
-add_library( pdclibs STATIC ${PDCLIB_SOURCES} $<TARGET_OBJECTS:_dlmallocs> $<TARGET_OBJECTS:_dtoas> ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} )
+add_library( pdclib  SHARED ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} )
+add_library( pdclibs STATIC ${PDCLIB_SOURCES} ${PDCLIB_HEADERS} ${PDCLIB_PRIVATE_HEADERS} ${PDCLIB_NOINSTALL_HEADERS} )
 
 if ( USE_THREADS )
     # The example implementation makes use of pthread. We use CMake facilities
@@ -419,7 +410,7 @@ target_include_directories( pdclibs BEFORE PRIVATE ${CMAKE_BINARY_DIR}/configure
 
 # The code for the DLL / shared object should be compiled with whatever
 # options are appropriate for your compiler to generate relocatable code.
-set_property( TARGET pdclib _dlmalloc _dtoa PROPERTY POSITION_INDEPENDENT_CODE 1 )
+set_property( TARGET pdclib PROPERTY POSITION_INDEPENDENT_CODE 1 )
 
 # List of strict warnings; the compiler is your friend.
 if ( CMAKE_COMPILER_IS_GNUCC )
@@ -428,13 +419,17 @@ if ( CMAKE_COMPILER_IS_GNUCC )
     # specifically __STDC_NO_THREADS__ (by including stdc-predef.h). I
     # was unable to identify a more elegant way to achieve this.
     set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Winline -Wno-long-long -Wuninitialized -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H -nostdlib" )
-
+    set( NOFLAGS "-Wno-sign-compare" )
     if ( NOT AS_CXX )
         string( APPEND FLAGS " -Wmissing-prototypes -Wnested-externs -Wstrict-prototypes -Wdeclaration-after-statement" )
     endif()
 elseif( MSVC )
     set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
+    set( NOFLAGS "" )
 endif()
+
+# dtoa.c contains various warnings about signed / unsigned comparisons
+set_source_files_properties( functions/_dtoa/dtoa.c PROPERTIES COMPILE_OPTIONS ${NOFLAGS} )
 
 # Optionally, use C++ compiler instead of C compiler.
 if ( AS_CXX )
@@ -450,8 +445,6 @@ endif()
 # in _PDCLIB_config.h)
 set_property( TARGET pdclib  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS}" )
 set_property( TARGET pdclibs APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS}" )
-set_property( TARGET _dtoa  APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_BUILD ${FLAGS} -Wno-sign-compare" )
-set_property( TARGET _dtoas APPEND_STRING PROPERTY COMPILE_FLAGS "-D_PDCLIB_STATIC_DEFINE ${FLAGS} -Wno-sign-compare" )
 
 # On Windows, both a dynamic .dll and a static .a library require their own
 # respective .lib file, which is why the static library has its distinctive
