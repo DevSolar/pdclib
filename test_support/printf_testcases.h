@@ -164,6 +164,13 @@
     PRINTF_TEST( 7, "-0x8p-3", "%La", -1.0L );
     PRINTF_TEST( 11, "0xf.ffffp-3", "%.4La", 1.999998L );
     PRINTF_TEST( 12, "0xf.fffefp-3", "%.5La", 1.999998L );
+#elif LDBL_MANT_DIG == 113
+    PRINTF_TEST( 6, "0x1p+2", "%La", 4.0L );
+    PRINTF_TEST( 6, "0x1p-2", "%La", 0.25L );
+    PRINTF_TEST( 7, "-0x1p+0", "%La", -1.0L );
+    PRINTF_TEST( 8, "0x1.8p+0", "%La", 1.5L );
+    PRINTF_TEST( 11, "0x2.0000p+0", "%.4La", 1.999998L );
+    PRINTF_TEST( 12, "0x1.ffffep+0", "%.5La", 1.999998L );
 #endif
 
 /******************************************************************************

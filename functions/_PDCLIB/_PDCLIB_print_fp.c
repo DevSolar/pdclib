@@ -13,6 +13,7 @@
 
 #include "pdclib/_PDCLIB_print.h"
 
+extern int dprintf( int, char const *, ... );
 #define OP -
 /* dec:      1 - normalized, 0 - subnormal
    mant:     MSB of the mantissa
@@ -38,6 +39,8 @@ static void _PDCLIB_print_hexa( int sign,
 
     char const * digit_chars = ( status->flags & E_lower ) ? _PDCLIB_digits : _PDCLIB_Xdigits;
 
+    int index_offset = 0;
+
     _PDCLIB_static_assert( _PDCLIB_FLT_RADIX == 2, "Assuming 2-based FP" );
     _PDCLIB_static_assert( _PDCLIB_CHAR_BIT == 8, "Assuming 8-bit bytes" );
 
@@ -46,14 +49,20 @@ static void _PDCLIB_print_hexa( int sign,
 
     /* Handle the most significant byte (which might need masking) */
     excess_bits = ( mant_dig - 1 ) % 8;
-    value = *mant & ( ( 1 << excess_bits ) - 1 );
 
-    if ( excess_bits >= 4 )
+    if ( excess_bits > 0 )
     {
-        mantissa[1] = value & 0x0f;
-        value >>= 4;
-        excess_bits -= 4;
-        ++m;
+        value = *mant & ( ( 1 << excess_bits ) - 1 );
+
+        if ( excess_bits >= 4 )
+        {
+            mantissa[1] = value & 0x0f;
+            value >>= 4;
+            excess_bits -= 4;
+            ++m;
+        }
+
+        index_offset = 1;
     }
 
     mantissa[0] = ( dec << excess_bits ) | ( value & ( ( 1 << excess_bits ) - 1 ) );
@@ -66,7 +75,7 @@ static void _PDCLIB_print_hexa( int sign,
     */
     while ( m < ( ( mant_dig + 3 ) / 4 - 1 ) )
     {
-        value = *(mant OP ( ( m / 2 ) + 1 ) );
+        value = *(mant OP ( ( m / 2 ) + index_offset ) );
         mantissa[++m] = ( value & 0xf0 ) >> 4;
         mantissa[++m] = ( value & 0x0f );
     }
