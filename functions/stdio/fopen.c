@@ -88,7 +88,7 @@ int main( void )
     FILE * fh;
     remove( testfile );
     TESTCASE_NOREG( fopen( NULL, NULL ) == NULL );
-    TESTCASE( fopen( NULL, "w" ) == NULL );
+    TESTCASE_NOREG( fopen( NULL, "w" ) == NULL );
     TESTCASE_NOREG( fopen( "", NULL ) == NULL );
     TESTCASE( fopen( "", "w" ) == NULL );
     TESTCASE( fopen( testfile, "" ) == NULL );

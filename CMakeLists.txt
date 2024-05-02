@@ -419,17 +419,15 @@ if ( CMAKE_COMPILER_IS_GNUCC )
     # specifically __STDC_NO_THREADS__ (by including stdc-predef.h). I
     # was unable to identify a more elegant way to achieve this.
     set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Winline -Wno-long-long -Wuninitialized -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H -nostdlib" )
-    set( NOFLAGS "-Wno-sign-compare" )
     if ( NOT AS_CXX )
         string( APPEND FLAGS " -Wmissing-prototypes -Wnested-externs -Wstrict-prototypes -Wdeclaration-after-statement" )
     endif()
+    # dtoa.c contains various warnings about signed / unsigned comparisons
+    set_source_files_properties( functions/_dtoa/dtoa.c PROPERTIES COMPILE_OPTIONS -Wno-sign-compare )
 elseif( MSVC )
     set( FLAGS "/W4 /D_CRT_SECURE_NO_WARNINGS /wd4996" )
     set( NOFLAGS "" )
 endif()
-
-# dtoa.c contains various warnings about signed / unsigned comparisons
-set_source_files_properties( functions/_dtoa/dtoa.c PROPERTIES COMPILE_OPTIONS ${NOFLAGS} )
 
 # Optionally, use C++ compiler instead of C compiler.
 if ( AS_CXX )

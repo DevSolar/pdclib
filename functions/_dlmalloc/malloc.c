@@ -1323,8 +1323,8 @@ DLMALLOC_EXPORT void  dlmalloc_stats(void);
 
   p = malloc(n);
   assert(malloc_usable_size(p) >= 256);
-*/
 size_t dlmalloc_usable_size(void*);
+*/
 
 #endif /* ONLY_MSPACES */
 
@@ -5443,6 +5443,7 @@ int dlmallopt(int param_number, int value) {
   return change_mparam(param_number, value);
 }
 
+/*
 size_t dlmalloc_usable_size(void* mem) {
   if (mem != 0) {
     mchunkptr p = mem2chunk(mem);
@@ -5451,6 +5452,7 @@ size_t dlmalloc_usable_size(void* mem) {
   }
   return 0;
 }
+*/
 
 #endif /* !ONLY_MSPACES */
 

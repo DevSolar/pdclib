@@ -1,6 +1,6 @@
---- malloc-2.8.6.c	2016-05-23 13:25:14.000000000 +0100
-+++ malloc.c	2019-04-28 14:42:16.225706331 +0100
-@@ -1,3 +1,62 @@
+--- malloc-2.8.6.c	2024-05-01 19:50:19.477383272 +0200
++++ malloc.c	2024-05-02 21:47:51.377419724 +0200
+@@ -1,3 +1,63 @@
 +/* malloc( size_t )
 +   calloc( size_t, size_t )
 +   realloc( void *, size_t )
@@ -22,6 +22,7 @@
 +#ifndef REGTEST
 +
 +#include "pdclib/_PDCLIB_config.h"
++#include "pdclib/_PDCLIB_defguard.h"
 +
 +/* Have all functions herein use the dl* prefix */
 +#define USE_DL_PREFIX 1
@@ -63,7 +64,7 @@
  /*
    This is a version (aka dlmalloc) of malloc/free/realloc written by
    Doug Lea and released to the public domain, as explained at
-@@ -585,8 +644,15 @@
+@@ -585,8 +645,15 @@
  #define MAX_SIZE_T           (~(size_t)0)
  
  #ifndef USE_LOCKS /* ensure true if spin or recursive locks set */
@@ -81,7 +82,7 @@
  #endif /* USE_LOCKS */
  
  #if USE_LOCKS /* Spin locks for gcc >= 4.1, older gcc on x86, MSC >= 1310 */
-@@ -851,7 +917,7 @@
+@@ -851,7 +918,7 @@
    maximum supported value of n differs across systems, but is in all
    cases less than the maximum representable value of a size_t.
  */
@@ -90,7 +91,7 @@
  
  /*
    free(void* p)
-@@ -860,14 +926,14 @@
+@@ -860,14 +927,14 @@
    It has no effect if p is null. If p was not malloced or already
    freed, free(p) will by default cause the current program to abort.
  */
@@ -107,7 +108,7 @@
  
  /*
    realloc(void* p, size_t n)
-@@ -891,7 +957,7 @@
+@@ -891,7 +958,7 @@
    The old unix realloc convention of allowing the last-free'd chunk
    to be used as an argument to realloc is not supported.
  */
@@ -116,7 +117,7 @@
  
  /*
    realloc_in_place(void* p, size_t n)
-@@ -996,7 +1062,7 @@
+@@ -996,7 +1063,7 @@
    guarantee that this number of bytes can actually be obtained from
    the system.
  */
@@ -125,3 +126,29 @@
  
  /*
    malloc_set_footprint_limit();
+@@ -1256,8 +1323,8 @@
+ 
+   p = malloc(n);
+   assert(malloc_usable_size(p) >= 256);
+-*/
+ size_t dlmalloc_usable_size(void*);
++*/
+ 
+ #endif /* ONLY_MSPACES */
+ 
+@@ -5376,6 +5443,7 @@
+   return change_mparam(param_number, value);
+ }
+ 
++/*
+ size_t dlmalloc_usable_size(void* mem) {
+   if (mem != 0) {
+     mchunkptr p = mem2chunk(mem);
+@@ -5384,6 +5452,7 @@
+   }
+   return 0;
+ }
++*/
+ 
+ #endif /* !ONLY_MSPACES */
+ 

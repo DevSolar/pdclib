@@ -5445,6 +5445,7 @@ dtoa_r(double dd, int mode, int ndigits, int *decpt, int *sign, char **rve, char
 				switch(Rounding) {
 				  case 0: goto retc;
 				  case 2: goto Roundup;
+				  default: break;
 				  }
 				ures = 2*res;
 				if (ures > den
