@@ -399,6 +399,23 @@ struct _PDCLIB_imaxdiv_t
 /* Floating Point                                                             */
 /* -------------------------------------------------------------------------- */
 
+/* The patterns of the relevant bits in the FPU control register,
+   as used by the functions in <fenv.h>.
+*/
+#ifdef __x86_64__
+#define _PDCLIB_FE_DOWNWARD   1
+#define _PDCLIB_FE_TONEAREST  0
+#define _PDCLIB_FE_TOWARDZERO 3
+#define _PDCLIB_FE_UPWARD     2
+#elif __aarch64__
+#define _PDCLIB_FE_DOWNWARD   2
+#define _PDCLIB_FE_TONEAREST  0
+#define _PDCLIB_FE_TOWARDZERO 3
+#define _PDCLIB_FE_UPWARD     1
+#else
+#error Platform not supported.
+#endif
+
 /* Whether the implementation rounds toward zero (0), to nearest (1), toward  */
 /* positive infinity (2), or toward negative infinity (3). (-1) signifies     */
 /* indeterminable rounding, any other value implementation-specific rounding. */
