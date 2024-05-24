@@ -341,6 +341,7 @@ set( PDCLIB_HEADERS
      include/assert.h
      include/ctype.h
      include/errno.h
+     include/fenv.h
      include/inttypes.h
      include/iso646.h
      include/limits.h
