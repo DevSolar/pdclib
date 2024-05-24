@@ -85,6 +85,8 @@ set( PDCLIB_SOURCES
      functions/ctype/tolower.c
      functions/ctype/toupper.c
 
+     platform/example/functions/fenv/fegetround.c
+
      functions/inttypes/imaxabs.c
      functions/inttypes/imaxdiv.c
      functions/inttypes/strtoimax.c

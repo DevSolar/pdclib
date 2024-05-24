@@ -24,6 +24,16 @@ extern "C" {
    settings and exception flags not being tested.
 */
 
+/* A type holding the entire floating-point environment (exception status
+   flags, rounding mode, plus implementation-defined additional data).
+*/
+typedef int fenv_t;
+
+/* A type holding the floating-point status flags, plus implementation-
+   defined additional data.
+*/
+typedef int fexcept_t;
+
 /* Floating-point exception macros */
 
 /*
