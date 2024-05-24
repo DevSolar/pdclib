@@ -86,6 +86,7 @@ set( PDCLIB_SOURCES
      functions/ctype/toupper.c
 
      platform/example/functions/fenv/fegetround.c
+     platform/example/functions/fenv/fesetround.c
 
      functions/inttypes/imaxabs.c
      functions/inttypes/imaxdiv.c
