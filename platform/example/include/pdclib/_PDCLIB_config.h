@@ -419,7 +419,8 @@ struct _PDCLIB_imaxdiv_t
 /* Whether the implementation rounds toward zero (0), to nearest (1), toward  */
 /* positive infinity (2), or toward negative infinity (3). (-1) signifies     */
 /* indeterminable rounding, any other value implementation-specific rounding. */
-#define _PDCLIB_FLT_ROUNDS -1
+/* This is only the initial (default) value, and should usually be 1.         */
+#define _PDCLIB_FLT_ROUNDS 1
 
 /* Check <float.h> for explanations on each of these values.                  */
 #define _PDCLIB_FLT_EVAL_METHOD   __FLT_EVAL_METHOD__
