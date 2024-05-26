@@ -8,7 +8,7 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
-#if __STDC_VERSION__ >= 201112L
+#if __STDC_VERSION__ >= 201112L && ! defined( __STDC_NO_THREADS__ )
 _Thread_local int _PDCLIB_errno = 0;
 #else
 static int _PDCLIB_errno = 0;
@@ -27,7 +27,7 @@ int * _PDCLIB_errno_func()
 
 #include <errno.h>
 
-#if ! defined( REGTEST ) && __STDC_VERSION__ >= 201112L
+#if ! defined( REGTEST ) && __STDC_VERSION__ >= 201112L && ! defined( __STDC_NO_THREADS__ )
 
 #include <threads.h>
 
@@ -50,7 +50,7 @@ int main( void )
     errno = ERANGE;
     TESTCASE( errno == ERANGE );
 
-#if ! defined( REGTEST ) && __STDC_VERSION__ >= 201112L
+#if ! defined( REGTEST ) && __STDC_VERSION__ >= 201112L && ! defined( __STDC_NO_THREADS__ )
     {
         thrd_t t;
         struct timespec spec = { 1, 0 };
