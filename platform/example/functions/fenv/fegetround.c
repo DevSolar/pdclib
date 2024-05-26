@@ -16,11 +16,11 @@ int fegetround( void )
     __asm__ ( "fnstcw %0" : "=m" (fpu_control) );
     return ( fpu_control & UINT16_C( 0x0c00 ) ) >> 10;
 #elif __aarch64__
-    uint32_t fpu_control;
+    uint64_t fpu_control;
     __asm__ __volatile__ ( "mrs %0, fpcr" : "=r" (fpu_control) );
-    return ( fpu_control & UINT32_C( 0x00c00000 ) ) >> 22;
+    return ( fpu_control & UINT64_C( 0x00c00000 ) ) >> 22;
 #else
-#error Platform not supported.
+#error Platform not supported. Please add own port.
 #endif
 }
 
