@@ -4,6 +4,11 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#if ! defined( __GNUC__ ) || defined( __clang__ )
+/* GCC does not support #pragma STDC */
+#pragma STDC FENV_ACCESS ON
+#endif
+
 #include <fenv.h>
 #include <stdint.h>
 
