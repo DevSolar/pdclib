@@ -42,14 +42,14 @@ int fesetround( int round )
             }
 #elif __aarch64__
             {
-                uint32_t fpu_control;
+                uint64_t fpu_control;
                 __asm__ ( "mrs %0, fpcr" : "=r" ( fpu_control ) );
-                fpu_control &= UINT32_C( 3 ) << 22;
+                fpu_control &= UINT64_C( 3 ) << 22;
                 fpu_control |= round << 22;
                 __asm__ ( "msr fpcr, %0" : : "r" ( fpu_control ) );
             }
 #else
-#error Platform not supported.
+#error Platform not supported. Please add own port.
 #endif
             return 0;
         default:
@@ -64,9 +64,33 @@ int fesetround( int round )
 
 #include "_PDCLIB_test.h"
 
+#include <float.h>
+
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    TESTCASE( FLT_ROUNDS == 1 );
+    TESTCASE( fegetround() == FE_TONEAREST );
+
+    TESTCASE( fesetround( FE_TOWARDZERO ) == 0 );
+    TESTCASE( fegetround() == FE_TOWARDZERO );
+#if ! defined( __GNUC__ ) || defined( __clang__ )
+    /* GCC Bug 30569 */
+    /* https://stackoverflow.com/a/78533054/60281 */
+    TESTCASE( FLT_ROUNDS == 0 );
+#endif
+
+    TESTCASE( fesetround( FE_UPWARD ) == 0 );
+    TESTCASE( fegetround() == FE_UPWARD );
+#if ! defined( __GNUC__ ) || defined( __clang__ )
+    TESTCASE( FLT_ROUNDS == 2 );
+#endif
+
+    TESTCASE( fesetround( FE_DOWNWARD ) == 0 );
+    TESTCASE( fegetround() == FE_DOWNWARD );
+#if ! defined( __GNUC__ ) || defined( __clang__ )
+    TESTCASE( FLT_ROUNDS == 3 );
+#endif
+
     return TEST_RESULTS;
 }
 
