@@ -70,11 +70,24 @@ int fesetround( int round )
 #include "_PDCLIB_test.h"
 
 #include <float.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 int main( void )
 {
+    double d;
+    double down = 0x1.9999999999999p-4;
+    double up = 0x1.999999999999ap-4;
+    double down_n = -0x1.999999999999ap-4;
+    double up_n = -0x1.9999999999999p-4;
+
+
     TESTCASE( FLT_ROUNDS == 1 );
     TESTCASE( fegetround() == FE_TONEAREST );
+    d = strtod( "0.1", NULL );
+    TESTCASE( d == up );
+    d = strtod( "-0.1", NULL );
+    TESTCASE( d == down_n );
 
     TESTCASE( fesetround( FE_TOWARDZERO ) == 0 );
     TESTCASE( fegetround() == FE_TOWARDZERO );
@@ -83,18 +96,30 @@ int main( void )
     /* https://stackoverflow.com/a/78533054/60281 */
     TESTCASE( FLT_ROUNDS == 0 );
 #endif
+    d = strtod( "0.1", NULL );
+    TESTCASE( d == down );
+    d = strtod( "-0.1", NULL );
+    TESTCASE( d == up_n );
 
     TESTCASE( fesetround( FE_UPWARD ) == 0 );
     TESTCASE( fegetround() == FE_UPWARD );
 #if ! defined( __GNUC__ ) || defined( __clang__ )
     TESTCASE( FLT_ROUNDS == 2 );
 #endif
+    d = strtod( "0.1", NULL );
+    TESTCASE( d == up );
+    d = strtod( "-0.1", NULL );
+    TESTCASE( d == up_n );
 
     TESTCASE( fesetround( FE_DOWNWARD ) == 0 );
     TESTCASE( fegetround() == FE_DOWNWARD );
 #if ! defined( __GNUC__ ) || defined( __clang__ )
     TESTCASE( FLT_ROUNDS == 3 );
 #endif
+    d = strtod( "0.1", NULL );
+    TESTCASE( d == down );
+    d = strtod( "-0.1", NULL );
+    TESTCASE( d == down_n );
 
     return TEST_RESULTS;
 }
