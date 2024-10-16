@@ -64,7 +64,7 @@ Everyone bearing with me during the "stdio block", a period of many years in
 which PDCLib received not a single update because I was stuck and could not
 find the time and energy to work it out, thanks.
 
-Lennart Frid�n and Sammy Nordstr�m, who have been great pals even after I sunk
+Lennart Fridén and Sammy Nordström, who have been great pals even after I sunk
 some other project that had eaten countless hours of work between the three of
 us, thanks.
 
