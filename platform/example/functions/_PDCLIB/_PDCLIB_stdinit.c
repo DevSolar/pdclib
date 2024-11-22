@@ -519,7 +519,7 @@ struct _PDCLIB_lc_time_t _PDCLIB_lc_time_C =
         ( char * )"Aug",
         ( char * )"Sep",
         ( char * )"Oct",
-        ( char * )"Now",
+        ( char * )"Nov",
         ( char * )"Dec"
     },
     /* _PDCLIB_month_name_full */
