@@ -13,7 +13,7 @@
 
 #include <string.h>
 
-#include "/usr/include/errno.h"
+#include "pdclib/_PDCLIB_platform_errno.h"
 
 extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 

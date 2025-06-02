@@ -50,6 +50,16 @@ configure_file( platform/example/include/pdclib/_PDCLIB_config.h
     configured_include/pdclib/_PDCLIB_config.h
 )
 
+find_path( ERRNO_PATH errno.h DOC "Path to the system <errno.h>" )
+find_path( FCNTL_PATH fcntl.h DOC "Path to the system <fcntl.h>" )
+
+configure_file( platform/example/include/pdclib/_PDCLIB_platform_errno.h
+    configured_include/pdclib/_PDCLIB_platform_errno.h
+)
+configure_file( platform/example/include/pdclib/_PDCLIB_platform_fcntl.h
+    configured_include/pdclib/_PDCLIB_platform_fcntl.h
+)
+
 # Debug is the default setting anyway, but better to make it explicit and
 # give output about it.
 if ( NOT CMAKE_BUILD_TYPE )

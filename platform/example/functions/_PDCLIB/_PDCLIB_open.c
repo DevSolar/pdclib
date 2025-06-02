@@ -20,7 +20,7 @@
 #include "fcntl.h"
 #include "unistd.h"
 
-#include "/usr/include/errno.h"
+#include "pdclib/_PDCLIB_platform_errno.h"
 
 _PDCLIB_fd_t _PDCLIB_open( const char * const filename, unsigned int mode )
 {
