@@ -27,8 +27,8 @@ int fesetround( int round )
 #ifdef FE_DOWNWARD
         case FE_DOWNWARD:
 #endif
-#ifdef FE_TRUNCATE
-        case FE_TRUNCATE:
+#ifdef FE_TOWARDZERO
+        case FE_TOWARDZERO:
 #endif
 #ifdef __x86_64__
             {
