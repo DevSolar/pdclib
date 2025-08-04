@@ -26,7 +26,7 @@
 #include "pdclib/_PDCLIB_glue.h"
 #include "pdclib/_PDCLIB_defguard.h"
 
-#include "/usr/include/errno.h"
+#include "pdclib/_PDCLIB_platform_errno.h"
 
 /* The system calls provided for renaming are rename(), renameat()
    and renameat2(). Using rename() is not possible, since we have
@@ -35,7 +35,7 @@
    AT_FDCWD is declared in fcntl.h. We need to manually declare
    renameat() here as it is declared in system's <stdio.h>.
 */
-#include "/usr/include/fcntl.h"
+#include "pdclib/_PDCLIB_platform_fcntl.h"
 
 #ifdef __cplusplus
 extern "C" {

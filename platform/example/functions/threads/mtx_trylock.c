@@ -8,7 +8,7 @@
 
 #include <threads.h>
 
-#include "/usr/include/errno.h"
+#include "pdclib/_PDCLIB_platform_errno.h"
 
 #ifdef __cplusplus
 extern "C" {

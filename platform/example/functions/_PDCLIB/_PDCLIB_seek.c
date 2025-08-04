@@ -15,7 +15,7 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-#include "/usr/include/errno.h"
+#include "pdclib/_PDCLIB_platform_errno.h"
 
 #ifdef __cplusplus
 extern "C" {
