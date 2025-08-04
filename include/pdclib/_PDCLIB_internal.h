@@ -616,13 +616,11 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const cha
 #define _PDCLIB_BIGINT_BITS 1024
 
 #if _PDCLIB_BIGINT_DIGIT_BITS == 32
-#define _PDCLIB_BIGINT_DIGIT_MAX UINT32_C( 0xFFFFFFFF )
-#define _PDCLIB_BIGINT_BASE ( UINT64_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
+#define _PDCLIB_BIGINT_DIGIT_MAX _PDCLIB_UINT_LEAST32_C( 0xFFFFFFFF )
 typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_digit_t;
 typedef _PDCLIB_uint_least64_t _PDCLIB_bigint_arith_t;
 #elif _PDCLIB_BIGINT_DIGIT_BITS == 16
-#define _PDCLIB_BIGINT_DIGIT_MAX UINT16_C( 0xFFFF )
-#define _PDCLIB_BIGINT_BASE ( UINT32_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
+#define _PDCLIB_BIGINT_DIGIT_MAX _PDCLIB_UINT_LEAST16_C( 0xFFFF )
 typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_digit_t;
 typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_arith_t;
 #else
