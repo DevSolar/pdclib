@@ -620,22 +620,13 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const cha
 #define _PDCLIB_BIGINT_BASE ( UINT64_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
 typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_digit_t;
 typedef _PDCLIB_uint_least64_t _PDCLIB_bigint_arith_t;
-typedef _PDCLIB_int_least64_t _PDCLIB_bigint_sarith_t;
 #elif _PDCLIB_BIGINT_DIGIT_BITS == 16
 #define _PDCLIB_BIGINT_DIGIT_MAX UINT16_C( 0xFFFF )
 #define _PDCLIB_BIGINT_BASE ( UINT32_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
 typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_digit_t;
 typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_arith_t;
-typedef _PDCLIB_int_least32_t _PDCLIB_bigint_sarith_t;
-#elif _PDCLIB_BIGINT_DIGIT_BITS == 8
-/* For testing purposes only. */
-#define _PDCLIB_BIGINT_DIGIT_MAX UINT8_C( 0xFF )
-#define _PDCLIB_BIGINT_BASE ( UINT16_C(1) << _PDCLIB_BIGINT_DIGIT_BITS )
-typedef _PDCLIB_uint_least8_t  _PDCLIB_bigint_digit_t;
-typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_arith_t;
-typedef _PDCLIB_int_least16_t _PDCLIB_bigint_sarith_t;
 #else
-#error Only 16 or 32 supported for _PDCLIB_BIGINT_DIGIT_BITS.
+#error _PDCLIB_BIGINT_DIGIT_BITS.needs to be 16 or 32.
 #endif
 
 /* How many "digits" a _PDCLIB_bigint_t holds.                                */
@@ -649,107 +640,11 @@ typedef _PDCLIB_int_least16_t _PDCLIB_bigint_sarith_t;
 
 typedef struct
 {
-    /* Least significant digit first */
-    _PDCLIB_bigint_digit_t data[ _PDCLIB_BIGINT_DIGITS ];
     /* Number of digits used; zero value == zero size */
     _PDCLIB_size_t size;
+    /* Least significant digit first */
+    _PDCLIB_bigint_digit_t data[ _PDCLIB_BIGINT_DIGITS ];
 } _PDCLIB_bigint_t;
-
-/* Initializer */
-/* ----------- */
-
-/* Sets a bigint to pow2( n ) */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint2( _PDCLIB_bigint_t * bigint, unsigned n );
-
-/* Sets a bigint to pow10( n ) */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint10( _PDCLIB_bigint_t * bigint, unsigned n );
-
-/* Sets a bigint from a 32bit input value. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint32( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t value );
-
-/* Sets a bigint from two 32bit input values. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint64( _PDCLIB_bigint_t * bigint, _PDCLIB_uint_least32_t high, _PDCLIB_uint_least32_t low );
-
-/* Sets a bigint to the mantissa of a floating point value, as used rather
-   specifically in _PDCLIB_print_fp.c.
-*/
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mant( _PDCLIB_bigint_t * bigint, unsigned char const * mant, _PDCLIB_size_t mant_dig );
-
-/* Sets a bigint from another bigint. (Copies only value->size digits, so it is
-   faster than a POD copy of a _PDCLIB_bigint_t in most cases.)
-*/
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint( _PDCLIB_bigint_t * _PDCLIB_restrict bigint, _PDCLIB_bigint_t const * _PDCLIB_restrict value );
-
-/* Comparison, Output */
-/* ------------------ */
-
-/* Compares two given bigint values. Returns 0 if lhs == rhs, a negative number
-   if lhs < rhs, and a positive number if lhs > rhs.
-*/
-_PDCLIB_LOCAL int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
-
-/* Writes a hexadecimal representation of the given bigint into the given buffer.
-   Buffer should be at least _PDCLIB_BIGINT_CHARS in size.
-*/
-_PDCLIB_LOCAL char * _PDCLIB_bigint_tostring( _PDCLIB_bigint_t const * _PDCLIB_restrict value, char * _PDCLIB_restrict buffer );
-
-/* Operations (in-place) */
-/* --------------------- */
-
-/* Adds to a given bigint another given bigint. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_add( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
-
-/* Substracts from a given bigint another given bigint. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_sub( _PDCLIB_bigint_t * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
-
-/* Multiplies a given bigint with a given 32bit value. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mul_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
-
-/* Divides a given bigint by a given 32bit value. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_div_dig( _PDCLIB_bigint_t * lhs, _PDCLIB_bigint_digit_t rhs );
-
-/* Shifts a given bigint left by a given count of bits. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_shl( _PDCLIB_bigint_t * lhs, unsigned rhs );
-
-/* Operations (into new bigint) */
-/* ---------------------------- */
-
-/* Multiplies a given bigint with another given bigint. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_mul( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
-
-/* Divides a given bigint by another given bigint. */
-_PDCLIB_LOCAL _PDCLIB_bigint_t * _PDCLIB_bigint_div( _PDCLIB_bigint_t * _PDCLIB_restrict result, _PDCLIB_bigint_t const * _PDCLIB_restrict lhs, _PDCLIB_bigint_t const * _PDCLIB_restrict rhs );
-
-/* Queries */
-/* ------- */
-
-/* Returns the log2() of a given bigint, i.e. the offset of the highest
-   bit set.
-*/
-_PDCLIB_LOCAL unsigned _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint );
-
-/* Returns the "inverse" log2() of a given bigint, i.e. the offset of the
-   lowest bit set.
-*/
-_PDCLIB_LOCAL unsigned _PDCLIB_bigint_invlog2( _PDCLIB_bigint_t const * bigint );
-
-/* FP Conversions */
-/* -------------- */
-
-/* Split a float into its integral components.
-   Returns 1 if value is negative, zero otherwise.
-*/
-_PDCLIB_LOCAL int _PDCLIB_float_split( float value, unsigned * exponent, _PDCLIB_bigint_t * significand );
-
-/* Split a double into its integral components.
-   Returns 1 if value is negative, zero otherwise.
-*/
-_PDCLIB_LOCAL int _PDCLIB_double_split( double value, unsigned * exponent, _PDCLIB_bigint_t * significand );
-
-/* Split a long double into its integral components.
-   Returns 1 if value is negative, zero otherwise.
-*/
-_PDCLIB_LOCAL int _PDCLIB_long_double_split( long double value, unsigned * exponent, _PDCLIB_bigint_t * significand );
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */

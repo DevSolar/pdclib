@@ -237,8 +237,6 @@ set( PDCLIB_SOURCES
 
      functions/_dlmalloc/malloc.c
 
-     functions/_dtoa/dtoa.c
-
      functions/_tzcode/_PDCLIB_gmtcheck.c
      functions/_tzcode/_PDCLIB_gmtsub.c
      functions/_tzcode/_PDCLIB_increment_overflow.c
@@ -255,23 +253,6 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/assert.c
      functions/_PDCLIB/errno.c
      functions/_PDCLIB/_PDCLIB_atomax.c
-     functions/_PDCLIB/_PDCLIB_bigint.c
-     functions/_PDCLIB/_PDCLIB_bigint2.c
-     functions/_PDCLIB/_PDCLIB_bigint10.c
-     functions/_PDCLIB/_PDCLIB_bigint32.c
-     functions/_PDCLIB/_PDCLIB_bigint64.c
-     functions/_PDCLIB/_PDCLIB_bigint_add.c
-     functions/_PDCLIB/_PDCLIB_bigint_sub.c
-     functions/_PDCLIB/_PDCLIB_bigint_cmp.c
-     functions/_PDCLIB/_PDCLIB_bigint_invlog2.c
-     functions/_PDCLIB/_PDCLIB_bigint_log2.c
-     functions/_PDCLIB/_PDCLIB_bigint_mant.c
-     functions/_PDCLIB/_PDCLIB_bigint_mul.c
-     functions/_PDCLIB/_PDCLIB_bigint_mul_dig.c
-     functions/_PDCLIB/_PDCLIB_bigint_div.c
-     functions/_PDCLIB/_PDCLIB_bigint_div_dig.c
-     functions/_PDCLIB/_PDCLIB_bigint_shl.c
-     functions/_PDCLIB/_PDCLIB_bigint_tostring.c
      functions/_PDCLIB/_PDCLIB_closeall.c
      functions/_PDCLIB/_PDCLIB_digits.c
      functions/_PDCLIB/_PDCLIB_filemode.c
