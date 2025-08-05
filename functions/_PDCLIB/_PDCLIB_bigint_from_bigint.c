@@ -1,4 +1,3 @@
-
 /* _PDCLIB_bigint_from_bigint( bigint_t *, bigint_t const * )
 
    This file is part of the Public Domain C Library (PDCLib).
@@ -7,14 +6,18 @@
 
 #ifndef REGTEST
 
-#include <string.h>
-
 #include "pdclib/_PDCLIB_internal.h"
 
 void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other )
 {
+    unsigned i;
+
+    for ( i = 0; i < other->size; ++i )
+    {
+        bigint->data[i] = other->data[i];
+    }
+
     bigint->size = other->size;
-    memcpy( bigint->data, other->data, other->size * sizeof( _PDCLIB_bigint_digit_t ) );
 }
 
 #endif
