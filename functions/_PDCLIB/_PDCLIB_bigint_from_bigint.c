@@ -25,7 +25,27 @@ void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t con
 
 int main( void )
 {
-    TESTCASE( NO_TESTDRIVER );
+    _PDCLIB_bigint_t bigint;
+    _PDCLIB_bigint_t testdata[] =
+    {
+        /* Only 16bit, works with 32bit digits as well. */
+        { 0, { 0u } },
+        { 1, { 0xFFFFu } },
+        { 2, { 0xAAAAu, 0xFFFFu } }
+    };
+
+    _PDCLIB_bigint_from_bigint( &bigint, &testdata[0] );
+    TESTCASE( bigint.size == 0 );
+
+    _PDCLIB_bigint_from_bigint( &bigint, &testdata[1] );
+    TESTCASE( bigint.size == 1 );
+    TESTCASE( bigint.data[0] == 0xFFFFu );
+
+    _PDCLIB_bigint_from_bigint( &bigint, &testdata[2] );
+    TESTCASE( bigint.size == 2 );
+    TESTCASE( bigint.data[0] == 0xAAAAu );
+    TESTCASE( bigint.data[1] == 0xFFFFu );
+
     return TEST_RESULTS;
 }
 
