@@ -28,6 +28,7 @@ void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t con
 
 int main( void )
 {
+#ifndef REGTEST
     _PDCLIB_bigint_t bigint;
     _PDCLIB_bigint_t testdata[] =
     {
@@ -48,6 +49,7 @@ int main( void )
     TESTCASE( bigint.size == 2 );
     TESTCASE( bigint.data[0] == 0xAAAAu );
     TESTCASE( bigint.data[1] == 0xFFFFu );
+#endif
 
     return TEST_RESULTS;
 }

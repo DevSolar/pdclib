@@ -35,8 +35,8 @@ int main( void )
     _PDCLIB_bigint_from_digit( &bigint, _PDCLIB_BIGINT_DIGIT_MAX );
     TESTCASE( bigint.size == 1 );
     TESTCASE( bigint.data[0] == _PDCLIB_BIGINT_DIGIT_MAX );
-
 #endif
+
     return TEST_RESULTS;
 }
 

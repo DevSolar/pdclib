@@ -613,7 +613,8 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const cha
 /* -------------------------------------------------------------------------- */
 
 /* Must be divisible by 32.                                                   */
-#define _PDCLIB_BIGINT_BITS 1024
+/* 1120 is enough for 64bit floats. A 128 float takes 16544 bits.             */
+#define _PDCLIB_BIGINT_BITS 1120
 
 #if _PDCLIB_BIGINT_DIGIT_BITS == 32
 #define _PDCLIB_BIGINT_DIGIT_MAX _PDCLIB_UINT_LEAST32_C( 0xFFFFFFFF )
@@ -643,6 +644,14 @@ typedef struct
     /* Least significant digit first */
     _PDCLIB_bigint_digit_t data[ _PDCLIB_BIGINT_DIGITS ];
 } _PDCLIB_bigint_t;
+
+void _PDCLIB_bigint_from_digit( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_digit_t digit );
+void _PDCLIB_bigint_from_pow2( _PDCLIB_bigint_t * bigint, unsigned pow );
+void _PDCLIB_bigint_from_pow10( _PDCLIB_bigint_t * bigint, unsigned pow );
+void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
+void _PDCLIB_bigint_add( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
+void _PDCLIB_bigint_mul( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
+int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs );
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
