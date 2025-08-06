@@ -652,6 +652,8 @@ void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t con
 void _PDCLIB_bigint_add( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
 void _PDCLIB_bigint_mul( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
 int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs );
+void _PDCLIB_bigint_shl( _PDCLIB_bigint_t * bigint, _PDCLIB_size_t bits );
+void _PDCLIB_bigint_mul10( _PDCLIB_bigint_t * bigint );
 
 /* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
