@@ -8,8 +8,6 @@
 
 #include "pdclib/_PDCLIB_internal.h"
 
-#include <stdio.h>
-
 void _PDCLIB_bigint_mul( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other )
 {
     _PDCLIB_size_t s = other->size;

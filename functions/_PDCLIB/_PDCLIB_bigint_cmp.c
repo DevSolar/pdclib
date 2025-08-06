@@ -50,27 +50,21 @@ int main( void )
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) == 0 );
 
     _PDCLIB_bigint_add( &lhs, &testdata[1] );
-
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) > 0 );
 
     _PDCLIB_bigint_add( &rhs, &testdata[1] );
-
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) == 0 );
 
     _PDCLIB_bigint_add( &rhs, &testdata[1] );
-
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) < 0 );
 
     _PDCLIB_bigint_from_bigint( &lhs, &testdata[0] );
-
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) > 0 );
 
     _PDCLIB_bigint_from_bigint( &rhs, &testdata[0] );
-
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) == 0 );
 
     _PDCLIB_bigint_add( &rhs, &testdata[1] );
-
     TESTCASE( _PDCLIB_bigint_cmp( &lhs, &rhs ) < 0 );
 #endif
 

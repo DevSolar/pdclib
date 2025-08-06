@@ -42,13 +42,10 @@ int main( void )
     TESTCASE( bigint.size == 0 );
 
     _PDCLIB_bigint_from_bigint( &bigint, &testdata[1] );
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[0] == 0xFFFFu );
+    _PDCLIB_bigint_cmp( &bigint, &testdata[1] );
 
     _PDCLIB_bigint_from_bigint( &bigint, &testdata[2] );
-    TESTCASE( bigint.size == 2 );
-    TESTCASE( bigint.data[0] == 0xAAAAu );
-    TESTCASE( bigint.data[1] == 0xFFFFu );
+    _PDCLIB_bigint_cmp( &bigint, &testdata[2] );
 #endif
 
     return TEST_RESULTS;

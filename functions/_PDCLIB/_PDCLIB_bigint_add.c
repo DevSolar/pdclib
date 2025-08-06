@@ -47,42 +47,34 @@ int main( void )
     _PDCLIB_bigint_t testdata[] =
     {
         { 1, { 0x0001u } },
-        { 2, { (_PDCLIB_bigint_digit_t)( ( (_PDCLIB_bigint_arith_t)1 << _PDCLIB_BIGINT_DIGIT_BITS ) - 1 ), 0x0001u } }
+        { 2, { (_PDCLIB_bigint_digit_t)( ( (_PDCLIB_bigint_arith_t)1 << _PDCLIB_BIGINT_DIGIT_BITS ) - 1 ), 0x0001u } },
+        { 1, { 0x0002u } },
+        { 2, { 0x0001u, 0x0002u } },
+        { 2, { 0x0000u, 0x0002u } }
     };
 
-    // 1 + 1
+    /* 1 + 1 */
     _PDCLIB_bigint_from_digit( &bigint, 1 );
     _PDCLIB_bigint_add( &bigint, &bigint );
+    _PDCLIB_bigint_cmp( &bigint, &testdata[2] );
 
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[0] == 0x0002u );
-
-    // 1 + 0x0001 0xFFFF -- carry
+    /* 1 + 0x0001 0xFFFF -- carry */
     _PDCLIB_bigint_add( &bigint, &testdata[1] );
+    _PDCLIB_bigint_cmp( &bigint, &testdata[3] );
 
-    TESTCASE( bigint.size == 2 );
-    TESTCASE( bigint.data[0] == 0x0001u );
-    TESTCASE( bigint.data[1] == 0x0002u );
-
-    // 0x0001 0xFFFF + 1 -- carry
+    /* 0x0001 0xFFFF + 1 -- carry */
     _PDCLIB_bigint_from_bigint( &bigint, &testdata[1] );
     _PDCLIB_bigint_add( &bigint, &testdata[0] );
+    _PDCLIB_bigint_cmp( &bigint, &testdata[4] );
 
-    TESTCASE( bigint.size == 2 );
-    TESTCASE( bigint.data[0] == 0x0000u );
-    TESTCASE( bigint.data[1] == 0x0002u );
-
-    // 0 + 0
+    /* 0 + 0 */
     _PDCLIB_bigint_from_digit( &bigint, 0 );
     _PDCLIB_bigint_add( &bigint, &bigint );
-
     TESTCASE( bigint.size == 0 );
 
-    // 0 + 1
+    /* 0 + 1 */
     _PDCLIB_bigint_add( &bigint, &testdata[0] );
-
-    TESTCASE( bigint.size == 1 );
-    TESTCASE( bigint.data[0] == 0x0001u );
+    _PDCLIB_bigint_cmp( &bigint, &testdata[0] );
 #endif
 
     return TEST_RESULTS;
