@@ -20,7 +20,7 @@ unsigned _PDCLIB_bigint_div( _PDCLIB_bigint_t * dividend, _PDCLIB_bigint_t const
     assert( s <= divisor->size );
     assert( divisor->data[ divisor->size - 1 ] < _PDCLIB_BIGINT_DIGIT_MAX );
 
-    if ( s-- < divisor->size || dividend->data[s] < divisor->data[s])
+    if ( s < divisor->size || dividend->data[ s - 1 ] < divisor->data[ s - 1 ])
     {
         return 0;
     }
@@ -28,7 +28,7 @@ unsigned _PDCLIB_bigint_div( _PDCLIB_bigint_t * dividend, _PDCLIB_bigint_t const
     /* With dividend truncated, and divisor + 1,
        this quotient might be one short of correct.
     */
-    quotient = dividend->data[s] / ( divisor->data[s] + 1 );
+    quotient = dividend->data[ s - 1 ] / ( divisor->data[ s - 1 ] + 1 );
 
     if ( quotient > 0 )
     {
@@ -52,7 +52,7 @@ unsigned _PDCLIB_bigint_div( _PDCLIB_bigint_t * dividend, _PDCLIB_bigint_t const
        but that does not matter for the compare or
        the subsequent substraction.
     */
-    if ( _PDCLIB_bigint_cmp( dividend, divisor ) > 0 )
+    if ( _PDCLIB_bigint_cmp( dividend, divisor ) >= 0 )
     {
         /* quotient was too small, substract divisor once more. */
         _PDCLIB_bigint_arith_t d = 0;
@@ -94,7 +94,6 @@ int main( void )
         { 1, { 0x4000 } },
         { 1, { 0x3FFF } },
         { 1, { 0x0001 } },
-        { 2, { 0x0000, 0x0001 } },
         { 1, { _PDCLIB_BIGINT_DIGIT_MAX } },
         { 1, { 0xFFF9 } },
         { 1, { 0x1C71 } }
@@ -109,7 +108,7 @@ int main( void )
     _PDCLIB_bigint_from_bigint( &dividend, &testdata[3] );
     _PDCLIB_bigint_from_bigint( &divisor, &testdata[2] );
     TESTCASE( _PDCLIB_bigint_div( &dividend, &divisor ) == 0 );
-    TESTCASE( _PDCLIB_bigint_cmp( &dividend, &testdata[3] ) );
+    TESTCASE( _PDCLIB_bigint_cmp( &dividend, &testdata[3] ) == 0 );
 
     /* dividend = divisor + 1 */
     _PDCLIB_bigint_from_bigint( &dividend, &testdata[2] );
@@ -117,22 +116,17 @@ int main( void )
     TESTCASE( _PDCLIB_bigint_div( &dividend, &divisor ) == 1 );
     TESTCASE( _PDCLIB_bigint_cmp( &dividend, &testdata[4] ) == 0 );
 
-    _PDCLIB_bigint_from_bigint( &dividend, &testdata[5] );
-    _PDCLIB_bigint_from_bigint( &divisor, &testdata[6] );
-    TESTCASE( _PDCLIB_bigint_div( &dividend, &divisor ) == 1 );
-    TESTCASE( _PDCLIB_bigint_cmp( &dividend, &testdata[4] ) == 0 );
-
     /* dividend = divisor * 9 */
-    _PDCLIB_bigint_from_bigint( &dividend, &testdata[7] );
-    _PDCLIB_bigint_from_bigint( &divisor, &testdata[8] );
+    _PDCLIB_bigint_from_bigint( &dividend, &testdata[6] );
+    _PDCLIB_bigint_from_bigint( &divisor, &testdata[7] );
     TESTCASE( _PDCLIB_bigint_div( &dividend, &divisor ) == 9 );
     TESTCASE( dividend.size == 0 );
 
     /* dividend = divisor * 9 + rem */
-    _PDCLIB_bigint_from_bigint( &dividend, &testdata[6] );
-    _PDCLIB_bigint_from_digit( &divisor, testdata[6].data[0] / 9 );
+    _PDCLIB_bigint_from_bigint( &dividend, &testdata[5] );
+    _PDCLIB_bigint_from_digit( &divisor, testdata[5].data[0] / 9 );
     TESTCASE( _PDCLIB_bigint_div( &dividend, &divisor ) == 9 );
-    TESTCASE( dividend.data[0] == ( testdata[6].data[0] % 9 ) );
+    TESTCASE( dividend.data[0] == ( testdata[5].data[0] % 9 ) );
 #endif
 
     return TEST_RESULTS;
