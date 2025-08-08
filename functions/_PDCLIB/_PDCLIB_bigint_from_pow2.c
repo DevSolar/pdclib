@@ -13,7 +13,7 @@
 void _PDCLIB_bigint_from_pow2( _PDCLIB_bigint_t * bigint, unsigned pow )
 {
     ldiv_t dv = ldiv( pow, _PDCLIB_BIGINT_DIGIT_BITS );
-    unsigned i;
+    long i;
 
     for ( i = 0; i < dv.quot; ++i )
     {

@@ -10,7 +10,7 @@
 
 void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other )
 {
-    unsigned i;
+    _PDCLIB_size_t i;
 
     for ( i = 0; i < other->size; ++i )
     {
