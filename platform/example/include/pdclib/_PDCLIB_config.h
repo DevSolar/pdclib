@@ -460,11 +460,13 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_LDBL_TRUE_MIN     __LDBL_DENORM_MIN__
 
 /* Macros for deconstructing floating point values                            */
-#define _PDCLIB_DBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
-#define _PDCLIB_DBL_DEC( bytes ) ( ( _PDCLIB_DBL_EXP( bytes ) > 0 ) ? 1 : 0 )
-#define _PDCLIB_DBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
+/* This assumes that the floating point value has been memcpy'd into a bigint */
+/* (see _PDCLIB_bigint_from_dbl.c and _PDCLIB_bigint_from_ldbl.c), with the   */
+/* bigint passed to the macro as parameter.                                   */
+#define _PDCLIB_DBL_SIGN( data ) ( ( data[3] & 0x8000 ) >> 15 )
+#define _PDCLIB_DBL_EXP( data ) ( ( data[3] & 0x7ff0u ) >> 4 )
+#define _PDCLIB_DBL_SIZE( data ) ( data[3] &= 0x000fu, 3 )
 #define _PDCLIB_DBL_BIAS 1023
-#define _PDCLIB_DBL_MANT_START( bytes ) ( bytes + 6 )
 
 /* Most platforms today use IEEE 754 single precision for 'float', and double */
 /* precision for 'double'. But type 'long double' varies. We use what the     */
@@ -472,30 +474,26 @@ struct _PDCLIB_imaxdiv_t
 #if _PDCLIB_LDBL_MANT_DIG == 64
 
 /* Intel "Extended Precision" format, using 80 bits (64bit mantissa) */
-#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[9] & 0x80 ) >> 7 )
-#define _PDCLIB_LDBL_DEC( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
-#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[9] & 0x7f ) << 8 ) | (unsigned)bytes[8] )
+#define _PDCLIB_LDBL_SIGN( data ) ( ( data[4] & 0x8000u ) >> 15 )
+#define _PDCLIB_LDBL_EXP( data ) ( data[4] & 0x7fffu )
+#define _PDCLIB_LDBL_SIZE( data ) 4
 #define _PDCLIB_LDBL_BIAS 16383
-#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 7 )
 
 #elif _PDCLIB_LDBL_MANT_DIG == 113
 
 /* IEEE "Quadruple Precision" format, using 128 bits (113bit mantissa) */
-#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[15] & 0x80 ) >> 7 )
-#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
-#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[15] & 0x7f ) << 8 ) | (unsigned)bytes[14] )
+#define _PDCLIB_LDBL_SIGN( data ) ( ( data[7] & 0x8000u ) >> 15 )
+#define _PDCLIB_LDBL_EXP( data ) ( data[7] & 0x7fffu )
+#define _PDCLIB_LDBL_SIZE( data ) 7
 #define _PDCLIB_LDBL_BIAS 16383
-#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 13 )
 
 #else
 
 /* IEEE "Double Precision" format, using 64 bits (53bit mantissa,
    same as DBL above) */
-#define _PDCLIB_LDBL_SIGN( bytes ) ( ( (unsigned)bytes[7] & 0x80 ) >> 7 )
-#define _PDCLIB_LDBL_DEC( bytes ) ( ( _PDCLIB_LDBL_EXP( bytes ) > 0 ) ? 1 : 0 )
-#define _PDCLIB_LDBL_EXP( bytes ) ( ( ( (unsigned)bytes[7] & 0x7f ) << 4 ) | ( ( (unsigned)bytes[6] & 0xf0 ) >> 4 ) )
+#define _PDCLIB_LDBL_SIGN( data ) ( ( data[3] & 0x8000 ) >> 15 )
+#define _PDCLIB_LDBL_EXP( data ) ( ( data[3] & 0x7ff0u ) >> 4 )
 #define _PDCLIB_LDBL_BIAS 1023
-#define _PDCLIB_LDBL_MANT_START( bytes ) ( bytes + 6 )
 
 #endif
 
