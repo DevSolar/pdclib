@@ -13,17 +13,12 @@
 
 #include "pdclib/_PDCLIB_print.h"
 
-extern int dprintf( int, char const *, ... );
 #define OP -
 /* dec:      1 - normalized, 0 - subnormal
    mant:     MSB of the mantissa
    mant_dig: base FLT_RADIX digits in the mantissa, including the decimal
 */
-static void _PDCLIB_print_hexa( int sign,
-                                int exp,
-                                int dec,
-                                unsigned char const * mant,
-                                size_t mant_dig,
+static void _PDCLIB_print_hexa( _PDCLIB_bigint_t * fp,
                                 struct _PDCLIB_status_t * status )
 {
     size_t excess_bits;
@@ -212,115 +207,14 @@ static void _PDCLIB_print_hexa( int sign,
    mant:     MSB of the mantissa
    mant_dig: base FLT_RADIX digits in the mantissa, including the decimal
 */
-static void _PDCLIB_print_fp( int sign,
-                              int exp,
-                              int dec,
-                              unsigned char const * mant,
-                              size_t mant_dig,
+static void _PDCLIB_print_fp( _PDCLIB_bigint_t * bigint,
                               struct _PDCLIB_status_t * status )
 {
-    /* Turning sign bit into sign character. */
-    if ( sign )
-    {
-        sign = '-';
-    }
-    else if ( status->flags & E_plus )
-    {
-        sign = '+';
-    }
-    else if ( status->flags & E_space )
-    {
-        sign = ' ';
-    }
-    else
-    {
-        sign = '\0';
-    }
-
-    if ( exp == INT_MIN || exp == INT_MAX )
-    {
-        /* "nan" / "inf" */
-        char const * s = ( status->flags & E_lower )
-                         ? ( ( exp == INT_MIN ) ? "nan" : "inf" )
-                         : ( ( exp == INT_MIN ) ? "NAN" : "INF" );
-
-        status->current = ( sign == '\0' ) ? 3 : 4;
-
-        if ( ! ( status->flags & E_minus ) )
-        {
-            while ( status->current < status->width )
-            {
-                PUT( ' ' );
-                ++status->current;
-            }
-        }
-
-        if ( sign != '\0' )
-        {
-            PUT( sign );
-        }
-
-        while ( *s )
-        {
-            PUT( *s++ );
-        }
-
-        return;
-    }
-
-    switch ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) )
-    {
-        case E_hexa:
-            _PDCLIB_print_hexa( sign, exp, dec, mant, mant_dig, status );
-            break;
-        case E_decimal:
-        case E_exponent:
-        case E_generic:
-        default:
-            break;
-    }
-}
-
-void _PDCLIB_print_double( double value, struct _PDCLIB_status_t * status )
-{
-    unsigned char bytes[ sizeof( double ) ];
-    int exp;
-    memcpy( bytes, &value, sizeof( double ) );
-    exp = _PDCLIB_DBL_EXP( bytes ) - _PDCLIB_DBL_BIAS;
-
-    if ( exp == _PDCLIB_DBL_MAX_EXP )
-    {
-        /*                           NAN       INF */
-        exp = ( value != value ) ? INT_MIN : INT_MAX;
-    }
-
-    _PDCLIB_print_fp( _PDCLIB_DBL_SIGN( bytes ),
-                      exp,
-                      _PDCLIB_DBL_DEC( bytes ),
-                      _PDCLIB_DBL_MANT_START( bytes ),
-                      _PDCLIB_DBL_MANT_DIG,
-                      status );
-}
-
-void _PDCLIB_print_ldouble( long double value, struct _PDCLIB_status_t * status )
-{
-    unsigned char bytes[ sizeof( long double ) ];
-    int exp;
-    memcpy( bytes, &value, sizeof( long double ) );
-    exp = _PDCLIB_LDBL_EXP( bytes ) - _PDCLIB_LDBL_BIAS;
-
-    if ( exp == _PDCLIB_LDBL_MAX_EXP )
-    {
-        /*                           NAN       INF */
-        exp = ( value != value ) ? INT_MIN : INT_MAX;
-    }
-
-    _PDCLIB_print_fp( _PDCLIB_LDBL_SIGN( bytes ),
-                      exp,
-                      _PDCLIB_LDBL_DEC( bytes ),
-                      _PDCLIB_LDBL_MANT_START( bytes ),
-                      _PDCLIB_LDBL_MANT_DIG,
-                      status );
+    /* '-', E_plus '+', E_space ' ' */
+    /* E_lower nan/inf, NAN/INF */
+    /* status->current < status->width */
+    /* E_minus -- left aligned */
+    /* ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) ) */
 }
 
 #endif
