@@ -466,7 +466,6 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_DBL_SIGN( data ) ( ( data[3] & 0x8000 ) >> 15 )
 #define _PDCLIB_DBL_EXP( data ) ( ( data[3] & 0x7ff0u ) >> 4 )
 #define _PDCLIB_DBL_SIZE( data ) ( data[3] &= 0x000fu, 4 )
-#define _PDCLIB_DBL_BIAS 1023
 
 /* Most platforms today use IEEE 754 single precision for 'float', and double */
 /* precision for 'double'. But type 'long double' varies. We use what the     */
@@ -477,7 +476,6 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_LDBL_SIGN( data ) ( ( data[4] & 0x8000u ) >> 15 )
 #define _PDCLIB_LDBL_EXP( data ) ( data[4] & 0x7fffu )
 #define _PDCLIB_LDBL_SIZE( data ) ( data[3] &= 0x7fffu, 4 )
-#define _PDCLIB_LDBL_BIAS 16383
 
 #elif _PDCLIB_LDBL_MANT_DIG == 113
 
@@ -485,15 +483,14 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_LDBL_SIGN( data ) ( ( data[7] & 0x8000u ) >> 15 )
 #define _PDCLIB_LDBL_EXP( data ) ( data[7] & 0x7fffu )
 #define _PDCLIB_LDBL_SIZE( data ) 7
-#define _PDCLIB_LDBL_BIAS 16383
 
 #else
 
-/* IEEE "Double Precision" format, using 64 bits (53bit mantissa,
-   same as DBL above) */
+/* IEEE "Double Precision" format, using 64 bits (53bit mantissa) */
+/* (Same as DBL above) */
 #define _PDCLIB_LDBL_SIGN( data ) ( ( data[3] & 0x8000 ) >> 15 )
 #define _PDCLIB_LDBL_EXP( data ) ( ( data[3] & 0x7ff0u ) >> 4 )
-#define _PDCLIB_LDBL_BIAS 1023
+#define _PDCLIB_LDBL_SIZE( data ) ( data[3] &= 0x000fu, 4 )
 
 #endif
 
