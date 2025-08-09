@@ -65,7 +65,5 @@
 
 void _PDCLIB_print_integer( struct _PDCLIB_imaxdiv_t div, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_string( const char * s, struct _PDCLIB_status_t * status );
-void _PDCLIB_print_double( double value, struct _PDCLIB_status_t * status );
-void _PDCLIB_print_ldouble( long double value, struct _PDCLIB_status_t * status );
 
 #endif

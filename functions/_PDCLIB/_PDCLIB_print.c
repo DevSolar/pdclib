@@ -307,12 +307,16 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
             if ( status->flags & E_ldouble )
             {
                 long double value = va_arg( status->arg, long double );
-                _PDCLIB_print_ldouble( value, status );
+                _PDCLIB_bigint_t fp;
+                _PDCLIB_bigint_from_ldbl( &fp );
+                _PDCLIB_print_fp( &fp, status );
             }
             else
             {
                 double value = va_arg( status->arg, double );
-                _PDCLIB_print_double( value, status );
+                _PDCLIB_bigint_t fp;
+                _PDCLIB_bigint_from_dbl( &fp );
+                _PDCLIB_print_fp( &fp, status )
             }
         }
         else

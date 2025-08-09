@@ -156,6 +156,10 @@
     PRINTF_TEST( 8, "0x000p+0", "%08a", 0.0 );
     PRINTF_TEST( 11, "0x2.0000p+0", "%.4a", 1.999998 );
     PRINTF_TEST( 12, "0x1.ffffep+0", "%.5a", 1.999998 );
+    PRINTF_TEST( 3, "inf", "%a", 1e500 );
+    PRINTF_TEST( 4, "-inf", "%a", -1e500 );
+    PRINTF_TEST( 3, "INF", "%A", 1e500 );
+    PRINTF_TEST( 4, "-INF", "%A", -1e500 );
     /* Long Double */
     PRINTF_TEST( 6, "0x0p+0", "%La", 0.0L );
     PRINTF_TEST( 7, "+0x0p+0", "%+La", 0.0L );
