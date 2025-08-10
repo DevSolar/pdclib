@@ -649,6 +649,8 @@ void _PDCLIB_bigint_from_digit( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_digit_
 void _PDCLIB_bigint_from_pow2( _PDCLIB_bigint_t * bigint, unsigned pow );
 void _PDCLIB_bigint_from_pow10( _PDCLIB_bigint_t * bigint, unsigned pow );
 void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
+void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * bigint, double value );
+void _PDCLIB_bigint_from_ldbl( _PDCLIB_bigint_t * bigint, long double value );
 void _PDCLIB_bigint_add( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
 void _PDCLIB_bigint_mul( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
 int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs );

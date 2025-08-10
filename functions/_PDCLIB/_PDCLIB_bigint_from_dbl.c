@@ -39,7 +39,14 @@ void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * fp, double d )
             /* Normal */
             /* Set implicit decimal */
             div_t dv = div( _PDCLIB_DBL_MANT_DIG - 1, _PDCLIB_BIGINT_DIGIT_BITS );
-            fp->data[ dv.quot ] |= ( 1u << dv.rem );
+            if ( dv.rem == 0 )
+            {
+                fp->data[ size++ ] = 1u;
+            }
+            else
+            {
+                fp->data[ dv.quot ] |= ( 1u << dv.rem );
+            }
             /* Set (unbiased, scaled) exponent */
             exp = exp - ( _PDCLIB_DBL_MAX_EXP - 1 ) - ( _PDCLIB_DBL_MANT_DIG - 1 );
             break;
