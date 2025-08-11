@@ -257,7 +257,9 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_bigint_digit_log2.c
      functions/_PDCLIB/_PDCLIB_bigint_div.c
      functions/_PDCLIB/_PDCLIB_bigint_from_bigint.c
+     functions/_PDCLIB/_PDCLIB_bigint_from_dbl.c
      functions/_PDCLIB/_PDCLIB_bigint_from_digit.c
+     functions/_PDCLIB/_PDCLIB_bigint_from_ldbl.c
      functions/_PDCLIB/_PDCLIB_bigint_from_pow10.c
      functions/_PDCLIB/_PDCLIB_bigint_from_pow2.c
      functions/_PDCLIB/_PDCLIB_bigint_log2.c
