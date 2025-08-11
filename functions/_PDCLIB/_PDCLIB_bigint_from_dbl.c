@@ -53,6 +53,11 @@ void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * fp, double d )
         }
     }
 
+    while ( size > 0 && fp->data[ size - 1 ] == 0 )
+    {
+        --size;
+    }
+
     fp->size = size;
     fp->data[ fp->size ] = exp;
     fp->data[ fp->size + 1 ] = sign;
