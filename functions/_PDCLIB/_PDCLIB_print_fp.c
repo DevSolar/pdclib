@@ -13,6 +13,8 @@
 
 #include "pdclib/_PDCLIB_print.h"
 
+#if 0
+
 #define OP -
 /* dec:      1 - normalized, 0 - subnormal
    mant:     MSB of the mantissa
@@ -202,13 +204,15 @@ static void _PDCLIB_print_hexa( _PDCLIB_bigint_t * fp,
     }
 }
 
+#endif
+
 /* dec:      1 - normalized, 0 - subnormal
    exp:      INT_MAX - infinity, INT_MIN - Not a Number
    mant:     MSB of the mantissa
    mant_dig: base FLT_RADIX digits in the mantissa, including the decimal
 */
-static void _PDCLIB_print_fp( _PDCLIB_bigint_t * bigint,
-                              struct _PDCLIB_status_t * status )
+void _PDCLIB_print_fp( _PDCLIB_bigint_t * bigint,
+                       struct _PDCLIB_status_t * status )
 {
     /* '-', E_plus '+', E_space ' ' */
     /* E_lower nan/inf, NAN/INF */

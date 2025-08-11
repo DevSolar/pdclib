@@ -66,6 +66,7 @@ void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * fp, double d )
 
 int main( void )
 {
+#ifndef REGTEST
     _PDCLIB_bigint_t fp;
     _PDCLIB_bigint_t t;
     size_t i;
@@ -100,6 +101,7 @@ int main( void )
     TESTCASE( _PDCLIB_bigint_cmp( &fp, &t ) == 0 );
     TESTCASE( fp.data[ fp.size ] == (_PDCLIB_bigint_digit_t)(1 - ( _PDCLIB_DBL_MAX_EXP - 1 ) - ( _PDCLIB_DBL_MANT_DIG - 1 ) ) );
     TESTCASE( fp.data[ fp.size + 1 ] == 0 );
+#endif
 
     return TEST_RESULTS;
 }
