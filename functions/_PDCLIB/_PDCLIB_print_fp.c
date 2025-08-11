@@ -6,43 +6,30 @@
 
 #ifndef REGTEST
 
-#include <limits.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "pdclib/_PDCLIB_print.h"
+
+static void _PDCLIB_print_hexa( _PDCLIB_bigint_t * fp,
+                                struct _PDCLIB_status_t * status,
+                                char sign )
+{
+    _PDCLIB_static_assert( _PDCLIB_FLT_RADIX == 2, "Assuming 2-based Floating Point" );
+
+    size_t mant_dig = ( status->flags & E_ldouble ) ? _PDCLIB_LDBL_MANT_DIG : _PDCLIB_DBL_MANT_DIG;
+
+    if ( fp->data[ fp->size ] & 1<<1 )
+    {
+        size_t log2 = _PDCLIB_bigint_log2( fp );
+	size_t log3 = log2;
+    }
+}
 
 #if 0
 
 #define OP -
-/* dec:      1 - normalized, 0 - subnormal
-   mant:     MSB of the mantissa
-   mant_dig: base FLT_RADIX digits in the mantissa, including the decimal
-*/
 static void _PDCLIB_print_hexa( _PDCLIB_bigint_t * fp,
                                 struct _PDCLIB_status_t * status )
 {
-    size_t excess_bits;
-    char value;
-
-    unsigned char mantissa[ _PDCLIB_LDBL_MANT_DIG / 4 + 2 ] = { 0 };
-    size_t m = 0;
-
-    char exponent[ 7 ];
-    size_t e = 0;
-
-    size_t i;
-
-    char const * digit_chars = ( status->flags & E_lower ) ? _PDCLIB_digits : _PDCLIB_Xdigits;
-
-    int index_offset = 0;
-
-    _PDCLIB_static_assert( _PDCLIB_FLT_RADIX == 2, "Assuming 2-based FP" );
-    _PDCLIB_static_assert( _PDCLIB_CHAR_BIT == 8, "Assuming 8-bit bytes" );
-
-    /* Mantissa */
-    /* -------- */
+    char const * digits = ( status->flags & E_lower ) ? _PDCLIB_digits : _PDCLIB_Xdigits;
 
     /* Handle the most significant byte (which might need masking) */
     excess_bits = ( mant_dig - 1 ) % 8;
@@ -116,7 +103,7 @@ static void _PDCLIB_print_hexa( _PDCLIB_bigint_t * fp,
         for ( e = 1; exp > 0; ++e )
         {
             div_t d = div( exp, 10 );
-            exponent[e] = digit_chars[ d.rem ];
+            exponent[e] = digits[ d.rem ];
             exp = d.quot;
         }
     }
@@ -169,7 +156,7 @@ static void _PDCLIB_print_hexa( _PDCLIB_bigint_t * fp,
     PUT( '0' );
     PUT( ( status->flags & E_lower ) ? 'x' : 'X' );
 
-    PUT( digit_chars[ mantissa[0] ] );
+    PUT( digits[ mantissa[0] ] );
 
     if ( ( ( m > 0 ) && ( status->prec != 0 ) ) || ( status->prec > 0 ) || ( status->flags & E_alt ) )
     {
@@ -186,7 +173,7 @@ static void _PDCLIB_print_hexa( _PDCLIB_bigint_t * fp,
 
     for ( i = 1; i <= m; ++i )
     {
-        PUT( digit_chars[ mantissa[i] ] );
+        PUT( digits[ mantissa[i] ] );
     }
 
     while ( (int)i <= status->prec )
@@ -246,7 +233,7 @@ void _PDCLIB_print_fp( _PDCLIB_bigint_t * fp,
     char sign;
 
     /* Turning sign bit into sign character. */
-    if ( fp->data[ fp->size + 1 ] > 0 )
+    if ( fp->data[ fp->size ] & 1<<0 )
     {
         sign = '-';
     }
@@ -263,7 +250,7 @@ void _PDCLIB_print_fp( _PDCLIB_bigint_t * fp,
         sign = '\0';
     }
 
-    if ( fp->data[ fp->size ] == _PDCLIB_BIGINT_DIGIT_MAX )
+    if ( fp->data[ fp->size ] & 1<<2 )
     {
         _PDCLIB_print_inf_nan( fp, status, sign );
         return;
