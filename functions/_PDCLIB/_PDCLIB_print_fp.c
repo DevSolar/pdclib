@@ -206,19 +206,77 @@ static void _PDCLIB_print_hexa( _PDCLIB_bigint_t * fp,
 
 #endif
 
-/* dec:      1 - normalized, 0 - subnormal
-   exp:      INT_MAX - infinity, INT_MIN - Not a Number
-   mant:     MSB of the mantissa
-   mant_dig: base FLT_RADIX digits in the mantissa, including the decimal
-*/
-void _PDCLIB_print_fp( _PDCLIB_bigint_t * bigint,
+static void _PDCLIB_print_inf_nan( _PDCLIB_bigint_t * fp,
+                                   struct _PDCLIB_status_t * status,
+                                   char sign )
+{
+    char const * s = ( status->flags & E_lower )
+                     ? ( ( fp->size > 0 ) ? "nan" : "inf" )
+                     : ( ( fp->size > 0 ) ? "NAN" : "INF" );
+
+    /* "Count" the characters before actually printing them */
+    /* This allows us to pad properly if necessary */
+    status->current = ( sign == '\0' ) ? 3 : 4;
+
+    /* Pad if necessary */
+    if ( ! ( status->flags & E_minus ) )
+    {
+        while ( status->current < status->width )
+        {
+            PUT( ' ' );
+            ++status->current;
+        }
+    }
+
+    /* Output -- we already counted the characters above */
+    if ( sign != '\0' )
+    {
+        PUT( sign );
+    }
+
+    while ( *s )
+    {
+        PUT( *s++ );
+    }
+}
+
+void _PDCLIB_print_fp( _PDCLIB_bigint_t * fp,
                        struct _PDCLIB_status_t * status )
 {
-    /* '-', E_plus '+', E_space ' ' */
-    /* E_lower nan/inf, NAN/INF */
-    /* status->current < status->width */
-    /* E_minus -- left aligned */
-    /* ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) ) */
+    char sign;
+
+    /* Turning sign bit into sign character. */
+    if ( fp->data[ fp->size + 1 ] > 0 )
+    {
+        sign = '-';
+    }
+    else if ( status->flags & E_plus )
+    {
+        sign = '+';
+    }
+    else if ( status->flags & E_space )
+    {
+        sign = ' ';
+    }
+    else
+    {
+        sign = '\0';
+    }
+
+    if ( fp->data[ fp->size ] == _PDCLIB_BIGINT_DIGIT_MAX )
+    {
+        _PDCLIB_print_inf_nan( fp, status, sign );
+        return;
+    }
+
+    switch ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) )
+    {
+        case E_hexa:
+            _PDCLIB_print_hexa( fp, status, sign );
+            break;
+        default:
+            break;
+    }
 }
 
 #endif
