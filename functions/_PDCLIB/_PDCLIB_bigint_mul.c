@@ -74,7 +74,7 @@ int main( void )
     {
         { 1, { 0x0001u } },
         { 1, { 0x0002u } },
-        { 1, ( (_PDCLIB_bigint_arith_t)1u << _PDCLIB_BIGINT_DIGIT_BITS) - 1 },
+        { 1, { ( (_PDCLIB_bigint_arith_t)1u << _PDCLIB_BIGINT_DIGIT_BITS) - 1 } },
         { 2, { ( (_PDCLIB_bigint_arith_t)1u << _PDCLIB_BIGINT_DIGIT_BITS) - 1, 1u } }
     };
 

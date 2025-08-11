@@ -249,12 +249,22 @@ set( PDCLIB_SOURCES
      functions/_tzcode/_PDCLIB_tzparse.c
      functions/_tzcode/_PDCLIB_tzset_unlocked.c
      functions/_tzcode/_PDCLIB_update_tzname_etc.c
-
      functions/_PDCLIB/assert.c
      functions/_PDCLIB/errno.c
      functions/_PDCLIB/_PDCLIB_atomax.c
+     functions/_PDCLIB/_PDCLIB_bigint_add.c
+     functions/_PDCLIB/_PDCLIB_bigint_cmp.c
+     functions/_PDCLIB/_PDCLIB_bigint_digit_log2.c
+     functions/_PDCLIB/_PDCLIB_bigint_div.c
      functions/_PDCLIB/_PDCLIB_bigint_from_bigint.c
      functions/_PDCLIB/_PDCLIB_bigint_from_digit.c
+     functions/_PDCLIB/_PDCLIB_bigint_from_pow10.c
+     functions/_PDCLIB/_PDCLIB_bigint_from_pow2.c
+     functions/_PDCLIB/_PDCLIB_bigint_log2.c
+     functions/_PDCLIB/_PDCLIB_bigint_mul.c
+     functions/_PDCLIB/_PDCLIB_bigint_mul10.c
+     functions/_PDCLIB/_PDCLIB_bigint_shl.c
+
      functions/_PDCLIB/_PDCLIB_closeall.c
      functions/_PDCLIB/_PDCLIB_digits.c
      functions/_PDCLIB/_PDCLIB_filemode.c
@@ -409,7 +419,7 @@ if ( CMAKE_COMPILER_IS_GNUCC )
     # GCC making statements about the standard library's capabilities,
     # specifically __STDC_NO_THREADS__ (by including stdc-predef.h). I
     # was unable to identify a more elegant way to achieve this.
-    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Winline -Wno-long-long -Wuninitialized -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H -nostdlib" )
+    set( FLAGS "-Wall -Wextra -pedantic -Wno-unused-parameter -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Winline -Wno-long-long -Wuninitialized -Wno-overflow -fno-builtin -fvisibility=hidden -D_STDC_PREDEF_H -nostdlib" )
     if ( NOT AS_CXX )
         string( APPEND FLAGS " -Wmissing-prototypes -Wnested-externs -Wstrict-prototypes -Wdeclaration-after-statement" )
     endif()
@@ -447,6 +457,9 @@ endif()
 add_custom_target( testdrivers )
 add_custom_target( regtestdrivers )
 
+# Math library needs to be linked on Unixes
+find_library( MATH_LIB m )
+
 # Each source file can be compiled to
 # 1) a test driver for the function it defines,
 # 2) a regression test driver for the function as defined by the system's
@@ -460,6 +473,9 @@ foreach( file ${PDCLIB_SOURCES} )
     set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers )
     target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_BINARY_DIR}/configured_include include platform/example/include test_support )
     target_link_libraries( ${basename}_t pdclibs )
+    if ( MATH_LIB )
+        target_link_libraries( ${basename}_t ${MATH_LIB} )
+    endif()
     add_test( ${basename}_t test_support/testdrivers/${basename}_t )
     add_dependencies( testdrivers ${basename}_t )
 
@@ -468,6 +484,9 @@ foreach( file ${PDCLIB_SOURCES} )
     add_executable( ${basename}_r ${file} )
     set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST ${FLAGS}" )
     set_property( TARGET ${basename}_r PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
+    if ( MATH_LIB )
+        target_link_libraries( ${basename}_t ${MATH_LIB} )
+    endif()
     target_include_directories( ${basename}_r BEFORE PRIVATE test_support )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
     add_dependencies( regtestdrivers ${basename}_r )
