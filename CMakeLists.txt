@@ -285,6 +285,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_prepwrite.c
      functions/_PDCLIB/_PDCLIB_print.c
      functions/_PDCLIB/_PDCLIB_print_fp.c
+     functions/_PDCLIB/_PDCLIB_print_fp_hexa.c
      functions/_PDCLIB/_PDCLIB_print_integer.c
      functions/_PDCLIB/_PDCLIB_print_string.c
      functions/_PDCLIB/_PDCLIB_scan.c
@@ -459,9 +460,6 @@ endif()
 add_custom_target( testdrivers )
 add_custom_target( regtestdrivers )
 
-# Math library needs to be linked on Unixes
-find_library( MATH_LIB m )
-
 # Each source file can be compiled to
 # 1) a test driver for the function it defines,
 # 2) a regression test driver for the function as defined by the system's
@@ -475,9 +473,6 @@ foreach( file ${PDCLIB_SOURCES} )
     set_property( TARGET ${basename}_t PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/testdrivers )
     target_include_directories( ${basename}_t BEFORE PRIVATE ${CMAKE_BINARY_DIR}/configured_include include platform/example/include test_support )
     target_link_libraries( ${basename}_t pdclibs )
-    if ( MATH_LIB )
-        target_link_libraries( ${basename}_t ${MATH_LIB} )
-    endif()
     add_test( ${basename}_t test_support/testdrivers/${basename}_t )
     add_dependencies( testdrivers ${basename}_t )
 
@@ -486,9 +481,6 @@ foreach( file ${PDCLIB_SOURCES} )
     add_executable( ${basename}_r ${file} )
     set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST ${FLAGS}" )
     set_property( TARGET ${basename}_r PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
-    if ( MATH_LIB )
-        target_link_libraries( ${basename}_t ${MATH_LIB} )
-    endif()
     target_include_directories( ${basename}_r BEFORE PRIVATE test_support )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
     add_dependencies( regtestdrivers ${basename}_r )

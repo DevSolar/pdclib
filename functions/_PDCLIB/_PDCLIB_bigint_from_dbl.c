@@ -11,9 +11,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if _PDCLIB_BIGINT_DIGIT_BITS == 16
+typedef _PDCLIB_int_least16_t sint;
+#else
+typedef _PDCLIB_int_least32_t sint;
+#endif
+
 void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * fp, double d )
 {
-    int exp;
+    sint exp;
     int state;
     int size;
 
@@ -27,15 +33,10 @@ void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * fp, double d )
     {
         case 0:
             /* Subnormal */
-            /* Set (unbiased, scaled) exponent */
-            exp = 1 - ( _PDCLIB_DBL_MAX_EXP - 1 ) - ( _PDCLIB_DBL_MANT_DIG - 1 );
+            /* Set (unbiased, unscaled) exponent */
+            exp = 1 - ( _PDCLIB_DBL_MAX_EXP - 1 );
             state |= 1<<1; /* 1<<1: subnormal */
-
-            while ( size > 0 && fp->data[ size - 1 ] == 0 )
-            {
-                --size;
-            }
-
+            state |= ( _PDCLIB_DBL_MANT_DIG - 1 ) << 8;
             break;
         case ( _PDCLIB_DBL_MAX_EXP - 1 ) + _PDCLIB_DBL_MAX_EXP:
             /* INF / NAN */
@@ -54,15 +55,21 @@ void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * fp, double d )
             {
                 fp->data[ dv.quot ] |= ( 1u << dv.rem );
             }
-            /* Set (unbiased, scaled) exponent */
-            exp = exp - ( _PDCLIB_DBL_MAX_EXP - 1 ) - ( _PDCLIB_DBL_MANT_DIG - 1 );
+            /* Set (unbiased, unscaled) exponent */
+            exp = exp - ( _PDCLIB_DBL_MAX_EXP - 1 );
+            state |= ( _PDCLIB_DBL_MANT_DIG - 1 ) << 8;
             break;
         }
     }
 
+    while ( size > 0 && fp->data[ size - 1 ] == 0 )
+    {
+        --size;
+    }
+
     fp->size = size;
     fp->data[ fp->size ] = state;
-    fp->data[ fp->size + 1 ] = exp;
+    fp->data[ fp->size + 1 ] = (_PDCLIB_bigint_digit_t)exp;
 }
 
 #endif
@@ -82,8 +89,8 @@ int main( void )
     _PDCLIB_bigint_from_dbl( &fp, -1.0 );
     _PDCLIB_bigint_from_pow2( &t, _PDCLIB_DBL_MANT_DIG - 1 );
     TESTCASE( _PDCLIB_bigint_cmp( &fp, &t ) == 0 );
-    TESTCASE( fp.data[ fp.size ] == 1 );
-    TESTCASE( fp.data[ fp.size + 1 ] == (_PDCLIB_bigint_digit_t)( 1 - _PDCLIB_DBL_MANT_DIG ) );
+    TESTCASE( fp.data[ fp.size ] == ( 1 | ( _PDCLIB_DBL_MANT_DIG - 1 ) << 8 ) );
+    TESTCASE( fp.data[ fp.size + 1 ] == 0 );
 
     /* Inf */
     _PDCLIB_bigint_from_dbl( &fp, 1e500 );
@@ -105,8 +112,8 @@ int main( void )
     _PDCLIB_bigint_from_dbl( &fp, _PDCLIB_DBL_MIN / 2 );
     _PDCLIB_bigint_from_pow2( &t, _PDCLIB_DBL_MANT_DIG - 2 );
     TESTCASE( _PDCLIB_bigint_cmp( &fp, &t ) == 0 );
-    TESTCASE( fp.data[ fp.size ] == 1<<1 );
-    TESTCASE( fp.data[ fp.size + 1 ] == (_PDCLIB_bigint_digit_t)(1 - ( _PDCLIB_DBL_MAX_EXP - 1 ) - ( _PDCLIB_DBL_MANT_DIG - 1 ) ) );
+    TESTCASE( fp.data[ fp.size ] == ( 1<<1 | ( _PDCLIB_DBL_MANT_DIG - 1 ) << 8 ) );
+    TESTCASE( fp.data[ fp.size + 1 ] == (_PDCLIB_bigint_digit_t)(1 - ( _PDCLIB_DBL_MAX_EXP - 1 ) ) );
 #endif
 
     return TEST_RESULTS;

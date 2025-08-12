@@ -50,7 +50,10 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
                 break;
 
             case '#':
-                /* alternative format (leading 0x for hex, 0 for octal) */
+                /* alternative format: leading 0x for hex, 0 for octal,
+                   forced decimal point for floats, trailing zeroes not
+                   removed for %g/%G
+                */
                 status->flags |= E_alt;
                 ++spec;
                 break;

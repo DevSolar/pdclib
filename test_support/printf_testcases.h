@@ -168,7 +168,7 @@
     PRINTF_TEST( 8, " 0x0p+0 ", "%- 8La", 0.0L );
     PRINTF_TEST( 8, "0x000p+0", "%08La", 0.0L );
 #if LDBL_MANT_DIG == 64
-#if defined( REGTEST ) && defined( __CYGWIN__ )
+#if ! defined( REGTEST ) || ( defined( REGTEST ) && defined( __CYGWIN__ ) )
     /* As opposed to glibc, Cygwin's BSD libc does not make use of
        the (allowed) optimization to arrange the integral part of
        the significand in a way that aligns the remaining bits on

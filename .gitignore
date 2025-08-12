@@ -65,3 +65,6 @@ get-uctypes
 
 # Local files
 workbench
+
+# Unix
+.gdb_history
