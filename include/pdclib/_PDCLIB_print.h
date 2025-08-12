@@ -66,5 +66,6 @@
 void _PDCLIB_print_integer( struct _PDCLIB_imaxdiv_t div, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_string( const char * s, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_fp( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * status );
+void _PDCLIB_print_fp_hexa( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * status, char sign );
 
 #endif
