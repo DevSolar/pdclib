@@ -1,4 +1,4 @@
-/* _PDCLIB_print_float
+/* _PDCLIB_print_fp_hexa( _PDCLIB_bigint_t *, struct _PDCLIB_status_t *, char )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.

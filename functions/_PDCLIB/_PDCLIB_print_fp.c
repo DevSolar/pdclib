@@ -1,4 +1,4 @@
-/* _PDCLIB_print_float
+/* _PDCLIB_print_fp( _PDCLIB_bigint_t *, struct _PDCLIB_status_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -86,8 +86,6 @@ void _PDCLIB_print_fp( _PDCLIB_bigint_t * fp,
 #ifdef TEST
 
 #include "_PDCLIB_test.h"
-
-extern int dprintf( int, char const *, ... );
 
 int main( int argc, char * argv[] )
 {
