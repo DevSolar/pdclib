@@ -609,58 +609,6 @@ _PDCLIB_LOCAL struct _PDCLIB_lc_time_t * _PDCLIB_load_lc_time( const char * path
 _PDCLIB_LOCAL struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, const char * locale );
 
 /* -------------------------------------------------------------------------- */
-/* _PDCLIB_bigint_t support (required for floating point conversions)         */
-/* -------------------------------------------------------------------------- */
-
-/* Must be divisible by 32.                                                   */
-/* 1120 is enough for 64bit floats. A 128 float takes 16544 bits.             */
-#define _PDCLIB_BIGINT_BITS 1120
-
-#if _PDCLIB_BIGINT_DIGIT_BITS == 32
-#define _PDCLIB_BIGINT_DIGIT_MAX _PDCLIB_UINT_LEAST32_C( 0xFFFFFFFF )
-typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_digit_t;
-typedef _PDCLIB_uint_least64_t _PDCLIB_bigint_arith_t;
-#elif _PDCLIB_BIGINT_DIGIT_BITS == 16
-#define _PDCLIB_BIGINT_DIGIT_MAX _PDCLIB_UINT_LEAST16_C( 0xFFFF )
-typedef _PDCLIB_uint_least16_t _PDCLIB_bigint_digit_t;
-typedef _PDCLIB_uint_least32_t _PDCLIB_bigint_arith_t;
-#else
-#error _PDCLIB_BIGINT_DIGIT_BITS.needs to be 16 or 32.
-#endif
-
-/* How many "digits" a _PDCLIB_bigint_t holds.                                */
-#define _PDCLIB_BIGINT_DIGITS _PDCLIB_BIGINT_BITS / _PDCLIB_BIGINT_DIGIT_BITS
-
-/* Maximum number of characters needed for _PDCLIB_bigint_tostring()          */
-#define _PDCLIB_BIGINT_CHARS ( _PDCLIB_BIGINT_BITS / 4 + _PDCLIB_BIGINT_DIGITS + 2 )
-
-/* Type */
-/* ---- */
-
-typedef struct
-{
-    /* Number of digits used; zero value == zero size */
-    _PDCLIB_size_t size;
-    /* Least significant digit first */
-    _PDCLIB_bigint_digit_t data[ _PDCLIB_BIGINT_DIGITS ];
-} _PDCLIB_bigint_t;
-
-void _PDCLIB_bigint_from_digit( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_digit_t digit );
-void _PDCLIB_bigint_from_pow2( _PDCLIB_bigint_t * bigint, unsigned pow );
-void _PDCLIB_bigint_from_pow10( _PDCLIB_bigint_t * bigint, unsigned pow );
-void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
-void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * bigint, double value );
-void _PDCLIB_bigint_from_ldbl( _PDCLIB_bigint_t * bigint, long double value );
-void _PDCLIB_bigint_add( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
-void _PDCLIB_bigint_mul( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
-int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs );
-void _PDCLIB_bigint_shl( _PDCLIB_bigint_t * bigint, _PDCLIB_size_t bits );
-void _PDCLIB_bigint_mul10( _PDCLIB_bigint_t * bigint );
-int _PDCLIB_bigint_digit_log2( _PDCLIB_bigint_digit_t digit );
-int _PDCLIB_bigint_log2( _PDCLIB_bigint_t const * bigint );
-unsigned _PDCLIB_bigint_div( _PDCLIB_bigint_t * dividend, _PDCLIB_bigint_t const * divisor );
-
-/* -------------------------------------------------------------------------- */
 /* Sanity checks                                                              */
 /* -------------------------------------------------------------------------- */
 

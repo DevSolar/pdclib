@@ -76,6 +76,9 @@ void _PDCLIB_print_fp( _PDCLIB_bigint_t * fp,
         case E_hexa:
             _PDCLIB_print_fp_hexa( fp, status, sign );
             break;
+        case E_decimal:
+            _PDCLIB_print_fp_deci( fp, status, sign );
+            break;
         default:
             break;
     }

@@ -12,12 +12,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#if _PDCLIB_BIGINT_DIGIT_BITS == 16
-typedef _PDCLIB_int_least16_t sint;
-#else
-typedef _PDCLIB_int_least32_t sint;
-#endif
-
 static inline void round_up( char * buffer, size_t index )
 {
     if ( buffer[ index ] < '\017' )
@@ -134,13 +128,13 @@ static size_t print_mant( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * statu
 }
 
 void _PDCLIB_print_fp_hexa( _PDCLIB_bigint_t * fp,
-                                struct _PDCLIB_status_t * status,
-                                char sign )
+                            struct _PDCLIB_status_t * status,
+                            char sign )
 {
     _PDCLIB_static_assert( _PDCLIB_FLT_RADIX == 2, "Assuming 2-based Floating Point" );
 
     char const * digits = ( status->flags & E_lower ) ? _PDCLIB_digits : _PDCLIB_Xdigits;
-    int exp = (sint)fp->data[ fp->size + 1 ];
+    int exp = (_PDCLIB_bigint_sdigit_t)fp->data[ fp->size + 1 ];
     /* sign + "0x" + dec + "." + ( LDBL_MANT_DIG / 4 )
             + 'p' + sign + exp[5] + '\0' <= 41
        ...but how could I do THAT? :-)

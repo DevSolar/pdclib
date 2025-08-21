@@ -6,7 +6,7 @@
 
 #ifndef REGTEST
 
-#include "pdclib/_PDCLIB_internal.h"
+#include "pdclib/_PDCLIB_print.h"
 
 int _PDCLIB_bigint_cmp( _PDCLIB_bigint_t const * lhs, _PDCLIB_bigint_t const * rhs )
 {

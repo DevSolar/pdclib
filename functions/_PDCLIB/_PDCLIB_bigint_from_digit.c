@@ -6,7 +6,7 @@
 
 #ifndef REGTEST
 
-#include "pdclib/_PDCLIB_internal.h"
+#include "pdclib/_PDCLIB_print.h"
 
 void _PDCLIB_bigint_from_digit( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_digit_t digit )
 {
