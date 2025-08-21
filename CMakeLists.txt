@@ -285,6 +285,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_prepwrite.c
      functions/_PDCLIB/_PDCLIB_print.c
      functions/_PDCLIB/_PDCLIB_print_fp.c
+     functions/_PDCLIB/_PDCLIB_print_fp_deci.c
      functions/_PDCLIB/_PDCLIB_print_fp_hexa.c
      functions/_PDCLIB/_PDCLIB_print_integer.c
      functions/_PDCLIB/_PDCLIB_print_string.c

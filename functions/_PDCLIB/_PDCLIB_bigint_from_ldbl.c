@@ -6,20 +6,14 @@
 
 #ifndef REGTEST
 
-#include "pdclib/_PDCLIB_internal.h"
+#include "pdclib/_PDCLIB_print.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#if _PDCLIB_BIGINT_DIGIT_BITS == 16
-typedef _PDCLIB_int_least16_t sint;
-#else
-typedef _PDCLIB_int_least32_t sint;
-#endif
-
 void _PDCLIB_bigint_from_ldbl( _PDCLIB_bigint_t * fp, long double ld )
 {
-    sint exp;
+    _PDCLIB_bigint_sdigit_t exp;
     int state;
     int size;
 
