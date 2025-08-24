@@ -265,6 +265,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_bigint_log2.c
      functions/_PDCLIB/_PDCLIB_bigint_mul.c
      functions/_PDCLIB/_PDCLIB_bigint_mul10.c
+     functions/_PDCLIB/_PDCLIB_bigint_mul_pow10.c
      functions/_PDCLIB/_PDCLIB_bigint_shl.c
 
      functions/_PDCLIB/_PDCLIB_closeall.c
