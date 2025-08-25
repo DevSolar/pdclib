@@ -1,0 +1,37 @@
+#!/usr/bin/python3
+
+import sys
+
+def negpow2(num_powers):
+    """
+    Calculates and prints the first 'num_powers' of negative powers of 2
+    (1/2, 1/4, 1/8, etc.) using high-precision integer arithmetic.
+
+    This method avoids floating-point numbers to prevent precision loss.
+
+    Args:
+        numpow2 (int): The number of negative powers of 2 to print.
+    """
+
+    denominator = 2
+
+    for i in range(1, num_powers + 1):
+        remainder = 1
+        digits = []
+
+        while remainder != 0:
+            remainder *= 10
+            digit = remainder // denominator
+            digits.append(str(digit))
+            remainder %= denominator
+
+        print(" " + "".join(digits) + "0" * (num_powers - len(digits)))
+        denominator *= 2
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: negpow2 <count>")
+        sys.exit(1)
+
+    negpow2(int(sys.argv[1]))
+    sys.exit(0)

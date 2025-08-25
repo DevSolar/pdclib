@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+
+import sys
+
+def sumnegpow2(filename):
+    """
+    Reads a file containing a list of integers (including big integers),
+    sums them, and prints the total.
+
+    Lines starting with '#' are ignored as comments.
+    Lines that cannot be converted to an integer are skipped gracefully.
+
+    Args:
+        filename (str): The path to the input file.
+    """
+    total_sum = 0
+    line_count = 0
+    skipped_lines = 0
+
+    try:
+        with open(filename, 'r') as file:
+            for line in file:
+                line_count += 1
+                line = line.strip()
+
+                if not line or line.startswith('#'):
+                    continue
+
+                try:
+                    number = int(line)
+                    total_sum += number
+
+                except ValueError:
+                    skipped_lines += 1
+                    print(f"Warning: Skipping line {line_count} due to invalid format: '{line}'", file=sys.stderr)
+
+        print(f"Read {line_count} lines")
+        print(f"Skipped {skipped_lines} lines.")
+        print(f"Total sum: {total_sum}")
+
+    except FileNotFoundError:
+        print(f"Error: The file '{filename}' was not found.", file=sys.stderr)
+        return None
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: sumnegpow2 <filename>")
+        sys.exit(1)
+
+    filename = sys.argv[1]
+    sumnegpow2(filename)
+
