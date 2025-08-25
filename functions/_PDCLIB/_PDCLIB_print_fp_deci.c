@@ -10,11 +10,11 @@
 
 #include <assert.h>
 
-void _PDCLIB_print_fp_deci( _PDCLIB_bigint_t * fp,
+void _PDCLIB_print_fp_deci( _PDCLIB_fp_t * fp,
                             struct _PDCLIB_status_t * status,
-                            char sign )
+                            char * buffer )
 {
-    if ( fp->size == 0 )
+    if ( fp->mantissa.size == 0 )
     {
         /* mant-in-buffer zero, exp10 zero, go format */
     }
