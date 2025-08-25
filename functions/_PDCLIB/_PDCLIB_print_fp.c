@@ -1,4 +1,4 @@
-/* _PDCLIB_print_fp( _PDCLIB_bigint_t *, struct _PDCLIB_status_t * )
+/* _PDCLIB_print_fp( _PDCLIB_fp_t *, struct _PDCLIB_status_t * )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -8,78 +8,51 @@
 
 #include "pdclib/_PDCLIB_print.h"
 
-static void _PDCLIB_print_inf_nan( _PDCLIB_bigint_t * fp,
-                                   struct _PDCLIB_status_t * status,
-                                   char sign )
-{
-    char const * s = ( status->flags & E_lower )
-                     ? ( ( fp->size > 0 ) ? "nan" : "inf" )
-                     : ( ( fp->size > 0 ) ? "NAN" : "INF" );
+#include <string.h>
 
-    /* "Count" the characters before actually printing them */
-    /* This allows us to pad properly if necessary */
-    status->current = ( sign == '\0' ) ? 3 : 4;
-
-    /* Pad if necessary */
-    if ( ! ( status->flags & E_minus ) )
-    {
-        while ( status->current < status->width )
-        {
-            PUT( ' ' );
-            ++status->current;
-        }
-    }
-
-    /* Output -- we already counted the characters above */
-    if ( sign != '\0' )
-    {
-        PUT( sign );
-    }
-
-    while ( *s )
-    {
-        PUT( *s++ );
-    }
-}
-
-void _PDCLIB_print_fp( _PDCLIB_bigint_t * fp,
+void _PDCLIB_print_fp( _PDCLIB_fp_t * fp,
                        struct _PDCLIB_status_t * status )
 {
-    char sign;
+    char buffer[ _PDCLIB_LDBL_MANT_DIG + 10 ];
 
     /* Turning sign bit into sign character. */
-    if ( fp->data[ fp->size ] & 1<<0 )
+    if ( fp->sign == 1 )
     {
-        sign = '-';
+        fp->sign = '-';
     }
     else if ( status->flags & E_plus )
     {
-        sign = '+';
+        fp->sign = '+';
     }
     else if ( status->flags & E_space )
     {
-        sign = ' ';
+        fp->sign = ' ';
     }
     else
     {
-        sign = '\0';
+        fp->sign = '\0';
     }
 
-    if ( fp->data[ fp->size ] & 1<<2 )
+    switch ( fp->state )
     {
-        _PDCLIB_print_inf_nan( fp, status, sign );
-        return;
-    }
-
-    switch ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) )
-    {
-        case E_hexa:
-            _PDCLIB_print_fp_hexa( fp, status, sign );
+        case _PDCLIB_FP_NAN:
+            strcpy( buffer, ( status->flags & E_lower ) ? "nan" : "NAN" );
             break;
-        case E_decimal:
-            _PDCLIB_print_fp_deci( fp, status, sign );
+        case _PDCLIB_FP_INF:
+            strcpy( buffer, ( status->flags & E_lower ) ? "inf" : "INF" );
             break;
         default:
+            switch ( status->flags & ( E_decimal | E_exponent | E_generic | E_hexa ) )
+            {
+                case E_hexa:
+                    _PDCLIB_print_fp_hexa( fp, status, buffer );
+                    break;
+                case E_decimal:
+                    _PDCLIB_print_fp_deci( fp, status, buffer );
+                    break;
+                default:
+                    break;
+            }
             break;
     }
 }

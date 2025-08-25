@@ -249,17 +249,18 @@ set( PDCLIB_SOURCES
      functions/_tzcode/_PDCLIB_tzparse.c
      functions/_tzcode/_PDCLIB_tzset_unlocked.c
      functions/_tzcode/_PDCLIB_update_tzname_etc.c
+
      functions/_PDCLIB/assert.c
      functions/_PDCLIB/errno.c
      functions/_PDCLIB/_PDCLIB_atomax.c
+     functions/_PDCLIB/_PDCLIB_fp_from_dbl.c
+     functions/_PDCLIB/_PDCLIB_fp_from_ldbl.c
      functions/_PDCLIB/_PDCLIB_bigint_add.c
      functions/_PDCLIB/_PDCLIB_bigint_cmp.c
      functions/_PDCLIB/_PDCLIB_bigint_digit_log2.c
      functions/_PDCLIB/_PDCLIB_bigint_div.c
      functions/_PDCLIB/_PDCLIB_bigint_from_bigint.c
-     functions/_PDCLIB/_PDCLIB_bigint_from_dbl.c
      functions/_PDCLIB/_PDCLIB_bigint_from_digit.c
-     functions/_PDCLIB/_PDCLIB_bigint_from_ldbl.c
      functions/_PDCLIB/_PDCLIB_bigint_from_pow10.c
      functions/_PDCLIB/_PDCLIB_bigint_from_pow2.c
      functions/_PDCLIB/_PDCLIB_bigint_log2.c
@@ -267,7 +268,6 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_bigint_mul10.c
      functions/_PDCLIB/_PDCLIB_bigint_mul_pow10.c
      functions/_PDCLIB/_PDCLIB_bigint_shl.c
-
      functions/_PDCLIB/_PDCLIB_closeall.c
      functions/_PDCLIB/_PDCLIB_digits.c
      functions/_PDCLIB/_PDCLIB_filemode.c

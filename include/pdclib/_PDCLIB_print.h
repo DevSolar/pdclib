@@ -102,12 +102,28 @@ typedef struct
     _PDCLIB_bigint_digit_t data[ _PDCLIB_BIGINT_DIGITS ];
 } _PDCLIB_bigint_t;
 
+typedef struct
+{
+    _PDCLIB_bigint_t mantissa;
+    _PDCLIB_int_least16_t exponent;
+    _PDCLIB_int_least16_t scale;
+    enum
+    {
+        _PDCLIB_FP_NORMAL,
+        _PDCLIB_FP_SUBNORMAL,
+        _PDCLIB_FP_INF,
+        _PDCLIB_FP_NAN
+    } state;
+    char sign;
+} _PDCLIB_fp_t;
+
+void _PDCLIB_fp_from_dbl( _PDCLIB_fp_t * fp, double value );
+void _PDCLIB_fp_from_ldbl( _PDCLIB_fp_t * fp, long double value );
+
 void _PDCLIB_bigint_from_digit( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_digit_t digit );
 void _PDCLIB_bigint_from_pow2( _PDCLIB_bigint_t * bigint, unsigned pow );
 void _PDCLIB_bigint_from_pow10( _PDCLIB_bigint_t * bigint, unsigned pow );
 void _PDCLIB_bigint_from_bigint( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
-void _PDCLIB_bigint_from_dbl( _PDCLIB_bigint_t * bigint, double value );
-void _PDCLIB_bigint_from_ldbl( _PDCLIB_bigint_t * bigint, long double value );
 void _PDCLIB_bigint_add( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
 void _PDCLIB_bigint_mul( _PDCLIB_bigint_t * bigint, _PDCLIB_bigint_t const * other );
 void _PDCLIB_bigint_mul_pow10( _PDCLIB_bigint_t * bigint, int pow10 );
@@ -120,9 +136,9 @@ unsigned _PDCLIB_bigint_div( _PDCLIB_bigint_t * dividend, _PDCLIB_bigint_t const
 
 void _PDCLIB_print_integer( struct _PDCLIB_imaxdiv_t div, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_string( const char * s, struct _PDCLIB_status_t * status );
-void _PDCLIB_print_fp( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * status );
-void _PDCLIB_print_fp_deci( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * status, char sign );
-void _PDCLIB_print_fp_hexa( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * status, char sign );
+void _PDCLIB_print_fp( _PDCLIB_fp_t * fp, struct _PDCLIB_status_t * status );
+void _PDCLIB_print_fp_deci( _PDCLIB_fp_t * fp, struct _PDCLIB_status_t * status, char * buffer );
+void _PDCLIB_print_fp_hexa( _PDCLIB_fp_t * fp, struct _PDCLIB_status_t * status, char * buffer );
 void _PDCLIB_print_fp_dragon4( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * status );
 
 #endif

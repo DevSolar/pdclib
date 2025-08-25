@@ -73,19 +73,19 @@ static char * print_exp( char * buffer, int exp )
     return ++buffer;
 }
 
-static size_t print_mant( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * status, char * buffer, char sign )
+static size_t print_mant( _PDCLIB_fp_t * fp, struct _PDCLIB_status_t * status, char * buffer )
 {
     size_t i;
     int last_non_zero;
     size_t mant_dig = ( ( status->flags & E_ldouble ) ? _PDCLIB_LDBL_MANT_DIG : _PDCLIB_DBL_MANT_DIG ) - 1;
-    size_t log2 = _PDCLIB_bigint_log2( fp );
+    size_t log2 = _PDCLIB_bigint_log2( &fp->mantissa );
     char * bufend = buffer;
 
     if ( ( mant_dig % 4 ) > 0 )
     {
         /* alignment */
         int shift = 4 - ( mant_dig % 4 );
-        _PDCLIB_bigint_shl( fp, shift );
+        _PDCLIB_bigint_shl( &fp->mantissa, shift );
         mant_dig += shift;
         log2 += shift;
     }
@@ -104,7 +104,7 @@ static size_t print_mant( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * statu
         /* data nibbles */
         div_t dv = div( i - 1, _PDCLIB_BIGINT_DIGIT_BITS / 4 );
 
-        if ( ( *bufend = ( fp->data[ dv.quot ] >> ( dv.rem * 4 ) ) & 0xfu ) > 0 )
+        if ( ( *bufend = ( fp->mantissa.data[ dv.quot ] >> ( dv.rem * 4 ) ) & 0xfu ) > 0 )
         {
             last_non_zero = bufend - buffer;
         }
@@ -115,7 +115,7 @@ static size_t print_mant( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * statu
         /* check rounding */
         if ( last_non_zero > ( status->prec + 1 ) )
         {
-            round( buffer, last_non_zero, status->prec, sign );
+            round( buffer, last_non_zero, status->prec, fp->sign );
         }
 
         return status->prec + 1;
@@ -127,32 +127,31 @@ static size_t print_mant( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * statu
     }
 }
 
-void _PDCLIB_print_fp_hexa( _PDCLIB_bigint_t * fp,
+void _PDCLIB_print_fp_hexa( _PDCLIB_fp_t * fp,
                             struct _PDCLIB_status_t * status,
-                            char sign )
+                            char * buffer )
 {
     _PDCLIB_static_assert( _PDCLIB_FLT_RADIX == 2, "Assuming 2-based Floating Point" );
 
     char const * digits = ( status->flags & E_lower ) ? _PDCLIB_digits : _PDCLIB_Xdigits;
-    int exp = (_PDCLIB_bigint_sdigit_t)fp->data[ fp->size + 1 ];
+    int exp = (_PDCLIB_bigint_sdigit_t)fp->exponent;
     /* sign + "0x" + dec + "." + ( LDBL_MANT_DIG / 4 )
             + 'p' + sign + exp[5] + '\0' <= 41
        ...but how could I do THAT? :-)
     */
-    char buffer[42];
     char * current = buffer;
     size_t count;
     size_t i;
 
     /* significant */
-    if ( fp->size == 0 )
+    if ( fp->mantissa.size == 0 )
     {
         *current++ = '0';
         exp = 0;
     }
     else
     {
-        count = print_mant( fp, status, current, sign );
+        count = print_mant( fp, status, current );
 
         *current = digits[ (size_t)*current ];
         ++current;
@@ -191,7 +190,7 @@ void _PDCLIB_print_fp_hexa( _PDCLIB_bigint_t * fp,
     *current = '\0';
 
     /* output */
-    count = ( current - buffer ) + ( ( sign == '\0' ) ? 2 : 3 );
+    count = ( current - buffer ) + ( ( fp->sign == '\0' ) ? 2 : 3 );
     count = ( status->width > count ) ? ( status->width - count ) : 0;
 
     if ( ( count > 0 ) && ! ( status->flags & E_minus ) && ! ( status->flags & E_zero ) )
@@ -203,9 +202,9 @@ void _PDCLIB_print_fp_hexa( _PDCLIB_bigint_t * fp,
         }
     }
 
-    if ( sign != '\0' )
+    if ( fp->sign != '\0' )
     {
-        PUT( sign );
+        PUT( fp->sign );
         status->current++;
     }
 
