@@ -29,6 +29,7 @@ option( AS_CXX "Compile as C++. (For testing purposes.) Default: OFF." OFF )
 option( AS_C11 "Compile as C11. (For testing purposes.) Default: OFF." OFF )
 option( AS_C90 "Compile as C90. (For testing purposes.) Default: OFF." OFF )
 option( USE_THREADS "Compile with support for <threads.h>. Default: ON." ON )
+option( CMAKE_EXPORT_COMPILE_COMMANDS "Create a compilation database for use with clangd. Default: ON." ON )
 
 # Setting compiler to standard, no extensions.
 if ( AS_C11 )

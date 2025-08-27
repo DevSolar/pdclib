@@ -68,3 +68,6 @@ workbench
 
 # Unix
 .gdb_history
+
+# clangd
+.cache
