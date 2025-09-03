@@ -77,7 +77,7 @@ int main( void )
     _PDCLIB_bigint_from_pow2( &t, _PDCLIB_LDBL_MANT_DIG - 1 );
     TESTCASE( fp.state == _PDCLIB_FP_NORMAL );
     TESTCASE( _PDCLIB_bigint_cmp( &fp.mantissa, &t ) == 0 );
-    TESTCASE( fp.scale == ( 1 | ( _PDCLIB_LDBL_MANT_DIG - 1 ) << 8 ) );
+    TESTCASE( fp.scale == ( _PDCLIB_LDBL_MANT_DIG - 1 ) );
     TESTCASE( fp.exponent == 0 );
 
     /* Inf */
@@ -96,8 +96,8 @@ int main( void )
     _PDCLIB_bigint_from_pow2( &t, _PDCLIB_LDBL_MANT_DIG - 2 );
     TESTCASE( fp.state == _PDCLIB_FP_SUBNORMAL );
     TESTCASE( _PDCLIB_bigint_cmp( &fp.mantissa, &t ) == 0 );
-    TESTCASE( fp.scale == ( 1<<1 | ( _PDCLIB_LDBL_MANT_DIG - 1 ) << 8 ) );
-    TESTCASE( fp.exponent == (_PDCLIB_bigint_digit_t)(1 - ( _PDCLIB_LDBL_MAX_EXP - 1 ) ) );
+    TESTCASE( fp.scale == ( _PDCLIB_LDBL_MANT_DIG - 1 ) );
+    TESTCASE( fp.exponent == (_PDCLIB_int_least16_t)(1 - ( _PDCLIB_LDBL_MAX_EXP - 1 ) ) );
 #endif
 
     return TEST_RESULTS;

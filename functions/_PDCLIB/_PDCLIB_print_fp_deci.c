@@ -10,8 +10,6 @@
 
 #include <float.h>
 
-extern int dprintf( int, char const *, ... );
-
 static int prep( _PDCLIB_bigint_t * mantissa, int exponent )
 {
     /* log10(2) to 128bit precision */
@@ -216,9 +214,6 @@ int _PDCLIB_print_fp_deci( _PDCLIB_fp_t * fp,
 int main( int argc, char * argv[] )
 {
     /* Tested by _PDCLIB_print testdriver */
-#ifndef REGTEST
-    printf( "%.2f\n", 1.234567 );
-#endif
     return TEST_RESULTS;
 }
 
