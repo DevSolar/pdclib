@@ -32,6 +32,8 @@ extern struct _PDCLIB_file_t * _PDCLIB_filelist;
 struct _PDCLIB_file_t * tmpfile( void )
 {
     FILE * rc;
+    char const * tmpdir = getenv("TMPDIR");
+
     /* This is the chosen way to get high-quality randomness. Replace as
        appropriate.
     */
@@ -58,7 +60,7 @@ struct _PDCLIB_file_t * tmpfile( void )
         */
         unsigned int random;
         read( randomsource, (void *)&random, sizeof( unsigned int ) );
-        sprintf( filename, "/tmp/%u.tmp", random );
+        sprintf( filename, "%s/%u.tmp", (tmpdir == NULL) ? "/tmp" : tmpdir, random );
         /* Check if file of this name exists. Note that fopen() is a very weak
            check, which does not take e.g. access permissions into account
            (file might exist but not readable). Replace with something more
