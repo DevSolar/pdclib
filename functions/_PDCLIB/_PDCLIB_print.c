@@ -131,9 +131,6 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
 
             spec = endptr;
         }
-
-        /* Having a precision cancels out any zero flag. */
-        status->flags &= ~E_zero;
     }
 
     /* Optional length modifier
@@ -324,6 +321,12 @@ const char * _PDCLIB_print( const char * spec, struct _PDCLIB_status_t * status 
         }
         else
         {
+            /* Having a precision cancels out any zero flag. */
+            if ( status->prec != EOF )
+            {
+                status->flags &= ~E_zero;
+            }
+
             if ( status->flags & E_unsigned )
             {
                 /* Integer conversions (unsigned) */
