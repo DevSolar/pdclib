@@ -40,28 +40,29 @@
 #define E_plus     (INT32_C(1)<<1)
 #define E_alt      (INT32_C(1)<<2)
 #define E_space    (INT32_C(1)<<3)
+
 #define E_zero     (INT32_C(1)<<4)
 #define E_done     (INT32_C(1)<<5)
-
 #define E_char     (INT32_C(1)<<6)
 #define E_short    (INT32_C(1)<<7)
+
 #define E_long     (INT32_C(1)<<8)
 #define E_llong    (INT32_C(1)<<9)
 #define E_intmax   (INT32_C(1)<<10)
 #define E_size     (INT32_C(1)<<11)
+
 #define E_ptrdiff  (INT32_C(1)<<12)
 #define E_pointer  (INT32_C(1)<<13)
-
 #define E_double   (INT32_C(1)<<14)
 #define E_ldouble  (INT32_C(1)<<15)
 
-#define E_decimal  (INT32_C(1)<<18)
-#define E_exponent (INT32_C(1)<<19)
-#define E_generic  (INT32_C(1)<<20)
-#define E_hexa     (INT32_C(1)<<21)
-
 #define E_lower    (INT32_C(1)<<16)
 #define E_unsigned (INT32_C(1)<<17)
+#define E_decimal  (INT32_C(1)<<18)
+#define E_exponent (INT32_C(1)<<19)
+
+#define E_generic  (INT32_C(1)<<20)
+#define E_hexa     (INT32_C(1)<<21)
 
 /* -------------------------------------------------------------------------- */
 /* _PDCLIB_bigint_t support (required for floating point conversions)         */
@@ -137,7 +138,7 @@ unsigned _PDCLIB_bigint_div( _PDCLIB_bigint_t * dividend, _PDCLIB_bigint_t const
 void _PDCLIB_print_integer( struct _PDCLIB_imaxdiv_t div, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_string( const char * s, struct _PDCLIB_status_t * status );
 void _PDCLIB_print_fp( _PDCLIB_fp_t * fp, struct _PDCLIB_status_t * status );
-void _PDCLIB_print_fp_deci( _PDCLIB_fp_t * fp, struct _PDCLIB_status_t * status, char * buffer );
+int _PDCLIB_print_fp_deci( _PDCLIB_fp_t * fp, struct _PDCLIB_status_t * status, char * buffer );
 void _PDCLIB_print_fp_hexa( _PDCLIB_fp_t * fp, struct _PDCLIB_status_t * status, char * buffer );
 void _PDCLIB_print_fp_dragon4( _PDCLIB_bigint_t * fp, struct _PDCLIB_status_t * status );
 
