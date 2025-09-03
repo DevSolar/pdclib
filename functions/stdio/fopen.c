@@ -51,9 +51,13 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
     */
     rc->status |= filemode | _IOLBF;
 
-    if ( ( rc->handle = _PDCLIB_open( filename, rc->status ) ) == _PDCLIB_NOHANDLE )
+    /* _PDCLIB_realpath() gives us an absolute path to the file, which
+       a later reopen() would need.
+    */
+    if ( ( rc->handle = _PDCLIB_open( filename, rc->status ) ) == _PDCLIB_NOHANDLE
+            || ( rc->filename = _PDCLIB_realpath( filename ) ) == NULL )
     {
-        /* OS open() failed */
+        /* OS open() or realpath() failed */
 #ifndef __STDC_NO_THREADS__
         mtx_destroy( &rc->mtx );
 #endif
@@ -61,9 +65,6 @@ struct _PDCLIB_file_t * fopen( const char * _PDCLIB_restrict filename, const cha
         free( rc );
         return NULL;
     }
-
-    /* Getting absolute filename (for potential freopen()) */
-    rc->filename = _PDCLIB_realpath( filename );
 
     /* Adding to list of open files */
     _PDCLIB_LOCK( _PDCLIB_filelist_mtx );

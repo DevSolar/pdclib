@@ -9,6 +9,8 @@
 #include "pdclib/_PDCLIB_glue.h"
 
 #include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,7 +24,26 @@ extern char * realpath( const char * file_name, char * resolved_name );
 
 char * _PDCLIB_realpath( const char * path )
 {
-    return realpath( path, NULL );
+    /* TODO: PATH_MAX but that seems difficult to come by */
+    char buffer[ 4096 ];
+    char * resolved_name;
+
+    if ( realpath( path, buffer ) == NULL )
+    {
+        return NULL;
+    }
+
+    /* Need to do our own alloc-and-copy here, as realpath()
+       would be linked to the system malloc(), and if our
+       fclose() would run our free() on someone else's memory,
+       results are more interesting than we would like to see.
+    */
+    if ( ( resolved_name = malloc( strlen( buffer + 1 ) ) ) == NULL )
+    {
+        return NULL;
+    }
+
+    return strcpy( resolved_name, buffer );
 }
 
 #endif
