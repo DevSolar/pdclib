@@ -980,4 +980,24 @@
     PRINTF_TEST( 12, " 1.23e-05   ", "% -12.3g", 0.0000123 );
     PRINTF_TEST( 12, " 1.23e-06   ", "% -12.3g", 0.00000123 );
     PRINTF_TEST( 12, " 1.23e-08   ", "% -12.3g", 123e-10 );
+
+    /* INF / NAN */
+    PRINTF_TEST( 3, "inf", "%f", 1e500 );
+    PRINTF_TEST( 4, "-inf", "%f", -1e500 );
+    PRINTF_TEST( 4, "-nan", "%f", 0.0/0.0 );
+    PRINTF_TEST( 5, "  inf", "%5f", 1e500 );
+    PRINTF_TEST( 5, " -inf", "%5f", -1e500 );
+    PRINTF_TEST( 5, " -nan", "%5f", 0.0/0.0 );
+    PRINTF_TEST( 5, "inf  ", "%-5f", 1e500 );
+    PRINTF_TEST( 5, "-inf ", "%-5f", -1e500 );
+    PRINTF_TEST( 5, "-nan ", "%-5f", 0.0/0.0 );
+    PRINTF_TEST( 5, " inf ", "% -5f", 1e500 );
+    PRINTF_TEST( 5, "-inf ", "% -5f", -1e500 );
+    PRINTF_TEST( 5, "-nan ", "% -5f", 0.0/0.0 );
+    PRINTF_TEST( 5, "  inf", "%05f", 1e500 );
+    PRINTF_TEST( 5, " -inf", "%05f", -1e500 );
+    PRINTF_TEST( 5, " -nan", "%05f", 0.0/0.0 );
+    PRINTF_TEST( 5, "  inf", "%#05f", 1e500 );
+    PRINTF_TEST( 5, " -inf", "%#05f", -1e500 );
+    PRINTF_TEST( 5, " -nan", "%#05f", 0.0/0.0 );
     }
