@@ -217,24 +217,6 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
     }
 }
 
-static void _PDCLIB_format_g( struct _PDCLIB_status_t * status, char * buffer, int exp10, char sign ) {
-    size_t len = strlen( buffer );
-    int exponent = ( len + exp10 ) - 1;
-    status->prec = ( status->prec == 0 ) ? 1 : status->prec;
-
-    if ( exponent >= -4 && status->prec > exponent )
-    {
-        status->prec -= exponent;
-        _PDCLIB_format_f( status, buffer, exp10, sign );
-    }
-    else
-    {
-        _PDCLIB_format_e( status, buffer, exp10, sign );
-    }
-
-    return;
-}
-
 void _PDCLIB_print_fp( _PDCLIB_fp_t * fp,
                        struct _PDCLIB_status_t * status )
 {
@@ -300,25 +282,56 @@ void _PDCLIB_print_fp( _PDCLIB_fp_t * fp,
             {
                 int exp10;
 
-                /* Default precision for floating points is 6 */
                 if ( status->prec < 0 )
                 {
                     status->prec = 6;
                 }
 
-                exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
-
                 switch ( status->flags & ( E_decimal | E_exponent | E_generic ) )
                 {
                     case E_decimal:
+                    {
+                        exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
                         _PDCLIB_format_f( status, buffer, exp10, fp->sign );
                         break;
+                    }
                     case E_exponent:
+                    {
+                        exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
                         _PDCLIB_format_e( status, buffer, exp10, fp->sign );
                         break;
+                    }
                     case E_generic:
-                        _PDCLIB_format_g( status, buffer, exp10, fp->sign );
+                    {
+                        _PDCLIB_bigint_t mant;
+                        int exponent;
+                        _PDCLIB_bigint_from_bigint( &mant, &fp->mantissa );
+
+                        if ( status->prec == 0 )
+                        {
+                            status->prec = 1;
+                        }
+
+                        exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
+                        exponent = ( strlen( buffer ) + exp10 ) - 1;
+
+                        if ( exponent >= -4 && exponent < status->prec )
+                        {
+                            _PDCLIB_bigint_from_bigint( &fp->mantissa, &mant );
+                            status->flags &= ~E_generic;
+                            status->flags |= E_decimal;
+                            status->prec -= exponent + 1;
+                            exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
+                            status->flags |= E_generic;
+                            _PDCLIB_format_f( status, buffer, exp10, fp->sign );
+                        }
+                        else
+                        {
+                            status->prec -= 1;
+                            _PDCLIB_format_e( status, buffer, exp10, fp->sign );
+                        }
                         break;
+                    }
                 }
             }
             break;

@@ -105,17 +105,8 @@ int _PDCLIB_print_fp_deci( _PDCLIB_fp_t * fp,
             cutoff = -status->prec;
             break;
         case E_exponent:
-            cutoff = exp10 - status->prec - 1;
-            break;
         case E_generic:
-            if ( status->prec > exp10 && exp10 > -4 )
-            {
-                cutoff = -status->prec;
-            }
-            else
-            {
-                cutoff = exp10 - status->prec - 1;
-            }
+            cutoff = exp10 - status->prec - 1;
             break;
     }
 
