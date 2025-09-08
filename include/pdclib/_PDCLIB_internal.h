@@ -110,7 +110,7 @@ extern "C" {
 
 #define _PDCLIB_CHECKBUFFER( fh ) ( ( ( fh->bufidx == fh->bufend ) && ( fh->ungetidx == 0 ) ) ? _PDCLIB_fillbuffer( fh ) : 0 )
 
-#define _PDCLIB_GENERIC( func, x ) ( ( sizeof( x ) == sizeof( double ) ) ? _PDCLIB_ ## func( x ) : \
+#define _PDCLIB_GENERIC( func, x ) ( ( sizeof( x ) == sizeof( double ) ) ? _PDCLIB_ ## func ## d( x ) : \
                                      ( sizeof( x ) == sizeof( float ) ) ? _PDCLIB_ ## func ## f( x ) : \
                                      ( _PDCLIB_ ## func ## l( x ) ) )
 
@@ -473,6 +473,34 @@ _PDCLIB_LOCAL long double _PDCLIB_naive_etod( const char * s, char ** endptr );
 
 /* Conversion of hexadecimal notation to floating point */
 _PDCLIB_LOCAL long double _PDCLIB_naive_ptod( const char * s, char ** endptr );
+
+/* -------------------------------------------------------------------------- */
+/* Declaration of math helper functions (implemented in functions/math).      */
+/* -------------------------------------------------------------------------- */
+
+int _PDCLIB_isnand( double x );
+int _PDCLIB_isnanf( float x );
+int _PDCLIB_isnanl( long double x );
+
+int _PDCLIB_isinfd( double x );
+int _PDCLIB_isinff( float x );
+int _PDCLIB_isinfl( long double x );
+
+int _PDCLIB_signbitd( double x );
+int _PDCLIB_signbitf( float x );
+int _PDCLIB_signbitl( long double x );
+
+int _PDCLIB_isfinited( double x );
+int _PDCLIB_isfinitef( float x );
+int _PDCLIB_isfinitel( long double x );
+
+int _PDCLIB_isnormald( double x );
+int _PDCLIB_isnormalf( float x );
+int _PDCLIB_isnormall( long double x );
+
+int _PDCLIB_fpclassifyd( double x );
+int _PDCLIB_fpclassifyf( float x );
+int _PDCLIB_fpclassifyl( long double x );
 
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */

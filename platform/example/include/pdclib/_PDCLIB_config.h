@@ -460,9 +460,13 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_LDBL_TRUE_MIN     __LDBL_DENORM_MIN__
 
 /* Macros for deconstructing floating point values                            */
-/* This assumes that the floating point value has been memcpy'd into a bigint */
-/* (see _PDCLIB_bigint_from_dbl.c and _PDCLIB_bigint_from_ldbl.c), with the   */
-/* bigint passed to the macro as parameter.                                   */
+/* This assumes that the floating point value has been memcpy'd into an array */
+/* of _PDCLIB_bigint_digit_t (see _PDCLIB_bigint_from_*dbl.c with the array   */
+/* passed to the macro as parameter.                                          */
+#define _PDCLIB_FLT_SIGN( data ) ( ( data[1] & 0x8000 ) >> 15 )
+#define _PDCLIB_FLT_EXP( data ) ( ( data[1] & 0x7f80 ) >> 7 )
+#define _PDCLIB_FLT_SIZE( data ) ( data[1] &= 0x007f, 2 )
+
 #define _PDCLIB_DBL_SIGN( data ) ( ( data[3] & 0x8000 ) >> 15 )
 #define _PDCLIB_DBL_EXP( data ) ( ( data[3] & 0x7ff0u ) >> 4 )
 #define _PDCLIB_DBL_SIZE( data ) ( data[3] &= 0x000fu, 4 )

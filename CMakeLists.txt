@@ -107,6 +107,13 @@ set( PDCLIB_SOURCES
      functions/locale/localeconv.c
      functions/locale/setlocale.c
 
+     functions/math/fpclassify.c
+     functions/math/isfinite.c
+     functions/math/isinf.c
+     functions/math/isnan.c
+     functions/math/isnormal.c
+     functions/math/signbit.c
+
      platform/example/functions/signal/raise.c
      platform/example/functions/signal/signal.c
 
