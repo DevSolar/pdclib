@@ -84,6 +84,9 @@ extern "C" {
 /* _PDCLIB_CONSTRAINT_VIOLATION( e ) expand errno number e to parameter list  */
 /*                                   fit for Annex K constraint violation     */
 /*                                   handler.                                 */
+/* _PDCLIB_Generic( f, fp ) expand to _PDCLIB_f, _PDCLIB_ff, _PDCLIB_fl       */
+/*                          depending on fp being sizeof double, float, or    */
+/*                          long double.                                      */
 /* -------------------------------------------------------------------------- */
 
 #define _PDCLIB_static_assert( e, m ) enum { _PDCLIB_concat( _PDCLIB_assert_, __LINE__ ) = 1 / ( !!(e) ) }
@@ -106,6 +109,10 @@ extern "C" {
 #define _PDCLIB_GETC( fh ) ( ( fh->ungetidx == 0 ) ? ( unsigned char )fh->buffer[ fh->bufidx++ ] : ( unsigned char )fh->ungetbuf[ --fh->ungetidx ] )
 
 #define _PDCLIB_CHECKBUFFER( fh ) ( ( ( fh->bufidx == fh->bufend ) && ( fh->ungetidx == 0 ) ) ? _PDCLIB_fillbuffer( fh ) : 0 )
+
+#define _PDCLIB_GENERIC( func, x ) ( ( sizeof( x ) == sizeof( double ) ) ? _PDCLIB_ ## func( x ) : \
+                                     ( sizeof( x ) == sizeof( float ) ) ? _PDCLIB_ ## func ## f( x ) : \
+                                     ( _PDCLIB_ ## func ## l( x ) ) )
 
 /* -------------------------------------------------------------------------- */
 /* Preparing the length modifiers used in <inttypes.h>.                       */
@@ -377,6 +384,9 @@ _PDCLIB_LOCAL _PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
 _PDCLIB_LOCAL const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
 _PDCLIB_LOCAL _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, int limdigit, char * sign );
 
+/* Helper function used by strtof(), strtod(), and strtold().                 */
+_PDCLIB_LOCAL int _PDCLIB_strtod_prelim( const char * p, char * sign, char ** endptr );
+
 /* Digits arrays used by various integer conversion functions */
 extern const char _PDCLIB_digits[];
 extern const char _PDCLIB_Xdigits[];
@@ -458,12 +468,11 @@ _PDCLIB_LOCAL int _PDCLIB_getstream( struct _PDCLIB_file_t * stream );
 /* Backend for strtok and strtok_s (plus potential extensions like strtok_r). */
 _PDCLIB_LOCAL char * _PDCLIB_strtok( char * _PDCLIB_restrict s1, _PDCLIB_size_t * _PDCLIB_restrict s1max, const char * _PDCLIB_restrict s2, char ** _PDCLIB_restrict ptr );
 
-/* -------------------------------------------------------------------------- */
-/* Declaration of helper functions (implemented in functions/_dtoa).          */
-/* -------------------------------------------------------------------------- */
+/* Conversion of exponent notation to floating point */
+_PDCLIB_LOCAL long double _PDCLIB_naive_etod( const char * s, char ** endptr );
 
-_PDCLIB_LOCAL void _PDCLIB_freedtoa( char * s );
-_PDCLIB_LOCAL char * _PDCLIB_dtoa( double dd, int mode, int ndigits, int * decpt, int * sign, char ** rve );
+/* Conversion of hexadecimal notation to floating point */
+_PDCLIB_LOCAL long double _PDCLIB_naive_ptod( const char * s, char ** endptr );
 
 /* -------------------------------------------------------------------------- */
 /* errno                                                                      */

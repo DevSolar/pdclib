@@ -1,4 +1,4 @@
-/* strtod( const char *, char ** )
+/* strtold( const char *, char ** )
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
@@ -12,9 +12,9 @@
 
 #include <float.h>
 
-double strtod( const char * s, char ** endptr )
+long double strtold( const char * s, char ** endptr )
 {
-    double rc = 0;
+    long double rc = 0;
     char sign = '+';
     int base = _PDCLIB_strtod_prelim( s, &sign, endptr );
 
@@ -27,16 +27,16 @@ double strtod( const char * s, char ** endptr )
             break;
         case -1:
             /* INF */
-            rc = DBL_MAX * 2;
+            rc = LDBL_MAX * 2;
             break;
         case 0:
             /* No match */
             break;
         case 10:
-            rc = (double)_PDCLIB_naive_etod( s, endptr );
+            rc = (long double)_PDCLIB_naive_etod( s, endptr );
             break;
         case 16:
-            rc = (double)_PDCLIB_naive_ptod( s, endptr );
+            rc = (long double)_PDCLIB_naive_ptod( s, endptr );
             break;
     }
 
@@ -61,15 +61,13 @@ double strtod( const char * s, char ** endptr )
 typedef struct
 {
     const char * s;
-    double d;
+    long double d;
     ptrdiff_t l;
 } testdata_t;
 
-extern int dprintf( int, char const *, ... );
-
 int main( void )
 {
-    double d;
+    long double d;
     char * s;
     testdata_t testdata[] =
     {
@@ -85,9 +83,9 @@ int main( void )
         { "-0.000123e+6", -123.0, 12 },
         { "-123000e-3", -123, 10 },
         { "-123e-003", -0.123, 9 },
-        { " infx", DBL_MAX * 2, 4 },
+        { " infx", LDBL_MAX * 2, 4 },
         { " nanx", 0.0 / 0.0 * -1, 4 },
-        { " -infx", DBL_MAX * 2 * -1, 5 },
+        { " -infx", LDBL_MAX * 2 * -1, 5 },
         { " -nanx", 0.0 / 0.0, 5 },
         { " nan(foo)", 0.0 / 0.0 * -1, 9 },
         { " nan(foo", 0.0 / 0.0 * -1, 4 }

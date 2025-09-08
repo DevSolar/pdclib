@@ -183,6 +183,9 @@ set( PDCLIB_SOURCES
      functions/stdlib/rand.c
      functions/stdlib/set_constraint_handler_s.c
      functions/stdlib/srand.c
+     functions/stdlib/strtod.c
+     functions/stdlib/strtof.c
+     functions/stdlib/strtold.c
      functions/stdlib/strtol.c
      functions/stdlib/strtoll.c
      functions/stdlib/strtoul.c
@@ -286,6 +289,8 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_load_lc_numeric.c
      functions/_PDCLIB/_PDCLIB_load_lc_time.c
      functions/_PDCLIB/_PDCLIB_load_lines.c
+     functions/_PDCLIB/_PDCLIB_naive_etod.c
+     functions/_PDCLIB/_PDCLIB_naive_ptod.c
      functions/_PDCLIB/_PDCLIB_prepread.c
      functions/_PDCLIB/_PDCLIB_prepwrite.c
      functions/_PDCLIB/_PDCLIB_print.c
@@ -297,6 +302,7 @@ set( PDCLIB_SOURCES
      functions/_PDCLIB/_PDCLIB_scan.c
      functions/_PDCLIB/_PDCLIB_seed.c
      functions/_PDCLIB/_PDCLIB_strtok.c
+     functions/_PDCLIB/_PDCLIB_strtod_prelim.c
      functions/_PDCLIB/_PDCLIB_strtox_main.c
      functions/_PDCLIB/_PDCLIB_strtox_prelim.c
      functions/_PDCLIB/stdarg.c
