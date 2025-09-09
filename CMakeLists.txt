@@ -476,6 +476,9 @@ if ( UNIX )
     set_target_properties( pdclibs PROPERTIES OUTPUT_NAME pdclib )
 endif()
 
+# On POSIX, math.h functions are defined separately in libm.
+find_library( LIBM m HINTS /system/lib64 DOC "Standard Math Library" )
+
 add_custom_target( testdrivers )
 add_custom_target( regtestdrivers )
 
@@ -501,6 +504,7 @@ foreach( file ${PDCLIB_SOURCES} )
     set_property( TARGET ${basename}_r APPEND_STRING PROPERTY COMPILE_FLAGS "-DTEST -DREGTEST ${FLAGS}" )
     set_property( TARGET ${basename}_r PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test_support/regtestdrivers )
     target_include_directories( ${basename}_r BEFORE PRIVATE test_support )
+    target_link_libraries( ${basename}_r ${LIBM} )
     add_test( ${basename}_r test_support/regtestdrivers/${basename}_r )
     add_dependencies( regtestdrivers ${basename}_r )
 endforeach()
