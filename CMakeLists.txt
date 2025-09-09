@@ -107,6 +107,10 @@ set( PDCLIB_SOURCES
      functions/locale/localeconv.c
      functions/locale/setlocale.c
 
+     functions/math/fabs.c
+     functions/math/fdim.c
+     functions/math/fmax.c
+     functions/math/fmin.c
      functions/math/fpclassify.c
      functions/math/isfinite.c
      functions/math/isinf.c
