@@ -65,11 +65,28 @@ static void _PDCLIB_format_e( struct _PDCLIB_status_t * status, char * buffer, i
               + ( ( status->prec > 0 ) ? status->prec : 0 )
               + ( current - exp_buffer );
 
+        if ( ( sign != '\0' ) && ( status->flags & E_zero ) )
+        {
+            PUT( sign );
+            status->current++;
+        }
+
         for ( ; (size_t)i < status->width; ++i )
         {
             PUT( ( status->flags & E_zero ) ? '0' : ' ' );
             status->current++;
         }
+
+        if ( ( sign != '\0' ) && ! ( status->flags & E_zero ) )
+        {
+            PUT( sign );
+            status->current++;
+        }
+    }
+    else if ( sign != '\0' )
+    {
+        PUT( sign );
+        status->current++;
     }
 
     /* Print buffer */
@@ -117,11 +134,28 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
             + ( status->prec > 0 || status->flags & E_alt )
             + ( ( status->prec > 0 ) ? status->prec : 0 );
 
+        if ( ( sign != '\0' ) && ( status->flags & E_zero ) )
+        {
+            PUT( sign );
+            status->current++;
+        }
+
         for ( ; i < status->width; ++i )
         {
             PUT( ( status->flags & E_zero ) ? '0' : ' ' );
             status->current++;
         }
+
+        if ( ( sign != '\0' ) && ! ( status->flags & E_zero ) )
+        {
+            PUT( sign );
+            status->current++;
+        }
+    }
+    else if ( sign != '\0' )
+    {
+        PUT( sign );
+        status->current++;
     }
 
     if ( exp10 >= 0 )
@@ -217,6 +251,38 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
     }
 }
 
+static void _PDCLIB_format_infnan( struct _PDCLIB_status_t * status, int state, char sign )
+{
+    size_t i;
+    char const * s = ( state == _PDCLIB_FP_INF )
+        ? ( ( status->flags & E_lower ) ? "inf" : "INF" )
+        : ( ( status->flags & E_lower ) ? "nan" : "NAN" );
+
+    /* Left padding, if applicable */
+    if ( ! ( status->flags & E_minus ) )
+    {
+        i = ( sign != '\0' ) ? 4 : 3;
+        for ( i = ( sign != '\0' ) ? 4 : 3; i < status->width; ++i )
+        {
+            PUT( ' ' );
+            status->current++;
+        }
+    }
+
+    if ( sign != '\0' )
+    {
+        PUT( sign );
+        status->current++;
+    }
+
+    for ( i = 0; i < 3; ++i )
+    {
+        PUT( s[i] );
+    }
+
+    status->current += 3;
+}
+
 void _PDCLIB_print_fp( _PDCLIB_fp_t * fp,
                        struct _PDCLIB_status_t * status )
 {
@@ -240,101 +306,72 @@ void _PDCLIB_print_fp( _PDCLIB_fp_t * fp,
         fp->sign = '\0';
     }
 
-    switch ( fp->state )
+    if ( fp->state == _PDCLIB_FP_INF || fp->state == _PDCLIB_FP_NAN )
     {
-        case _PDCLIB_FP_NAN:
+        _PDCLIB_format_infnan( status, fp->state, fp->sign );
+        return;
+    }
+
+    if ( status->flags & E_hexa )
+    {
+        _PDCLIB_print_fp_hexa( fp, status, buffer );
+        return;
+    }
+    else
+    {
+        int exp10;
+
+        if ( status->prec < 0 )
+        {
+            status->prec = 6;
+        }
+
+        switch ( status->flags & ( E_decimal | E_exponent | E_generic ) )
+        {
+            case E_decimal:
             {
-                size_t i;
-                if ( fp->sign == '-' )
-                {
-                    PUT( fp->sign );
-                    status->current++;
-                }
-                for ( i = 0; i < 3; ++i )
-                {
-                    PUT( ( ( status->flags & E_lower ) ? "nan" : "NAN" )[i] );
-                    status->current++;
-                }
+                exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
+                _PDCLIB_format_f( status, buffer, exp10, fp->sign );
+                break;
             }
-            return;
-        case _PDCLIB_FP_INF:
+            case E_exponent:
             {
-                int i;
-                if ( fp->sign == '-' )
-                {
-                    PUT( fp->sign );
-                    status->current++;
-                }
-                for ( i = 0; i < 3; ++i )
-                {
-                    PUT( ( ( status->flags & E_lower ) ? "inf" : "INF" )[i] );
-                    status->current++;
-                }
+                exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
+                _PDCLIB_format_e( status, buffer, exp10, fp->sign );
+                break;
             }
-            return;
-        default:
-            if ( status->flags & E_hexa )
+            case E_generic:
             {
-                _PDCLIB_print_fp_hexa( fp, status, buffer );
-                return;
-            }
-            else
-            {
-                int exp10;
+                _PDCLIB_bigint_t mant;
+                int exponent;
+                _PDCLIB_bigint_from_bigint( &mant, &fp->mantissa );
 
-                if ( status->prec < 0 )
+                if ( status->prec == 0 )
                 {
-                    status->prec = 6;
+                    status->prec = 1;
                 }
 
-                switch ( status->flags & ( E_decimal | E_exponent | E_generic ) )
+                exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
+                exponent = ( strlen( buffer ) + exp10 ) - 1;
+
+                if ( exponent >= -4 && exponent < status->prec )
                 {
-                    case E_decimal:
-                    {
-                        exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
-                        _PDCLIB_format_f( status, buffer, exp10, fp->sign );
-                        break;
-                    }
-                    case E_exponent:
-                    {
-                        exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
-                        _PDCLIB_format_e( status, buffer, exp10, fp->sign );
-                        break;
-                    }
-                    case E_generic:
-                    {
-                        _PDCLIB_bigint_t mant;
-                        int exponent;
-                        _PDCLIB_bigint_from_bigint( &mant, &fp->mantissa );
-
-                        if ( status->prec == 0 )
-                        {
-                            status->prec = 1;
-                        }
-
-                        exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
-                        exponent = ( strlen( buffer ) + exp10 ) - 1;
-
-                        if ( exponent >= -4 && exponent < status->prec )
-                        {
-                            _PDCLIB_bigint_from_bigint( &fp->mantissa, &mant );
-                            status->flags &= ~E_generic;
-                            status->flags |= E_decimal;
-                            status->prec -= exponent + 1;
-                            exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
-                            status->flags |= E_generic;
-                            _PDCLIB_format_f( status, buffer, exp10, fp->sign );
-                        }
-                        else
-                        {
-                            status->prec -= 1;
-                            _PDCLIB_format_e( status, buffer, exp10, fp->sign );
-                        }
-                        break;
-                    }
+                    _PDCLIB_bigint_from_bigint( &fp->mantissa, &mant );
+                    status->flags &= ~E_generic;
+                    status->flags |= E_decimal;
+                    status->prec -= exponent + 1;
+                    exp10 = _PDCLIB_print_fp_deci( fp, status, buffer );
+                    status->flags |= E_generic;
+                    _PDCLIB_format_f( status, buffer, exp10, fp->sign );
                 }
+                else
+                {
+                    status->prec -= 1;
+                    _PDCLIB_format_e( status, buffer, exp10, fp->sign );
+                }
+                break;
             }
-            break;
+        }
     }
 }
 
