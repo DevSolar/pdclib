@@ -5,15 +5,19 @@
 */
 
 #ifndef _PDCLIB_STDALIGN_H
-#define _PDCLIB_ALIGN_H _PDCLIB_ALIGN_H
+#define _PDCLIB_STDALIGN_H _PDCLIB_STDALIGN_H
 
 #ifndef __cplusplus
-#define alignas _Alignas
-#define alignof _Alignof
-#endif
-
 #define __alignas_is_defined 1
 #define __alignof_is_defined 1
+
+#if ! defined( __STDC_VERSION__ ) || ( __STDC_VERSION__ < 202311L )
+#define alignas _Alignas
+#define alignof _Alignof
+#elif __STDC_VERSION__ >= 202311L
+#warning <stdalign.h> has been deprecated as of C23.
+#endif
+#endif
 
 /* Extension hook for downstream projects that want to have non-standard
    extensions to standard headers.
