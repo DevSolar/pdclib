@@ -101,7 +101,7 @@ double cos( double x );
 float cosf( float x );
 long double cosl( long double x );
 
-/* Since of x in radians. */
+/* Sine of x in radians. */
 double sin( double x );
 float sinf( float x );
 long double sinl( long double x );
