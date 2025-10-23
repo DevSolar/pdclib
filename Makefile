@@ -42,13 +42,13 @@ bin/$(ARTARGET): $(OBJ)
 	@$(AR) $(ARFLAGS) $@ $^
 
 bin/obj/%.o: src/*/%.c Makefile platform/$(PLATFORM)/settings.mk | bin/obj
-	@$(CC) $(CFLAGS) -Iinclude -c $< -o $@
+	@$(CC) $(CFLAGS) -Iinclude -Iplatform/$(PLATFORM)/include -c $< -o $@
 
 bin/tools/%: tools/%.c Makefile platform/$(PLATFORM)/settings.mk | bin/tools
 	@$(CC) $(CFLAGS) $< -o $@
 
 bin/tst/%: src/*/%.c Makefile platform/$(PLATFORM)/settings.mk | bin/tst
-	@$(CC) $(CFLAGS) -Iinclude -Itest_support -DTEST $< -o $@
+	@$(CC) $(CFLAGS) -Iinclude -Iplatform/$(PLATFORM)/include -Itest_support -DTEST $< -o $@
 
 bin/rtst/%: src/*/%.c Makefile platform/$(PLATFORM)/settings.mk | bin/rtst
 	@$(CC) $(CFLAGS) -Itest_support -DTEST -DREGTEST $< -o $@

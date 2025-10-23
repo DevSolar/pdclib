@@ -28,20 +28,41 @@ extern int printf( char const *, ... );
 #define TESTEQUAL( expected, x ) \
     do \
     { \
-        int observed = (int)(x); \
-        if ( observed != expected ) \
+        long long observed = (long long)(x); \
+        if ( observed != (long long)expected ) \
         { \
             TEST_RESULTS += 1; \
-            printf( "    FAILED: " __FILE__ ", line %d (%s) - expected %d, got %d\n", __LINE__, #x, (int)expected, (int)observed ); \
+            printf( "    FAILED: " __FILE__ ", line %d (%s) - expected %lld, got %lld\n", __LINE__, #x, (long long)expected, observed ); \
+        } \
+    } while ( 0 )
+
+#define TESTEQUALU( expected, x ) \
+    do \
+    { \
+        unsigned long long observed = (unsigned long long)(x); \
+        if ( observed != (unsigned long long)expected ) \
+        { \
+            TEST_RESULTS += 1; \
+            printf( "    FAILED: " __FILE__ ", line %d (%s) - expected %llu, got %llu\n", __LINE__, #x, (unsigned long long)expected, observed ); \
         } \
     } while ( 0 )
 
 #define TESTNEQ( unexpected, x ) \
     do \
     { \
-        if ( (int)(x) == unexpected ) \
+        if ( (long long)(x) == unexpected ) \
         { \
             TEST_RESULTS += 1; \
-            printf( "    FAILED: " __FILE__ ", line %d (%s) - got (unexpected) %d\n", __LINE__, #x, (int)unexpected ); \
+            printf( "    FAILED: " __FILE__ ", line %d (%s) - got (unexpected) %lld\n", __LINE__, #x, (long long)unexpected ); \
+        } \
+    } while ( 0 )
+
+#define TESTNEQU( unexpected, x ) \
+    do \
+    { \
+        if ( (unsigned long long)(x) == unexpected ) \
+        { \
+            TEST_RESULTS += 1; \
+            printf( "    FAILED: " __FILE__ ", line %d (%s) - got (unexpected) %llu\n", __LINE__, #x, (unsigned long long)unexpected ); \
         } \
     } while ( 0 )
