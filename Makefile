@@ -20,9 +20,9 @@ DIRS:=bin/obj bin/tst bin/rtst bin/tools
 
 .PHONY: all clean tests regtests
 
-include platform/$(PLATFORM)/settings.mk
+all: regtests tests
 
-all: regtests tests $(TOOLS)
+include platform/$(PLATFORM)/settings.mk
 
 clean:
 	@$(RM) bin
