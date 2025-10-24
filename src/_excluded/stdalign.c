@@ -5,7 +5,9 @@
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#ifndef __VBCC__
 #include <stdalign.h>
+#endif
 
 #ifdef TEST
 
@@ -13,15 +15,16 @@
 
 struct test_struct
 {
-    char c;
-    long long l;
     long double f;
+    long long l;
+    char c;
 };
 
 #define LARGE_ALIGNMENT 128
 
 int main( void )
 {
+#ifndef __VBCC__
     /* alignof must be a power of two */
     TESTNEQ( 0, alignof( int ) );
     TESTEQUAL( 0, ( alignof( int ) & ( alignof( int ) - 1 ) ) );
@@ -47,6 +50,7 @@ int main( void )
     alignas( alignof( double ) ) char aligned_char;
     TESTEQUAL( alignof( double ), alignof( aligned_char ) );
     }
+#endif
 
     return TEST_RESULTS;
 }

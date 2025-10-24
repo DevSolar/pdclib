@@ -1,11 +1,12 @@
-
 /* iso646.h Tests
 
    This file is part of the Public Domain C Library (PDCLib).
    Permission is granted to use, modify, and / or redistribute at will.
 */
 
+#ifndef __VBCC__
 #include <iso646.h>
+#endif
 
 #ifdef TEST
 
@@ -13,6 +14,7 @@
 
 int main( void )
 {
+#ifndef __VBCC__
     int x;
 
     // and (&&) - Logical AND
@@ -70,6 +72,7 @@ int main( void )
     TESTEQUAL( 2, x xor_eq 1 ); // x = 3 ^ 1; x is now 2
     x = 3;
     TESTEQUAL( 7, x xor_eq 4 ); // x = 3 ^ 4; x is now 7
+#endif
 
     return TEST_RESULTS;
 }

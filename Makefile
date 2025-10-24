@@ -11,6 +11,11 @@ else
 endif
 endif
 
+define run_test
+    $(info Running $1...)
+    $1
+endef
+
 OBJ:=$(foreach file,$(filter-out src/_excluded/%,$(wildcard src/**/*.c)),$(patsubst %.c,bin/obj/%.o,$(notdir $(file))))
 TST:=$(foreach file,$(wildcard src/**/*.c),$(patsubst %.c,bin/tst/%,$(notdir $(file))))
 RTST:=$(foreach file,$(wildcard src/**/*.c),$(patsubst %.c,bin/rtst/%,$(notdir $(file))))
@@ -33,10 +38,10 @@ $(DIRS):
 pdclib: bin/$(ARTARGET)
 
 tests: $(TST)
-	@$(foreach driver,$(TST),echo $(driver)...; $(driver);)
+	@$(foreach driver,$(TST),$(call run_test,$(driver)))
 
 regtests: $(RTST)
-	@$(foreach driver,$(RTST),echo $(driver)...; $(driver);)
+	@$(foreach driver,$(RTST),$(call run_test,$(driver)))
 
 bin/$(ARTARGET): $(OBJ)
 	@$(AR) $(ARFLAGS) $@ $^

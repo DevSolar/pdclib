@@ -9,4 +9,4 @@ AR:=lha
 ARFLAGS:=-q a $@ $(^D) $^
 ARTARGET:=pdclib.lha
 
--include $(DEPS)
+-include $(DEPS) $(TDEPS)
