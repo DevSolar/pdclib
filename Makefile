@@ -12,8 +12,8 @@ endif
 endif
 
 define run_test
-    $(info Running $1...)
-    $1
+    $(info Running $1 $(notdir $2)...)
+    $2
 endef
 
 OBJ:=$(foreach file,$(filter-out src/_excluded/%,$(wildcard src/**/*.c)),$(patsubst %.c,bin/obj/%.o,$(notdir $(file))))
@@ -38,10 +38,10 @@ $(DIRS):
 pdclib: bin/$(ARTARGET)
 
 tests: $(TST)
-	@$(foreach driver,$(TST),$(call run_test,$(driver)))
+	@$(foreach driver,$(TST),$(call run_test,test,$(driver)))
 
 regtests: $(RTST)
-	@$(foreach driver,$(RTST),$(call run_test,$(driver)))
+	@$(foreach driver,$(RTST),$(call run_test,regtest,$(driver)))
 
 bin/$(ARTARGET): $(OBJ)
 	@$(AR) $(ARFLAGS) $@ $^
