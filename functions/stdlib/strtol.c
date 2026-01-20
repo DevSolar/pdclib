@@ -24,11 +24,11 @@ long int strtol( const char * s, char ** endptr, int base )
 
     if ( sign == '+' )
     {
-        rc = ( long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )LONG_MAX, ( uintmax_t )( LONG_MAX / base ), ( int )( LONG_MAX % base ), &sign );
+        rc = ( long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )LONG_MAX, ( uintmax_t )LONG_MAX, &sign );
     }
     else
     {
-        rc = ( long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )LONG_MIN, ( uintmax_t )( LONG_MIN / -base ), ( int )( -( LONG_MIN % base ) ), &sign );
+        rc = ( long int )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )( unsigned long )LONG_MIN, ( ( uintmax_t )LONG_MAX + 1 ), &sign );
     }
 
     if ( endptr != NULL )

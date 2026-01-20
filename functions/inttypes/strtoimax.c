@@ -24,11 +24,11 @@ intmax_t strtoimax( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restrict
 
     if ( sign == '+' )
     {
-        rc = ( intmax_t )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )INTMAX_MAX, ( uintmax_t )( INTMAX_MAX / base ), ( int )( INTMAX_MAX % base ), &sign );
+        rc = ( intmax_t )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )INTMAX_MAX, ( uintmax_t )INTMAX_MAX, &sign );
     }
     else
     {
-        rc = ( intmax_t )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )INTMAX_MIN, ( uintmax_t )( INTMAX_MIN / -base ), ( int )( -( INTMAX_MIN % base ) ), &sign );
+        rc = ( intmax_t )_PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )INTMAX_MIN, ( ( uintmax_t )INTMAX_MAX + 1 ), &sign );
     }
 
     if ( endptr != NULL )
