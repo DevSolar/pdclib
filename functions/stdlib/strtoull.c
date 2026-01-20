@@ -22,7 +22,7 @@ unsigned long long int strtoull( const char * s, char ** endptr, int base )
         return 0;
     }
 
-    rc = _PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )ULLONG_MAX, ( uintmax_t )( ULLONG_MAX / base ), ( int )( ULLONG_MAX % base ), &sign );
+    rc = _PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )ULLONG_MAX, ( uintmax_t )ULLONG_MAX, &sign );
 
     if ( endptr != NULL )
     {

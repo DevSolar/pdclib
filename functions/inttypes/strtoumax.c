@@ -22,7 +22,7 @@ uintmax_t strtoumax( const char * _PDCLIB_restrict nptr, char ** _PDCLIB_restric
         return 0;
     }
 
-    rc = _PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )UINTMAX_MAX, ( uintmax_t )( UINTMAX_MAX / base ), ( int )( UINTMAX_MAX % base ), &sign );
+    rc = _PDCLIB_strtox_main( &p, ( unsigned )base, ( uintmax_t )UINTMAX_MAX, ( uintmax_t )UINTMAX_MAX, &sign );
 
     if ( endptr != NULL )
     {

@@ -382,7 +382,7 @@ _PDCLIB_LOCAL _PDCLIB_intmax_t _PDCLIB_atomax( const char * s );
 
 /* Two helper functions used by strtol(), strtoul() and long long variants.   */
 _PDCLIB_LOCAL const char * _PDCLIB_strtox_prelim( const char * p, char * sign, int * base );
-_PDCLIB_LOCAL _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limval, int limdigit, char * sign );
+_PDCLIB_LOCAL _PDCLIB_uintmax_t _PDCLIB_strtox_main( const char ** p, unsigned int base, _PDCLIB_uintmax_t error, _PDCLIB_uintmax_t limit, char * sign );
 
 /* Helper function used by strtof(), strtod(), and strtold().                 */
 _PDCLIB_LOCAL int _PDCLIB_strtod_prelim( const char * p, char * sign, char ** endptr );
