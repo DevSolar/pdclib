@@ -6,8 +6,4 @@ PDCLib contains three parts of third party software:
 
 - Large parts of the functionality behind <time.h> is included
   courtesy of the IANA, https://www.iana.org/time-zones/
-  (tzcode2020a.tar.gz), which was released into the Public Domain.
-
-- strtod() is included courtesy of David M. Gay, https://netlib.org/fp/
-  (dtoa.c), which was released under a modified MIT license (as far
-  as I could tell). Please check functions/_dtoa/dtoa.c for details.
+  tzcode2020a.tar.gz), which was released into the Public Domain.
