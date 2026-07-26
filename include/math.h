@@ -17,9 +17,9 @@ extern "C" {
 typedef float float_t;
 typedef double double_t;
 
-#define HUGE_VALF _PDCLIB_HUGE_VALF;
-#define HUGE_VAL _PDCLIB_HUGE_VAL;
-#define HUGE_VALL _PDCLIB_HUGE_VALL;
+#define HUGE_VALF _PDCLIB_HUGE_VALF
+#define HUGE_VAL _PDCLIB_HUGE_VAL
+#define HUGE_VALL _PDCLIB_HUGE_VALL
 
 #define INFINITY (_PDCLIB_FLT_MAX * 2)
 #define NAN ( -(0.0f / 0.0f) )

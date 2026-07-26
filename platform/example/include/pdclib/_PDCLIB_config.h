@@ -459,6 +459,24 @@ struct _PDCLIB_imaxdiv_t
 #define _PDCLIB_DBL_TRUE_MIN      __DBL_DENORM_MIN__
 #define _PDCLIB_LDBL_TRUE_MIN     __LDBL_DENORM_MIN__
 
+#if __FLT_HAS_INFINITY__ == 1
+#define _PDCLIB_HUGE_VALF         (__FLT_MAX__ * 2)
+#else
+#define _PDCLIB_HUGE_VALF         __FLT_MAX__
+#endif
+
+#if __DBL_HAS_INFINITY__ == 1
+#define _PDCLIB_HUGE_VAL          (__DBL_MAX__ * 2)
+#else
+#define _PDCLIB_HUGE_VAL          __DBL_MAX__
+#endif
+
+#if __LDBL_HAS_INFINITY__ == 1
+#define _PDCLIB_HUGE_VALL         (__LDBL_MAX__ * 2)
+#else
+#define _PDCLIB_HUGE_VALL         __LDBL_MAX__
+#endif
+
 /* Macros for deconstructing floating point values                            */
 /* This assumes that the floating point value has been memcpy'd into an array */
 /* of _PDCLIB_bigint_digit_t (see _PDCLIB_bigint_from_*dbl.c with the array   */
