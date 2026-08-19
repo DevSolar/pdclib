@@ -38,7 +38,7 @@ char * _PDCLIB_realpath( const char * path )
        fclose() would run our free() on someone else's memory,
        results are more interesting than we would like to see.
     */
-    if ( ( resolved_name = malloc( strlen( buffer + 1 ) ) ) == NULL )
+    if ( ( resolved_name = malloc( strlen( buffer ) + 1 ) ) == NULL )
     {
         return NULL;
     }
