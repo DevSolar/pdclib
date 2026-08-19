@@ -70,16 +70,26 @@ struct _PDCLIB_lc_messages_t * _PDCLIB_load_lc_messages( const char * path, cons
 int main( void )
 {
 #ifndef REGTEST
-    FILE * fh = fopen( "test_numeric.dat", "wb" );
-    struct _PDCLIB_lc_lconv_numeric_t * lc;
+    FILE * fh = fopen( "test_messages.dat", "wb" );
+    struct _PDCLIB_lc_messages_t * lc;
+    size_t i;
+
     TESTCASE( fh != NULL );
-    TESTCASE( fputs( ",\n.\n\n", fh ) != EOF );
+    for ( i = 0; i < _PDCLIB_ERRNO_MAX; ++i )
+    {
+        TESTCASE( fprintf( fh, "Errno %zu\n", i ) > 0 );
+    }
     fclose( fh );
-    TESTCASE( ( lc = _PDCLIB_load_lc_numeric( "./", "test" ) ) );
-    remove( "test_numeric.dat" );
-    TESTCASE( strcmp( lc->decimal_point, "," ) == 0 );
-    TESTCASE( strcmp( lc->thousands_sep, "." ) == 0 );
-    TESTCASE( strcmp( lc->grouping, "" ) == 0 );
+
+    TESTCASE( ( lc = _PDCLIB_load_lc_messages( "./", "test" ) ) != NULL );
+    remove( "test_messages.dat" );
+
+    for ( i = 0; i < _PDCLIB_ERRNO_MAX; ++i )
+    {
+        char buffer[ 32 ];
+        sprintf( buffer, "Errno %zu", i );
+        TESTCASE( strcmp( lc->errno_texts[ i ], buffer ) == 0 );
+    }
 #endif
 
     return TEST_RESULTS;
