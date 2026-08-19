@@ -21,6 +21,8 @@ extern int wait( int * status );
 }
 #endif
 
+extern char ** environ;
+
 int system( const char * string )
 {
     const char * argv[] = { "sh", "-c", NULL, NULL };
@@ -28,18 +30,25 @@ int system( const char * string )
 
     if ( string != NULL )
     {
+        int status;
         int pid = fork();
 
         if ( pid == 0 )
         {
-            execve( "/bin/sh", ( char * const *)argv, NULL );
+#if defined( __ANDROID__ )
+            execve( "/system/bin/sh", ( char * const *)argv, environ );
+#else
+            execve( "/bin/sh", ( char * const *)argv, environ );
+#endif
         }
         else if ( pid > 0 )
         {
-            while ( wait( NULL ) != pid )
+            while ( wait( &status ) != pid )
             {
                 /* EMPTY */
             }
+
+            return status;
         }
     }
 
@@ -57,14 +66,20 @@ int main( void )
     FILE * fh;
     char buffer[25];
     buffer[24] = 'x';
+#if !( defined( REGTEST ) && defined( __ANDROID__ ) )
+    /* Bionic's system() is hardcoded to use
+       execve( "/bin/sh", (char * const *)argv, NULL );
+       which fails on non-rooted Termux.
+    */
     TESTCASE( ( fh = freopen( testfile, "wb+", stdout ) ) != NULL );
-    TESTCASE( system( SHELLCOMMAND ) );
+    TESTCASE( system( SHELLCOMMAND ) == 0 );
     rewind( fh );
     TESTCASE( fread( buffer, 1, 24, fh ) == 24 );
     TESTCASE( memcmp( buffer, "SUCCESS testing system()", 24 ) == 0 );
     TESTCASE( buffer[24] == 'x' );
     TESTCASE( fclose( fh ) == 0 );
     TESTCASE( remove( testfile ) == 0 );
+#endif
     return TEST_RESULTS;
 }
 
