@@ -33,6 +33,8 @@ struct tm * localtime_s( const time_t * _PDCLIB_restrict timer, struct tm * _PDC
 int main( void )
 {
 #ifndef REGTEST
+    extern int setenv( const char *, const char *, int );
+    setenv( "TZ", "CET-1", 1 );
     time_t t;
     struct tm time;
 

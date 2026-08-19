@@ -23,6 +23,10 @@ struct tm * localtime( const time_t * timer )
 
 int main( void )
 {
+#ifndef REGTEST
+    extern int setenv( const char *, const char *, int );
+    setenv( "TZ", "CET-1", 1 );
+#endif
     /* TODO: System Clock DST */
 
     time_t t;

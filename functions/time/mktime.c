@@ -35,6 +35,10 @@ time_t mktime( struct tm * timeptr )
 
 int main( void )
 {
+#ifndef REGTEST
+    extern int setenv( const char *, const char *, int );
+    setenv( "TZ", "CET-1", 1 );
+#endif
     /* System Clock DST */
     struct tm time;
     time_t t;
