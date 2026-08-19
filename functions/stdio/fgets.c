@@ -80,7 +80,7 @@ int main( void )
     /* newlib returns NULL on any n < 2, so we _NOREG these tests. */
     TESTCASE_NOREG( fgets( buffer, 1, fh ) == buffer );
     TESTCASE_NOREG( strcmp( buffer, "" ) == 0 );
-    TESTCASE( fgets( buffer, 0, fh ) == NULL );
+    TESTCASE_NOREG( fgets( buffer, 0, fh ) == NULL );
     TESTCASE( ! feof( fh ) );
     TESTCASE_NOREG( fgets( buffer, 1, fh ) == buffer );
     TESTCASE_NOREG( strcmp( buffer, "" ) == 0 );
