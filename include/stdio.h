@@ -44,9 +44,13 @@ typedef struct _PDCLIB_file_t FILE;
 #define SEEK_END _PDCLIB_SEEK_END
 #define SEEK_SET _PDCLIB_SEEK_SET
 
-extern FILE * stdin;
-extern FILE * stdout;
-extern FILE * stderr;
+extern struct _PDCLIB_file_t _PDCLIB_sin;
+extern struct _PDCLIB_file_t _PDCLIB_sout;
+extern struct _PDCLIB_file_t _PDCLIB_serr;
+
+#define stdin  ( &_PDCLIB_sin )
+#define stdout ( &_PDCLIB_sout )
+#define stderr ( &_PDCLIB_serr )
 
 /* Operations on files */
 
