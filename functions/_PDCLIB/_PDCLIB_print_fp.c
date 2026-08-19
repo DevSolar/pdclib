@@ -91,7 +91,7 @@ static void _PDCLIB_format_e( struct _PDCLIB_status_t * status, char * buffer, i
 
     /* Print buffer */
     current = buffer;
-    PUT( _PDCLIB_digits[ (size_t)*current++ ] );
+    PUT( *current++ );
     status->current++;
 
     if ( status->prec > 0 || status->flags & E_alt )
@@ -104,7 +104,7 @@ static void _PDCLIB_format_e( struct _PDCLIB_status_t * status, char * buffer, i
     {
         if ( *current != '\0' )
         {
-            PUT( _PDCLIB_digits[ (size_t)*current++ ] );
+            PUT( *current++ );
             status->current++;
         }
         else if ( ! ( status->flags & E_generic ) )
@@ -166,13 +166,13 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
 
         for ( i = 0; (size_t)i < len; ++i )
         {
-            PUT( _PDCLIB_digits[ (size_t)buffer[i] ] );
+            PUT( buffer[i] );
             status->current++;
         }
 
         for ( i = 0; i < exp10; ++i )
         {
-            PUT( _PDCLIB_digits[0] );
+            PUT( '0' );
             status->current++;
         }
 
@@ -194,7 +194,7 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
             /* Print n from buffer, period, rest from buffer, zeroes to precision */
             for ( i = 0; i < n; ++i )
             {
-                PUT( _PDCLIB_digits[ (size_t)buffer[i] ] );
+                PUT( buffer[i] );
                 status->current++;
             }
 
@@ -206,7 +206,7 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
 
             for ( i = 0; buffer[ i + n ] != '\0'; ++i )
             {
-                PUT( _PDCLIB_digits[ (size_t)buffer[ i + n ] ] );
+                PUT( buffer[ i + n ] );
                 status->current++;
             }
 
@@ -215,7 +215,7 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
         else
         {
             /* Print zero, period, -n zeroes, buffer, zeroes to precision */
-            PUT( _PDCLIB_digits[0] );
+            PUT( '0' );
             status->current++;
 
             if ( status->prec > 0 || status->flags & E_alt )
@@ -226,13 +226,13 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
 
             for ( i = 0; i < -n; ++i )
             {
-                PUT( _PDCLIB_digits[0] );
+                PUT( '0' );
                 status->current++;
             }
 
             for ( i = 0; buffer[i] != '\0'; ++i )
             {
-                PUT( _PDCLIB_digits[ (size_t)buffer[i] ] );
+                PUT( buffer[i] );
                 status->current++;
             }
 
@@ -245,7 +245,7 @@ static void _PDCLIB_format_f( struct _PDCLIB_status_t * status, char * buffer, i
     {
         for ( ; len > 0; --len )
         {
-            PUT( _PDCLIB_digits[0] );
+            PUT( '0' );
             status->current++;
         }
     }
